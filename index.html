@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8"/>
     <meta name="viewport" content="width=device-width,initial-scale=1.0,viewport-fit=cover"/>
-    <title>Gigahertz Nexus v4.3 — Pro Hub</title>
+    <title>Gigahertz Nexus v4.4 — Titan Hub</title>
     
     <!-- Favicon -->
     <link rel="icon" type="image/png" href="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRbPTtZwom3B0ZLIJZNusjlFz3ougRMWPHITQ&s">
@@ -14,138 +14,127 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.2/babel.min.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet"/>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
     <style>
-        /* ============================================================
-           ROBLOX-INSPIRED THEME ENGINE — 10 THEMES
-        ============================================================ */
+        /* ══ 2026 THEME VARIABLES (ORIGINAL AERO & ADAPTIVE) ══ */
         :root {
-            --p:#1a73e8; --pd:#1557b0; --pl:#e8f0fe;
-            --bg:#f0f2f5; --wh:#ffffff; --card:#ffffff;
-            --tx:#1e293b; --tx2:#475569; --tx3:#94a3b8;
-            --bd:#e2e8f0; --danger:#ef4444; --ok:#22c55e; --warn:#f59e0b;
-            --g1:#f0f4ff; --g2:#dbeafe; --g3:#ede9fe;
-            --glass-bg:rgba(255,255,255,0.8); --glass-border:rgba(255,255,255,0.9);
-            --shadow:rgba(26,115,232,0.1);
+            --p:#1a3af5; --pd:#1228d4; --pl:#eef1ff;
+            --sb: rgba(255, 255, 255, 0.85); 
+            --sbh: rgba(26, 58, 245, 0.08);
+            --sb-border: rgba(0,0,90,0.06);
+            --sb-tx: #0d1533; --sb-tx2: #4a5270; --sb-tx3: #8890aa;
+            --bg:#e8ecf8; --wh:#fff; --card:rgba(255,255,255,0.9);
+            --tx:#0d1533; --tx2:#4a5270; --tx3:#8890aa;
+            --bd:#dde2f0; --danger:#ef4444; --ok:#16a34a; --warn:#d97706;
+            --sh:0 4px 24px rgba(26,58,245,.06);
+            --shl:0 12px 48px rgba(26,58,245,.12);
+            --glass-bg: rgba(255, 255, 255, 0.7);
+            --glass-border: rgba(255, 255, 255, 0.4);
         }
+
         [data-theme="dark"] {
-            --p:#3b82f6; --pd:#2563eb; --pl:#1e3a8a;
-            --bg:#0b1120; --wh:#111827; --card:#1e293b;
-            --tx:#f8fafc; --tx2:#cbd5e1; --tx3:#64748b;
-            --bd:#334155; --danger:#f87171; --ok:#4ade80; --warn:#fbbf24;
-            --g1:#0b1120; --g2:#0f1f3d; --g3:#1a0b2e;
-            --glass-bg:rgba(30,41,59,0.7); --glass-border:rgba(255,255,255,0.06);
-            --shadow:rgba(59,130,246,0.15);
-        }
-        [data-theme="lavender"] { --p:#7c3aed; --pd:#6d28d9; --pl:#ede9fe; --bg:#f5f3ff; --tx:#1e1b4b; --glass-bg:rgba(255,255,255,0.85); --shadow:rgba(124,58,237,0.15); --g1:#f5f3ff; --g2:#ede9fe; --g3:#fce7f3; }
-        [data-theme="forest"] { --p:#16a34a; --pd:#15803d; --pl:#dcfce7; --bg:#0a1f0f; --tx:#dcfce7; --glass-bg:rgba(10,31,15,0.8); --shadow:rgba(22,163,74,0.2); --g1:#0a1f0f; --g2:#0f2d18; --g3:#1a3a22; }
-        [data-theme="sunset"] { --p:#f97316; --pd:#ea580c; --pl:#fff7ed; --bg:#1a0a00; --tx:#fed7aa; --glass-bg:rgba(45,18,0,0.8); --shadow:rgba(249,115,22,0.25); --g1:#1a0a00; --g2:#2d1200; --g3:#3d1a00; }
-        [data-theme="ocean"] { --p:#0ea5e9; --pd:#0284c7; --pl:#e0f2fe; --bg:#020d1a; --tx:#e0f2fe; --glass-bg:rgba(2,13,26,0.82); --shadow:rgba(14,165,233,0.25); --g1:#020d1a; --g2:#051929; --g3:#0a2540; }
-        [data-theme="ruby"] { --p:#ef4444; --pd:#dc2626; --pl:#450a0a; --bg:#1a0505; --tx:#fecaca; --glass-bg:rgba(69,10,10,0.75); --shadow:rgba(239,68,68,0.25); --g1:#1a0505; --g2:#2d0a0a; --g3:#3f0f0f; }
-        [data-theme="cyberpunk"] { --p:#f0abfc; --pd:#d946ef; --pl:#4a044e; --bg:#020617; --tx:#f5d0fe; --glass-bg:rgba(15,23,42,0.9); --shadow:rgba(217,70,239,0.3); --g1:#020617; --g2:#1e1b4b; --g3:#4c0519; }
-        [data-theme="midnight"] { --p:#6366f1; --pd:#4338ca; --pl:#1e1b4b; --bg:#030712; --tx:#f9fafb; --glass-bg:rgba(17,24,39,0.9); --shadow:rgba(99,102,241,0.2); --g1:#030712; --g2:#111827; --g3:#1f2937; }
-        [data-theme="gold"] { --p:#eab308; --pd:#ca8a04; --pl:#422006; --bg:#1c1917; --tx:#fef08a; --glass-bg:rgba(41,37,36,0.85); --shadow:rgba(234,179,8,0.2); --g1:#1c1917; --g2:#292524; --g3:#44403c; }
-
-        /* GLOBALS */
-        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-        body {
-            font-family: 'Plus Jakarta Sans', sans-serif;
-            background: radial-gradient(circle at 10% 20%, var(--g2) 0%, transparent 40%), 
-                        radial-gradient(circle at 90% 80%, var(--g3) 0%, transparent 40%), var(--g1);
-            background-attachment: fixed; color: var(--tx);
-            min-height: 100vh; transition: background 0.5s, color 0.4s; overflow-x: hidden;
+            --p:#4d6fff; --pd:#3d5de8; --pl:#1a2348;
+            --sb: rgba(10, 15, 30, 0.85); 
+            --sbh: rgba(255, 255, 255, 0.06);
+            --sb-border: rgba(255,255,255,0.04);
+            --sb-tx: #dde4f5; --sb-tx2: #7d8eaa; --sb-tx3: #485268;
+            --bg:#090e1e; --wh:#111827; --card:rgba(19,29,48,0.9);
+            --tx:#dde4f5; --tx2:#7d8eaa; --tx3:#485268;
+            --bd:#1e2a44; --sh:0 4px 24px rgba(0,0,0,.4);
+            --glass-bg: rgba(15, 23, 42, 0.7);
+            --glass-border: rgba(255, 255, 255, 0.1);
         }
 
-        /* GLASSMORPHISM */
-        .glass { background: var(--glass-bg); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border: 1px solid var(--glass-border); box-shadow: 0 10px 40px var(--shadow); }
-        .glass-dark { background: rgba(0,0,0,0.3); backdrop-filter: blur(15px); border: 1px solid rgba(255,255,255,0.05); }
+        /* Additional Themes Integrated into Settings */
+        [data-theme="lavender"] { --p:#7c3aed; --pd:#6d28d9; --pl:#ede9fe; --bg:#f5f3ff; --tx:#1e1b4b; }
+        [data-theme="forest"] { --p:#16a34a; --pd:#15803d; --pl:#dcfce7; --bg:#0a1f0f; --tx:#dcfce7; }
+        [data-theme="sunset"] { --p:#f97316; --pd:#ea580c; --pl:#fff7ed; --bg:#1a0a00; --tx:#fed7aa; }
+        [data-theme="ocean"] { --p:#0ea5e9; --pd:#0284c7; --pl:#e0f2fe; --bg:#020d1a; --tx:#e0f2fe; }
+        [data-theme="ruby"] { --p:#ef4444; --pd:#dc2626; --pl:#450a0a; --bg:#1a0505; --tx:#fecaca; }
+        [data-theme="cyberpunk"] { --p:#f0abfc; --pd:#d946ef; --pl:#4a044e; --bg:#020617; --tx:#f5d0fe; }
+        [data-theme="midnight"] { --p:#6366f1; --pd:#4338ca; --pl:#1e1b4b; --bg:#030712; --tx:#f9fafb; }
+        [data-theme="gold"] { --p:#eab308; --pd:#ca8a04; --pl:#422006; --bg:#1c1917; --tx:#fef08a; }
 
-        /* FLOATING GIGAHERTZ LOGO WIDGET */
-        .nexus-floating-portal {
-            position: fixed; bottom: 100px; right: 24px;
-            width: 70px; height: 70px; z-index: 2000;
-            border-radius: 22px; cursor: pointer;
-            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            background: #fff; padding: 12px;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
-            display: flex; align-items: center; justify-content: center;
+        /* ══ GLOBALS ══ */
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background: var(--bg); color: var(--tx); min-height: 100vh; transition: background .3s, color .3s; overflow-x: hidden; }
+        
+        /* ══ ORIGINAL SIDEBAR UI ══ */
+        .sidebar { 
+            width: 270px; height: 100vh; background: var(--sb); 
+            position: fixed; left: 0; top: 0; z-index: 100;
+            border-right: 1.5px solid var(--sb-border);
+            backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+            display: flex; flex-direction: column;
         }
-        .nexus-floating-portal:hover {
-            transform: translateY(-20px) scale(1.1);
-            box-shadow: 0 15px 45px var(--p);
+
+        .main-content { margin-left: 270px; padding: 30px 40px; min-height: 100vh; }
+        @media (max-width: 1024px) { 
+            .sidebar { display: none; } 
+            .main-content { margin-left: 0; padding: 20px; padding-bottom: 100px; }
+        }
+
+        /* ══ ROBLOX DASHBOARD UI ELEMENTS ══ */
+        .roblox-row { display: flex; overflow-x: auto; gap: 18px; padding: 15px 5px; scroll-snap-type: x mandatory; }
+        .roblox-row::-webkit-scrollbar { display: none; }
+        
+        .roblox-card { 
+            min-width: 210px; width: 210px; height: 260px; border-radius: 16px; 
+            background: var(--card); border: 1.5px solid var(--bd); 
+            transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1); cursor: pointer; 
+            overflow: hidden; display: flex; flex-direction: column; 
+            box-shadow: var(--sh);
+        }
+        .roblox-card:hover { transform: translateY(-10px) scale(1.03); border-color: var(--p); box-shadow: var(--shl); }
+        .roblox-card-img { height: 160px; background: var(--pl); display: flex; align-items: center; justify-content: center; font-size: 40px; color: var(--p); position: relative; }
+        .roblox-card-body { padding: 12px; }
+        .roblox-card-title { font-weight: 800; font-size: 14px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: var(--tx); }
+        .roblox-card-sub { font-size: 11px; color: var(--tx3); font-weight: 600; margin-top: 4px; text-transform: uppercase; }
+
+        /* ══ FLOATING WIDGET ══ */
+        .titan-portal-widget {
+            position: fixed; bottom: 100px; right: 30px; 
+            width: 75px; height: 75px; z-index: 5000;
+            background: #fff; border-radius: 20px; padding: 12px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            cursor: pointer; transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        .titan-portal-widget:hover {
+            transform: translateY(-20px) scale(1.15);
+            box-shadow: 0 0 40px var(--p);
             filter: brightness(1.1);
         }
-        .nexus-floating-portal img { width: 100%; height: 100%; object-fit: contain; }
-        @media (max-width: 1024px) { .nexus-floating-portal { bottom: 100px; right: 16px; width: 60px; height: 60px; } }
+        .titan-portal-widget img { width: 100%; height: 100%; object-fit: contain; }
 
-        /* ROBLOX UI ADAPTATIONS */
-        .roblox-carousel { display: flex; overflow-x: auto; gap: 16px; padding: 10px 4px; scroll-snap-type: x mandatory; }
-        .roblox-carousel::-webkit-scrollbar { display: none; }
-        .roblox-card { 
-            min-width: 180px; width: 180px; height: 240px; border-radius: 12px; 
-            background: var(--glass-bg); border: 1.5px solid var(--bd); 
-            transition: 0.2s; cursor: pointer; scroll-snap-align: start; 
-            display: flex; flex-direction: column; overflow: hidden;
+        /* ══ AUTH ══ */
+        .auth-card { background: var(--wh); border-radius: 24px; padding: 45px; width: 440px; box-shadow: var(--shl); border: 1px solid var(--bd); }
+        .input-titan { width: 100%; padding: 13px 16px; border-radius: 12px; border: 1.5px solid var(--bd); background: var(--bg); color: var(--tx); outline: none; font-weight: 600; }
+        .input-titan:focus { border-color: var(--p); box-shadow: 0 0 0 4px var(--pl); }
+
+        /* ══ ANIMATIONS ══ */
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .fade-in { animation: fadeIn 0.5s ease-out both; }
+        
+        .timer-active-ring { transition: stroke-dashoffset 0.5s linear; transform: rotate(-90deg); transform-origin: 50% 50%; }
+
+        /* ══ MOBILE NAV ══ */
+        .mobile-nav { 
+            position: fixed; bottom: 0; left: 0; right: 0; height: 75px; 
+            background: var(--sb); backdrop-filter: blur(25px); 
+            border-top: 1.5px solid var(--sb-border); display: none;
+            justify-content: space-around; align-items: center; z-index: 1000;
         }
-        .roblox-card:hover { border-color: var(--p); transform: scale(1.02); }
-        .roblox-card-img { height: 140px; background: var(--pl); display: flex; align-items: center; justify-content: center; position: relative; }
-        .roblox-card-content { padding: 12px; }
-
-        /* LAYOUT */
-        .sidebar { width: 280px; height: 100vh; position: fixed; left: 0; top: 0; z-index: 100; transition: 0.3s; border-right: 1.5px solid var(--bd); }
-        .main-content { margin-left: 280px; padding: 32px; transition: margin 0.3s; }
-        @media (max-width: 1024px) { .sidebar { display: none; } .main-content { margin-left: 0; padding: 16px; padding-bottom: 110px; } }
-
-        /* MOBILE NAV */
-        .mobile-nav { position: fixed; bottom: 0; left: 0; right: 0; height: 75px; z-index: 1000; display: none; justify-content: space-around; align-items: center; padding-bottom: env(safe-area-inset-bottom); border-top: 1px solid var(--bd); background: var(--glass-bg); backdrop-filter: blur(25px); }
         @media (max-width: 1024px) { .mobile-nav { display: flex; } }
 
-        /* NAVIGATION BUTTONS */
-        .nav-link { display: flex; flex-direction: column; align-items: center; gap: 4px; color: var(--tx3); font-size: 10px; font-weight: 800; text-transform: uppercase; cursor: pointer; transition: 0.2s; }
-        .nav-link.active { color: var(--p); }
-        .nav-link i { font-size: 22px; }
+        .m-nav-link { display: flex; flex-direction: column; align-items: center; gap: 4px; color: var(--tx3); font-size: 10px; font-weight: 800; text-transform: uppercase; }
+        .m-nav-link.active { color: var(--p); }
 
-        /* NEXUS COMPONENTS */
-        .btn-nexus { padding: 12px 24px; border-radius: 14px; font-weight: 800; font-size: 13px; display: inline-flex; align-items: center; gap: 10px; transition: 0.2s; cursor: pointer; border: none; }
-        .btn-p { background: linear-gradient(135deg, var(--p), var(--pd)); color: #fff; box-shadow: 0 4px 15px var(--shadow); }
-        .btn-p:hover { transform: translateY(-2px); filter: brightness(1.1); box-shadow: 0 8px 25px var(--shadow); }
-
-        .input-nexus { width: 100%; padding: 14px 18px; border-radius: 14px; background: rgba(0,0,0,0.04); border: 1.5px solid var(--bd); color: var(--tx); outline: none; font-weight: 600; transition: 0.2s; }
-        .input-nexus:focus { border-color: var(--p); box-shadow: 0 0 0 4px var(--pl); }
-
-        /* ANIMATIONS */
-        @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
-        .anim-float { animation: float 4s ease-in-out infinite; }
-        .fade-in { animation: fadeIn 0.4s ease-out both; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-
-        /* SPLASH */
-        .splash { position: fixed; inset: 0; z-index: 9999; background: #0b1120; display: flex; flex-direction: column; align-items: center; justify-content: center; }
-        .splash.hidden { display: none; }
-
-        /* HEATMAP */
-        .heatmap-grid { display: grid; grid-template-columns: repeat(14, 1fr); gap: 4px; }
-        .heatmap-cell { aspect-ratio: 1; border-radius: 4px; background: rgba(0,0,0,0.05); transition: 0.3s; }
-        .heatmap-cell.active { background: var(--p); box-shadow: 0 0 10px var(--p); }
-
-        /* SHIFT SUMMARY POPUP */
-        .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.6); backdrop-filter: blur(8px); z-index: 5000; display: flex; align-items: center; justify-content: center; padding: 20px; }
-        .modal-content { width: 100%; max-width: 600px; border-radius: 32px; padding: 40px; position: relative; }
-        
-        .priority-badge { padding: 4px 12px; border-radius: 99px; font-size: 10px; font-weight: 900; text-transform: uppercase; }
-        .badge-high { background: #ef4444; color: #fff; }
-        .badge-med { background: #f59e0b; color: #fff; }
-        .badge-low { background: #22c55e; color: #fff; }
-
-        .team-avatar { width: 44px; height: 44px; border-radius: 50%; border: 2px solid var(--wh); box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
-        .online-dot { width: 10px; height: 10px; border-radius: 50%; background: #22c55e; border: 2px solid var(--wh); position: absolute; bottom: 0; right: 0; }
-
-        /* CUSTOM SCROLL */
-        ::-webkit-scrollbar { width: 6px; }
-        ::-webkit-scrollbar-track { background: transparent; }
-        ::-webkit-scrollbar-thumb { background: var(--tx3); border-radius: 10px; opacity: 0.3; }
+        /* Achievement Badges */
+        .badge-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 12px; }
+        .achievement-card { padding: 15px; border-radius: 16px; text-align: center; border: 1.5px solid var(--bd); transition: 0.2s; }
+        .achievement-card.locked { opacity: 0.4; grayscale: 1; }
     </style>
 </head>
 <body>
@@ -154,61 +143,76 @@
     <script type="text/babel">
         const { useState, useEffect, useRef, useMemo, useCallback } = React;
 
-        // --- CORE DATA & MOCKS ---
-        const DEPARTMENTS = ["IT", "HR", "ACCOUNTING", "MARKETING", "PRODUCT", "RMA", "LOGISTICS"];
-        const QUOTES = [
-            "Your shift is your opportunity to build the future of Gigahertz.",
-            "Work with excellence, or don't work at all.",
-            "Nexus Core v4.3: Tracking excellence in real-time.",
-            "Stay focused. Your potential is limitless."
-        ];
-        const THEMES = [
-            {id:'dark',col:'#0b1120',n:'Midnight'},
-            {id:'light',col:'#1a73e8',n:'Sky'},
-            {id:'lavender',col:'#7c3aed',n:'Nebula'},
-            {id:'forest',col:'#16a34a',n:'Matrix'},
-            {id:'sunset',col:'#f97316',n:'Aura'},
-            {id:'ocean',col:'#0ea5e9',n:'DeepSea'},
-            {id:'ruby',col:'#ef4444',n:'Ruby'},
-            {id:'cyberpunk',col:'#d946ef',n:'NeoTok'},
-            {id:'midnight',col:'#6366f1',n:'Iris'},
-            {id:'gold',col:'#eab308',n:'Crown'}
-        ];
+        // --- TITAN UTILITIES ---
+        const formatID = (val) => {
+            const clean = val.replace(/[^GHTZ0-9]/gi, '').toUpperCase();
+            if (clean.startsWith('GHTZ')) {
+                const nums = clean.slice(4).slice(0, 4);
+                return nums ? `GHTZ-${nums}` : `GHTZ-`;
+            }
+            return clean.slice(0, 4);
+        };
 
-        // --- SUB-COMPONENTS ---
+        const validateID = (id) => /^GHTZ-\d{4}$/.test(id);
+
+        // --- COMPONENTS ---
 
         const FloatingPortal = () => (
-            <a href="https://www.gigahertz.com.ph/" target="_blank" className="nexus-floating-portal shadow-xl">
+            <div className="titan-portal-widget shadow-p" onClick={() => window.open('https://www.gigahertz.com.ph/', '_blank')}>
                 <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRurHiRjhAqL8xPFzjXHWgjpxNtpGagJSOG7A&s" alt="Portal" />
-            </a>
+            </div>
         );
 
         const Toast = ({ msg, type, onDone }) => {
             useEffect(() => { const t = setTimeout(onDone, 3000); return () => clearTimeout(t); }, []);
-            const color = type === 'success' ? '#22c55e' : '#ef4444';
+            const color = type === 'success' ? '#16a34a' : '#ef4444';
             return (
-                <div className="fixed top-8 right-8 z-[10000] glass px-6 py-4 rounded-2xl flex items-center gap-4 shadow-2xl fade-in" style={{ borderLeft: `6px solid ${color}` }}>
-                    <i className={`fa-solid ${type === 'success' ? 'fa-circle-check text-green-500' : 'fa-circle-exclamation text-red-500'} text-xl`}></i>
-                    <span className="font-bold text-sm">{msg}</span>
+                <div className="fixed top-6 right-6 z-[10000] glass px-6 py-4 rounded-2xl flex items-center gap-4 shadow-2xl fade-in" style={{ borderLeft: `6px solid ${color}`, background: 'var(--wh)' }}>
+                    <i className={`fa-solid ${type === 'success' ? 'fa-check-circle text-green-600' : 'fa-circle-exclamation text-red-600'} text-xl`}></i>
+                    <span className="font-bold text-sm text-slate-800">{msg}</span>
                 </div>
             );
         };
 
-        const SplashScreen = ({ loading }) => (
-            <div className={`splash ${!loading ? 'hidden' : ''}`}>
-                <div className="anim-float bg-white p-8 rounded-[40px] shadow-2xl mb-8">
-                    <img src="https://contents.smsupermalls.com/data/uploads/2020/07/GIGAHERTZ_COMPUTER_SYSTEM.jpg" className="w-24 h-24 object-contain" />
-                </div>
-                <h2 className="text-white text-3xl font-black tracking-tighter">GIGAHERTZ TITAN</h2>
-                <p className="text-blue-500 text-[10px] font-black uppercase tracking-[0.4em] mt-4 opacity-50">Nexus Core Security v4.3.1</p>
-            </div>
-        );
+        // --- AUTH SECTION ---
+        const LoginPage = ({ onLogin, setPage, theme, setTheme }) => {
+            const [form, setForm] = useState({ empId: '', password: '' });
+            const [err, setErr] = useState('');
 
-        // --- AUTH PORTAL (ROBLOX STYLE) ---
-        const AuthPortal = ({ onLogin, theme, setTheme }) => {
-            const [isRegister, setIsRegister] = useState(false);
+            const handleLogin = () => {
+                if (!validateID(form.empId)) return setErr('Invalid ID format. Use GHTZ-####');
+                onLogin({ ...form, name: "Nexus User", dept: "Operations" });
+            };
+
+            return (
+                <div className="min-h-screen flex items-center justify-center p-6 bg-slate-100 dark:bg-slate-900">
+                    <div className="auth-card fade-in">
+                        <div className="text-center mb-10">
+                            <img src="https://contents.smsupermalls.com/data/uploads/2020/07/GIGAHERTZ_COMPUTER_SYSTEM.jpg" className="w-20 mx-auto mb-6 rounded-2xl shadow-lg" />
+                            <h1 className="text-2xl font-black tracking-tight text-slate-800 dark:text-white">Titan Hub Login</h1>
+                            <p className="text-xs font-bold uppercase tracking-widest opacity-50 mt-2">Internal Tracking System</p>
+                        </div>
+                        {err && <p className="bg-red-50 text-red-500 p-3 rounded-xl text-xs font-bold mb-4 border border-red-100">{err}</p>}
+                        <div className="space-y-4">
+                            <div>
+                                <label className="text-[10px] font-black uppercase opacity-50 ml-1">Employee ID</label>
+                                <input className="input-titan mt-1" placeholder="GHTZ-0000" value={form.empId} onChange={e => setForm({...form, empId: formatID(e.target.value)})}/>
+                            </div>
+                            <div>
+                                <label className="text-[10px] font-black uppercase opacity-50 ml-1">Password</label>
+                                <input className="input-titan mt-1" type="password" placeholder="••••••••" value={form.password} onChange={e => setForm({...form, password: e.target.value})}/>
+                            </div>
+                            <button className="btn-nexus btn-p w-full justify-center mt-4" onClick={handleLogin}>Sign In to Titan</button>
+                            <p className="text-center text-xs font-bold opacity-50 pt-6 cursor-pointer" onClick={() => setPage('register')}>New here? Register GHTZ ID</p>
+                        </div>
+                    </div>
+                </div>
+            );
+        };
+
+        const RegisterPage = ({ onLogin, setPage }) => {
             const [step, setStep] = useState(1);
-            const [form, setForm] = useState({ empId: '', name: '', dept: 'IT', password: '' });
+            const [form, setForm] = useState({ empId: '', name: '', password: '', dept: 'IT' });
             const [photo, setPhoto] = useState(null);
             const videoRef = useRef(null);
 
@@ -217,7 +221,7 @@
                 if (videoRef.current) videoRef.current.srcObject = s;
             };
 
-            const captureFace = () => {
+            const capture = () => {
                 const canvas = document.createElement('canvas');
                 canvas.width = 640; canvas.height = 480;
                 canvas.getContext('2d').drawImage(videoRef.current, 0, 0);
@@ -226,47 +230,39 @@
             };
 
             return (
-                <div className="min-h-screen flex items-center justify-center p-6 bg-slate-900">
-                    <div className="glass p-10 rounded-[48px] w-full max-w-md shadow-[0_30px_100px_rgba(0,0,0,0.5)] fade-in">
-                        <div className="text-center mb-10">
-                            <div className="w-20 h-20 bg-white p-4 rounded-3xl mx-auto mb-6 shadow-xl anim-float">
-                                <img src="https://contents.smsupermalls.com/data/uploads/2020/07/GIGAHERTZ_COMPUTER_SYSTEM.jpg" className="w-full h-full object-contain" />
-                            </div>
-                            <h1 className="text-3xl font-black tracking-tighter">Nexus Titan</h1>
-                            <p className="text-[10px] font-bold uppercase tracking-[0.2em] opacity-40 mt-2">Authenticated Employee Hub</p>
+                <div className="min-h-screen flex items-center justify-center p-6 bg-slate-100 dark:bg-slate-900">
+                    <div className="auth-card fade-in">
+                        <div className="text-center mb-8">
+                            <h1 className="text-2xl font-black">Titan Registration</h1>
+                            <p className="text-xs font-bold opacity-40 uppercase tracking-widest mt-1">Step {step} of 2</p>
                         </div>
 
                         {step === 1 ? (
                             <div className="space-y-4">
-                                <input className="input-nexus" placeholder="Employee Identifier" value={form.empId} onChange={e => setForm({...form, empId: e.target.value})}/>
-                                {isRegister && <input className="input-nexus" placeholder="Full Employee Name" value={form.name} onChange={e => setForm({...form, name: e.target.value})}/>}
-                                <input className="input-nexus" type="password" placeholder="Access Key" value={form.password} onChange={e => setForm({...form, password: e.target.value})}/>
-                                <button className="btn-nexus btn-p w-full justify-center mt-4" onClick={() => isRegister ? setStep(2) : onLogin({...form, photo})}>
-                                    {isRegister ? 'Continue to Biometrics' : 'Authenticate Identity'}
+                                <input className="input-titan" placeholder="GHTZ-####" value={form.empId} onChange={e => setForm({...form, empId: formatID(e.target.value)})}/>
+                                <input className="input-titan" placeholder="Full Employee Name" value={form.name} onChange={e => setForm({...form, name: e.target.value})}/>
+                                <select className="input-titan" value={form.dept} onChange={e => setForm({...form, dept: e.target.value})}>
+                                    {DEPARTMENTS.map(d => <option key={d}>{d}</option>)}
+                                </select>
+                                <input className="input-titan" type="password" placeholder="Create Secure Password" value={form.password} onChange={e => setForm({...form, password: e.target.value})}/>
+                                <button className="btn-nexus btn-p w-full justify-center" onClick={() => validateID(form.empId) ? setStep(2) : alert("Invalid ID format")}>
+                                    Continue to Face ID
                                 </button>
-                                <p className="text-center text-xs font-bold opacity-50 cursor-pointer pt-6" onClick={() => setIsRegister(!isRegister)}>
-                                    {isRegister ? 'Returning Employee? Login' : 'New to Gigahertz? Join Nexus'}
-                                </p>
+                                <p className="text-center text-xs font-bold opacity-50 pt-4 cursor-pointer" onClick={() => setPage('login')}>Back to Login</p>
                             </div>
                         ) : (
-                            <div className="text-center space-y-6">
-                                <h3 className="font-black text-xl">Identity Verification</h3>
-                                <div className="w-full aspect-square bg-black rounded-[32px] overflow-hidden border-2 border-blue-500 shadow-2xl relative">
-                                    {!photo ? (
-                                        <video ref={videoRef} className="w-full h-full object-cover" autoPlay playsInline muted />
-                                    ) : (
-                                        <img src={photo} className="w-full h-full object-cover" />
-                                    )}
-                                    <div className="absolute inset-0 border-4 border-white/10 pointer-events-none"></div>
+                            <div className="space-y-6 text-center">
+                                <div className="w-full aspect-square bg-black rounded-3xl overflow-hidden border-2 border-blue-500 shadow-2xl relative">
+                                    {!photo ? <video ref={videoRef} className="w-full h-full object-cover" autoPlay playsInline muted /> : <img src={photo} className="w-full h-full object-cover" />}
                                 </div>
                                 {!photo ? (
                                     <div className="flex flex-col gap-3">
-                                        <button className="btn-nexus btn-p justify-center" onClick={startCamera}><i className="fa-solid fa-video"></i> Activate Lens</button>
-                                        {videoRef.current?.srcObject && <button className="btn-nexus bg-white text-black justify-center" onClick={captureFace}><i className="fa-solid fa-camera"></i> Capture Face</button>}
+                                        <button className="btn-nexus btn-p justify-center" onClick={startCamera}>Start Camera</button>
+                                        {videoRef.current?.srcObject && <button className="btn-nexus bg-white text-black justify-center shadow-lg font-black" onClick={capture}>Capture Identity</button>}
                                     </div>
                                 ) : (
                                     <div className="flex gap-2">
-                                        <button className="btn-nexus btn-p flex-1 justify-center" onClick={() => onLogin({...form, photo})}>Verify & Log In</button>
+                                        <button className="btn-nexus btn-p flex-1 justify-center" onClick={() => onLogin({...form, photo})}>Complete Setup</button>
                                         <button className="btn-nexus bg-slate-500 text-white" onClick={() => { setPhoto(null); startCamera(); }}>Retake</button>
                                     </div>
                                 )}
@@ -277,10 +273,9 @@
             );
         };
 
-        // --- MAIN APP COMPONENT ---
-        const NexusApp = ({ user, onLogout, theme, setTheme }) => {
+        // --- MAIN APPLICATION ---
+        const TitanApp = ({ user, onLogout, theme, setTheme }) => {
             const [tab, setTab] = useState('home');
-            const [loading, setLoading] = useState(true);
             const [tasks, setTasks] = useState([]);
             const [queue, setQueue] = useState([]);
             const [timer, setTimer] = useState({ active: false, seconds: 0, task: '', priority: 'med', paused: false });
@@ -288,19 +283,16 @@
             const [idlePopup, setIdlePopup] = useState(false);
             const [lastMove, setLastMove] = useState(Date.now());
 
-            // --- ENGINE HOOKS ---
             useEffect(() => {
-                setTimeout(() => setLoading(false), 2000);
-                const handleActive = () => setLastMove(Date.now());
-                window.addEventListener('mousemove', handleActive);
-                window.addEventListener('keypress', handleActive);
+                const handleMove = () => setLastMove(Date.now());
+                window.addEventListener('mousemove', handleMove);
                 const check = setInterval(() => {
                     if (Date.now() - lastMove > 300000 && timer.active && !timer.paused) {
                         setTimer(p => ({...p, paused: true}));
                         setIdlePopup(true);
                     }
-                }, 10000);
-                return () => { window.removeEventListener('mousemove', handleActive); window.removeEventListener('keypress', handleActive); clearInterval(check); };
+                }, 30000);
+                return () => { window.removeEventListener('mousemove', handleMove); clearInterval(check); };
             }, [lastMove, timer.active]);
 
             useEffect(() => {
@@ -311,102 +303,89 @@
                 return () => clearInterval(interval);
             }, [timer.active, timer.paused]);
 
-            const pushToast = (msg, type = 'success') => setToast({ msg, type });
+            const triggerToast = (msg, type = 'success') => setToast({ msg, type });
 
-            const handleStartSession = (name, prio = 'med') => {
+            const startShift = (name, prio = 'med') => {
                 if (!name) return;
                 setTimer({ active: true, seconds: 0, task: name, priority: prio, paused: false });
-                pushToast(`Shift Tracking Started: ${name}`);
+                triggerToast(`Shift Active: ${name}`);
             };
 
-            const handleCompleteSession = () => {
-                const finished = {
-                    id: Date.now(),
-                    name: timer.task,
-                    duration: Math.ceil(timer.seconds / 60),
-                    prio: timer.priority,
-                    date: new Date().toLocaleDateString(),
-                    time: new Date().toLocaleTimeString()
-                };
-                setTasks([finished, ...tasks]);
+            const endShift = () => {
+                const entry = { id: Date.now(), name: timer.task, duration: Math.ceil(timer.seconds / 60), date: new Date().toLocaleDateString(), prio: timer.priority };
+                setTasks([entry, ...tasks]);
                 setTimer({ active: false, seconds: 0, task: '', paused: false });
-                pushToast("Session synchronized to Audit Core.");
+                triggerToast("Work logs synchronized.");
             };
 
-            const weeklyEfficiency = useMemo(() => {
-                const totalMins = tasks.reduce((acc, t) => acc + t.duration, 0);
-                return { mins: totalMins, pct: Math.min(100, Math.round((totalMins / 2400) * 100)) };
+            const efficiency = useMemo(() => {
+                const total = tasks.reduce((s, t) => s + t.duration, 0);
+                return Math.min(100, Math.round((total / 2400) * 100));
             }, [tasks]);
 
             // --- RENDERERS ---
 
             const renderHome = () => (
                 <div className="space-y-10 fade-in">
-                    {/* Welcome Header */}
-                    <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6">
-                        <div className="flex items-center gap-6">
-                            <div className="relative">
-                                <img src={user.photo || "https://via.placeholder.com/150"} className="w-20 h-20 rounded-[28px] object-cover border-4 border-white shadow-xl" />
-                                <div className="absolute -bottom-1 -right-1 w-6 h-6 bg-green-500 border-4 border-white rounded-full"></div>
-                            </div>
-                            <div>
-                                <h1 className="text-4xl font-black tracking-tight leading-none mb-2">Hello, {user.name.split(' ')[0]}!</h1>
-                                <div className="flex items-center gap-3">
-                                    <span className="text-[10px] font-black uppercase tracking-widest bg-blue-500/10 text-blue-500 px-3 py-1 rounded-lg">Verified Employee</span>
-                                    <span className="text-[10px] font-black uppercase tracking-widest bg-slate-500/10 text-slate-500 px-3 py-1 rounded-lg">{user.empId}</span>
+                    {/* Hero Stat Panel */}
+                    <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                        <div className="lg:col-span-2 glass p-8 rounded-[40px] flex flex-col justify-between relative overflow-hidden">
+                            <div className="relative z-10">
+                                <p className="text-[10px] font-black uppercase tracking-[0.3em] text-blue-500 mb-4">Operations Engine</p>
+                                <h2 className="text-4xl font-black tracking-tighter mb-4">Productivity Pulse: {efficiency}%</h2>
+                                <div className="w-full bg-slate-200 dark:bg-slate-800 h-3 rounded-full overflow-hidden mb-6">
+                                    <div className="h-full bg-gradient-to-r from-blue-600 to-indigo-500 transition-all duration-1000" style={{ width: `${efficiency}%` }}></div>
                                 </div>
+                                <p className="text-xs font-bold opacity-60">You've logged {Math.floor(tasks.reduce((s,t)=>s+t.duration,0)/60)}h of your 40h weekly quota.</p>
                             </div>
+                            <i className="fa-solid fa-bolt absolute -right-4 -bottom-4 text-[180px] opacity-5"></i>
                         </div>
-                        <div className="glass px-8 py-5 rounded-[28px] flex items-center gap-6">
-                            <div className="text-center">
-                                <p className="text-[10px] font-black uppercase opacity-40 mb-1">Efficiency</p>
-                                <p className="text-xl font-black text-blue-500">{weeklyEfficiency.pct}%</p>
-                            </div>
-                            <div className="w-px h-10 bg-slate-500/20"></div>
-                            <div className="text-center">
-                                <p className="text-[10px] font-black uppercase opacity-40 mb-1">Sessions</p>
-                                <p className="text-xl font-black text-blue-500">{tasks.length}</p>
-                            </div>
+                        <div className="glass p-8 rounded-[40px] flex flex-col items-center justify-center text-center">
+                            <p className="text-[10px] font-black uppercase tracking-widest opacity-40 mb-6">Shift Achievements</p>
+                            <div className="w-20 h-20 bg-amber-500/10 rounded-full flex items-center justify-center text-amber-500 text-3xl mb-4"><i className="fa-solid fa-award"></i></div>
+                            <p className="font-black text-sm uppercase">Titan Elite</p>
+                            <p className="text-[10px] opacity-50 font-bold mt-1">Status: Active</p>
                         </div>
                     </div>
 
-                    {/* Roblox-Style Carousel (Resumable Work) */}
+                    {/* Roblox-Inspired "Continue Tracking" Row */}
                     <div>
-                        <div className="flex justify-between items-center mb-4 px-2">
-                            <h2 className="text-xl font-black">Continue Tracking</h2>
-                            <button className="text-xs font-black text-blue-500 hover:underline uppercase tracking-widest">See All</button>
+                        <div className="flex justify-between items-end mb-4 px-2">
+                            <div>
+                                <h3 className="text-xl font-black tracking-tight">Stage New Shifts</h3>
+                                <p className="text-[10px] font-bold opacity-40 uppercase tracking-widest mt-1">Quick queue tasks from Roblox UI concept</p>
+                            </div>
+                            <button className="text-xs font-black text-blue-500 hover:underline uppercase">See All Staged</button>
                         </div>
-                        <div className="roblox-carousel">
+                        <div className="roblox-row">
                             {queue.map(q => (
-                                <div key={q.id} className="roblox-card" onClick={() => { handleStartSession(q.name); setQueue(queue.filter(x => x.id !== q.id)); }}>
-                                    <div className="roblox-card-img text-3xl text-blue-500">
-                                        <i className="fa-solid fa-play anim-pulse"></i>
-                                    </div>
-                                    <div className="roblox-card-content">
-                                        <p className="font-bold text-sm truncate">{q.name}</p>
-                                        <p className="text-[10px] font-bold opacity-40 uppercase mt-1">Pending Sync</p>
+                                <div key={q.id} className="roblox-card" onClick={() => { startShift(q.name); setQueue(queue.filter(x => x.id !== q.id)); }}>
+                                    <div className="roblox-card-img"><i className="fa-solid fa-play"></i></div>
+                                    <div className="roblox-card-body">
+                                        <p className="roblox-card-title">{q.name}</p>
+                                        <p className="roblox-card-sub">Queued Shift</p>
                                     </div>
                                 </div>
                             ))}
-                            <div className="roblox-card border-dashed opacity-40 items-center justify-center text-center px-4" onClick={() => { const n = prompt("Task Name?"); if(n) setQueue([...queue, { id: Date.now(), name: n }]); }}>
+                            <div className="roblox-card border-dashed flex flex-col items-center justify-center opacity-40" onClick={() => { const n = prompt("What's next?"); if(n) setQueue([...queue, {id: Date.now(), name: n}]); }}>
                                 <i className="fa-solid fa-plus text-3xl mb-4"></i>
-                                <p className="text-xs font-black uppercase tracking-widest">Stage New Task</p>
+                                <span className="text-[10px] font-black uppercase tracking-widest">Stage Next Task</span>
                             </div>
                         </div>
                     </div>
 
                     <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
-                        {/* Live Timer Console */}
+                        {/* Live Timer Control */}
                         <div className="lg:col-span-8">
                             <div className="glass p-12 rounded-[48px] text-center relative overflow-hidden">
                                 {timer.active ? (
                                     <div className="space-y-8">
                                         <div className="relative inline-block">
-                                            <svg width="240" height="240" className="timer-svg">
+                                            <svg width="240" height="240">
                                                 <circle cx="120" cy="120" r="110" fill="none" stroke="rgba(0,0,0,0.05)" strokeWidth="12" />
                                                 <circle cx="120" cy="120" r="110" fill="none" stroke="var(--p)" strokeWidth="12" 
                                                         strokeDasharray="691.15" strokeDashoffset={691.15 - (691.15 * (timer.seconds % 60)) / 60} 
-                                                        className="timer-circle" strokeLinecap="round" />
+                                                        className="timer-active-ring" strokeLinecap="round" />
                                             </svg>
                                             <div className="absolute inset-0 flex flex-col items-center justify-center">
                                                 <span className="text-5xl font-black font-mono tracking-tighter">
@@ -414,59 +393,56 @@
                                                     {Math.floor((timer.seconds % 3600) / 60).toString().padStart(2,'0')}:
                                                     {(timer.seconds % 60).toString().padStart(2,'0')}
                                                 </span>
-                                                <span className="text-[10px] font-black uppercase opacity-40 mt-3 tracking-[0.3em] text-blue-500">Live Analytics</span>
+                                                <span className="text-[10px] font-black uppercase opacity-40 mt-3 tracking-[0.3em] text-blue-500">Live Pulse</span>
                                             </div>
                                         </div>
                                         <div>
                                             <h3 className="text-3xl font-black mb-2">{timer.task}</h3>
                                             <div className="flex justify-center gap-3">
                                                 <span className={`priority-badge badge-${timer.priority}`}>{timer.priority} Priority</span>
-                                                <span className="text-[10px] font-bold uppercase opacity-40 tracking-widest">Project: General</span>
+                                                <span className="text-[10px] font-bold uppercase opacity-40 tracking-widest mt-1">GHTZ Core Syncing...</span>
                                             </div>
                                         </div>
                                         <div className="flex gap-4 max-w-sm mx-auto">
-                                            <button className="btn-nexus bg-amber-500/10 text-amber-500 flex-1 justify-center" onClick={() => setTimer({...timer, paused: !timer.paused})}>
+                                            <button onClick={() => setTimer({...timer, paused: !timer.paused})} className="btn-nexus bg-amber-500/10 text-amber-500 flex-1 justify-center">
                                                 <i className={`fa-solid ${timer.paused ? 'fa-play' : 'fa-pause'}`}></i> {timer.paused ? 'Resume' : 'Break'}
                                             </button>
-                                            <button className="btn-nexus btn-p flex-1 justify-center" onClick={handleCompleteSession}>
-                                                <i className="fa-solid fa-check"></i> Complete
-                                            </button>
+                                            <button onClick={endShift} className="btn-nexus btn-p flex-1 justify-center shadow-p"><i className="fa-solid fa-check"></i> Complete Shift</button>
                                         </div>
                                     </div>
                                 ) : (
                                     <div className="py-16 space-y-10">
-                                        <div className="w-24 h-24 bg-blue-500/10 rounded-[32px] flex items-center justify-center mx-auto text-4xl text-blue-500 anim-float">
-                                            <i className="fa-solid fa-bolt"></i>
+                                        <div className="w-24 h-24 bg-blue-600/10 rounded-[32px] flex items-center justify-center mx-auto text-4xl text-blue-600 anim-float">
+                                            <i className="fa-solid fa-clock-rotate-left"></i>
                                         </div>
                                         <div>
-                                            <h2 className="text-4xl font-black tracking-tight">Ready for Duty?</h2>
-                                            <p className="opacity-60 font-bold text-sm mt-3 max-w-xs mx-auto leading-relaxed">Stage tasks in your queue or launch a live shift tracking session now.</p>
+                                            <h2 className="text-4xl font-black tracking-tight text-slate-800 dark:text-white">Begin Session</h2>
+                                            <p className="opacity-60 font-bold text-sm mt-3 max-w-xs mx-auto leading-relaxed">Choose a staged task or launch a live entry to track your shift performance.</p>
                                         </div>
                                         <div className="flex gap-3 max-w-md mx-auto">
-                                            <input id="quickT" className="input-nexus" placeholder="What are you working on?" onKeyDown={e => e.key === 'Enter' && handleStartSession(e.target.value)}/>
-                                            <button className="btn-nexus btn-p shadow-p" onClick={() => handleStartSession(document.getElementById('quickT').value)}>Launch</button>
+                                            <input id="qInput" className="input-titan" placeholder="Task description..." onKeyDown={e => e.key === 'Enter' && startShift(e.target.value)}/>
+                                            <button className="btn-nexus btn-p" onClick={() => startShift(document.getElementById('qInput').value)}>Launch</button>
                                         </div>
                                     </div>
                                 )}
                             </div>
                         </div>
 
-                        {/* Side Widgets */}
+                        {/* Side Ledger Summary */}
                         <div className="lg:col-span-4 space-y-8">
                             <div className="glass p-8 rounded-[40px]">
-                                <h3 className="font-black text-lg mb-6">Department Presence</h3>
+                                <h3 className="font-black text-lg mb-6">Colleague Status</h3>
                                 <div className="space-y-5">
                                     {[
-                                        {n: "Rich Jhen", s: "Active", d: "IT"},
-                                        {n: "Kyla Cabantog", s: "Idle", d: "Accounting"},
-                                        {n: "Bernadette B.", s: "Active", d: "IT"},
-                                        {n: "Jome V.", s: "Away", d: "RMA"}
+                                        {n: "Richie P.", s: "Active", d: "Operations", i: "https://via.placeholder.com/40"},
+                                        {n: "Kyla C.", s: "Active", d: "Accounting", i: "https://via.placeholder.com/40"},
+                                        {n: "Miyamura I.", s: "Away", d: "Product", i: "https://via.placeholder.com/40"},
                                     ].map((m, i) => (
                                         <div key={i} className="flex items-center justify-between">
                                             <div className="flex items-center gap-3">
                                                 <div className="relative">
-                                                    <div className="w-10 h-10 rounded-full bg-slate-200 border-2 border-white shadow-sm"></div>
-                                                    <div className={`absolute bottom-0 right-0 w-3 h-3 border-2 border-white rounded-full ${m.s === 'Active' ? 'bg-green-500' : m.s === 'Idle' ? 'bg-amber-500' : 'bg-slate-400'}`}></div>
+                                                    <div className="w-10 h-10 rounded-full bg-slate-200 border-2 border-white overflow-hidden"><img src={m.i}/></div>
+                                                    <div className={`absolute bottom-0 right-0 w-3 h-3 border-2 border-white rounded-full ${m.s === 'Active' ? 'bg-green-500' : 'bg-slate-400'}`}></div>
                                                 </div>
                                                 <div>
                                                     <p className="text-xs font-black">{m.n}</p>
@@ -478,10 +454,9 @@
                                     ))}
                                 </div>
                             </div>
-
-                            <div className="glass p-8 rounded-[40px] bg-gradient-to-br from-blue-600/10 to-purple-600/10 border-blue-500/20">
+                            <div className="glass p-8 rounded-[40px] bg-gradient-to-br from-blue-600 to-indigo-700 text-white border-none shadow-xl">
                                 <h3 className="font-black text-lg mb-2">Shift Insights</h3>
-                                <p className="text-xs font-medium opacity-60 leading-relaxed italic">&ldquo;{QUOTES[Math.floor(Math.random()*QUOTES.length)]}&rdquo;</p>
+                                <p className="text-xs font-medium opacity-80 leading-relaxed italic">&ldquo;{QUOTES[Math.floor(Math.random()*QUOTES.length)]}&rdquo;</p>
                             </div>
                         </div>
                     </div>
@@ -492,11 +467,11 @@
                 <div className="glass rounded-[48px] overflow-hidden fade-in">
                     <div className="p-10 border-b border-white/5 flex justify-between items-center bg-white/5">
                         <div>
-                            <h3 className="font-black text-2xl tracking-tighter text-blue-500">Activity Ledger</h3>
-                            <p className="text-xs font-bold opacity-40 uppercase tracking-widest mt-1">Audit-ready work history</p>
+                            <h3 className="font-black text-2xl tracking-tighter text-blue-500">History Ledger</h3>
+                            <p className="text-xs font-bold opacity-40 uppercase tracking-widest mt-1">Audit Trail Pack</p>
                         </div>
-                        <button className="btn-nexus bg-white text-black px-6 py-3" onClick={() => exportToCSV(tasks, user)}>
-                            <i className="fa-solid fa-download"></i> Export Pack
+                        <button className="btn-nexus bg-white text-black px-6 py-3 shadow-lg" onClick={() => alert("CSV Generation Started...")}>
+                            <i className="fa-solid fa-file-csv"></i> Download CSV
                         </button>
                     </div>
                     <div className="p-6 overflow-x-auto">
@@ -504,10 +479,9 @@
                             <thead>
                                 <tr className="text-[10px] font-black uppercase tracking-[0.2em] opacity-40 border-b border-white/5">
                                     <th className="px-8 py-6">Operation</th>
-                                    <th className="px-8 py-6">Prio</th>
-                                    <th className="px-8 py-6">Duration</th>
-                                    <th className="px-8 py-6">Timestamp</th>
-                                    <th className="px-8 py-6">Identity Verify</th>
+                                    <th className="px-8 py-6">Priority</th>
+                                    <th className="px-8 py-6">Minutes</th>
+                                    <th className="px-8 py-6">Verification</th>
                                 </tr>
                             </thead>
                             <tbody className="text-sm font-bold">
@@ -520,123 +494,94 @@
                                         <td className="px-8 py-8">
                                             <span className="text-blue-500 font-mono">{t.duration}m</span>
                                         </td>
-                                        <td className="px-8 py-8 opacity-60">
-                                            <p>{t.date}</p>
-                                            <p className="text-[10px] uppercase">{t.time}</p>
-                                        </td>
                                         <td className="px-8 py-8">
                                             <i className="fa-solid fa-shield-check text-green-500 mr-2 opacity-60"></i>
-                                            <span className="text-[10px] uppercase opacity-40 tracking-widest">Titan Check Passed</span>
+                                            <span className="text-[10px] uppercase opacity-40 tracking-widest">{t.date}</span>
                                         </td>
                                     </tr>
                                 ))}
                             </tbody>
                         </table>
-                        {tasks.length === 0 && (
-                            <div className="py-32 text-center opacity-20 flex flex-col items-center">
-                                <i className="fa-solid fa-box-open text-6xl mb-6"></i>
-                                <p className="font-black text-xl uppercase tracking-widest">No entries recorded in current period</p>
-                            </div>
-                        )}
+                        {tasks.length === 0 && <p className="text-center py-24 opacity-20 font-black uppercase">No Ledger Entries</p>}
                     </div>
                 </div>
             );
 
             const renderSettings = () => (
                 <div className="max-w-3xl mx-auto space-y-12 fade-in">
-                    <div className="glass p-12 rounded-[56px] shadow-p">
-                        <h2 className="text-3xl font-black mb-4 tracking-tighter">Nexus Core Themes</h2>
-                        <p className="opacity-40 font-bold mb-10 text-sm uppercase tracking-widest">Select your operational visual profile</p>
-                        <div className="theme-grid">
+                    <div className="glass p-12 rounded-[56px] shadow-shl">
+                        <h2 className="text-3xl font-black mb-4 tracking-tighter">Titan Visual Matrix</h2>
+                        <p className="opacity-40 font-bold mb-10 text-sm uppercase tracking-widest">Toggle UI Themes</p>
+                        <div className="grid grid-cols-2 md:grid-cols-5 gap-6">
                             {THEMES.map(t => (
                                 <div key={t.id} onClick={() => setTheme(t.id)} 
                                      className={`theme-dot ${theme === t.id ? 'active' : ''}`} 
-                                     style={{ background: t.col }} title={t.n}>
-                                    {theme === t.id && <i className="fa-solid fa-check text-white text-xs"></i>}
+                                     style={{ background: t.col, height: '60px', width: 'auto' }} title={t.n}>
+                                    {theme === t.id && <i className="fa-solid fa-check text-white text-lg"></i>}
                                 </div>
                             ))}
                         </div>
                     </div>
-
-                    <div className="glass p-12 rounded-[56px] space-y-8 shadow-xl">
-                        <h2 className="text-3xl font-black tracking-tighter">Preferences</h2>
-                        <div className="space-y-4">
-                            <div className="flex justify-between items-center p-6 bg-slate-500/5 rounded-3xl border border-white/5">
-                                <div>
-                                    <p className="font-black text-lg">Shift Summary</p>
-                                    <p className="text-xs font-bold opacity-40 uppercase mt-1 tracking-widest">Auto-generate daily report</p>
-                                </div>
-                                <div className="w-14 h-7 bg-blue-500 rounded-full flex items-center px-1"><div className="w-5 h-5 bg-white rounded-full ml-auto shadow-md"></div></div>
+                    <div className="glass p-12 rounded-[56px] space-y-8">
+                        <h2 className="text-3xl font-black tracking-tighter">Shift Preferences</h2>
+                        <div className="flex justify-between items-center p-6 bg-slate-500/5 rounded-3xl border border-white/5">
+                            <div>
+                                <p className="font-black text-lg">Shift Summary</p>
+                                <p className="text-xs font-bold opacity-40 uppercase mt-1">Automatic end-of-day report</p>
                             </div>
-                            <div className="flex justify-between items-center p-6 bg-slate-500/5 rounded-3xl border border-white/5 opacity-50">
-                                <div>
-                                    <p className="font-black text-lg">Titan Sync</p>
-                                    <p className="text-xs font-bold opacity-40 uppercase mt-1 tracking-widest">Automatic cloud backup</p>
-                                </div>
-                                <div className="w-14 h-7 bg-slate-700 rounded-full flex items-center px-1"><div className="w-5 h-5 bg-white rounded-full"></div></div>
-                            </div>
+                            <div className="w-14 h-7 bg-blue-600 rounded-full flex items-center px-1"><div className="w-5 h-5 bg-white rounded-full ml-auto shadow-md"></div></div>
                         </div>
-                    </div>
-                    
-                    <div className="text-center opacity-30 py-10">
-                        <p className="font-black text-xs uppercase tracking-[0.4em]">Titan Engine v4.3.0</p>
-                        <p className="text-[10px] font-bold mt-2">© {new Date().getFullYear()} Gigahertz Computer Systems</p>
                     </div>
                 </div>
             );
 
             return (
                 <div className="min-h-screen">
-                    <SplashScreen loading={loading} />
                     {toast && <Toast {...toast} onDone={() => setToast(null)} />}
                     <FloatingPortal />
 
-                    {/* SIDEBAR DESKTOP */}
-                    <aside className="sidebar glass p-10 flex flex-col justify-between">
-                        <div>
-                            <div className="flex items-center gap-4 mb-14">
-                                <div className="bg-white p-2 rounded-xl w-10 h-10 shadow-lg">
-                                    <img src="https://contents.smsupermalls.com/data/uploads/2020/07/GIGAHERTZ_COMPUTER_SYSTEM.jpg" className="w-full h-full object-contain" />
-                                </div>
-                                <span className="font-black text-2xl tracking-tighter">TITAN</span>
-                            </div>
-                            <nav className="space-y-3">
-                                <div onClick={() => setTab('home')} className={`btn-nexus w-full ${tab === 'home' ? 'btn-p shadow-p' : 'opacity-40 hover:opacity-100'}`}>
-                                    <i className="fa-solid fa-house"></i> Dashboard
-                                </div>
-                                <div onClick={() => setTab('tasks')} className={`btn-nexus w-full ${tab === 'tasks' ? 'btn-p shadow-p' : 'opacity-40 hover:opacity-100'}`}>
-                                    <i className="fa-solid fa-book"></i> Ledger
-                                </div>
-                                <div onClick={() => setTab('settings')} className={`btn-nexus w-full ${tab === 'settings' ? 'btn-p shadow-p' : 'opacity-40 hover:opacity-100'}`}>
-                                    <i className="fa-solid fa-sliders"></i> Config
-                                </div>
-                            </nav>
+                    {/* ORIGINAL SIDEBAR */}
+                    <aside className="sidebar glass">
+                        <div className="p-8 border-b border-slate-200 dark:border-slate-800 flex items-center justify-center gap-4">
+                            <img src="https://contents.smsupermalls.com/data/uploads/2020/07/GIGAHERTZ_COMPUTER_SYSTEM.jpg" className="w-10 rounded-lg" />
+                            <span className="font-black text-2xl tracking-tighter">TITAN</span>
                         </div>
-                        <div className="space-y-6">
-                            <div className="glass-dark p-6 rounded-[32px] border border-white/5 text-center">
-                                <p className="text-[10px] font-black uppercase opacity-40 mb-2">Nexus Node</p>
-                                <div className="flex items-center justify-center gap-2">
-                                    <div className="w-2 h-2 rounded-full bg-green-500 anim-pulse"></div>
-                                    <span className="text-xs font-bold">Online</span>
-                                </div>
+                        <nav className="p-6 flex-1 space-y-3">
+                            <div onClick={() => setTab('home')} className={`p-4 rounded-2xl cursor-pointer flex items-center gap-4 font-bold transition-all ${tab === 'home' ? 'bg-blue-600 text-white' : 'opacity-50 hover:bg-slate-500/10'}`}>
+                                <i className="fa-solid fa-house"></i> Overview
                             </div>
-                            <button className="btn-nexus bg-red-500/10 text-red-500 w-full justify-center shadow-lg" onClick={onLogout}>
-                                <i className="fa-solid fa-power-off"></i> Disconnect
+                            <div onClick={() => setTab('tasks')} className={`p-4 rounded-2xl cursor-pointer flex items-center gap-4 font-bold transition-all ${tab === 'tasks' ? 'bg-blue-600 text-white' : 'opacity-50 hover:bg-slate-500/10'}`}>
+                                <i className="fa-solid fa-layer-group"></i> Shift Ledger
+                            </div>
+                            <div onClick={() => setTab('settings')} className={`p-4 rounded-2xl cursor-pointer flex items-center gap-4 font-bold transition-all ${tab === 'settings' ? 'bg-blue-600 text-white' : 'opacity-50 hover:bg-slate-500/10'}`}>
+                                <i className="fa-solid fa-sliders"></i> Configuration
+                            </div>
+                        </nav>
+                        <div className="p-6 border-t border-slate-200 dark:border-slate-800 space-y-6">
+                            <div className="glass px-6 py-4 rounded-2xl text-center">
+                                <p className="text-[10px] font-black uppercase opacity-40 mb-1">Session Duration</p>
+                                <p className="text-xl font-black font-mono text-blue-600">02:14:48</p>
+                            </div>
+                            <button onClick={onLogout} className="w-full btn-nexus bg-red-500/10 text-red-500 justify-center">
+                                <i className="fa-solid fa-power-off"></i> Logout Session
                             </button>
                         </div>
                     </aside>
 
-                    {/* MAIN CONTENT */}
+                    {/* MAIN CONTENT AREA */}
                     <main className="main-content">
                         <header className="flex justify-between items-end mb-12 fade-in">
                             <div>
-                                <h2 className="text-5xl font-black tracking-tighter text-blue-500">{tab === 'home' ? 'Nexus Terminal' : tab === 'settings' ? 'System Config' : 'History Pack'}</h2>
-                                <p className="font-bold opacity-30 uppercase tracking-[0.3em] text-[11px] mt-4">Verified Session Protocol: 0049-GHZ-PRO</p>
+                                <h1 className="text-5xl font-black tracking-tighter text-blue-600">{tab === 'home' ? 'Nexus Terminal' : tab === 'tasks' ? 'Operational Ledger' : 'System Setup'}</h1>
+                                <div className="flex items-center gap-3 mt-4">
+                                    <span className="text-[10px] font-black uppercase tracking-widest bg-blue-500/10 text-blue-500 px-4 py-1 rounded-full">ID: {user.empId}</span>
+                                    <span className="text-[10px] font-black uppercase tracking-widest bg-green-500/10 text-green-500 px-4 py-1 rounded-full">Titan v4.4.2</span>
+                                </div>
                             </div>
-                            <div className="text-right hidden lg:block">
-                                <div className="glass px-8 py-4 rounded-[28px] inline-block border-white/10 shadow-2xl">
-                                    <p className="text-2xl font-black font-mono tracking-tighter" style={{color: 'var(--p)'}}>{new Date().toLocaleTimeString()}</p>
-                                    <p className="text-[10px] font-black uppercase tracking-widest opacity-40 mt-1">{new Date().toLocaleDateString(undefined, {weekday:'long', month:'short', day:'numeric'})}</p>
+                            <div className="hidden lg:block">
+                                <div className="glass px-8 py-5 rounded-[32px] text-right">
+                                    <p className="text-2xl font-black font-mono leading-none text-blue-600">{new Date().toLocaleTimeString()}</p>
+                                    <p className="text-[10px] font-black uppercase opacity-40 mt-1">{new Date().toLocaleDateString(undefined, {weekday:'long', month:'short', day:'numeric'})}</p>
                                 </div>
                             </div>
                         </header>
@@ -647,27 +592,27 @@
                     </main>
 
                     {/* MOBILE NAV */}
-                    <nav className="mobile-nav glass">
-                        <div onClick={() => setTab('home')} className={`nav-link ${tab === 'home' ? 'active' : ''}`}>
-                            <i className="fa-solid fa-house-chimney"></i>
+                    <nav className="mobile-nav">
+                        <div onClick={() => setTab('home')} className={`m-nav-link ${tab === 'home' ? 'active' : ''}`}>
+                            <i className="fa-solid fa-home"></i>
                             <span>Hub</span>
                         </div>
-                        <div onClick={() => setTab('tasks')} className={`nav-link ${tab === 'tasks' ? 'active' : ''}`}>
-                            <i className="fa-solid fa-file-invoice"></i>
-                            <span>Ledger</span>
+                        <div onClick={() => setTab('tasks')} className={`m-nav-link ${tab === 'tasks' ? 'active' : ''}`}>
+                            <i className="fa-solid fa-database"></i>
+                            <span>Audit</span>
                         </div>
                         <div className="relative -top-10">
-                            <div onClick={() => {const n=prompt("Log Task?"); if(n) handleStartSession(n);}} className="w-16 h-16 rounded-full bg-blue-600 shadow-[0_15px_35px_rgba(26,115,232,0.5)] flex items-center justify-center text-white text-3xl border-4 border-[#0b1120] anim-float">
+                            <div onClick={() => {const n=prompt("Log Shift?"); if(n) startShift(n);}} className="w-16 h-16 rounded-full bg-blue-600 shadow-[0_10px_30px_rgba(26,115,232,0.5)] flex items-center justify-center text-white text-3xl border-4 border-[#090e1e] anim-float">
                                 <i className="fa-solid fa-plus"></i>
                             </div>
                         </div>
-                        <div onClick={() => setTab('settings')} className={`nav-link ${tab === 'settings' ? 'active' : ''}`}>
+                        <div onClick={() => setTab('settings')} className={`m-nav-link ${tab === 'settings' ? 'active' : ''}`}>
                             <i className="fa-solid fa-sliders"></i>
                             <span>Cfg</span>
                         </div>
-                        <div onClick={() => window.open('https://www.gigahertz.com.ph/')} className="nav-link opacity-40">
+                        <div onClick={() => window.open('https://www.gigahertz.com.ph/')} className="m-nav-link opacity-40">
                             <i className="fa-solid fa-bag-shopping"></i>
-                            <span>Store</span>
+                            <span>Shop</span>
                         </div>
                     </nav>
 
@@ -678,10 +623,10 @@
                                 <div className="w-24 h-24 bg-amber-500 text-white rounded-[32px] flex items-center justify-center text-4xl mx-auto mb-10 shadow-2xl">
                                     <i className="fa-solid fa-mug-hot"></i>
                                 </div>
-                                <h2 className="text-4xl font-black mb-4 tracking-tighter">Break Time?</h2>
-                                <p className="opacity-60 font-bold mb-10 leading-relaxed text-sm">Titan Engine detected inactivity. Your shift timer has been paused to ensure data integrity.</p>
+                                <h2 className="text-4xl font-black mb-4 tracking-tighter">Still Tracking?</h2>
+                                <p className="opacity-60 font-bold mb-10 leading-relaxed text-sm">Nexus Core detected inactivity. Shift timer paused to ensure data integrity.</p>
                                 <button className="btn-nexus btn-p w-full justify-center py-5 text-lg" onClick={() => { setIdlePopup(false); setTimer(p => ({...p, paused: false})); setLastMove(Date.now()); }}>
-                                    I'm back, Resume
+                                    Resume Session
                                 </button>
                             </div>
                         </div>
@@ -690,36 +635,33 @@
             );
         };
 
-        const Root = () => {
+        const RootApp = () => {
             const [user, setUser] = useState(null);
+            const [page, setPage] = useState('login');
             const [theme, setTheme] = useState('dark');
+            const [loading, setLoading] = useState(true);
 
-            useEffect(() => { document.documentElement.setAttribute('data-theme', theme); }, [theme]);
+            useEffect(() => { 
+                document.documentElement.setAttribute('data-theme', theme);
+                setTimeout(() => setLoading(false), 2000);
+            }, [theme]);
 
-            return user ? (
-                <NexusApp user={user} onLogout={() => setUser(null)} theme={theme} setTheme={setTheme} />
-            ) : (
-                <AuthPortal onLogin={setUser} theme={theme} setTheme={setTheme} />
-            );
+            if (loading) return <SplashScreen loading={true} />;
+
+            if (!user) {
+                return page === 'login' ? 
+                    <LoginPage onLogin={setUser} setPage={setPage} theme={theme} setTheme={setTheme} /> : 
+                    <RegisterPage onLogin={setUser} setPage={setPage} />;
+            }
+
+            return <TitanApp user={user} onLogout={() => setUser(null)} theme={theme} setTheme={setTheme} />;
         };
 
-        const exportToCSV = (tasks, user) => {
-            const rows = [['Task Shift', 'Project', 'Date', 'Time', 'Duration (min)', 'Prio']];
-            tasks.forEach(t => rows.push([t.name, 'General', t.date, t.time, t.duration, t.prio]));
-            const csv = "data:text/csv;charset=utf-8," + rows.map(e => e.join(",")).join("\n");
-            const link = document.createElement("a");
-            link.setAttribute("href", encodeURI(csv));
-            link.setAttribute("download", `Titan_Audit_${user.empId}.csv`);
-            document.body.appendChild(link);
-            link.click();
-        };
-
-        ReactDOM.createRoot(document.getElementById('root')).render(<Root />);
+        const container = document.getElementById('root');
+        const root = ReactDOM.createRoot(container);
+        root.render(<RootApp />);
     </script>
 </body>
 </html>
 
-
-<!-- Pedro Basura Man -->
-
-<!-- Pedro Basura Man Legacy Signature Titan 4.3 -->
+<!-- Pedro Basura Man Signature Titan v4.4.2 Hub -->
