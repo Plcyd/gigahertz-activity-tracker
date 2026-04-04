@@ -3,12 +3,12 @@
 <head>
     <meta charset="UTF-8"/>
     <meta name="viewport" content="width=device-width,initial-scale=1.0,viewport-fit=cover"/>
-    <title>Gigahertz Nexus v4.2 — Employee Hub</title>
+    <title>Gigahertz Nexus v4.3 — Pro Hub</title>
     
     <!-- Favicon -->
     <link rel="icon" type="image/png" href="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRbPTtZwom3B0ZLIJZNusjlFz3ougRMWPHITQ&s">
 
-    <!-- UI Core -->
+    <!-- Dependencies -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.development.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.development.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.2/babel.min.js"></script>
@@ -19,16 +19,16 @@
 
     <style>
         /* ============================================================
-           THEME SYSTEM — 10 ADVANCED THEMES
+           ROBLOX-INSPIRED THEME ENGINE — 10 THEMES
         ============================================================ */
         :root {
             --p:#1a73e8; --pd:#1557b0; --pl:#e8f0fe;
-            --bg:#f8faff; --wh:#ffffff; --card:#ffffff;
+            --bg:#f0f2f5; --wh:#ffffff; --card:#ffffff;
             --tx:#1e293b; --tx2:#475569; --tx3:#94a3b8;
             --bd:#e2e8f0; --danger:#ef4444; --ok:#22c55e; --warn:#f59e0b;
             --g1:#f0f4ff; --g2:#dbeafe; --g3:#ede9fe;
-            --glass-bg:rgba(255,255,255,0.85); --glass-border:rgba(255,255,255,0.9);
-            --shadow:rgba(26,115,232,0.12);
+            --glass-bg:rgba(255,255,255,0.8); --glass-border:rgba(255,255,255,0.9);
+            --shadow:rgba(26,115,232,0.1);
         }
         [data-theme="dark"] {
             --p:#3b82f6; --pd:#2563eb; --pl:#1e3a8a;
@@ -36,17 +36,17 @@
             --tx:#f8fafc; --tx2:#cbd5e1; --tx3:#64748b;
             --bd:#334155; --danger:#f87171; --ok:#4ade80; --warn:#fbbf24;
             --g1:#0b1120; --g2:#0f1f3d; --g3:#1a0b2e;
-            --glass-bg:rgba(30,41,59,0.75); --glass-border:rgba(255,255,255,0.07);
-            --shadow:rgba(59,130,246,0.2);
+            --glass-bg:rgba(30,41,59,0.7); --glass-border:rgba(255,255,255,0.06);
+            --shadow:rgba(59,130,246,0.15);
         }
-        [data-theme="lavender"] { --p:#7c3aed; --pd:#6d28d9; --pl:#ede9fe; --bg:#f5f3ff; --wh:#ffffff; --tx:#1e1b4b; --glass-bg:rgba(255,255,255,0.85); --shadow:rgba(124,58,237,0.15); --g1:#f5f3ff; --g2:#ede9fe; --g3:#fce7f3; }
-        [data-theme="forest"] { --p:#16a34a; --pd:#15803d; --pl:#dcfce7; --bg:#0a1f0f; --wh:#0f2d18; --tx:#dcfce7; --glass-bg:rgba(10,31,15,0.8); --shadow:rgba(22,163,74,0.2); --g1:#0a1f0f; --g2:#0f2d18; --g3:#1a3a22; }
-        [data-theme="sunset"] { --p:#f97316; --pd:#ea580c; --pl:#fff7ed; --bg:#1a0a00; --wh:#2d1200; --tx:#fed7aa; --glass-bg:rgba(45,18,0,0.8); --shadow:rgba(249,115,22,0.25); --g1:#1a0a00; --g2:#2d1200; --g3:#3d1a00; }
-        [data-theme="ocean"] { --p:#0ea5e9; --pd:#0284c7; --pl:#e0f2fe; --bg:#020d1a; --wh:#051929; --tx:#e0f2fe; --glass-bg:rgba(2,13,26,0.82); --shadow:rgba(14,165,233,0.25); --g1:#020d1a; --g2:#051929; --g3:#0a2540; }
-        [data-theme="crimson"] { --p:#ef4444; --pd:#dc2626; --pl:#450a0a; --bg:#1a0505; --wh:#2d0a0a; --tx:#fecaca; --glass-bg:rgba(69,10,10,0.75); --shadow:rgba(239,68,68,0.25); --g1:#1a0505; --g2:#2d0a0a; --g3:#3f0f0f; }
-        [data-theme="cyberpunk"] { --p:#f0abfc; --pd:#d946ef; --pl:#4a044e; --bg:#020617; --wh:#0f172a; --tx:#f5d0fe; --glass-bg:rgba(15,23,42,0.9); --shadow:rgba(217,70,239,0.3); --g1:#020617; --g2:#1e1b4b; --g3:#4c0519; }
-        [data-theme="midnight"] { --p:#6366f1; --pd:#4338ca; --pl:#1e1b4b; --bg:#030712; --wh:#111827; --tx:#f9fafb; --glass-bg:rgba(17,24,39,0.9); --shadow:rgba(99,102,241,0.2); --g1:#030712; --g2:#111827; --g3:#1f2937; }
-        [data-theme="gold"] { --p:#eab308; --pd:#ca8a04; --pl:#422006; --bg:#1c1917; --wh:#292524; --tx:#fef08a; --glass-bg:rgba(41,37,36,0.85); --shadow:rgba(234,179,8,0.2); --g1:#1c1917; --g2:#292524; --g3:#44403c; }
+        [data-theme="lavender"] { --p:#7c3aed; --pd:#6d28d9; --pl:#ede9fe; --bg:#f5f3ff; --tx:#1e1b4b; --glass-bg:rgba(255,255,255,0.85); --shadow:rgba(124,58,237,0.15); --g1:#f5f3ff; --g2:#ede9fe; --g3:#fce7f3; }
+        [data-theme="forest"] { --p:#16a34a; --pd:#15803d; --pl:#dcfce7; --bg:#0a1f0f; --tx:#dcfce7; --glass-bg:rgba(10,31,15,0.8); --shadow:rgba(22,163,74,0.2); --g1:#0a1f0f; --g2:#0f2d18; --g3:#1a3a22; }
+        [data-theme="sunset"] { --p:#f97316; --pd:#ea580c; --pl:#fff7ed; --bg:#1a0a00; --tx:#fed7aa; --glass-bg:rgba(45,18,0,0.8); --shadow:rgba(249,115,22,0.25); --g1:#1a0a00; --g2:#2d1200; --g3:#3d1a00; }
+        [data-theme="ocean"] { --p:#0ea5e9; --pd:#0284c7; --pl:#e0f2fe; --bg:#020d1a; --tx:#e0f2fe; --glass-bg:rgba(2,13,26,0.82); --shadow:rgba(14,165,233,0.25); --g1:#020d1a; --g2:#051929; --g3:#0a2540; }
+        [data-theme="ruby"] { --p:#ef4444; --pd:#dc2626; --pl:#450a0a; --bg:#1a0505; --tx:#fecaca; --glass-bg:rgba(69,10,10,0.75); --shadow:rgba(239,68,68,0.25); --g1:#1a0505; --g2:#2d0a0a; --g3:#3f0f0f; }
+        [data-theme="cyberpunk"] { --p:#f0abfc; --pd:#d946ef; --pl:#4a044e; --bg:#020617; --tx:#f5d0fe; --glass-bg:rgba(15,23,42,0.9); --shadow:rgba(217,70,239,0.3); --g1:#020617; --g2:#1e1b4b; --g3:#4c0519; }
+        [data-theme="midnight"] { --p:#6366f1; --pd:#4338ca; --pl:#1e1b4b; --bg:#030712; --tx:#f9fafb; --glass-bg:rgba(17,24,39,0.9); --shadow:rgba(99,102,241,0.2); --g1:#030712; --g2:#111827; --g3:#1f2937; }
+        [data-theme="gold"] { --p:#eab308; --pd:#ca8a04; --pl:#422006; --bg:#1c1917; --tx:#fef08a; --glass-bg:rgba(41,37,36,0.85); --shadow:rgba(234,179,8,0.2); --g1:#1c1917; --g2:#292524; --g3:#44403c; }
 
         /* GLOBALS */
         *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -60,24 +60,38 @@
 
         /* GLASSMORPHISM */
         .glass { background: var(--glass-bg); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border: 1px solid var(--glass-border); box-shadow: 0 10px 40px var(--shadow); }
-        .glass-dark { background: rgba(0,0,0,0.2); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.05); }
+        .glass-dark { background: rgba(0,0,0,0.3); backdrop-filter: blur(15px); border: 1px solid rgba(255,255,255,0.05); }
 
-        /* FLOATING GIGAHERTZ WIDGET */
-        .floating-gh-widget {
-            position: fixed; bottom: 90px; right: 24px;
+        /* FLOATING GIGAHERTZ LOGO WIDGET */
+        .nexus-floating-portal {
+            position: fixed; bottom: 100px; right: 24px;
             width: 70px; height: 70px; z-index: 2000;
-            border-radius: 20px; cursor: pointer;
+            border-radius: 22px; cursor: pointer;
             transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            background: #fff; padding: 10px;
+            background: #fff; padding: 12px;
             box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            display: flex; align-items: center; justify-content: center;
         }
-        .floating-gh-widget:hover {
-            transform: translateY(-15px) scale(1.1);
-            box-shadow: 0 0 30px var(--p);
+        .nexus-floating-portal:hover {
+            transform: translateY(-20px) scale(1.1);
+            box-shadow: 0 15px 45px var(--p);
             filter: brightness(1.1);
         }
-        .floating-gh-widget img { width: 100%; height: 100%; object-fit: contain; }
-        @media (max-width: 1024px) { .floating-gh-widget { bottom: 100px; right: 16px; width: 60px; height: 60px; } }
+        .nexus-floating-portal img { width: 100%; height: 100%; object-fit: contain; }
+        @media (max-width: 1024px) { .nexus-floating-portal { bottom: 100px; right: 16px; width: 60px; height: 60px; } }
+
+        /* ROBLOX UI ADAPTATIONS */
+        .roblox-carousel { display: flex; overflow-x: auto; gap: 16px; padding: 10px 4px; scroll-snap-type: x mandatory; }
+        .roblox-carousel::-webkit-scrollbar { display: none; }
+        .roblox-card { 
+            min-width: 180px; width: 180px; height: 240px; border-radius: 12px; 
+            background: var(--glass-bg); border: 1.5px solid var(--bd); 
+            transition: 0.2s; cursor: pointer; scroll-snap-align: start; 
+            display: flex; flex-direction: column; overflow: hidden;
+        }
+        .roblox-card:hover { border-color: var(--p); transform: scale(1.02); }
+        .roblox-card-img { height: 140px; background: var(--pl); display: flex; align-items: center; justify-content: center; position: relative; }
+        .roblox-card-content { padding: 12px; }
 
         /* LAYOUT */
         .sidebar { width: 280px; height: 100vh; position: fixed; left: 0; top: 0; z-index: 100; transition: 0.3s; border-right: 1.5px solid var(--bd); }
@@ -88,23 +102,21 @@
         .mobile-nav { position: fixed; bottom: 0; left: 0; right: 0; height: 75px; z-index: 1000; display: none; justify-content: space-around; align-items: center; padding-bottom: env(safe-area-inset-bottom); border-top: 1px solid var(--bd); background: var(--glass-bg); backdrop-filter: blur(25px); }
         @media (max-width: 1024px) { .mobile-nav { display: flex; } }
 
-        .nav-icon-link {
-            display: flex; flex-direction: column; align-items: center; gap: 4px;
-            color: var(--tx3); font-size: 10px; font-weight: 800; text-transform: uppercase;
-        }
-        .nav-icon-link.active { color: var(--p); }
+        /* NAVIGATION BUTTONS */
+        .nav-link { display: flex; flex-direction: column; align-items: center; gap: 4px; color: var(--tx3); font-size: 10px; font-weight: 800; text-transform: uppercase; cursor: pointer; transition: 0.2s; }
+        .nav-link.active { color: var(--p); }
+        .nav-link i { font-size: 22px; }
 
-        /* BUTTONS */
+        /* NEXUS COMPONENTS */
         .btn-nexus { padding: 12px 24px; border-radius: 14px; font-weight: 800; font-size: 13px; display: inline-flex; align-items: center; gap: 10px; transition: 0.2s; cursor: pointer; border: none; }
         .btn-p { background: linear-gradient(135deg, var(--p), var(--pd)); color: #fff; box-shadow: 0 4px 15px var(--shadow); }
-        .btn-p:hover { transform: translateY(-2px); filter: brightness(1.1); }
+        .btn-p:hover { transform: translateY(-2px); filter: brightness(1.1); box-shadow: 0 8px 25px var(--shadow); }
 
-        /* INPUTS */
-        .input-nexus { width: 100%; padding: 14px 18px; border-radius: 14px; background: rgba(0,0,0,0.04); border: 1.5px solid var(--bd); color: var(--tx); outline: none; font-weight: 600; }
+        .input-nexus { width: 100%; padding: 14px 18px; border-radius: 14px; background: rgba(0,0,0,0.04); border: 1.5px solid var(--bd); color: var(--tx); outline: none; font-weight: 600; transition: 0.2s; }
         .input-nexus:focus { border-color: var(--p); box-shadow: 0 0 0 4px var(--pl); }
 
         /* ANIMATIONS */
-        @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-8px); } }
+        @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
         .anim-float { animation: float 4s ease-in-out infinite; }
         .fade-in { animation: fadeIn 0.4s ease-out both; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
@@ -113,14 +125,27 @@
         .splash { position: fixed; inset: 0; z-index: 9999; background: #0b1120; display: flex; flex-direction: column; align-items: center; justify-content: center; }
         .splash.hidden { display: none; }
 
-        /* PRIORITY DOTS */
-        .priority-dot { width: 8px; height: 8px; border-radius: 50%; }
-        .prio-high { background: #ef4444; box-shadow: 0 0 10px #ef4444; }
-        .prio-med { background: #f59e0b; }
-        .prio-low { background: #22c55e; }
+        /* HEATMAP */
+        .heatmap-grid { display: grid; grid-template-columns: repeat(14, 1fr); gap: 4px; }
+        .heatmap-cell { aspect-ratio: 1; border-radius: 4px; background: rgba(0,0,0,0.05); transition: 0.3s; }
+        .heatmap-cell.active { background: var(--p); box-shadow: 0 0 10px var(--p); }
 
-        /* BADGES */
-        .nexus-badge { padding: 4px 10px; border-radius: 8px; font-size: 10px; font-weight: 900; text-transform: uppercase; letter-spacing: 0.05em; }
+        /* SHIFT SUMMARY POPUP */
+        .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.6); backdrop-filter: blur(8px); z-index: 5000; display: flex; align-items: center; justify-content: center; padding: 20px; }
+        .modal-content { width: 100%; max-width: 600px; border-radius: 32px; padding: 40px; position: relative; }
+        
+        .priority-badge { padding: 4px 12px; border-radius: 99px; font-size: 10px; font-weight: 900; text-transform: uppercase; }
+        .badge-high { background: #ef4444; color: #fff; }
+        .badge-med { background: #f59e0b; color: #fff; }
+        .badge-low { background: #22c55e; color: #fff; }
+
+        .team-avatar { width: 44px; height: 44px; border-radius: 50%; border: 2px solid var(--wh); box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+        .online-dot { width: 10px; height: 10px; border-radius: 50%; background: #22c55e; border: 2px solid var(--wh); position: absolute; bottom: 0; right: 0; }
+
+        /* CUSTOM SCROLL */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: var(--tx3); border-radius: 10px; opacity: 0.3; }
     </style>
 </head>
 <body>
@@ -129,45 +154,61 @@
     <script type="text/babel">
         const { useState, useEffect, useRef, useMemo, useCallback } = React;
 
-        // --- MOCK DATA ---
-        const PROJECT_CODES = ["GZ-2026-A1", "OPS-INTERNAL", "MARKET-EXP", "RMA-RECON", "CORE-UPGRADE"];
-        const INITIAL_PRESENCE = [
-            { name: "Rich J.", status: "active", id: 1 },
-            { name: "Kyla C.", status: "active", id: 2 },
-            { name: "Richie P.", status: "idle", id: 3 },
-            { name: "Miyamura I.", status: "away", id: 4 },
+        // --- CORE DATA & MOCKS ---
+        const DEPARTMENTS = ["IT", "HR", "ACCOUNTING", "MARKETING", "PRODUCT", "RMA", "LOGISTICS"];
+        const QUOTES = [
+            "Your shift is your opportunity to build the future of Gigahertz.",
+            "Work with excellence, or don't work at all.",
+            "Nexus Core v4.3: Tracking excellence in real-time.",
+            "Stay focused. Your potential is limitless."
+        ];
+        const THEMES = [
+            {id:'dark',col:'#0b1120',n:'Midnight'},
+            {id:'light',col:'#1a73e8',n:'Sky'},
+            {id:'lavender',col:'#7c3aed',n:'Nebula'},
+            {id:'forest',col:'#16a34a',n:'Matrix'},
+            {id:'sunset',col:'#f97316',n:'Aura'},
+            {id:'ocean',col:'#0ea5e9',n:'DeepSea'},
+            {id:'ruby',col:'#ef4444',n:'Ruby'},
+            {id:'cyberpunk',col:'#d946ef',n:'NeoTok'},
+            {id:'midnight',col:'#6366f1',n:'Iris'},
+            {id:'gold',col:'#eab308',n:'Crown'}
         ];
 
         // --- SUB-COMPONENTS ---
 
-        const FloatingLogoWidget = () => (
-            <a href="https://www.gigahertz.com.ph/" target="_blank" className="floating-gh-widget shadow-p">
-                <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRurHiRjhAqL8xPFzjXHWgjpxNtpGagJSOG7A&s" alt="Gigahertz Portal" />
+        const FloatingPortal = () => (
+            <a href="https://www.gigahertz.com.ph/" target="_blank" className="nexus-floating-portal shadow-xl">
+                <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRurHiRjhAqL8xPFzjXHWgjpxNtpGagJSOG7A&s" alt="Portal" />
             </a>
         );
 
-        const StatusIndicator = ({ status }) => {
-            const colors = { active: 'bg-green-500', idle: 'bg-amber-500', away: 'bg-slate-500' };
-            return <div className={`w-3 h-3 rounded-full ${colors[status] || 'bg-slate-500'} border-2 border-white`}></div>;
+        const Toast = ({ msg, type, onDone }) => {
+            useEffect(() => { const t = setTimeout(onDone, 3000); return () => clearTimeout(t); }, []);
+            const color = type === 'success' ? '#22c55e' : '#ef4444';
+            return (
+                <div className="fixed top-8 right-8 z-[10000] glass px-6 py-4 rounded-2xl flex items-center gap-4 shadow-2xl fade-in" style={{ borderLeft: `6px solid ${color}` }}>
+                    <i className={`fa-solid ${type === 'success' ? 'fa-circle-check text-green-500' : 'fa-circle-exclamation text-red-500'} text-xl`}></i>
+                    <span className="font-bold text-sm">{msg}</span>
+                </div>
+            );
         };
 
-        const AchievementCard = ({ title, icon, color }) => (
-            <div className="glass p-4 rounded-2xl flex items-center gap-3">
-                <div className={`w-10 h-10 rounded-xl flex items-center justify-center text-white ${color}`}>
-                    <i className={`fa-solid ${icon}`}></i>
+        const SplashScreen = ({ loading }) => (
+            <div className={`splash ${!loading ? 'hidden' : ''}`}>
+                <div className="anim-float bg-white p-8 rounded-[40px] shadow-2xl mb-8">
+                    <img src="https://contents.smsupermalls.com/data/uploads/2020/07/GIGAHERTZ_COMPUTER_SYSTEM.jpg" className="w-24 h-24 object-contain" />
                 </div>
-                <div>
-                    <p className="text-[10px] font-black opacity-40 uppercase">Unlocked</p>
-                    <p className="text-xs font-bold">{title}</p>
-                </div>
+                <h2 className="text-white text-3xl font-black tracking-tighter">GIGAHERTZ TITAN</h2>
+                <p className="text-blue-500 text-[10px] font-black uppercase tracking-[0.4em] mt-4 opacity-50">Nexus Core Security v4.3.1</p>
             </div>
         );
 
-        // --- AUTH PORTAL ---
+        // --- AUTH PORTAL (ROBLOX STYLE) ---
         const AuthPortal = ({ onLogin, theme, setTheme }) => {
             const [isRegister, setIsRegister] = useState(false);
             const [step, setStep] = useState(1);
-            const [form, setForm] = useState({ empId: '', name: '', dept: 'IT / NEXUS', password: '' });
+            const [form, setForm] = useState({ empId: '', name: '', dept: 'IT', password: '' });
             const [photo, setPhoto] = useState(null);
             const videoRef = useRef(null);
 
@@ -176,7 +217,7 @@
                 if (videoRef.current) videoRef.current.srcObject = s;
             };
 
-            const capture = () => {
+            const captureFace = () => {
                 const canvas = document.createElement('canvas');
                 canvas.width = 640; canvas.height = 480;
                 canvas.getContext('2d').drawImage(videoRef.current, 0, 0);
@@ -186,41 +227,46 @@
 
             return (
                 <div className="min-h-screen flex items-center justify-center p-6 bg-slate-900">
-                    <div className="glass p-10 rounded-[40px] w-full max-w-md fade-in">
+                    <div className="glass p-10 rounded-[48px] w-full max-w-md shadow-[0_30px_100px_rgba(0,0,0,0.5)] fade-in">
                         <div className="text-center mb-10">
                             <div className="w-20 h-20 bg-white p-4 rounded-3xl mx-auto mb-6 shadow-xl anim-float">
                                 <img src="https://contents.smsupermalls.com/data/uploads/2020/07/GIGAHERTZ_COMPUTER_SYSTEM.jpg" className="w-full h-full object-contain" />
                             </div>
-                            <h1 className="text-3xl font-black tracking-tight">Nexus Entry</h1>
-                            <p className="text-[10px] font-bold uppercase tracking-[0.2em] opacity-40 mt-2">v4.2.0 Internal Secure Hub</p>
+                            <h1 className="text-3xl font-black tracking-tighter">Nexus Titan</h1>
+                            <p className="text-[10px] font-bold uppercase tracking-[0.2em] opacity-40 mt-2">Authenticated Employee Hub</p>
                         </div>
 
                         {step === 1 ? (
                             <div className="space-y-4">
-                                <input className="input-nexus" placeholder="Employee ID" value={form.empId} onChange={e => setForm({...form, empId: e.target.value})}/>
-                                {isRegister && <input className="input-nexus" placeholder="Full Name" value={form.name} onChange={e => setForm({...form, name: e.target.value})}/>}
-                                <input className="input-nexus" type="password" placeholder="Password" value={form.password} onChange={e => setForm({...form, password: e.target.value})}/>
-                                <button className="btn-nexus btn-p w-full justify-center" onClick={() => isRegister ? setStep(2) : onLogin({...form, photo})}>
-                                    {isRegister ? 'Next: Identity Verification' : 'Authenticate'}
+                                <input className="input-nexus" placeholder="Employee Identifier" value={form.empId} onChange={e => setForm({...form, empId: e.target.value})}/>
+                                {isRegister && <input className="input-nexus" placeholder="Full Employee Name" value={form.name} onChange={e => setForm({...form, name: e.target.value})}/>}
+                                <input className="input-nexus" type="password" placeholder="Access Key" value={form.password} onChange={e => setForm({...form, password: e.target.value})}/>
+                                <button className="btn-nexus btn-p w-full justify-center mt-4" onClick={() => isRegister ? setStep(2) : onLogin({...form, photo})}>
+                                    {isRegister ? 'Continue to Biometrics' : 'Authenticate Identity'}
                                 </button>
-                                <p className="text-center text-xs font-bold opacity-50 cursor-pointer pt-4" onClick={() => setIsRegister(!isRegister)}>
-                                    {isRegister ? 'Already verified? Sign In' : 'New Employee? Register Identity'}
+                                <p className="text-center text-xs font-bold opacity-50 cursor-pointer pt-6" onClick={() => setIsRegister(!isRegister)}>
+                                    {isRegister ? 'Returning Employee? Login' : 'New to Gigahertz? Join Nexus'}
                                 </p>
                             </div>
                         ) : (
                             <div className="text-center space-y-6">
-                                <h3 className="font-black text-xl">Identity Scan</h3>
-                                <div className="cam-box w-full aspect-square bg-black rounded-3xl overflow-hidden border-2 border-blue-500">
-                                    {!photo ? <video ref={videoRef} className="w-full h-full object-cover" autoPlay playsInline muted /> : <img src={photo} className="w-full h-full object-cover"/>}
+                                <h3 className="font-black text-xl">Identity Verification</h3>
+                                <div className="w-full aspect-square bg-black rounded-[32px] overflow-hidden border-2 border-blue-500 shadow-2xl relative">
+                                    {!photo ? (
+                                        <video ref={videoRef} className="w-full h-full object-cover" autoPlay playsInline muted />
+                                    ) : (
+                                        <img src={photo} className="w-full h-full object-cover" />
+                                    )}
+                                    <div className="absolute inset-0 border-4 border-white/10 pointer-events-none"></div>
                                 </div>
                                 {!photo ? (
                                     <div className="flex flex-col gap-3">
-                                        <button className="btn-nexus btn-p justify-center" onClick={startCamera}>Open Camera</button>
-                                        {videoRef.current?.srcObject && <button className="btn-nexus bg-white text-black justify-center" onClick={capture}>Capture Face</button>}
+                                        <button className="btn-nexus btn-p justify-center" onClick={startCamera}><i className="fa-solid fa-video"></i> Activate Lens</button>
+                                        {videoRef.current?.srcObject && <button className="btn-nexus bg-white text-black justify-center" onClick={captureFace}><i className="fa-solid fa-camera"></i> Capture Face</button>}
                                     </div>
                                 ) : (
                                     <div className="flex gap-2">
-                                        <button className="btn-nexus btn-p flex-1 justify-center" onClick={() => onLogin({...form, photo})}>Complete Setup</button>
+                                        <button className="btn-nexus btn-p flex-1 justify-center" onClick={() => onLogin({...form, photo})}>Verify & Log In</button>
                                         <button className="btn-nexus bg-slate-500 text-white" onClick={() => { setPhoto(null); startCamera(); }}>Retake</button>
                                     </div>
                                 )}
@@ -231,351 +277,411 @@
             );
         };
 
-        // --- MAIN APP ENGINE ---
+        // --- MAIN APP COMPONENT ---
         const NexusApp = ({ user, onLogout, theme, setTheme }) => {
             const [tab, setTab] = useState('home');
             const [loading, setLoading] = useState(true);
             const [tasks, setTasks] = useState([]);
             const [queue, setQueue] = useState([]);
-            const [presence] = useState(INITIAL_PRESENCE);
-            const [timer, setTimer] = useState({ active: false, seconds: 0, task: '', priority: 'med', project: PROJECT_CODES[0], paused: false });
+            const [timer, setTimer] = useState({ active: false, seconds: 0, task: '', priority: 'med', paused: false });
             const [toast, setToast] = useState(null);
             const [idlePopup, setIdlePopup] = useState(false);
             const [lastMove, setLastMove] = useState(Date.now());
 
+            // --- ENGINE HOOKS ---
             useEffect(() => {
                 setTimeout(() => setLoading(false), 2000);
-                const handleActivity = () => setLastMove(Date.now());
-                window.addEventListener('mousemove', handleActivity);
-                const idleCheck = setInterval(() => {
-                    if (Date.now() - lastMove > 300000 && timer.active && !timer.paused) { 
-                        setTimer(prev => ({ ...prev, paused: true }));
+                const handleActive = () => setLastMove(Date.now());
+                window.addEventListener('mousemove', handleActive);
+                window.addEventListener('keypress', handleActive);
+                const check = setInterval(() => {
+                    if (Date.now() - lastMove > 300000 && timer.active && !timer.paused) {
+                        setTimer(p => ({...p, paused: true}));
                         setIdlePopup(true);
                     }
-                }, 30000);
-                return () => { window.removeEventListener('mousemove', handleActivity); clearInterval(idleCheck); };
+                }, 10000);
+                return () => { window.removeEventListener('mousemove', handleActive); window.removeEventListener('keypress', handleActive); clearInterval(check); };
             }, [lastMove, timer.active]);
 
             useEffect(() => {
-                let int;
+                let interval;
                 if (timer.active && !timer.paused) {
-                    int = setInterval(() => setTimer(p => ({ ...p, seconds: p.seconds + 1 })), 1000);
+                    interval = setInterval(() => setTimer(p => ({ ...p, seconds: p.seconds + 1 })), 1000);
                 }
-                return () => clearInterval(int);
+                return () => clearInterval(interval);
             }, [timer.active, timer.paused]);
 
-            const triggerToast = (msg, type = 'success') => setToast({ msg, type });
+            const pushToast = (msg, type = 'success') => setToast({ msg, type });
 
-            const startTracking = (name, prio = 'med', proj = PROJECT_CODES[0]) => {
-                setTimer({ active: true, seconds: 0, task: name, priority: prio, project: proj, paused: false });
-                triggerToast(`Tracking Shift: ${name}`);
+            const handleStartSession = (name, prio = 'med') => {
+                if (!name) return;
+                setTimer({ active: true, seconds: 0, task: name, priority: prio, paused: false });
+                pushToast(`Shift Tracking Started: ${name}`);
             };
 
-            const completeShift = () => {
-                const finished = { 
-                    id: Date.now(), 
-                    name: timer.task, 
-                    duration: Math.ceil(timer.seconds / 60), 
+            const handleCompleteSession = () => {
+                const finished = {
+                    id: Date.now(),
+                    name: timer.task,
+                    duration: Math.ceil(timer.seconds / 60),
                     prio: timer.priority,
-                    proj: timer.project,
-                    date: new Date().toLocaleDateString()
+                    date: new Date().toLocaleDateString(),
+                    time: new Date().toLocaleTimeString()
                 };
                 setTasks([finished, ...tasks]);
                 setTimer({ active: false, seconds: 0, task: '', paused: false });
-                triggerToast("Shift logs synchronized.");
+                pushToast("Session synchronized to Audit Core.");
             };
 
-            const generateReport = () => {
-                const today = tasks.filter(t => t.date === new Date().toLocaleDateString());
-                const totalMins = today.reduce((s, t) => s + t.duration, 0);
-                alert(`Daily Shift Report:\n\nTasks Completed: ${today.length}\nTotal Time: ${Math.floor(totalMins/60)}h ${totalMins%60}m\nEfficiency Score: ${weeklyPulse.pct}%\n\nLogs ready for HR submission.`);
-            };
-
-            const weeklyPulse = useMemo(() => {
+            const weeklyEfficiency = useMemo(() => {
                 const totalMins = tasks.reduce((acc, t) => acc + t.duration, 0);
-                return { mins: totalMins, pct: Math.min(100, Math.round((totalMins / 2400) * 100)), ot: Math.max(0, (totalMins - 2400) / 60) };
+                return { mins: totalMins, pct: Math.min(100, Math.round((totalMins / 2400) * 100)) };
             }, [tasks]);
 
-            return (
-                <div className="min-h-screen">
-                    {loading && (
-                        <div className="splash">
-                            <div className="anim-float bg-white p-8 rounded-[40px] shadow-2xl">
-                                <img src="https://contents.smsupermalls.com/data/uploads/2020/07/GIGAHERTZ_COMPUTER_SYSTEM.jpg" className="w-24" />
-                            </div>
-                            <h2 className="text-white font-black mt-8 text-xl tracking-[0.3em]">NEXUS CORE</h2>
-                        </div>
-                    )}
-                    {toast && <Toast {...toast} onDone={() => setToast(null)} />}
-                    <FloatingLogoWidget />
+            // --- RENDERERS ---
 
-                    {/* Desktop Sidebar */}
-                    <aside className="sidebar glass p-8 flex flex-col justify-between">
-                        <div>
-                            <div className="flex items-center gap-4 mb-12">
-                                <div className="bg-white p-2 rounded-xl w-10 h-10 shadow-lg">
-                                    <img src="https://contents.smsupermalls.com/data/uploads/2020/07/GIGAHERTZ_COMPUTER_SYSTEM.jpg" className="w-full h-full object-contain" />
+            const renderHome = () => (
+                <div className="space-y-10 fade-in">
+                    {/* Welcome Header */}
+                    <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6">
+                        <div className="flex items-center gap-6">
+                            <div className="relative">
+                                <img src={user.photo || "https://via.placeholder.com/150"} className="w-20 h-20 rounded-[28px] object-cover border-4 border-white shadow-xl" />
+                                <div className="absolute -bottom-1 -right-1 w-6 h-6 bg-green-500 border-4 border-white rounded-full"></div>
+                            </div>
+                            <div>
+                                <h1 className="text-4xl font-black tracking-tight leading-none mb-2">Hello, {user.name.split(' ')[0]}!</h1>
+                                <div className="flex items-center gap-3">
+                                    <span className="text-[10px] font-black uppercase tracking-widest bg-blue-500/10 text-blue-500 px-3 py-1 rounded-lg">Verified Employee</span>
+                                    <span className="text-[10px] font-black uppercase tracking-widest bg-slate-500/10 text-slate-500 px-3 py-1 rounded-lg">{user.empId}</span>
                                 </div>
-                                <span className="font-black text-xl tracking-tighter">Nexus 4.2</span>
                             </div>
-                            <nav className="space-y-3">
-                                <div onClick={() => setTab('home')} className={`btn-nexus w-full ${tab === 'home' ? 'btn-p' : 'opacity-40 hover:opacity-100'}`}><i className="fa-solid fa-house"></i> Terminal</div>
-                                <div onClick={() => setTab('tasks')} className={`btn-nexus w-full ${tab === 'tasks' ? 'btn-p' : 'opacity-40 hover:opacity-100'}`}><i className="fa-solid fa-layer-group"></i> My Ledger</div>
-                                <div onClick={() => setTab('settings')} className={`btn-nexus w-full ${tab === 'settings' ? 'btn-p' : 'opacity-40 hover:opacity-100'}`}><i className="fa-solid fa-sliders"></i> Config</div>
-                            </nav>
+                        </div>
+                        <div className="glass px-8 py-5 rounded-[28px] flex items-center gap-6">
+                            <div className="text-center">
+                                <p className="text-[10px] font-black uppercase opacity-40 mb-1">Efficiency</p>
+                                <p className="text-xl font-black text-blue-500">{weeklyEfficiency.pct}%</p>
+                            </div>
+                            <div className="w-px h-10 bg-slate-500/20"></div>
+                            <div className="text-center">
+                                <p className="text-[10px] font-black uppercase opacity-40 mb-1">Sessions</p>
+                                <p className="text-xl font-black text-blue-500">{tasks.length}</p>
+                            </div>
+                        </div>
+                    </div>
 
-                            {/* Presence Widget */}
-                            <div className="mt-12">
-                                <p className="text-[10px] font-black uppercase tracking-widest opacity-40 mb-4">Department Presence</p>
-                                <div className="space-y-4">
-                                    {presence.map(p => (
-                                        <div key={p.id} className="flex items-center justify-between">
-                                            <span className="text-xs font-bold opacity-80">{p.name}</span>
-                                            <StatusIndicator status={p.status} />
+                    {/* Roblox-Style Carousel (Resumable Work) */}
+                    <div>
+                        <div className="flex justify-between items-center mb-4 px-2">
+                            <h2 className="text-xl font-black">Continue Tracking</h2>
+                            <button className="text-xs font-black text-blue-500 hover:underline uppercase tracking-widest">See All</button>
+                        </div>
+                        <div className="roblox-carousel">
+                            {queue.map(q => (
+                                <div key={q.id} className="roblox-card" onClick={() => { handleStartSession(q.name); setQueue(queue.filter(x => x.id !== q.id)); }}>
+                                    <div className="roblox-card-img text-3xl text-blue-500">
+                                        <i className="fa-solid fa-play anim-pulse"></i>
+                                    </div>
+                                    <div className="roblox-card-content">
+                                        <p className="font-bold text-sm truncate">{q.name}</p>
+                                        <p className="text-[10px] font-bold opacity-40 uppercase mt-1">Pending Sync</p>
+                                    </div>
+                                </div>
+                            ))}
+                            <div className="roblox-card border-dashed opacity-40 items-center justify-center text-center px-4" onClick={() => { const n = prompt("Task Name?"); if(n) setQueue([...queue, { id: Date.now(), name: n }]); }}>
+                                <i className="fa-solid fa-plus text-3xl mb-4"></i>
+                                <p className="text-xs font-black uppercase tracking-widest">Stage New Task</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+                        {/* Live Timer Console */}
+                        <div className="lg:col-span-8">
+                            <div className="glass p-12 rounded-[48px] text-center relative overflow-hidden">
+                                {timer.active ? (
+                                    <div className="space-y-8">
+                                        <div className="relative inline-block">
+                                            <svg width="240" height="240" className="timer-svg">
+                                                <circle cx="120" cy="120" r="110" fill="none" stroke="rgba(0,0,0,0.05)" strokeWidth="12" />
+                                                <circle cx="120" cy="120" r="110" fill="none" stroke="var(--p)" strokeWidth="12" 
+                                                        strokeDasharray="691.15" strokeDashoffset={691.15 - (691.15 * (timer.seconds % 60)) / 60} 
+                                                        className="timer-circle" strokeLinecap="round" />
+                                            </svg>
+                                            <div className="absolute inset-0 flex flex-col items-center justify-center">
+                                                <span className="text-5xl font-black font-mono tracking-tighter">
+                                                    {Math.floor(timer.seconds / 3600).toString().padStart(2,'0')}:
+                                                    {Math.floor((timer.seconds % 3600) / 60).toString().padStart(2,'0')}:
+                                                    {(timer.seconds % 60).toString().padStart(2,'0')}
+                                                </span>
+                                                <span className="text-[10px] font-black uppercase opacity-40 mt-3 tracking-[0.3em] text-blue-500">Live Analytics</span>
+                                            </div>
+                                        </div>
+                                        <div>
+                                            <h3 className="text-3xl font-black mb-2">{timer.task}</h3>
+                                            <div className="flex justify-center gap-3">
+                                                <span className={`priority-badge badge-${timer.priority}`}>{timer.priority} Priority</span>
+                                                <span className="text-[10px] font-bold uppercase opacity-40 tracking-widest">Project: General</span>
+                                            </div>
+                                        </div>
+                                        <div className="flex gap-4 max-w-sm mx-auto">
+                                            <button className="btn-nexus bg-amber-500/10 text-amber-500 flex-1 justify-center" onClick={() => setTimer({...timer, paused: !timer.paused})}>
+                                                <i className={`fa-solid ${timer.paused ? 'fa-play' : 'fa-pause'}`}></i> {timer.paused ? 'Resume' : 'Break'}
+                                            </button>
+                                            <button className="btn-nexus btn-p flex-1 justify-center" onClick={handleCompleteSession}>
+                                                <i className="fa-solid fa-check"></i> Complete
+                                            </button>
+                                        </div>
+                                    </div>
+                                ) : (
+                                    <div className="py-16 space-y-10">
+                                        <div className="w-24 h-24 bg-blue-500/10 rounded-[32px] flex items-center justify-center mx-auto text-4xl text-blue-500 anim-float">
+                                            <i className="fa-solid fa-bolt"></i>
+                                        </div>
+                                        <div>
+                                            <h2 className="text-4xl font-black tracking-tight">Ready for Duty?</h2>
+                                            <p className="opacity-60 font-bold text-sm mt-3 max-w-xs mx-auto leading-relaxed">Stage tasks in your queue or launch a live shift tracking session now.</p>
+                                        </div>
+                                        <div className="flex gap-3 max-w-md mx-auto">
+                                            <input id="quickT" className="input-nexus" placeholder="What are you working on?" onKeyDown={e => e.key === 'Enter' && handleStartSession(e.target.value)}/>
+                                            <button className="btn-nexus btn-p shadow-p" onClick={() => handleStartSession(document.getElementById('quickT').value)}>Launch</button>
+                                        </div>
+                                    </div>
+                                )}
+                            </div>
+                        </div>
+
+                        {/* Side Widgets */}
+                        <div className="lg:col-span-4 space-y-8">
+                            <div className="glass p-8 rounded-[40px]">
+                                <h3 className="font-black text-lg mb-6">Department Presence</h3>
+                                <div className="space-y-5">
+                                    {[
+                                        {n: "Rich Jhen", s: "Active", d: "IT"},
+                                        {n: "Kyla Cabantog", s: "Idle", d: "Accounting"},
+                                        {n: "Bernadette B.", s: "Active", d: "IT"},
+                                        {n: "Jome V.", s: "Away", d: "RMA"}
+                                    ].map((m, i) => (
+                                        <div key={i} className="flex items-center justify-between">
+                                            <div className="flex items-center gap-3">
+                                                <div className="relative">
+                                                    <div className="w-10 h-10 rounded-full bg-slate-200 border-2 border-white shadow-sm"></div>
+                                                    <div className={`absolute bottom-0 right-0 w-3 h-3 border-2 border-white rounded-full ${m.s === 'Active' ? 'bg-green-500' : m.s === 'Idle' ? 'bg-amber-500' : 'bg-slate-400'}`}></div>
+                                                </div>
+                                                <div>
+                                                    <p className="text-xs font-black">{m.n}</p>
+                                                    <p className="text-[9px] font-bold opacity-40 uppercase">{m.d}</p>
+                                                </div>
+                                            </div>
+                                            <span className="text-[10px] font-black opacity-30">{m.s}</span>
                                         </div>
                                     ))}
                                 </div>
                             </div>
+
+                            <div className="glass p-8 rounded-[40px] bg-gradient-to-br from-blue-600/10 to-purple-600/10 border-blue-500/20">
+                                <h3 className="font-black text-lg mb-2">Shift Insights</h3>
+                                <p className="text-xs font-medium opacity-60 leading-relaxed italic">&ldquo;{QUOTES[Math.floor(Math.random()*QUOTES.length)]}&rdquo;</p>
+                            </div>
                         </div>
+                    </div>
+                </div>
+            );
+
+            const renderLedger = () => (
+                <div className="glass rounded-[48px] overflow-hidden fade-in">
+                    <div className="p-10 border-b border-white/5 flex justify-between items-center bg-white/5">
+                        <div>
+                            <h3 className="font-black text-2xl tracking-tighter text-blue-500">Activity Ledger</h3>
+                            <p className="text-xs font-bold opacity-40 uppercase tracking-widest mt-1">Audit-ready work history</p>
+                        </div>
+                        <button className="btn-nexus bg-white text-black px-6 py-3" onClick={() => exportToCSV(tasks, user)}>
+                            <i className="fa-solid fa-download"></i> Export Pack
+                        </button>
+                    </div>
+                    <div className="p-6 overflow-x-auto">
+                        <table className="w-full text-left">
+                            <thead>
+                                <tr className="text-[10px] font-black uppercase tracking-[0.2em] opacity-40 border-b border-white/5">
+                                    <th className="px-8 py-6">Operation</th>
+                                    <th className="px-8 py-6">Prio</th>
+                                    <th className="px-8 py-6">Duration</th>
+                                    <th className="px-8 py-6">Timestamp</th>
+                                    <th className="px-8 py-6">Identity Verify</th>
+                                </tr>
+                            </thead>
+                            <tbody className="text-sm font-bold">
+                                {tasks.map(t => (
+                                    <tr key={t.id} className="border-b border-white/5 hover:bg-white/5 transition-all">
+                                        <td className="px-8 py-8 font-black">{t.name}</td>
+                                        <td className="px-8 py-8">
+                                            <span className={`priority-badge badge-${t.prio}`}>{t.prio}</span>
+                                        </td>
+                                        <td className="px-8 py-8">
+                                            <span className="text-blue-500 font-mono">{t.duration}m</span>
+                                        </td>
+                                        <td className="px-8 py-8 opacity-60">
+                                            <p>{t.date}</p>
+                                            <p className="text-[10px] uppercase">{t.time}</p>
+                                        </td>
+                                        <td className="px-8 py-8">
+                                            <i className="fa-solid fa-shield-check text-green-500 mr-2 opacity-60"></i>
+                                            <span className="text-[10px] uppercase opacity-40 tracking-widest">Titan Check Passed</span>
+                                        </td>
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </table>
+                        {tasks.length === 0 && (
+                            <div className="py-32 text-center opacity-20 flex flex-col items-center">
+                                <i className="fa-solid fa-box-open text-6xl mb-6"></i>
+                                <p className="font-black text-xl uppercase tracking-widest">No entries recorded in current period</p>
+                            </div>
+                        )}
+                    </div>
+                </div>
+            );
+
+            const renderSettings = () => (
+                <div className="max-w-3xl mx-auto space-y-12 fade-in">
+                    <div className="glass p-12 rounded-[56px] shadow-p">
+                        <h2 className="text-3xl font-black mb-4 tracking-tighter">Nexus Core Themes</h2>
+                        <p className="opacity-40 font-bold mb-10 text-sm uppercase tracking-widest">Select your operational visual profile</p>
+                        <div className="theme-grid">
+                            {THEMES.map(t => (
+                                <div key={t.id} onClick={() => setTheme(t.id)} 
+                                     className={`theme-dot ${theme === t.id ? 'active' : ''}`} 
+                                     style={{ background: t.col }} title={t.n}>
+                                    {theme === t.id && <i className="fa-solid fa-check text-white text-xs"></i>}
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+
+                    <div className="glass p-12 rounded-[56px] space-y-8 shadow-xl">
+                        <h2 className="text-3xl font-black tracking-tighter">Preferences</h2>
                         <div className="space-y-4">
-                            <AchievementCard title="Nexus Certified" icon="fa-award" color="bg-amber-500" />
-                            <button className="btn-nexus bg-red-500/10 text-red-500 w-full justify-center" onClick={onLogout}><i className="fa-solid fa-power-off"></i> Disconnect</button>
+                            <div className="flex justify-between items-center p-6 bg-slate-500/5 rounded-3xl border border-white/5">
+                                <div>
+                                    <p className="font-black text-lg">Shift Summary</p>
+                                    <p className="text-xs font-bold opacity-40 uppercase mt-1 tracking-widest">Auto-generate daily report</p>
+                                </div>
+                                <div className="w-14 h-7 bg-blue-500 rounded-full flex items-center px-1"><div className="w-5 h-5 bg-white rounded-full ml-auto shadow-md"></div></div>
+                            </div>
+                            <div className="flex justify-between items-center p-6 bg-slate-500/5 rounded-3xl border border-white/5 opacity-50">
+                                <div>
+                                    <p className="font-black text-lg">Titan Sync</p>
+                                    <p className="text-xs font-bold opacity-40 uppercase mt-1 tracking-widest">Automatic cloud backup</p>
+                                </div>
+                                <div className="w-14 h-7 bg-slate-700 rounded-full flex items-center px-1"><div className="w-5 h-5 bg-white rounded-full"></div></div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div className="text-center opacity-30 py-10">
+                        <p className="font-black text-xs uppercase tracking-[0.4em]">Titan Engine v4.3.0</p>
+                        <p className="text-[10px] font-bold mt-2">© {new Date().getFullYear()} Gigahertz Computer Systems</p>
+                    </div>
+                </div>
+            );
+
+            return (
+                <div className="min-h-screen">
+                    <SplashScreen loading={loading} />
+                    {toast && <Toast {...toast} onDone={() => setToast(null)} />}
+                    <FloatingPortal />
+
+                    {/* SIDEBAR DESKTOP */}
+                    <aside className="sidebar glass p-10 flex flex-col justify-between">
+                        <div>
+                            <div className="flex items-center gap-4 mb-14">
+                                <div className="bg-white p-2 rounded-xl w-10 h-10 shadow-lg">
+                                    <img src="https://contents.smsupermalls.com/data/uploads/2020/07/GIGAHERTZ_COMPUTER_SYSTEM.jpg" className="w-full h-full object-contain" />
+                                </div>
+                                <span className="font-black text-2xl tracking-tighter">TITAN</span>
+                            </div>
+                            <nav className="space-y-3">
+                                <div onClick={() => setTab('home')} className={`btn-nexus w-full ${tab === 'home' ? 'btn-p shadow-p' : 'opacity-40 hover:opacity-100'}`}>
+                                    <i className="fa-solid fa-house"></i> Dashboard
+                                </div>
+                                <div onClick={() => setTab('tasks')} className={`btn-nexus w-full ${tab === 'tasks' ? 'btn-p shadow-p' : 'opacity-40 hover:opacity-100'}`}>
+                                    <i className="fa-solid fa-book"></i> Ledger
+                                </div>
+                                <div onClick={() => setTab('settings')} className={`btn-nexus w-full ${tab === 'settings' ? 'btn-p shadow-p' : 'opacity-40 hover:opacity-100'}`}>
+                                    <i className="fa-solid fa-sliders"></i> Config
+                                </div>
+                            </nav>
+                        </div>
+                        <div className="space-y-6">
+                            <div className="glass-dark p-6 rounded-[32px] border border-white/5 text-center">
+                                <p className="text-[10px] font-black uppercase opacity-40 mb-2">Nexus Node</p>
+                                <div className="flex items-center justify-center gap-2">
+                                    <div className="w-2 h-2 rounded-full bg-green-500 anim-pulse"></div>
+                                    <span className="text-xs font-bold">Online</span>
+                                </div>
+                            </div>
+                            <button className="btn-nexus bg-red-500/10 text-red-500 w-full justify-center shadow-lg" onClick={onLogout}>
+                                <i className="fa-solid fa-power-off"></i> Disconnect
+                            </button>
                         </div>
                     </aside>
 
-                    {/* Main Content Area */}
+                    {/* MAIN CONTENT */}
                     <main className="main-content">
                         <header className="flex justify-between items-end mb-12 fade-in">
                             <div>
-                                <h2 className="text-4xl font-black tracking-tight">{tab === 'home' ? 'Operations Terminal' : tab === 'settings' ? 'System Config' : 'History Ledger'}</h2>
-                                <div className="flex items-center gap-3 mt-2">
-                                    <nexus-badge className="bg-blue-500/10 text-blue-500 nexus-badge">Verified ID: {user.empId}</nexus-badge>
-                                    <nexus-badge className="bg-green-500/10 text-green-500 nexus-badge">{user.dept}</nexus-badge>
-                                </div>
+                                <h2 className="text-5xl font-black tracking-tighter text-blue-500">{tab === 'home' ? 'Nexus Terminal' : tab === 'settings' ? 'System Config' : 'History Pack'}</h2>
+                                <p className="font-bold opacity-30 uppercase tracking-[0.3em] text-[11px] mt-4">Verified Session Protocol: 0049-GHZ-PRO</p>
                             </div>
                             <div className="text-right hidden lg:block">
-                                <div className="glass px-6 py-3 rounded-2xl inline-block border-white/10 shadow-lg">
-                                    <p className="text-xl font-black font-mono tracking-tighter" style={{color: 'var(--p)'}}>{new Date().toLocaleTimeString()}</p>
-                                    <p className="text-[9px] font-black uppercase opacity-40 tracking-widest">{new Date().toLocaleDateString(undefined, {weekday:'long', month:'short', day:'numeric'})}</p>
+                                <div className="glass px-8 py-4 rounded-[28px] inline-block border-white/10 shadow-2xl">
+                                    <p className="text-2xl font-black font-mono tracking-tighter" style={{color: 'var(--p)'}}>{new Date().toLocaleTimeString()}</p>
+                                    <p className="text-[10px] font-black uppercase tracking-widest opacity-40 mt-1">{new Date().toLocaleDateString(undefined, {weekday:'long', month:'short', day:'numeric'})}</p>
                                 </div>
                             </div>
                         </header>
 
-                        {tab === 'home' && (
-                            <div className="space-y-8 fade-in">
-                                {/* Top Stats Widgets */}
-                                <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                                    <div className="glass p-8 rounded-[40px] lg:col-span-2 relative overflow-hidden">
-                                        <p className="text-[10px] font-black uppercase tracking-[0.3em] text-blue-500 mb-4">Productivity Pulse</p>
-                                        <div className="flex justify-between items-end mb-4">
-                                            <h3 className="text-4xl font-black">{weeklyPulse.pct}% Weekly Goal</h3>
-                                            {weeklyPulse.ot > 0 && <span className="text-xs font-black text-amber-500 tracking-tighter">+ {weeklyPulse.ot.toFixed(1)}h Overtime</span>}
-                                        </div>
-                                        <div className="w-full bg-slate-200 dark:bg-white/5 h-3 rounded-full overflow-hidden">
-                                            <div className="h-full bg-gradient-to-r from-blue-500 to-purple-500 transition-all duration-1000" style={{ width: `${weeklyPulse.pct}%` }}></div>
-                                        </div>
-                                        <p className="mt-4 text-xs font-bold opacity-60">You've tracked {Math.floor(weeklyPulse.mins/60)}h {weeklyPulse.mins%60}m of your 40h quota.</p>
-                                        <i className="fa-solid fa-chart-line absolute top-6 right-8 text-6xl opacity-5"></i>
-                                    </div>
-                                    <div className="glass p-8 rounded-[40px] flex flex-col justify-center items-center text-center">
-                                        <p className="text-[10px] font-black uppercase tracking-[0.3em] opacity-40 mb-6">Pomodoro Cycles</p>
-                                        <div className="w-20 h-20 bg-amber-500/10 rounded-full flex items-center justify-center text-amber-500 text-3xl font-black mb-4">4</div>
-                                        <p className="text-sm font-bold leading-tight">Great focus today!<br/><span className="text-xs opacity-50 font-medium">Keep the momentum.</span></p>
-                                    </div>
-                                </div>
-
-                                <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                                    {/* Timer Engine */}
-                                    <div className="glass p-10 rounded-[48px] text-center relative overflow-hidden">
-                                        {timer.active ? (
-                                            <div className="space-y-8">
-                                                <div className="relative inline-block">
-                                                    <svg width="220" height="220" className="timer-svg">
-                                                        <circle cx="110" cy="110" r="100" fill="none" stroke="rgba(0,0,0,0.05)" strokeWidth="12" />
-                                                        <circle cx="110" cy="110" r="100" fill="none" stroke="var(--p)" strokeWidth="12" 
-                                                                strokeDasharray="628.3" strokeDashoffset={628.3 - (628.3 * (timer.seconds % 60)) / 60} 
-                                                                className="timer-circle" strokeLinecap="round" />
-                                                    </svg>
-                                                    <div className="absolute inset-0 flex flex-col items-center justify-center">
-                                                        <span className="text-4xl font-black font-mono tracking-tighter">
-                                                            {Math.floor(timer.seconds / 3600).toString().padStart(2,'0')}:
-                                                            {Math.floor((timer.seconds % 3600) / 60).toString().padStart(2,'0')}:
-                                                            {(timer.seconds % 60).toString().padStart(2,'0')}
-                                                        </span>
-                                                        <p className="text-[10px] font-black uppercase opacity-40 mt-1">Live Telemetry</p>
-                                                    </div>
-                                                </div>
-                                                <div>
-                                                    <h3 className="text-2xl font-black">{timer.task}</h3>
-                                                    <div className="flex justify-center gap-2 mt-3">
-                                                        <nexus-badge className="bg-slate-500/10 text-slate-500 nexus-badge">{timer.project}</nexus-badge>
-                                                        <nexus-badge className={`${timer.priority === 'high' ? 'bg-red-500/10 text-red-500' : 'bg-green-500/10 text-green-500'} nexus-badge`}>{timer.priority} prio</nexus-badge>
-                                                    </div>
-                                                </div>
-                                                <div className="flex gap-4">
-                                                    <button onClick={() => setTimer({...timer, paused: !timer.paused})} className="btn-nexus bg-amber-500/10 text-amber-500 flex-1 justify-center"><i className={`fa-solid ${timer.paused ? 'fa-play' : 'fa-pause'}`}></i> {timer.paused ? 'Resume' : 'Break'}</button>
-                                                    <button onClick={completeShift} className="btn-nexus btn-p flex-1 justify-center"><i className="fa-solid fa-check"></i> End Shift</button>
-                                                </div>
-                                            </div>
-                                        ) : (
-                                            <div className="py-12 space-y-10">
-                                                <div className="w-24 h-24 bg-blue-500/10 rounded-[32px] flex items-center justify-center mx-auto text-4xl text-blue-500 anim-float">
-                                                    <i className="fa-solid fa-clock-rotate-left"></i>
-                                                </div>
-                                                <div className="max-w-xs mx-auto">
-                                                    <h2 className="text-3xl font-black">Ready to Work?</h2>
-                                                    <p className="opacity-60 font-bold text-sm mt-2 leading-relaxed">Stage a task in your queue or launch a live session now.</p>
-                                                </div>
-                                                <div className="space-y-3 max-w-sm mx-auto">
-                                                    <input id="qT" className="input-nexus" placeholder="What's the goal for this shift?" />
-                                                    <div className="flex gap-2">
-                                                        <select id="qP" className="input-nexus flex-1 py-3 text-xs uppercase font-black">
-                                                            {PROJECT_CODES.map(c => <option key={c} value={c}>{c}</option>)}
-                                                        </select>
-                                                        <button onClick={() => startTracking(document.getElementById('qT').value, 'med', document.getElementById('qP').value)} className="btn-nexus btn-p">Launch</button>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        )}
-                                    </div>
-
-                                    {/* Task Queue & Presence */}
-                                    <div className="flex flex-col gap-6">
-                                        <div className="glass p-8 rounded-[40px] flex-1">
-                                            <div className="flex justify-between items-center mb-8">
-                                                <h3 className="font-black text-lg">Smart Queue</h3>
-                                                <button onClick={() => generateReport()} className="text-[10px] font-black uppercase text-blue-500 bg-blue-500/10 px-4 py-2 rounded-xl hover:bg-blue-500/20">Generate Summary Report</button>
-                                            </div>
-                                            <div className="space-y-4">
-                                                {queue.length === 0 ? (
-                                                    <div className="py-12 text-center opacity-20 flex flex-col items-center">
-                                                        <i className="fa-solid fa-list-check text-4xl mb-4"></i>
-                                                        <p className="font-bold italic text-sm">Queue is empty. Stage tasks to track later.</p>
-                                                    </div>
-                                                ) : queue.map(q => (
-                                                    <div key={q.id} className="flex justify-between items-center p-4 rounded-2xl bg-white/5 border border-transparent hover:border-blue-500/20 transition-all">
-                                                        <span className="font-bold">{q.name}</span>
-                                                        <button onClick={() => { startTracking(q.name); setQueue(queue.filter(x => x.id !== q.id)); }} className="w-10 h-10 rounded-xl bg-blue-500/10 text-blue-500"><i className="fa-solid fa-play"></i></button>
-                                                    </div>
-                                                ))}
-                                            </div>
-                                            <button onClick={() => { const n = prompt("Task Name?"); if(n) setQueue([...queue, { id: Date.now(), name: n }]); }} className="w-full mt-6 py-4 border-2 border-dashed border-slate-500/20 rounded-2xl text-xs font-black uppercase tracking-widest opacity-40 hover:opacity-100 hover:border-blue-500/50 transition-all">+ Add Staged Task</button>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        )}
-
-                        {tab === 'tasks' && (
-                            <div className="glass rounded-[48px] overflow-hidden fade-in">
-                                <div className="p-8 border-b border-white/5 flex justify-between items-center">
-                                    <h3 className="font-black text-xl">Shift Audit Ledger</h3>
-                                    <button onClick={() => alert("CSV Exporting...")} className="btn-nexus bg-white/5 text-[10px] uppercase font-black tracking-widest px-4 py-2">Download Data Pack</button>
-                                </div>
-                                <div className="p-4 overflow-x-auto">
-                                    <table className="w-full text-left">
-                                        <thead>
-                                            <tr className="text-[10px] font-black uppercase tracking-widest opacity-40">
-                                                <th className="px-6 py-4">Task Shift</th>
-                                                <th className="px-6 py-4">Project</th>
-                                                <th className="px-6 py-4 text-center">Priority</th>
-                                                <th className="px-6 py-4">Duration</th>
-                                                <th className="px-6 py-4">Verified Date</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody className="text-sm font-bold">
-                                            {tasks.map(t => (
-                                                <tr key={t.id} className="border-t border-white/5 hover:bg-white/5 transition-all">
-                                                    <td className="px-6 py-6">{t.name}</td>
-                                                    <td className="px-6 py-6 opacity-60 font-mono text-xs">{t.proj}</td>
-                                                    <td className="px-6 py-6 text-center">
-                                                        <div className={`mx-auto priority-dot prio-${t.prio}`}></div>
-                                                    </td>
-                                                    <td className="px-6 py-6 text-blue-500">{t.duration}m</td>
-                                                    <td className="px-6 py-6 opacity-40">{t.date}</td>
-                                                </tr>
-                                            ))}
-                                        </tbody>
-                                    </table>
-                                    {tasks.length === 0 && <p className="text-center py-20 opacity-20 font-black uppercase">No shifts logged in the current ledger</p>}
-                                </div>
-                            </div>
-                        )}
-
-                        {tab === 'settings' && (
-                            <div className="max-w-2xl mx-auto space-y-10 fade-in">
-                                <div className="glass p-10 rounded-[40px]">
-                                    <h2 className="text-2xl font-black mb-8">Nexus Themes (10)</h2>
-                                    <div className="theme-grid">
-                                        {[
-                                            {id:'dark',col:'#0b1120',n:'Midnight'},
-                                            {id:'light',col:'#1a73e8',n:'Day'},
-                                            {id:'lavender',col:'#7c3aed',n:'Nebula'},
-                                            {id:'forest',col:'#16a34a',n:'Matrix'},
-                                            {id:'sunset',col:'#f97316',n:'Aura'},
-                                            {id:'ocean',col:'#0ea5e9',n:'DeepSea'},
-                                            {id:'crimson',col:'#ef4444',n:'Fury'},
-                                            {id:'cyberpunk',col:'#d946ef',n:'NeoTok'},
-                                            {id:'midnight',col:'#6366f1',n:'Iris'},
-                                            {id:'gold',col:'#eab308',n:'Crown'}
-                                        ].map(t => (
-                                            <div key={t.id} onClick={() => setTheme(t.id)} className={`theme-dot ${theme === t.id ? 'active' : ''}`} style={{ background: t.col }} title={t.n}>
-                                                {theme === t.id && <i className="fa-solid fa-check text-white text-xs"></i>}
-                                            </div>
-                                        ))}
-                                    </div>
-                                </div>
-                                <div className="glass p-10 rounded-[40px] space-y-6">
-                                    <h2 className="text-2xl font-black">System Preferences</h2>
-                                    <div className="flex justify-between items-center p-5 bg-white/5 rounded-3xl">
-                                        <span className="font-bold">Automated Daily Report</span>
-                                        <div className="w-12 h-6 bg-blue-500 rounded-full flex items-center px-1"><div className="w-4 h-4 bg-white rounded-full ml-auto"></div></div>
-                                    </div>
-                                    <div className="flex justify-between items-center p-5 bg-white/5 rounded-3xl opacity-50">
-                                        <span className="font-bold">Hardware Acceleration</span>
-                                        <div className="w-12 h-6 bg-slate-700 rounded-full flex items-center px-1"><div className="w-4 h-4 bg-white rounded-full"></div></div>
-                                    </div>
-                                </div>
-                            </div>
-                        )}
+                        {tab === 'home' && renderHome()}
+                        {tab === 'tasks' && renderLedger()}
+                        {tab === 'settings' && renderSettings()}
                     </main>
 
-                    {/* Mobile Bottom Navigation */}
-                    <nav className="mobile-nav">
-                        <div onClick={() => setTab('home')} className={`nav-icon-link ${tab === 'home' ? 'active' : ''}`}>
-                            <i className="fa-solid fa-home"></i>
+                    {/* MOBILE NAV */}
+                    <nav className="mobile-nav glass">
+                        <div onClick={() => setTab('home')} className={`nav-link ${tab === 'home' ? 'active' : ''}`}>
+                            <i className="fa-solid fa-house-chimney"></i>
                             <span>Hub</span>
                         </div>
-                        <div onClick={() => setTab('tasks')} className={`nav-icon-link ${tab === 'tasks' ? 'active' : ''}`}>
-                            <i className="fa-solid fa-database"></i>
-                            <span>Audit</span>
+                        <div onClick={() => setTab('tasks')} className={`nav-link ${tab === 'tasks' ? 'active' : ''}`}>
+                            <i className="fa-solid fa-file-invoice"></i>
+                            <span>Ledger</span>
                         </div>
-                        <div className="relative -top-8">
-                            <div onClick={() => {const n=prompt("Task Name?"); if(n) startTracking(n);}} className="w-16 h-16 rounded-full bg-blue-600 shadow-[0_10px_30px_rgba(26,115,232,0.5)] flex items-center justify-center text-white text-2xl border-4 border-[#0b1120]">
-                                <i className="fa-solid fa-bolt"></i>
+                        <div className="relative -top-10">
+                            <div onClick={() => {const n=prompt("Log Task?"); if(n) handleStartSession(n);}} className="w-16 h-16 rounded-full bg-blue-600 shadow-[0_15px_35px_rgba(26,115,232,0.5)] flex items-center justify-center text-white text-3xl border-4 border-[#0b1120] anim-float">
+                                <i className="fa-solid fa-plus"></i>
                             </div>
                         </div>
-                        <div onClick={() => setTab('settings')} className={`nav-icon-link ${tab === 'settings' ? 'active' : ''}`}>
+                        <div onClick={() => setTab('settings')} className={`nav-link ${tab === 'settings' ? 'active' : ''}`}>
                             <i className="fa-solid fa-sliders"></i>
-                            <span>Config</span>
+                            <span>Cfg</span>
                         </div>
-                        <div onClick={() => window.open('https://www.gigahertz.com.ph/')} className="nav-icon-link opacity-40">
+                        <div onClick={() => window.open('https://www.gigahertz.com.ph/')} className="nav-link opacity-40">
                             <i className="fa-solid fa-bag-shopping"></i>
-                            <span>Shop</span>
+                            <span>Store</span>
                         </div>
                     </nav>
 
-                    {/* Idle Modal */}
+                    {/* IDLE MODAL */}
                     {idlePopup && (
-                        <div className="fixed inset-0 z-[10000] flex items-center justify-center p-6 glass-dark backdrop-blur-3xl">
-                            <div className="glass p-12 rounded-[48px] max-w-sm text-center shadow-[0_0_100px_rgba(0,0,0,0.5)]">
-                                <div className="w-20 h-20 bg-amber-500 text-white rounded-full flex items-center justify-center text-3xl mx-auto mb-8 animate-pulse">
+                        <div className="fixed inset-0 z-[10000] flex items-center justify-center p-8 glass-dark backdrop-blur-3xl">
+                            <div className="glass p-14 rounded-[56px] max-w-sm text-center shadow-[0_40px_120px_rgba(0,0,0,0.5)] fade-in">
+                                <div className="w-24 h-24 bg-amber-500 text-white rounded-[32px] flex items-center justify-center text-4xl mx-auto mb-10 shadow-2xl">
                                     <i className="fa-solid fa-mug-hot"></i>
                                 </div>
-                                <h2 className="text-3xl font-black mb-4">Taking a break?</h2>
-                                <p className="opacity-60 font-bold mb-8 leading-relaxed text-sm">Nexus Core detected 5+ minutes of inactivity. Your session has been paused to ensure log accuracy.</p>
-                                <button className="btn-nexus btn-p w-full justify-center" onClick={() => { setIdlePopup(false); setTimer(p => ({...p, paused: false})); setLastMove(Date.now()); }}>
-                                    Resume Session
+                                <h2 className="text-4xl font-black mb-4 tracking-tighter">Break Time?</h2>
+                                <p className="opacity-60 font-bold mb-10 leading-relaxed text-sm">Titan Engine detected inactivity. Your shift timer has been paused to ensure data integrity.</p>
+                                <button className="btn-nexus btn-p w-full justify-center py-5 text-lg" onClick={() => { setIdlePopup(false); setTimer(p => ({...p, paused: false})); setLastMove(Date.now()); }}>
+                                    I'm back, Resume
                                 </button>
                             </div>
                         </div>
@@ -584,8 +690,7 @@
             );
         };
 
-        // --- ROOT ENTRY ---
-        const App = () => {
+        const Root = () => {
             const [user, setUser] = useState(null);
             const [theme, setTheme] = useState('dark');
 
@@ -598,10 +703,23 @@
             );
         };
 
-        const Root = ReactDOM.createRoot(document.getElementById('root'));
-        Root.render(<App />);
+        const exportToCSV = (tasks, user) => {
+            const rows = [['Task Shift', 'Project', 'Date', 'Time', 'Duration (min)', 'Prio']];
+            tasks.forEach(t => rows.push([t.name, 'General', t.date, t.time, t.duration, t.prio]));
+            const csv = "data:text/csv;charset=utf-8," + rows.map(e => e.join(",")).join("\n");
+            const link = document.createElement("a");
+            link.setAttribute("href", encodeURI(csv));
+            link.setAttribute("download", `Titan_Audit_${user.empId}.csv`);
+            document.body.appendChild(link);
+            link.click();
+        };
+
+        ReactDOM.createRoot(document.getElementById('root')).render(<Root />);
     </script>
 </body>
 </html>
 
-<!-- Pedro Basura Man Legacy Signature Core 4.2 -->
+
+<!-- Pedro Basura Man -->
+
+<!-- Pedro Basura Man Legacy Signature Titan 4.3 -->
