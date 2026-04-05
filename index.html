@@ -1154,7 +1154,7 @@ const PomodoroPage=({user,tasks,onTasksChanged,pushNotif})=>{
 
           {/* CONTROLS */}
           <div style={{display:'flex',gap:10,justifyContent:'center',marginTop:24}}>
-            <button onClick={()=>setRunning(p=>!p)} style={{padding:'13px 32px',background:`linear-gradient(135deg,${modeColor},var(--pd))`,color:'#fff',border:'none',borderRadius:var=>14,cursor:'pointer',fontFamily:"'Syne',sans-serif",fontSize:14,fontWeight:800,borderRadius:14,boxShadow:`0 4px 20px rgba(99,102,241,.3)`,transition:'.2s'}}>
+            <button onClick={()=>setRunning(p=>!p)} style={{padding:'13px 32px',background:`linear-gradient(135deg,${modeColor},var(--pd))`,color:'#fff',border:'none',borderRadius:14,cursor:'pointer',fontFamily:"'Syne',sans-serif",fontSize:14,fontWeight:800,boxShadow:`0 4px 20px rgba(99,102,241,.3)`,transition:'.2s'}}>
               {running?'⏸ Pause':'▶ Start'}
             </button>
             <button onClick={()=>{setRunning(false);setTimeLeft(mode==='work'?POMO_WORK:mode==='short'?POMO_SHORT:POMO_LONG);}} style={{padding:'13px 20px',background:'var(--ibg)',border:'1px solid var(--bd)',color:'var(--tx2)',borderRadius:14,cursor:'pointer',fontFamily:"'Syne',sans-serif",fontSize:13,fontWeight:700}}>
