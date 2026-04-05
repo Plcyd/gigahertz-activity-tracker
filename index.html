@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1.0,viewport-fit=cover"/>
-<title>TITAN — Activity Tracker</title>
+<title>Gigahertz TITAN — Activity Tracker</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.development.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.development.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.2/babel.min.js"></script>
@@ -48,6 +48,11 @@
 [data-theme="cyberpunk"]{--p:#f0abfc;--pd:#d946ef;--ps:#e879f9;--pl:rgba(240,171,252,.12);--bg:#02030d;--wh:rgba(10,5,20,.95);--tx:#f5d0fe;--tx2:#c084fc;--tx3:#7c3aed;--bd:rgba(240,171,252,0.1);--sb:rgba(5,2,15,.9);--sb-border:rgba(240,171,252,.06);--sb-tx:#f5d0fe;--ibg:rgba(240,171,252,0.05);--glass:rgba(240,171,252,0.04);--mesh1:#d946ef;--mesh2:#7c3aed;--mesh3:#06b6d4;}
 [data-theme="forest"]{--p:#22c55e;--pd:#16a34a;--ps:#4ade80;--pl:rgba(34,197,94,.12);--bg:#020f07;--wh:rgba(5,20,10,.95);--tx:#dcfce7;--tx2:#86efac;--tx3:#166534;--bd:rgba(34,197,94,0.1);--sb:rgba(2,10,5,.9);--sb-border:rgba(34,197,94,.06);--sb-tx:#dcfce7;--ibg:rgba(34,197,94,0.05);--glass:rgba(34,197,94,0.04);--mesh1:#22c55e;--mesh2:#0d9488;--mesh3:#16a34a;}
 [data-theme="sunset"]{--p:#f97316;--pd:#ea580c;--ps:#fb923c;--pl:rgba(249,115,22,.12);--bg:#0d0500;--wh:rgba(20,8,0,.95);--tx:#fed7aa;--tx2:#fb923c;--tx3:#7c2d12;--bd:rgba(249,115,22,0.1);--sb:rgba(13,5,0,.9);--sb-border:rgba(249,115,22,.06);--sb-tx:#fed7aa;--ibg:rgba(249,115,22,0.05);--glass:rgba(249,115,22,0.04);--mesh1:#f97316;--mesh2:#ef4444;--mesh3:#fbbf24;}
+[data-theme="lavender"]{--p:#7c3aed;--pd:#6d28d9;--ps:#a78bfa;--pl:#ede9fe;--bg:#f5f3ff;--wh:#fff;--tx:#1e1b4b;--tx2:#4c1d95;--tx3:#7c3aed;--bd:#ddd6fe;--sb:rgba(245,243,255,0.92);--sb-border:rgba(124,58,237,0.12);--sb-tx:#1e1b4b;--card:rgba(255,255,255,0.92);--ibg:#fff;--mesh1:#7c3aed;--mesh2:#8b5cf6;--mesh3:#a78bfa;}
+[data-theme="ocean"]{--p:#0ea5e9;--pd:#0284c7;--ps:#38bdf8;--pl:#e0f2fe;--bg:#020d1a;--wh:#031525;--tx:#e0f2fe;--tx2:#7dd3fc;--tx3:#0ea5e9;--bd:#0c2a42;--sb:rgba(2,13,26,0.92);--sb-border:rgba(14,165,233,0.15);--sb-tx:#e0f2fe;--card:rgba(3,21,37,0.92);--ibg:#031525;--mesh1:#0ea5e9;--mesh2:#0284c7;--mesh3:#38bdf8;}
+[data-theme="ruby"]{--p:#ef4444;--pd:#dc2626;--ps:#f87171;--pl:#450a0a;--bg:#1a0505;--wh:#200808;--tx:#fecaca;--tx2:#f87171;--tx3:#ef4444;--bd:#3d0c0c;--sb:rgba(26,5,5,0.92);--sb-border:rgba(239,68,68,0.15);--sb-tx:#fecaca;--card:rgba(32,8,8,0.92);--ibg:#200808;--mesh1:#ef4444;--mesh2:#dc2626;--mesh3:#f87171;}
+[data-theme="midnight"]{--p:#6366f1;--pd:#4338ca;--ps:#818cf8;--pl:#1e1b4b;--bg:#030712;--wh:#080f20;--tx:#f9fafb;--tx2:#c7d2fe;--tx3:#818cf8;--bd:#1e293b;--sb:rgba(3,7,18,0.92);--sb-border:rgba(99,102,241,0.12);--sb-tx:#f9fafb;--card:rgba(8,15,32,0.92);--ibg:#080f20;--mesh1:#6366f1;--mesh2:#4338ca;--mesh3:#818cf8;}
+[data-theme="gold"]{--p:#eab308;--pd:#ca8a04;--ps:#facc15;--pl:#422006;--bg:#1c1917;--wh:#231f1c;--tx:#fef08a;--tx2:#fbbf24;--tx3:#eab308;--bd:#3a3028;--sb:rgba(28,25,23,0.92);--sb-border:rgba(234,179,8,0.12);--sb-tx:#fef08a;--card:rgba(35,31,28,0.92);--ibg:#231f1c;--mesh1:#eab308;--mesh2:#ca8a04;--mesh3:#facc15;}
 
 /* ── GLOBAL ── */
 *{box-sizing:border-box;margin:0;padding:0;}
@@ -459,7 +464,18 @@ const POMO_WORK = 25*60, POMO_SHORT = 5*60, POMO_LONG = 15*60;
 const DEPARTMENTS = ['AUDIT','AMS','ACCOUNTING','HR','MARKETING','PROCESS IMPROVEMENT','SALES AND SERVICE SUPPORT','ONLINE SALES','RMA','PRODUCT DEPARTMENT','FACILITIES','WAREHOUSE','IT'];
 const PRESET = ['Admin Tasks','Client Call','Code Review','Documentation','Meeting','Planning & Strategy','Research','Testing','Training / Learning','Report Writing','Email Management','Team Coordination'];
 const QUOTES = ["Focus on being productive instead of busy.","The key is in not spending time, but in investing it.","Action is the foundational key to all success.","Until we can manage time, we can manage nothing else.","Time is what we want most, but what we use worst.","Small consistent shifts compound into extraordinary results.","Discipline is the bridge between goals and accomplishment."];
-const THEMES = [{id:'dark',n:'Dark',col:'#111827'},{id:'light',n:'Light',col:'#f1f5f9'},{id:'cyberpunk',n:'Cyber',col:'#d946ef'},{id:'forest',n:'Forest',col:'#22c55e'},{id:'sunset',n:'Sunset',col:'#f97316'}];
+const THEMES = [
+  {id:'dark',n:'Dark',col:'#111827'},
+  {id:'light',n:'Light',col:'#f1f5f9'},
+  {id:'cyberpunk',n:'Cyber',col:'#d946ef'},
+  {id:'forest',n:'Forest',col:'#22c55e'},
+  {id:'sunset',n:'Sunset',col:'#f97316'},
+  {id:'lavender',n:'Lavender',col:'#7c3aed'},
+  {id:'ocean',n:'Ocean',col:'#0ea5e9'},
+  {id:'ruby',n:'Ruby',col:'#ef4444'},
+  {id:'midnight',n:'Midnight',col:'#6366f1'},
+  {id:'gold',n:'Gold',col:'#eab308'}
+];
 const ACHIEVEMENTS = [
   {id:1,icon:'🏆',title:'First Shift',desc:'Log your first task',req:t=>t.length>=1},
   {id:2,icon:'⚡',title:'Speed Titan',desc:'Log 5 tasks',req:t=>t.length>=5},
