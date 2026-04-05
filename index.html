@@ -1,698 +1,1123 @@
 <!DOCTYPE html>
-<html lang="en" data-theme="dark">
+<html lang="en" data-theme="light">
 <head>
-    <meta charset="UTF-8"/>
-    <meta name="viewport" content="width=device-width,initial-scale=1.0,viewport-fit=cover"/>
-    <title>TITAN — Ultimate Activity Engine v7</title>
-    
-    <!-- GIGAHERTZ TITAN RESOURCE MANIFEST -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.development.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.development.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.2/babel.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&family=JetBrains+Mono:wght@300;400;700&display=swap" rel="stylesheet"/>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0,viewport-fit=cover"/>
+<title>Gigahertz — Titan Time Tracker v5</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.development.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.development.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.2/babel.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<style>
+/* ══ THEME VARIABLES ══ */
+:root{
+  --p:#1a3af5;--pd:#1228d4;--pl:#eef1ff;
+  --sb:rgba(255,255,255,0.88);--sbh:rgba(26,58,245,0.08);--sb-border:rgba(0,0,90,0.06);
+  --sb-tx:#0d1533;--sb-tx2:#4a5270;--sb-tx3:#8890aa;
+  --bg:#e8ecf8;--wh:#fff;--card:rgba(255,255,255,0.92);
+  --tx:#0d1533;--tx2:#4a5270;--tx3:#8890aa;
+  --bd:#dde2f0;--danger:#ef4444;--dl:#fff0f0;--ok:#16a34a;--warn:#d97706;
+  --sh:0 4px 24px rgba(26,58,245,.06);--shl:0 12px 48px rgba(26,58,245,.12);
+  --r:16px;--rsm:10px;--rlg:20px;--th:#f2f5ff;--ibg:#fff;
+  --glass-bg:rgba(255,255,255,0.72);--glass-border:rgba(255,255,255,0.5);
+}
+[data-theme="dark"]{
+  --p:#4d6fff;--pd:#3d5de8;--pl:#1a2348;
+  --sb:rgba(10,15,30,0.88);--sbh:rgba(255,255,255,0.06);--sb-border:rgba(255,255,255,0.05);
+  --sb-tx:#dde4f5;--sb-tx2:#7d8eaa;--sb-tx3:#485268;
+  --bg:#090e1e;--wh:#111827;--card:rgba(19,29,48,0.92);
+  --tx:#dde4f5;--tx2:#7d8eaa;--tx3:#485268;
+  --bd:#1e2a44;--danger:#f87171;--dl:#2d1117;--ok:#4ade80;--warn:#fbbf24;
+  --sh:0 4px 24px rgba(0,0,0,.4);--shl:0 12px 48px rgba(0,0,0,.6);
+  --th:#0e1526;--ibg:#0e1526;
+  --glass-bg:rgba(15,23,42,0.72);--glass-border:rgba(255,255,255,0.09);
+}
+/* ── ADDITIONAL THEMES ── */
+[data-theme="lavender"]{--p:#7c3aed;--pd:#6d28d9;--pl:#ede9fe;--bg:#f5f3ff;--wh:#fff;--tx:#1e1b4b;--tx2:#4c1d95;--tx3:#7c3aed;--bd:#ddd6fe;--sb:rgba(245,243,255,0.92);--sb-border:rgba(124,58,237,0.12);--sb-tx:#1e1b4b;--card:rgba(255,255,255,0.92);--ibg:#fff;--th:#f5f3ff;}
+[data-theme="forest"]{--p:#16a34a;--pd:#15803d;--pl:#dcfce7;--bg:#0a1f0f;--wh:#0f2a16;--tx:#dcfce7;--tx2:#86efac;--tx3:#4ade80;--bd:#1a3d22;--sb:rgba(10,31,15,0.92);--sb-border:rgba(22,163,74,0.15);--sb-tx:#dcfce7;--card:rgba(15,42,22,0.92);--ibg:#0f2a16;--th:#0a1f0f;}
+[data-theme="sunset"]{--p:#f97316;--pd:#ea580c;--pl:#fff7ed;--bg:#1a0a00;--wh:#1f0e00;--tx:#fed7aa;--tx2:#fb923c;--tx3:#f97316;--bd:#3d1a00;--sb:rgba(26,10,0,0.92);--sb-border:rgba(249,115,22,0.15);--sb-tx:#fed7aa;--card:rgba(31,14,0,0.92);--ibg:#1f0e00;--th:#1a0a00;}
+[data-theme="ocean"]{--p:#0ea5e9;--pd:#0284c7;--pl:#e0f2fe;--bg:#020d1a;--wh:#031525;--tx:#e0f2fe;--tx2:#7dd3fc;--tx3:#0ea5e9;--bd:#0c2a42;--sb:rgba(2,13,26,0.92);--sb-border:rgba(14,165,233,0.15);--sb-tx:#e0f2fe;--card:rgba(3,21,37,0.92);--ibg:#031525;--th:#020d1a;}
+[data-theme="ruby"]{--p:#ef4444;--pd:#dc2626;--pl:#450a0a;--bg:#1a0505;--wh:#200808;--tx:#fecaca;--tx2:#f87171;--tx3:#ef4444;--bd:#3d0c0c;--sb:rgba(26,5,5,0.92);--sb-border:rgba(239,68,68,0.15);--sb-tx:#fecaca;--card:rgba(32,8,8,0.92);--ibg:#200808;--th:#1a0505;}
+[data-theme="cyberpunk"]{--p:#f0abfc;--pd:#d946ef;--pl:#4a044e;--bg:#020617;--wh:#0a0a1a;--tx:#f5d0fe;--tx2:#c084fc;--tx3:#a855f7;--bd:#1a0a2e;--sb:rgba(2,6,23,0.92);--sb-border:rgba(240,171,252,0.1);--sb-tx:#f5d0fe;--card:rgba(10,10,26,0.92);--ibg:#0a0a1a;--th:#020617;}
+[data-theme="midnight"]{--p:#6366f1;--pd:#4338ca;--pl:#1e1b4b;--bg:#030712;--wh:#080f20;--tx:#f9fafb;--tx2:#c7d2fe;--tx3:#818cf8;--bd:#1e293b;--sb:rgba(3,7,18,0.92);--sb-border:rgba(99,102,241,0.12);--sb-tx:#f9fafb;--card:rgba(8,15,32,0.92);--ibg:#080f20;--th:#030712;}
+[data-theme="gold"]{--p:#eab308;--pd:#ca8a04;--pl:#422006;--bg:#1c1917;--wh:#231f1c;--tx:#fef08a;--tx2:#fbbf24;--tx3:#eab308;--bd:#3a3028;--sb:rgba(28,25,23,0.92);--sb-border:rgba(234,179,8,0.12);--sb-tx:#fef08a;--card:rgba(35,31,28,0.92);--ibg:#231f1c;--th:#1c1917;}
 
-    <style>
-        /* ==========================================================================
-           TITAN ENGINE CSS CORE: THEME & COLOR MATRIX
-           Ensuring ultra-legibility in all operational modes.
-           ========================================================================== */
-        :root {
-            /* Branding: Gigahertz Royal Blue */
-            --p: #1a3af5; 
-            --pd: #1228d4; 
-            --pl: #eef1ff;
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(--tx);min-height:100vh;transition:background .3s,color .3s;}
+input,select,button,textarea{font-family:inherit;}
+::-webkit-scrollbar{width:6px;height:6px;}
+::-webkit-scrollbar-track{background:transparent;}
+::-webkit-scrollbar-thumb{background:var(--bd);border-radius:99px;}
+*:focus-visible{outline:2px solid var(--p);outline-offset:2px;border-radius:4px;}
 
-            /* Base Elements */
-            --bg: #f1f4fc;
-            --wh: #ffffff;
-            --card: rgba(255, 255, 255, 0.94);
-            --bd: #dce1f0;
+/* ══ AUTH ══ */
+.auth-wrap{min-height:100vh;background:linear-gradient(145deg,#b8c8f8 0%,#d0dcfb 35%,#e8edfc 60%,#c4d0f8 100%);display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden;}
+[data-theme="dark"] .auth-wrap{background:linear-gradient(145deg,#050a18 0%,#080e22 35%,#0a1228 60%,#060b1c 100%);}
+.auth-wrap::before{content:'';position:absolute;inset:0;background:radial-gradient(circle at 20% 50%,rgba(26,58,245,.15) 0%,transparent 55%),radial-gradient(circle at 80% 20%,rgba(77,111,255,.1) 0%,transparent 50%);}
+.auth-card{background:var(--wh);border-radius:var(--rlg);padding:42px 38px;width:460px;box-shadow:var(--shl);position:relative;z-index:1;border:1px solid var(--bd);max-height:92vh;overflow-y:auto;}
+.auth-logo{display:flex;flex-direction:column;align-items:center;gap:8px;margin-bottom:22px;}
+.auth-logo-name{font-size:11px;font-weight:700;letter-spacing:.14em;color:var(--p);text-transform:uppercase;}
+.auth-title{font-size:22px;font-weight:800;color:var(--tx);text-align:center;margin-bottom:4px;}
+.auth-sub{font-size:13px;color:var(--tx2);text-align:center;margin-bottom:22px;}
+.form-group{margin-bottom:13px;position:relative;}
+.form-label{font-size:11px;font-weight:700;color:var(--tx2);margin-bottom:5px;display:block;letter-spacing:.05em;text-transform:uppercase;}
+.form-input{width:100%;padding:11px 13px;border:1.5px solid var(--bd);border-radius:var(--rsm);font-size:14px;color:var(--tx);background:var(--ibg);outline:none;transition:all .2s;}
+.form-input:focus{border-color:var(--p);box-shadow:0 0 0 3px rgba(26,58,245,.12);}
+.form-input::placeholder{color:var(--tx3);}
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:11px;}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:7px;padding:11px 20px;border-radius:var(--rsm);border:none;cursor:pointer;font-size:14px;font-weight:700;transition:all .2s;}
+.btn-p{background:var(--p);color:#fff;width:100%;box-shadow:0 4px 14px rgba(26,58,245,.2);}
+.btn-p:hover{background:var(--pd);transform:translateY(-1px);}
+.btn-p:disabled{opacity:.6;cursor:not-allowed;transform:none;}
+.btn-ghost{background:transparent;color:var(--tx2);border:1.5px solid var(--bd);}
+.btn-ghost:hover{background:var(--bg);color:var(--tx);}
+.auth-link{font-size:13px;color:var(--tx2);text-align:center;margin-top:14px;}
+.auth-link a{color:var(--p);font-weight:700;cursor:pointer;}
+.err-box{background:var(--dl);color:var(--danger);border:1px solid rgba(239,68,68,.3);padding:10px 13px;border-radius:var(--rsm);font-size:13px;margin-bottom:13px;}
+.pw-wrapper{position:relative;display:flex;width:100%;}
+.pw-toggle-btn{position:absolute;right:12px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;color:var(--tx3);display:flex;padding:4px;border-radius:4px;transition:.2s;}
+.pw-toggle-btn:hover{background:var(--bg);color:var(--tx);}
+.pwd-strength-bar{height:4px;background:var(--bd);border-radius:99px;margin-top:8px;overflow:hidden;}
+.pwd-strength-fill{height:100%;transition:width .3s,background-color .3s;border-radius:99px;}
+.pwd-strength-text{font-size:11px;font-weight:700;margin-top:4px;text-align:right;letter-spacing:.05em;text-transform:uppercase;}
+.terms-box{background:var(--bg);border:1px solid var(--bd);border-radius:var(--rsm);padding:12px 16px;margin-bottom:14px;max-height:120px;overflow-y:auto;font-size:11px;color:var(--tx2);line-height:1.5;}
+.terms-box h4{font-size:11px;text-transform:uppercase;color:var(--tx);letter-spacing:.05em;margin-bottom:6px;}
+.terms-box p{margin-bottom:8px;}
+/* CAMERA */
+.face-section{margin-bottom:20px;display:flex;flex-direction:column;align-items:center;}
+.cam-vp{position:relative;width:100%;height:250px;background:var(--ibg);border-radius:var(--rsm);overflow:hidden;border:2px solid var(--bd);}
+.cam-idle{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;color:var(--tx3);font-size:13px;font-weight:600;gap:10px;}
+.cam-status{font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center;gap:8px;margin-top:12px;}
+.cam-dot{width:10px;height:10px;border-radius:50%;background:var(--ok);}
+.cam-dot.wait{background:var(--warn);animation:pulse 1s infinite;}
+.cam-dot.off{background:var(--tx3);}
+.cam-btns{display:flex;gap:12px;justify-content:center;margin-top:14px;width:100%;}
+.cam-btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:10px 20px;border-radius:99px;font-size:13px;font-weight:700;cursor:pointer;border:none;transition:.2s;flex:1;}
+.cam-btn-capture{background:var(--p);color:#fff;}
+.cam-btn-capture:hover{background:var(--pd);transform:translateY(-1px);}
+.cam-btn-retry,.cam-btn-retake{background:var(--bg);color:var(--tx2);border:1.5px solid var(--bd);}
+.cam-btn-retry:hover,.cam-btn-retake:hover{background:var(--bd);color:var(--tx);}
 
-            /* Adaptive Text Stack */
-            --tx: #0a0e20; 
-            --tx2: #3f4664; 
-            --tx3: #7b85a3;
+/* ══ LAYOUT ══ */
+.layout{display:flex;min-height:100vh;}
+.sidebar{width:272px;min-height:100vh;background:var(--sb);display:flex;flex-direction:column;position:fixed;top:0;left:0;z-index:200;border-right:1.5px solid var(--sb-border);backdrop-filter:blur(22px);-webkit-backdrop-filter:blur(22px);transition:all .3s;}
+.main{margin-left:272px;flex:1;min-height:100vh;}
+.page{padding:30px 36px;max-width:1140px;margin:0 auto;}
+.page-hdr{margin-bottom:24px;display:flex;justify-content:space-between;align-items:flex-end;}
+.page-title{font-size:26px;font-weight:800;color:var(--tx);letter-spacing:-.5px;display:flex;align-items:center;gap:10px;}
+.page-sub{font-size:13px;color:var(--tx2);margin-top:4px;}
+.page-date{font-size:12.5px;margin-top:4px;display:flex;align-items:center;gap:5px;font-weight:600;background:var(--pl);color:var(--p);padding:4px 12px;border-radius:99px;}
 
-            /* States */
-            --danger: #ef4444; 
-            --dl: #fff0f0; 
-            --ok: #16a34a; 
-            --warn: #d97706;
+/* ══ SIDEBAR ANATOMY ══ */
+.sb-logo{padding:20px 16px;display:flex;align-items:center;gap:12px;background:linear-gradient(135deg,rgba(26,58,245,.06) 0%,transparent 100%);}
+.sb-logo-name{font-size:12.5px;font-weight:900;letter-spacing:.16em;color:var(--sb-tx);text-transform:uppercase;}
+.sb-nav{flex:1;padding:20px 14px;display:flex;flex-direction:column;gap:3px;overflow-y:auto;}
+.nav-item{display:flex;align-items:center;gap:12px;padding:12px 14px;border-radius:10px;cursor:pointer;color:var(--sb-tx2);font-size:13px;font-weight:600;transition:all .25s cubic-bezier(.4,0,.2,1);border:1.5px solid transparent;position:relative;overflow:hidden;}
+.nav-item::before{content:'';position:absolute;left:0;top:0;height:100%;width:3px;background:var(--p);transform:translateX(-3px);transition:.25s;border-radius:0 2px 2px 0;}
+.nav-item:hover{background:var(--sbh);color:var(--sb-tx);transform:translateX(2px);}
+.nav-item.active{background:linear-gradient(135deg,rgba(26,58,245,.15) 0%,rgba(26,58,245,.05) 100%);color:var(--p);border-color:rgba(26,58,245,.2);font-weight:700;}
+.nav-item.active::before{transform:translateX(0);}
+.nav-item svg{flex-shrink:0;width:18px;height:18px;stroke-width:2.2;}
+.sb-bottom{padding:16px 14px;border-top:1.5px solid var(--sb-border);display:flex;flex-direction:column;gap:10px;}
+.session-wrap{padding:13px;background:linear-gradient(135deg,rgba(26,58,245,.12) 0%,rgba(77,111,255,.06) 100%);border:1px solid rgba(26,58,245,.16);border-radius:10px;display:flex;align-items:flex-start;gap:10px;cursor:pointer;transition:.25s;}
+.session-wrap:hover{background:linear-gradient(135deg,rgba(26,58,245,.18) 0%,rgba(77,111,255,.1) 100%);transform:translateY(-1px);}
+.session-wrap svg{width:16px;height:16px;color:var(--p);flex-shrink:0;margin-top:1px;}
+.session-content{flex:1;}
+.session-lbl{font-size:8.5px;font-weight:800;color:var(--sb-tx3);letter-spacing:.12em;text-transform:uppercase;margin-bottom:3px;display:block;}
+.session-time{font-size:22px;font-weight:900;color:var(--p);font-variant-numeric:tabular-nums;letter-spacing:-1px;line-height:1;font-family:'JetBrains Mono',monospace;}
+.session-since{font-size:9px;color:var(--sb-tx3);margin-top:2px;font-weight:500;}
+.sb-user{padding:11px;background:rgba(26,58,245,.05);border:1.5px solid rgba(26,58,245,.12);border-radius:10px;display:flex;align-items:center;gap:9px;cursor:pointer;transition:.25s;}
+.sb-user:hover{background:rgba(26,58,245,.1);}
+.user-avatar{width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,var(--p) 0%,#4d6fff 100%);display:flex;align-items:center;justify-content:center;color:#fff;font-size:13px;font-weight:800;flex-shrink:0;box-shadow:0 3px 12px rgba(26,58,245,.25);}
+.user-info{flex:1;min-width:0;}
+.user-name{display:block;color:var(--sb-tx);font-size:12px;font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.user-details{display:flex;flex-wrap:wrap;gap:3px;margin-top:3px;}
+.user-detail-tag{font-size:8px;font-weight:700;padding:2px 7px;border-radius:4px;background:rgba(26,58,245,.15);color:var(--p);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:120px;}
+.icon-btn{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:9px;cursor:pointer;color:var(--sb-tx2);font-size:12.5px;font-weight:600;background:transparent;border:1px solid transparent;width:100%;transition:.25s;}
+.icon-btn:hover{background:var(--sbh);color:var(--sb-tx);border-color:rgba(26,58,245,.1);}
+.icon-btn svg{flex-shrink:0;width:16px;height:16px;}
+.logout-btn{display:flex;align-items:center;justify-content:center;border-radius:50%;cursor:pointer;color:#fff;background:var(--danger);border:2px solid var(--danger);width:42px;height:42px;flex-shrink:0;transition:.25s;margin:0 auto;}
+.logout-btn:hover{transform:scale(1.1);box-shadow:0 4px 12px rgba(239,68,68,.3);}
+.notif-panel{position:absolute;bottom:calc(100% + 8px);left:50%;transform:translateX(-50%);width:272px;background:var(--card);border:1px solid var(--bd);border-radius:10px;box-shadow:0 12px 48px rgba(0,0,0,.15);padding:12px;display:none;max-height:280px;overflow-y:auto;z-index:1001;}
+.icon-btn:focus .notif-panel,.icon-btn:focus-within .notif-panel{display:block;}
+.notif-item{font-size:11px;padding:9px;border-bottom:1px solid var(--bd);color:var(--tx);line-height:1.5;}
+.notif-item:last-child{border-bottom:none;}
+.notif-time{font-size:9px;color:var(--tx3);margin-top:3px;font-weight:500;}
+.notif-badge{position:absolute;top:8px;right:8px;background:var(--danger);color:#fff;font-size:9px;font-weight:800;border-radius:50%;width:18px;height:18px;display:flex;align-items:center;justify-content:center;}
 
-            /* Shadows & Glass */
-            --sh: 0 4px 20px rgba(26, 58, 245, 0.08);
-            --shl: 0 10px 40px rgba(26, 58, 245, 0.12);
-            --glass-bg: rgba(255, 255, 255, 0.75);
-            --glass-border: rgba(255, 255, 255, 0.5);
+/* ══ STAT GRID & CARDS ══ */
+.stat-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:24px;}
+.stat-card,.track-section,.recent-section,.chart-card,.table-wrap{background:var(--card);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border-radius:var(--rlg);box-shadow:var(--sh);padding:22px 24px;border:1px solid var(--bd);transition:transform .2s,box-shadow .2s;}
+.stat-card:hover{transform:translateY(-2px);box-shadow:var(--shl);}
+.stat-icon{width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;margin-bottom:12px;}
+.stat-lbl{font-size:11.5px;color:var(--tx2);font-weight:700;margin-bottom:4px;text-transform:uppercase;letter-spacing:.06em;}
+.stat-val{font-size:28px;font-weight:800;color:var(--p);line-height:1;letter-spacing:-1px;}
+.stat-sub{font-size:11.5px;color:var(--tx3);margin-top:6px;font-weight:500;}
+.stat-clock{font-size:28px;font-weight:800;color:var(--p);font-variant-numeric:tabular-nums;letter-spacing:-.5px;line-height:1;font-family:'JetBrains Mono',monospace;}
+.stat-live{display:flex;align-items:center;gap:6px;margin-top:6px;}
+.live-dot{width:8px;height:8px;border-radius:50%;background:var(--ok);animation:pulse 1.4s ease infinite;}
 
-            /* Radii */
-            --r: 20px;
-            --r-sm: 10px;
-        }
+/* ══ TRACKER ══ */
+.track-title{font-size:15px;font-weight:800;color:var(--tx);margin-bottom:4px;}
+.track-sub{font-size:12.5px;color:var(--tx2);margin-bottom:16px;}
+.track-row{display:flex;gap:10px;align-items:center;}
+.track-select{flex:1;padding:11px 14px;border:1.5px solid var(--bd);border-radius:var(--rsm);font-size:13.5px;color:var(--tx);background:var(--ibg);outline:none;cursor:pointer;font-weight:500;}
+.track-select:focus{border-color:var(--p);box-shadow:0 0 0 3px rgba(26,58,245,.12);}
+.start-btn{padding:11px 20px;background:var(--p);color:#fff;border:none;border-radius:var(--rsm);font-size:13.5px;font-weight:700;cursor:pointer;white-space:nowrap;display:flex;align-items:center;gap:6px;transition:.2s;box-shadow:0 4px 14px rgba(26,58,245,.2);}
+.start-btn:hover{background:var(--pd);transform:translateY(-1px);}
+.custom-row{display:flex;gap:10px;margin-top:12px;align-items:center;}
+.custom-input{flex:1;padding:10px 14px;border:1.5px solid var(--bd);border-radius:var(--rsm);font-size:13.5px;color:var(--tx);background:var(--ibg);outline:none;transition:.2s;font-weight:500;}
+.custom-input:focus{border-color:var(--p);}
+.custom-input::placeholder{color:var(--tx3);}
+.add-btn{padding:10px 18px;background:transparent;border:1.5px solid var(--p);color:var(--p);border-radius:var(--rsm);font-size:13.5px;font-weight:700;cursor:pointer;transition:.2s;white-space:nowrap;}
+.add-btn:hover{background:var(--pl);}
 
-        [data-theme="dark"] {
-            /* Primary Dark */
-            --p: #4d6fff; 
-            --pd: #3a57e0; 
-            --pl: #111a3b;
+/* ══ ACTIVE TIMER ══ */
+.timer-active{background:linear-gradient(135deg,#08122e 0%,#050d22 100%);border-radius:var(--rlg);padding:24px 26px;position:relative;overflow:hidden;border:1px solid rgba(26,58,245,.3);box-shadow:0 10px 40px rgba(8,18,46,.4);}
+.timer-active::before{content:'';position:absolute;inset:0;background:radial-gradient(circle at 75% 25%,rgba(26,58,245,.4) 0%,transparent 60%);pointer-events:none;}
+.timer-lbl{font-size:11px;font-weight:800;color:rgba(255,255,255,.5);text-transform:uppercase;letter-spacing:.15em;margin-bottom:8px;}
+.timer-task{font-size:19px;font-weight:800;color:#fff;margin-bottom:16px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.timer-digits-row{display:flex;align-items:flex-end;gap:4px;margin-bottom:6px;}
+.timer-digits{font-size:52px;font-weight:800;color:#fff;line-height:1;font-variant-numeric:tabular-nums;letter-spacing:-2px;font-family:'JetBrains Mono',monospace;}
+.timer-digits.paused{color:rgba(255,255,255,.4);}
+.timer-unit{font-size:10px;font-weight:700;color:rgba(255,255,255,.4);margin-bottom:8px;letter-spacing:.08em;}
+.timer-sep{font-size:42px;font-weight:300;color:rgba(255,255,255,.3);line-height:1;margin-bottom:4px;}
+.timer-meta{display:flex;align-items:center;gap:8px;margin-bottom:14px;}
+.timer-dot{width:8px;height:8px;background:#4ade80;border-radius:50%;flex-shrink:0;}
+.timer-dot.active{animation:pulse 1.3s ease infinite;}
+.timer-dot.paused{background:#fbbf24;}
+.timer-meta-txt{font-size:11.5px;font-weight:700;color:rgba(255,255,255,.5);}
+.timer-bar-wrap{width:100%;height:4px;background:rgba(255,255,255,.1);border-radius:99px;margin-bottom:14px;overflow:hidden;}
+.timer-bar{height:100%;background:linear-gradient(90deg,#1a3af5,#4ade80);border-radius:99px;transition:width 1s linear;}
+.timer-bar.paused{background:#fbbf24;}
+.timer-actions{display:flex;gap:10px;}
+.pause-btn{flex:1;padding:11px;background:rgba(255,255,255,.1);color:#fff;border:1px solid rgba(255,255,255,.2);border-radius:var(--rsm);font-size:13.5px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;transition:.2s;}
+.pause-btn:hover{background:rgba(255,255,255,.18);}
+.stop-btn{flex:2;padding:11px;background:var(--danger);color:#fff;border:none;border-radius:var(--rsm);font-size:13.5px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;transition:.2s;box-shadow:0 4px 14px rgba(239,68,68,.3);}
+.stop-btn:hover{filter:brightness(.9);transform:translateY(-1px);}
+.timer-hint{font-size:10px;color:rgba(255,255,255,.3);text-align:center;margin-top:8px;font-weight:500;}
 
-            /* Background */
-            --bg: #030612;
-            --wh: #0d1226;
-            --card: rgba(18, 23, 44, 0.94);
-            --bd: #222d55;
+/* ══ QUEUE ══ */
+.queue-item{display:flex;align-items:center;justify-content:space-between;padding:11px 14px;background:var(--pl);border-radius:var(--rsm);border:1px solid rgba(26,58,245,.15);margin-bottom:8px;}
+.queue-task-name{font-size:13px;font-weight:700;color:var(--p);}
+.queue-start-btn{padding:6px 14px;background:var(--p);color:#fff;border:none;border-radius:6px;font-size:12px;font-weight:700;cursor:pointer;transition:.2s;}
+.queue-start-btn:hover{background:var(--pd);}
+.queue-start-btn:disabled{opacity:.4;cursor:not-allowed;}
+.queue-del-btn{background:none;border:none;cursor:pointer;color:var(--tx3);padding:4px 6px;margin-left:4px;border-radius:4px;font-size:13px;}
+.queue-del-btn:hover{color:var(--danger);background:var(--dl);}
 
-            /* Fixed Dark Text Issues */
-            --tx: #f0f3ff; 
-            --tx2: #9db2e2; 
-            --tx3: #6376ab;
+/* ══ ROBLOX ROW ══ */
+.roblox-row{display:flex;overflow-x:auto;gap:16px;padding:8px 4px 14px;scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch;}
+.roblox-row::-webkit-scrollbar{height:4px;}
+.roblox-row::-webkit-scrollbar-thumb{background:var(--bd);border-radius:99px;}
+.roblox-card{min-width:180px;width:180px;border-radius:16px;background:var(--card);border:1.5px solid var(--bd);transition:.28s cubic-bezier(.4,0,.2,1);cursor:pointer;overflow:hidden;display:flex;flex-direction:column;box-shadow:var(--sh);scroll-snap-align:start;}
+.roblox-card:hover{transform:translateY(-7px) scale(1.03);border-color:var(--p);box-shadow:var(--shl);}
+.roblox-card-img{height:110px;background:var(--pl);display:flex;align-items:center;justify-content:center;font-size:30px;color:var(--p);position:relative;}
+.roblox-card-body{padding:11px 13px;}
+.roblox-card-title{font-weight:800;font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:var(--tx);}
+.roblox-card-sub{font-size:10px;color:var(--tx3);font-weight:700;margin-top:3px;text-transform:uppercase;letter-spacing:.04em;}
 
-            /* Alerts */
-            --danger: #ff5f5f;
-            --dl: #1f0b0e;
-            --ok: #34d399;
-            --warn: #fbbf24;
+/* ══ RECENT ══ */
+.recent-section{padding:0;overflow:hidden;}
+.sec-hdr{padding:16px 22px;border-bottom:1px solid var(--bd);display:flex;align-items:center;justify-content:space-between;background:rgba(255,255,255,.3);border-radius:var(--rlg) var(--rlg) 0 0;}
+.sec-title{font-size:14px;font-weight:800;color:var(--tx);}
+.search-recent{padding:6px 12px;border-radius:100px;border:1px solid var(--bd);background:var(--ibg);font-size:11.5px;outline:none;color:var(--tx);min-width:180px;}
+.search-recent:focus{border-color:var(--p);}
+.recent-list{max-height:350px;overflow-y:auto;}
+.task-row{display:flex;align-items:center;justify-content:space-between;padding:13px 22px;border-bottom:1px solid var(--bd);transition:.2s;}
+.task-row:last-child{border-bottom:none;}
+.task-row:hover{background:var(--pl);}
+.task-cat-dot{width:10px;height:10px;border-radius:50%;margin-right:12px;flex-shrink:0;}
+.task-info{display:flex;align-items:center;flex:1;}
+.task-name{font-size:13.5px;font-weight:700;color:var(--tx);margin-bottom:2px;}
+.task-time{font-size:11.5px;color:var(--tx2);font-weight:500;}
+.dur-badge{background:var(--pl);color:var(--p);padding:5px 12px;border-radius:99px;font-size:11.5px;font-weight:800;white-space:nowrap;}
 
-            /* Glass */
-            --glass-bg: rgba(10, 15, 36, 0.78);
-            --glass-border: rgba(255, 255, 255, 0.06);
-            --sh: 0 10px 30px rgba(0, 0, 0, 0.5);
-            --shl: 0 20px 50px rgba(0, 0, 0, 0.7);
-        }
+/* ══ TASK TABLE ══ */
+.tm-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;flex-wrap:wrap;gap:10px;}
+.total-badge{display:inline-flex;align-items:center;gap:6px;background:var(--pl);color:var(--p);padding:8px 16px;border-radius:99px;font-size:13.5px;font-weight:800;box-shadow:var(--sh);}
+.date-filter{display:flex;align-items:center;gap:8px;background:var(--card);padding:8px 14px;border-radius:var(--rsm);box-shadow:var(--sh);border:1px solid var(--bd);}
+.date-filter input{border:none;outline:none;font-size:13.5px;color:var(--tx);background:transparent;font-family:inherit;font-weight:700;}
+.table-wrap{padding:0;max-height:calc(100vh - 260px);overflow-y:auto;}
+.gh-table{width:100%;border-collapse:collapse;}
+.gh-table th{position:sticky;top:0;z-index:10;background:var(--bg);padding:13px 20px;text-align:left;font-size:11px;font-weight:800;color:var(--tx2);text-transform:uppercase;letter-spacing:.08em;border-bottom:1px solid var(--bd);}
+.gh-table td{padding:13px 20px;font-size:13.5px;color:var(--tx);border-bottom:1px solid var(--bd);font-weight:500;}
+.gh-table tr:last-child td{border-bottom:none;}
+.gh-table tr:hover td{background:var(--pl);}
 
-        [data-theme="cyberpunk"] {
-            --p: #ff00ff; --pd: #b900b9; --bg: #010101; --tx: #00ffff; --bd: #303030;
-        }
+/* ══ ANALYTICS ══ */
+.analytics-grid{display:grid;grid-template-columns:2fr 1fr;gap:16px;margin-bottom:22px;}
+.chart-card{padding:22px;}
+.chart-title{font-size:14px;font-weight:800;color:var(--tx);margin-bottom:4px;}
+.chart-sub{font-size:12px;color:var(--tx2);margin-bottom:18px;font-weight:500;}
+.insight-box{background:var(--pl);border-left:4px solid var(--p);padding:14px 18px;border-radius:0 var(--rsm) var(--rsm) 0;margin-bottom:20px;}
+.insight-title{font-weight:800;color:var(--tx);margin-bottom:10px;display:flex;align-items:center;gap:8px;font-size:14px;}
+.insight-item{font-size:13px;color:var(--tx2);margin-bottom:7px;line-height:1.5;display:flex;gap:10px;align-items:flex-start;}
+.goal-hdr{display:flex;justify-content:space-between;font-size:12px;font-weight:700;color:var(--tx);margin-bottom:8px;}
+.goal-bar-bg{width:100%;height:8px;background:var(--bd);border-radius:99px;overflow:hidden;}
+.goal-bar-fill{height:100%;background:linear-gradient(90deg,var(--p),#9333ea);border-radius:99px;transition:width 1s;}
+.heatmap-wrap{display:flex;gap:5px;overflow-x:auto;padding:8px 0;}
+.heatmap-col{display:flex;flex-direction:column;gap:5px;}
+.heatmap-day{font-size:9px;font-weight:700;color:var(--tx3);text-align:center;margin-bottom:3px;text-transform:uppercase;}
+.heatmap-cell{width:17px;height:17px;border-radius:3px;background:var(--bg);transition:.15s;cursor:default;}
+.heatmap-cell:hover{transform:scale(1.25);z-index:10;}
+.heatmap-cell[data-level="1"]{background:rgba(26,58,245,.22);}
+.heatmap-cell[data-level="2"]{background:rgba(26,58,245,.48);}
+.heatmap-cell[data-level="3"]{background:rgba(26,58,245,.74);}
+.heatmap-cell[data-level="4"]{background:var(--p);}
+.heatmap-legend{display:flex;gap:5px;align-items:center;font-size:10px;color:var(--tx2);margin-top:10px;justify-content:flex-end;font-weight:600;}
+.legend-box{width:12px;height:12px;border-radius:2px;}
+.benchmark-row{display:flex;justify-content:space-between;padding:11px 0;border-bottom:1px solid var(--bd);align-items:center;}
+.benchmark-row:last-child{border-bottom:none;}
+.bm-rank{font-size:14px;font-weight:800;color:var(--tx3);width:24px;}
+.bm-name{font-size:13px;font-weight:700;color:var(--tx);flex:1;}
+.bm-score{font-size:13px;font-weight:800;color:var(--p);background:var(--pl);padding:4px 10px;border-radius:99px;}
 
-        [data-theme="forest"] {
-            --p: #22c55e; --pd: #166534; --bg: #061109; --tx: #dcfce7; --bd: #133a1a;
-        }
+/* ══ PROFILE ══ */
+.profile-grid{display:grid;grid-template-columns:1fr 2fr;gap:24px;align-items:start;}
+.avatar-wrapper{position:relative;width:130px;height:130px;margin:0 auto 18px;}
+.avatar-img{width:100%;height:100%;object-fit:cover;border-radius:50%;border:4px solid var(--p);background:var(--bg);box-shadow:var(--sh);}
+.avatar-btn{position:absolute;bottom:0;right:0;background:var(--p);color:#fff;border:2px solid var(--wh);border-radius:50%;width:36px;height:36px;cursor:pointer;display:flex;align-items:center;justify-content:center;box-shadow:var(--shl);transition:.2s;}
+.avatar-btn:hover{background:var(--pd);transform:scale(1.05);}
+.bio-textarea{width:100%;min-height:80px;padding:11px;border-radius:var(--rsm);border:1px solid var(--bd);background:var(--ibg);color:var(--tx);font-size:13px;resize:vertical;outline:none;margin-bottom:12px;}
+.bio-textarea:focus{border-color:var(--p);box-shadow:0 0 0 3px rgba(26,58,245,.12);}
 
-        /* RESET & BASE */
-        * { box-sizing: border-box; margin: 0; padding: 0; outline: none; }
-        body { 
-            font-family: 'Plus Jakarta Sans', sans-serif; 
-            background: var(--bg); 
-            color: var(--tx); 
-            min-height: 100vh;
-            transition: background 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-            overflow-x: hidden;
-        }
+/* ══ ACHIEVEMENTS ══ */
+.ach-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:14px;}
+.ach-card{padding:20px;border-radius:16px;text-align:center;border:1.5px solid var(--bd);transition:.2s;background:var(--card);}
+.ach-card.unlocked{border-color:var(--p);background:linear-gradient(135deg,var(--pl),var(--card));}
+.ach-card.locked{opacity:.35;filter:grayscale(1);}
 
-        /* TITAN GLOBAL COMPONENTS */
-        .glass { background: var(--glass-bg); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); border: 1px solid var(--glass-border); }
-        .titan-card { background: var(--card); border-radius: var(--r); border: 1px solid var(--bd); box-shadow: var(--sh); padding: 24px; transition: 0.3s; }
-        .titan-card:hover { transform: translateY(-3px); box-shadow: var(--shl); }
+/* ══ THEMES PICKER ══ */
+.theme-dot{width:48px;height:48px;border-radius:14px;cursor:pointer;display:flex;align-items:center;justify-content:center;border:3px solid transparent;transition:.2s;flex-shrink:0;}
+.theme-dot.active{border-color:#fff;box-shadow:0 0 0 3px var(--p);}
 
-        .btn-p { 
-            background: linear-gradient(135deg, var(--pd), var(--p)); 
-            color: #fff; padding: 12px 24px; border: none; border-radius: 12px;
-            font-weight: 800; cursor: pointer; display: inline-flex; align-items: center; gap: 8px;
-            transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            box-shadow: 0 6px 16px rgba(26, 58, 245, 0.25);
-        }
-        .btn-p:hover { transform: scale(1.05); }
+/* ══ IDLE OVERLAY ══ */
+.idle-overlay{position:fixed;inset:0;background:rgba(0,0,30,.6);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);display:flex;align-items:center;justify-content:center;z-index:9000;animation:fadeIn .2s;}
+.idle-card{background:var(--wh);border-radius:24px;padding:38px 34px;width:420px;text-align:center;box-shadow:0 24px 80px rgba(0,0,50,.3);animation:popIn .3s cubic-bezier(.34,1.56,.64,1);border:1px solid var(--bd);}
+.idle-icon{width:72px;height:72px;background:linear-gradient(135deg,#fef3c7,#fde68a);border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 16px;font-size:34px;}
+.idle-title{font-size:20px;font-weight:800;color:var(--tx);margin-bottom:8px;}
+.idle-msg{font-size:13.5px;color:var(--tx2);line-height:1.6;margin-bottom:6px;font-weight:500;}
+.idle-time{font-size:42px;font-weight:800;color:var(--warn);margin:10px 0 18px;font-variant-numeric:tabular-nums;letter-spacing:-2px;line-height:1;font-family:'JetBrains Mono',monospace;}
+.idle-btns{display:flex;gap:12px;}
+.idle-here{flex:1;padding:13px;background:var(--p);color:#fff;border:none;border-radius:var(--rsm);font-size:14px;font-weight:700;cursor:pointer;transition:.2s;}
+.idle-here:hover{background:var(--pd);transform:translateY(-1px);}
+.idle-out{flex:1;padding:13px;background:var(--bg);color:var(--tx2);border:1.5px solid var(--bd);border-radius:var(--rsm);font-size:13px;font-weight:700;cursor:pointer;transition:.2s;}
+.idle-out:hover{background:var(--bd);color:var(--tx);}
+.idle-prog-wrap{width:100%;height:4px;background:var(--bd);border-radius:99px;margin-top:18px;overflow:hidden;}
+.idle-prog-fill{height:100%;border-radius:99px;transition:width 1s linear;}
 
-        .input-group { position: relative; margin-bottom: 20px; }
-        .form-input { 
-            width: 100%; padding: 14px 18px; background: rgba(128,128,128,0.03); 
-            border: 1px solid var(--bd); border-radius: 12px; color: var(--tx); 
-            font-size: 14px; font-weight: 500;
-        }
-        .form-label { font-size: 11px; font-weight: 800; color: var(--tx3); text-transform: uppercase; margin-left: 10px; margin-bottom: 5px; display: block; letter-spacing: 0.1em; }
+/* ══ FLOAT WIDGET ══ */
+.float-widget{position:fixed;bottom:24px;right:24px;width:62px;height:62px;z-index:5000;background:#fff;border-radius:18px;padding:10px;box-shadow:0 8px 28px rgba(0,0,0,.18);cursor:pointer;transition:all .38s cubic-bezier(.175,.885,.32,1.275);}
+.float-widget:hover{transform:translateY(-16px) scale(1.18);box-shadow:0 0 32px var(--p),0 8px 28px rgba(0,0,0,.2);}
+.float-widget img{width:100%;height:100%;object-fit:contain;}
 
-        /* TELEMETRY LAYOUT */
-        .layout { display: grid; grid-template-columns: 280px 1fr; min-height: 100vh; }
-        .sidebar { position: fixed; left: 0; width: 280px; height: 100vh; border-right: 1px solid var(--bd); padding: 30px 20px; display: flex; flex-direction: column; background: var(--card); }
-        .main-content { margin-left: 280px; padding: 40px; position: relative; width: calc(100% - 280px); }
+/* ══ NOTIF TOAST ══ */
+.notif{position:fixed;bottom:24px;right:24px;background:var(--tx);color:var(--bg);padding:13px 20px;border-radius:var(--rsm);font-size:13.5px;font-weight:700;box-shadow:var(--shl);z-index:9999;animation:notifIn .3s cubic-bezier(.34,1.56,.64,1);}
+.notif.success{background:#15803d;color:#fff;}
+.notif.error{background:#ef4444;color:#fff;}
 
-        .sidebar-item { padding: 12px 18px; border-radius: 12px; margin-bottom: 5px; cursor: pointer; color: var(--tx2); display: flex; align-items: center; gap: 14px; transition: 0.2s; font-weight: 600; }
-        .sidebar-item:hover { background: rgba(128,128,128,0.05); color: var(--p); }
-        .sidebar-item.active { background: var(--pl); color: var(--p); }
+/* ══ TOGGLE ══ */
+.toggle-switch{width:48px;height:26px;background:var(--p);border-radius:99px;position:relative;cursor:pointer;flex-shrink:0;}
+.toggle-switch.off{background:var(--bd);}
+.toggle-knob{width:20px;height:20px;background:#fff;border-radius:50%;position:absolute;top:3px;left:3px;transition:left .2s;box-shadow:0 2px 6px rgba(0,0,0,.18);}
+.toggle-switch:not(.off) .toggle-knob{left:25px;}
 
-        /* ACTIVITY TERMINAL */
-        .pomo-ring { width: 60px; height: 60px; border-radius: 50%; border: 4px solid var(--pl); border-top-color: var(--p); display: flex; align-items: center; justify-content: center; }
-        .idle-indicator { background: var(--warn); width: 8px; height: 8px; border-radius: 50%; box-shadow: 0 0 10px var(--warn); }
-        .pulse-live { animation: pulse 2s infinite; }
+/* ══ MISC ══ */
+.empty-state{text-align:center;padding:48px 20px;color:var(--tx2);}
+.empty-state p{font-size:14px;font-weight:600;margin-top:12px;}
+.spinner{width:20px;height:20px;border:3px solid rgba(255,255,255,.25);border-top-color:#fff;border-radius:50%;animation:spin .7s linear infinite;}
+.gh-logo{object-fit:contain;mix-blend-mode:multiply;}
+[data-theme="dark"] .gh-logo{filter:invert(1) grayscale(1);mix-blend-mode:screen;}
+.sidebar-logo{filter:invert(1) grayscale(1);mix-blend-mode:screen!important;}
+.badge{display:inline-flex;align-items:center;padding:3px 10px;border-radius:99px;font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.06em;}
+.badge-high{background:rgba(239,68,68,.12);color:#ef4444;}
+.badge-med{background:rgba(217,119,6,.12);color:#d97706;}
+.badge-low{background:rgba(22,163,74,.12);color:#16a34a;}
 
-        @keyframes pulse { 0% { transform: scale(1); opacity: 1; } 50% { transform: scale(1.15); opacity: 0.7; } 100% { transform: scale(1); opacity: 1; } }
+/* ══ KEYFRAMES ══ */
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+@keyframes popIn{from{transform:scale(.9);opacity:0}to{transform:scale(1);opacity:1}}
+@keyframes notifIn{from{transform:translateY(20px) scale(.9);opacity:0}to{transform:translateY(0) scale(1);opacity:1}}
+@keyframes spin{to{transform:rotate(360deg)}}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.5;transform:scale(.85)}}
+@keyframes slideIn{from{opacity:0;transform:translateY(-8px)}to{opacity:1;transform:translateY(0)}}
+@keyframes pulse-logo{0%,100%{transform:scale(1);opacity:1}50%{transform:scale(1.07);opacity:.85}}
 
-        /* TITAN SOCIAL VIBES */
-        .social-hero { 
-            height: 240px; border-radius: 30px; 
-            background: linear-gradient(135deg, #1e293b, #0f172a); 
-            position: relative; overflow: hidden; margin-bottom: 24px;
-        }
-        .hero-particle { position: absolute; background: white; border-radius: 50%; opacity: 0.1; }
-        .profile-stack { margin-top: -80px; display: flex; align-items: flex-end; gap: 24px; padding: 0 40px; }
-        .p-avatar { width: 150px; height: 150px; border-radius: 40px; border: 6px solid var(--bg); box-shadow: var(--shl); object-fit: cover; }
-        
-        .stat-badge { background: rgba(128,128,128,0.04); padding: 8px 16px; border-radius: 99px; border: 1px solid var(--bd); text-align: center; }
-        .stat-badge .num { font-size: 16px; font-weight: 800; display: block; color: var(--tx); }
-        .stat-badge .lbl { font-size: 9px; text-transform: uppercase; letter-spacing: 0.1em; color: var(--tx3); font-weight: 700; }
+/* ══ SPLASH ══ */
+.splash-screen{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;background:var(--bg);gap:24px;}
 
-        /* COMMAND COMMAND CENTER OVERRIDES */
-        .command-console { background: #000; padding: 10px; border-radius: 8px; color: #34d399; font-family: 'JetBrains Mono', monospace; font-size: 11px; max-height: 120px; overflow-y: auto; }
-
-        /* MISC & MEDIA QUERIES */
-        .scroll-v { overflow-y: auto; }
-        .no-scroll { overflow: hidden; }
-
-        @media (max-width: 1100px) { .layout { grid-template-columns: 80px 1fr; } .sidebar { width: 80px; } .sidebar span, .sidebar-logo span { display: none; } .main-content { margin-left: 80px; width: calc(100% - 80px); } }
-
-        /* CHART OVERRIDE */
-        .canvas-wrap { height: 260px; width: 100%; position: relative; }
-        
-        /* THEME MATRIX BUTTONS */
-        .theme-swatch { width: 36px; height: 36px; border-radius: 50%; cursor: pointer; border: 2px solid #fff; transition: 0.2s; box-shadow: 0 4px 8px rgba(0,0,0,0.1); }
-        .theme-swatch:hover { transform: scale(1.1); }
-
-        .notif-toast { position: fixed; top: 20px; right: 20px; z-index: 9999; padding: 15px 24px; border-radius: 12px; font-weight: 800; color: #fff; background: var(--p); transform: translateX(120%); transition: 0.3s; box-shadow: var(--shl); }
-        .notif-toast.show { transform: translateX(0); }
-
-        .toggle-box { cursor: pointer; padding: 3px; background: #e0e4ed; width: 44px; height: 24px; border-radius: 20px; position: relative; }
-        .toggle-ball { background: #fff; width: 18px; height: 18px; border-radius: 50%; position: absolute; transition: left 0.3s ease; left: 3px; }
-        .toggle-box.active { background: var(--ok); }
-        .toggle-box.active .toggle-ball { left: 23px; }
-    </style>
+@media(max-width:1024px){
+  .sidebar{display:none;}
+  .main{margin-left:0;}
+  .stat-grid{grid-template-columns:1fr 1fr;}
+  .analytics-grid{grid-template-columns:1fr;}
+  .profile-grid{grid-template-columns:1fr;}
+}
+@media print{
+  .sidebar,.auth-wrap,.timer-active,.track-section,.idle-overlay,.notif,.float-widget{display:none!important;}
+  .main{margin-left:0!important;}
+}
+</style>
 </head>
-<body data-theme="dark">
-    <div id="root"></div>
+<body>
+<div id="root"></div>
 
-    <script type="text/babel">
-        const { useState, useEffect, useRef, useMemo, useCallback } = React;
+<script type="text/babel">
+const { useState, useEffect, useRef, useCallback, useMemo } = React;
 
-        // ============================================================================
-        // CONFIG & TELEMETRY MODULE
-        // TITAN V7 Core Identifiers
-        // ============================================================================
-        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxrJb3czrgVOUUO4va7-9arnCAg9s9NvtlDaFsfGZ3LbSEqdT_-6bet-W4IcPZ6tfiT/exec";
-        const CATEGORIES = ["Code Matrix", "Security Intel", "Logistics Pulse", "Engineering", "Core Meetings", "Titan Social"];
-        const APP_MODES = ["Full Stream", "Security Only", "Ghost Node (Private)"];
-        const BADGES = [
-            { id: 'shift_alpha', icon: '💎', title: 'Power Shift', hint: '8 Hours Tracking' },
-            { id: 'titan_link', icon: '🔗', title: 'TITAN Connected', hint: 'Auto Sync Set' },
-            { id: 'fire_protocol', icon: '🔥', title: 'Fire Protocol', hint: '10 Tasks Logged' }
-        ];
+/* ══ ICONS ══ */
+const EyeIcon = () => <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>;
+const EyeOffIcon = () => <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>;
 
-        // ============================================================================
-        // ANALYTICAL LOGIC LAYER
-        // ============================================================================
-        const localTelemetry = {
-            set: (k, v) => localStorage.setItem(`titan_v7_${k}`, JSON.stringify(v)),
-            get: (k) => JSON.parse(localStorage.getItem(`titan_v7_${k}`) || 'null'),
-            logTask: async (task) => {
-                const logs = localTelemetry.get('logs') || [];
-                logs.unshift({ id: Date.now(), ...task });
-                localTelemetry.set('logs', logs);
-                
-                // UPLOAD TO GOOGLE APPS SCRIPT / GOOGLE SHEETS
-                try {
-                    await fetch(SCRIPT_URL, {
-                        method: 'POST',
-                        mode: 'no-cors', // Standard bypass for GAS
-                        body: JSON.stringify({ action: 'addTask', ...task }),
-                        headers: { 'Content-Type': 'application/json' }
-                    });
-                } catch(e) { console.error("Cloud Node unreachable. Saving to local TITAN buffer."); }
-                
-                return true;
-            }
-        };
+/* ══ CONSTANTS ══ */
+const DEPARTMENTS = ['AUDIT','AMS','ACCOUNTING','HR','MARKETING','PROCESS IMPROVEMENT','SALES AND SERVICE SUPPORT','ONLINE SALES','RMA','PRODUCT DEPARTMENT','FACILITIES','WAREHOUSE','IT'];
+const PRESET = ['Admin Tasks','Client Call','Code Review','Documentation','Meeting','Planning & Strategy','Research','Testing','Training / Learning'];
+const QUOTES = ["Focus on being productive instead of busy.","The key is in not spending time, but in investing it.","Action is the foundational key to all success.","Until we can manage time, we can manage nothing else.","Time is what we want most, but what we use worst.","Success is no accident. It is hard work, perseverance, and sacrifice.","Small consistent shifts compound into extraordinary results."];
+const THEMES = [
+  {id:'light',n:'Light',col:'#e8ecf8'},{id:'dark',n:'Dark',col:'#111827'},
+  {id:'lavender',n:'Lavender',col:'#7c3aed'},{id:'forest',n:'Forest',col:'#16a34a'},
+  {id:'sunset',n:'Sunset',col:'#f97316'},{id:'ocean',n:'Ocean',col:'#0ea5e9'},
+  {id:'ruby',n:'Ruby',col:'#ef4444'},{id:'cyberpunk',n:'Cyber',col:'#d946ef'},
+  {id:'midnight',n:'Midnight',col:'#6366f1'},{id:'gold',n:'Gold',col:'#eab308'},
+];
+const ACHIEVEMENTS = [
+  {id:1,icon:'🏆',title:'First Shift',   desc:'Log your first task',             req:(t)=>t.length>=1},
+  {id:2,icon:'⚡',title:'Speed Titan',   desc:'Log 5 tasks in any period',       req:(t)=>t.length>=5},
+  {id:3,icon:'🔥',title:'Grind Mode',    desc:'Log 10+ tasks total',             req:(t)=>t.length>=10},
+  {id:4,icon:'💎',title:'Diamond Core',  desc:'Log 20+ tasks total',             req:(t)=>t.length>=20},
+  {id:5,icon:'⏱️',title:'Time Titan',    desc:'Total 60+ minutes logged',        req:(t)=>t.reduce((s,x)=>s+Number(x.durationMinutes||0),0)>=60},
+  {id:6,icon:'🌟',title:'Nexus Elite',   desc:'Reach 50% weekly productivity',   req:(t,e)=>e>=50},
+  {id:7,icon:'🎯',title:'Goal Crusher',  desc:'Hit 100% weekly goal',            req:(t,e)=>e>=100},
+  {id:8,icon:'👑',title:'Titan King',    desc:'30+ tasks total',                 req:(t)=>t.length>=30},
+];
+const IDLE_WARN = 5*60, IDLE_MAX = 10*60;
+const LOGO_URL = "https://contents.smsupermalls.com/data/uploads/2020/07/GIGAHERTZ_COMPUTER_SYSTEM.jpg";
 
-        // ============================================================================
-        // REUSABLE TITAN SUB-COMPONENTS
-        // ============================================================================
-        const NavItem = ({ active, label, icon, onClick }) => (
-            <div onClick={onClick} className={`sidebar-item ${active ? 'active' : ''}`}>
-                <i className={`fa-solid ${icon}`}></i>
-                <span>{label}</span>
-            </div>
-        );
+/* ══ LOCAL DB ══ */
+const ldb = {
+  getUsers:()=>{
+    let u=JSON.parse(localStorage.getItem('gh_users')||'[]');
+    if(!u.find(x=>x.empId==='GHZ-0001'))u.push({id:'id_demo',empId:'GHZ-0001',firstName:'Izumi',lastName:'Miyamura',password:'izumipassword',dept:'PRODUCT DEPARTMENT',photoBase64:'',bio:'',createdAt:new Date().toISOString()});
+    localStorage.setItem('gh_users',JSON.stringify(u));return u;
+  },
+  saveUsers:(u)=>localStorage.setItem('gh_users',JSON.stringify(u)),
+  getTasks:()=>JSON.parse(localStorage.getItem('gh_tasks')||'[]'),
+  saveTasks:(t)=>localStorage.setItem('gh_tasks',JSON.stringify(t)),
+  getPending:()=>JSON.parse(localStorage.getItem('gh_pending')||'[]'),
+  savePending:(p)=>localStorage.setItem('gh_pending',JSON.stringify(p)),
+  uid:()=>'id_'+Math.random().toString(36).slice(2),
+};
 
-        const SectionTitle = ({ title, sub }) => (
-            <div style={{marginBottom: '26px'}}>
-                <h1 style={{fontSize: '32px', fontWeight: 900, letterSpacing: '-0.04em'}} className="text-main">{title}</h1>
-                <p style={{fontSize: '13px', fontWeight: 600, color: 'var(--tx3)'}}>{sub}</p>
-            </div>
-        );
+const api = {
+  async login(empId,password){const u=ldb.getUsers().find(x=>x.empId===empId&&x.password===password);return u?{success:true,user:{id:u.id,empId:u.empId,firstName:u.firstName,lastName:u.lastName,dept:u.dept,photoBase64:u.photoBase64,bio:u.bio}}:{success:false,error:'Invalid credentials.'};},
+  async register({empId,firstName,lastName,password,dept,photoBase64}){if(!dept)return{success:false,error:'Select a department.'};const u=ldb.getUsers();if(u.find(x=>x.empId===empId))return{success:false,error:'ID already registered.'};const id=ldb.uid();u.push({id,empId,firstName,lastName,password,dept,photoBase64:photoBase64||'',bio:'',createdAt:new Date().toISOString()});ldb.saveUsers(u);return{success:true,user:{id,empId,firstName,lastName,dept,photoBase64,bio:''}};},
+  async getTasks({userId}){const t=ldb.getTasks().filter(x=>x.userId===userId);t.sort((a,b)=>b.date.localeCompare(a.date)||(b.startTime||'').localeCompare(a.startTime||''));return{success:true,tasks:t};},
+  async getAllTasks(){return{success:true,tasks:ldb.getTasks()};},
+  async addTask(task){const tasks=ldb.getTasks(),id=ldb.uid(),t={id,...task,createdAt:new Date().toISOString()};tasks.push(t);ldb.saveTasks(tasks);return{success:true,task:t};},
+  async updatePhoto({userId,photoBase64}){const u=ldb.getUsers(),i=u.findIndex(x=>x.id===userId);if(i>=0){u[i].photoBase64=photoBase64;ldb.saveUsers(u);localStorage.setItem(`gh_photo_${userId}`,photoBase64);return{success:true};}return{success:false,error:'User not found'};},
+  async updateBio({userId,bio}){const u=ldb.getUsers(),i=u.findIndex(x=>x.id===userId);if(i>=0){u[i].bio=bio;ldb.saveUsers(u);return{success:true};}return{success:false};},
+  async logActivity(data){const logs=JSON.parse(localStorage.getItem('gh_activity')||'[]');logs.push({id:ldb.uid(),timestamp:new Date().toISOString(),...data});localStorage.setItem('gh_activity',JSON.stringify(logs));return{success:true};},
+};
 
-        const Notification = ({ msg, active }) => (
-            <div className={`notif-toast ${active ? 'show' : ''}`}>
-                <i className="fa-solid fa-bolt mr-2"/> {msg}
-            </div>
-        );
+/* ══ HELPERS ══ */
+const todayStr  = ()=>new Date().toISOString().split('T')[0];
+const nowHHMM   = ()=>new Date().toTimeString().slice(0,5);
+const fmtMins   = (m)=>`${String(Math.floor(m/60)).padStart(2,'0')}h ${String(Math.floor(m%60)).padStart(2,'0')}m`;
+const fmtHHMMSS = (s)=>{if(s<0)s=0;const h=Math.floor(s/3600),m=Math.floor((s%3600)/60),sec=s%60;return`${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}:${String(sec).padStart(2,'0')}`;};
+const fmtDate12 = (d)=>{if(!d)return'';const dt=new Date(d+'T00:00:00');return dt.toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'});};
+const fmt12     = (t)=>{if(!t)return'';const[h,m]=t.split(':').map(Number);return`${h%12||12}:${String(m).padStart(2,'0')} ${h>=12?'PM':'AM'}`;};
+const getCatColor=(name)=>{const n=name.toLowerCase();if(/code|dev|sql/i.test(n))return'#3b82f6';if(/bug|fix|error/i.test(n))return'#ef4444';if(/meet|call|client/i.test(n))return'#10b981';if(/doc|write|report/i.test(n))return'#8b5cf6';if(/test|qa|audit/i.test(n))return'#f59e0b';if(/design|ui|ux/i.test(n))return'#ec4899';if(/train|learn/i.test(n))return'#06b6d4';return'var(--p)';};
+const exportCSV=(headers,rows,fn)=>{const csv=[headers.join(','),...rows.map(r=>r.map(c=>`"${String(c).replace(/"/g,'""')}"`).join(','))].join('\n');const a=Object.assign(document.createElement('a'),{href:URL.createObjectURL(new Blob([csv],{type:'text/csv'})),download:fn});a.click();};
+const fireLog=(action,details,user)=>{if(!user)return;api.logActivity({userId:user.id,empId:user.empId,action,details,status:'SUCCESS'}).catch(()=>{});};
 
-        // ============================================================================
-        // 01. DASHBOARD COMPONENT (REAL-TIME ENGINE)
-        // Includes: Active/Idle Tracking & Pomodoro Control
-        // ============================================================================
-        const TitanDashboard = ({ user, telemetry, pushTask }) => {
-            const [selCat, setSelCat] = useState(CATEGORIES[0]);
-            const [timerState, setTimerState] = useState({ active: false, seconds: 0, currentLabel: '' });
-            const [idleReport, setIdleReport] = useState({ activeTime: 0, idleTime: 0 });
-            const [activityStream, setActivityStream] = useState(["BOOT UP...", "Establishing TITAN Tunnel..."]);
+/* ══ HOOKS ══ */
+const useLiveClock=(start)=>{const[s,setS]=useState(start?Math.floor((Date.now()-new Date(start))/1000):0);useEffect(()=>{if(!start){setS(0);return;}const t=setInterval(()=>setS(Math.floor((Date.now()-new Date(start))/1000)),1000);return()=>clearInterval(t);},[start]);return s;};
+const useRealClock=()=>{const[t,setT]=useState(new Date());useEffect(()=>{const i=setInterval(()=>setT(new Date()),1000);return()=>clearInterval(i);},[]);return t.toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit',second:'2-digit'});};
 
-            useEffect(() => {
-                let interval;
-                if (timerState.active) {
-                    interval = setInterval(() => {
-                        setTimerState(prev => ({ ...prev, seconds: prev.seconds + 1 }));
-                        setIdleReport(prev => ({
-                            ...prev,
-                            [document.hasFocus() ? 'activeTime' : 'idleTime']: prev[document.hasFocus() ? 'activeTime' : 'idleTime'] + 1
-                        }));
-                    }, 1000);
-                }
-                return () => clearInterval(interval);
-            }, [timerState.active]);
+/* ══ SHARED COMPONENTS ══ */
+const Logo=({size=44,white=false})=><img src={LOGO_URL} height={size} className={white?'gh-logo sidebar-logo':'gh-logo'} alt="Gigahertz"/>;
+const ErrBox=({msg})=>msg?<div className="err-box">{msg}</div>:null;
+const Notif=({msg,type,onDone})=>{useEffect(()=>{const t=setTimeout(onDone,3000);return()=>clearTimeout(t);},[]);return<div className={`notif ${type}`}>{msg}</div>;};
+const FloatWidget=()=><div className="float-widget" onClick={()=>window.open('https://www.gigahertz.com.ph/','_blank')} title="Gigahertz Portal"><img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRurHiRjhAqL8xPFzjXHWgjpxNtpGagJSOG7A&s" alt="Portal"/></div>;
+const Splash=()=><div className="splash-screen"><img src={LOGO_URL} height={90} className="gh-logo" style={{borderRadius:24,boxShadow:'0 8px 32px rgba(77,111,255,.3)',animation:'pulse-logo 2s ease-in-out infinite'}}/><div style={{textAlign:'center'}}><div style={{fontWeight:900,fontSize:24,letterSpacing:'-.03em'}}>TITAN TIME TRACKER</div><div style={{fontWeight:700,fontSize:11,opacity:.4,textTransform:'uppercase',letterSpacing:'.2em',marginTop:4}}>Gigahertz Nexus v5.0</div></div><div style={{width:36,height:36,borderRadius:'50%',border:'4px solid var(--bd)',borderTopColor:'var(--p)',animation:'spin .9s linear infinite'}}/></div>;
 
-            const startEngines = () => {
-                if(!timerState.currentLabel) { alert("Identify Protocol!"); return; }
-                setTimerState(prev => ({ ...prev, active: true }));
-                setActivityStream(prev => [`NODE INITIALIZED: ${timerState.currentLabel}`, ...prev]);
-            };
-
-            const concludeProtocol = () => {
-                const dur = Math.round(timerState.seconds / 60);
-                pushTask({
-                    name: timerState.currentLabel,
-                    category: selCat,
-                    duration: dur || 1,
-                    status: 'Operational Complete'
-                });
-                setTimerState({ active: false, seconds: 0, currentLabel: '' });
-                setActivityStream(prev => [`ENGINE COOLDOWN: Process saved.`, ...prev]);
-            };
-
-            const formatLong = (s) => {
-                const h = Math.floor(s / 3600);
-                const m = Math.floor((s % 3600) / 60);
-                const ss = s % 60;
-                return `${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}:${String(ss).padStart(2,'0')}`;
-            };
-
-            return (
-                <div style={{animation: 'fadeIn 0.4s ease-out'}} className="no-scroll">
-                    <SectionTitle title="Titan Terminal" sub={`System node linked via authorized channel.`}/>
-
-                    <div style={{display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '20px', marginBottom: '30px'}}>
-                        <div className="titan-card">
-                            <span className="form-label">Network Runtime</span>
-                            <h2 style={{fontSize: '32px', fontFamily: 'JetBrains Mono', fontWeight: 800}}>{formatLong(idleReport.activeTime)}</h2>
-                            <div style={{marginTop: '12px', height: '4px', background: 'var(--bd)', borderRadius: '10px'}}>
-                                <div style={{width: '70%', background: 'var(--ok)', height: '100%', borderRadius: '100px'}}></div>
-                            </div>
-                            <span style={{fontSize: '10px', color: 'var(--tx3)', marginTop: '8px', display: 'block'}}>70% Efficiency Score</span>
-                        </div>
-                        <div className="titan-card">
-                            <span className="form-label">Idle Influx</span>
-                            <h2 style={{fontSize: '32px', fontFamily: 'JetBrains Mono', fontWeight: 800, color: 'var(--warn)'}}>{formatLong(idleReport.idleTime)}</h2>
-                            <span style={{fontSize: '11px', color: 'var(--tx2)', fontWeight: 600}}>System Inactivity Block</span>
-                        </div>
-                        <div className="titan-card" style={{display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
-                            <div className="pomo-ring" style={{borderTopColor: timerState.active ? 'var(--danger)' : 'var(--p)'}}>
-                                <i className="fa-solid fa-fire text-2xl"/>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div className="titan-card" style={{marginBottom: '30px'}}>
-                        <div className="input-group" style={{display: 'grid', gridTemplateColumns: '1fr 1fr auto', gap: '15px', alignItems: 'flex-end', marginBottom: '0'}}>
-                            <div>
-                                <span className="form-label">Protocol Definition</span>
-                                <input className="form-input" 
-                                    placeholder="Execute Command Name..."
-                                    value={timerState.currentLabel}
-                                    onChange={(e)=>setTimerState({...timerState, currentLabel: e.target.value})}
-                                    disabled={timerState.active}/>
-                            </div>
-                            <div>
-                                <span className="form-label">Security Logic Class</span>
-                                <select className="form-input" value={selCat} onChange={e=>setSelCat(e.target.value)} disabled={timerState.active}>
-                                    {CATEGORIES.map(c => <option key={c}>{c}</option>)}
-                                </select>
-                            </div>
-                            {!timerState.active ? (
-                                <button className="btn-p" onClick={startEngines}><i className="fa-solid fa-play"/> Initialize</button>
-                            ) : (
-                                <button className="btn-p" style={{background: 'var(--danger)'}} onClick={concludeProtocol}><i className="fa-solid fa-stop"/> Suspend</button>
-                            )}
-                        </div>
-                    </div>
-
-                    <div style={{display: 'grid', gridTemplateColumns: '1.4fr 1fr', gap: '20px'}}>
-                        <div className="titan-card scroll-v" style={{height: '350px'}}>
-                             <div style={{display: 'flex', justifyContent: 'space-between', marginBottom: '18px', borderBottom: '1px solid var(--bd)', paddingBottom: '12px'}}>
-                                <h4 style={{fontWeight: 900}}>Core Operation History</h4>
-                                <div className="badge-focus">Encrypted Cloud Save</div>
-                             </div>
-                             {telemetry.logs.length === 0 ? (
-                                <div style={{textAlign: 'center', marginTop: '40px', opacity: 0.3}}>Empty Pipeline Node. Start Tracking.</div>
-                             ) : (
-                                telemetry.logs.map((l, i) => (
-                                    <div key={i} style={{display: 'flex', justifyContent: 'space-between', padding: '14px 0', borderBottom: '1px solid rgba(128,128,128,0.05)'}}>
-                                        <div style={{display: 'flex', gap: '14px', alignItems: 'center'}}>
-                                            <div style={{background: 'var(--p)', width: '4px', height: '24px', borderRadius: '4px'}}/>
-                                            <div>
-                                                <div style={{fontSize: '14px', fontWeight: 800}}>{l.name}</div>
-                                                <div style={{fontSize: '10px', fontWeight: 700, color: 'var(--p)'}}>{l.category}</div>
-                                            </div>
-                                        </div>
-                                        <div style={{textAlign: 'right'}}>
-                                            <div style={{fontSize: '13px', fontWeight: 700}}>{l.duration} Minutes</div>
-                                            <div style={{fontSize: '9px', fontWeight: 700, color: 'var(--tx3)'}}>Cloud Seq ✓</div>
-                                        </div>
-                                    </div>
-                                ))
-                             )}
-                        </div>
-
-                        <div className="titan-card" style={{height: '350px'}}>
-                            <h4 style={{fontWeight: 900, marginBottom: '14px'}}>Root Terminal Monitoring</h4>
-                            <div className="command-console">
-                                {activityStream.map((msg, i) => <div key={i}>$ root@titan ~ {msg}</div>)}
-                                {timerState.active && <div className="pulse-live">$$ ENGINE CORE ACTIVE @ {formatLong(timerState.seconds)}</div>}
-                            </div>
-                            <div style={{marginTop: '20px', padding: '15px', border: '1.5px dashed var(--bd)', borderRadius: '15px'}}>
-                                <p style={{fontSize: '11px', fontWeight: 700, opacity: 0.5}}>ACTIVE BIOMETRIC NODE ID:</p>
-                                <code style={{color: 'var(--p)', fontSize: '13px', fontWeight: 800}}>{user?.empId || 'UNDEFINED'}</code>
-                                <p style={{fontSize: '10px', marginTop: '10px'}}>Automatic Idle suspension active: <span style={{color:'var(--ok)'}}>ONLINE</span></p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            );
-        };
-
-        // ============================================================================
-        // 02. PROFILE MODULE (THE SOCIAL MATRIX)
-        // Redesigned with Social-Media Tier layout
-        // ============================================================================
-        const SocialProfile = ({ user, logs }) => {
-            const allMins = logs.reduce((acc, curr) => acc + (curr.duration || 0), 0);
-            
-            return (
-                <div style={{animation: 'slideIn 0.5s ease-out'}} className="no-scroll">
-                    <div className="social-hero">
-                        {/* Dynamic Decorative Hero Atoms */}
-                        {[...Array(20)].map((_, i) => (
-                            <div key={i} className="hero-particle" style={{
-                                width: Math.random() * 50 + 'px', height: Math.random() * 50 + 'px',
-                                top: Math.random() * 100 + '%', left: Math.random() * 100 + '%',
-                                background: `rgba(${Math.random() * 255}, ${Math.random() * 255}, 255, 0.2)`
-                            }} />
-                        ))}
-                    </div>
-                    
-                    <div className="profile-stack">
-                        <img className="p-avatar" src={`https://api.dicebear.com/7.x/pixel-art/svg?seed=${user?.firstName || 'TITAN'}`} />
-                        <div style={{flex: 1, paddingBottom: '10px'}}>
-                             <div style={{display:'flex', alignItems: 'center', gap: '15px'}}>
-                                <h1 style={{fontSize: '36px', fontWeight: 900}} className="text-main">{user?.firstName} {user?.lastName}</h1>
-                                <div className="badge-focus" style={{background: 'var(--ok)', color: '#fff', fontSize: '11px'}}>Operational Lead</div>
-                             </div>
-                             <p style={{fontSize: '15px', fontWeight: 600, color: 'var(--tx3)'}}>Operator Level VII · Node Alpha Sector · {user?.dept}</p>
-                        </div>
-                        <div style={{display: 'flex', gap: '12px', paddingBottom: '10px'}}>
-                            <button className="btn-p" style={{background: 'var(--wh)', color: 'var(--tx)', border: '1px solid var(--bd)', padding: '10px 16px', fontSize: '13px'}}><i className="fa-solid fa-paper-plane"/> Share Log</button>
-                            <button className="btn-p" style={{fontSize: '13px'}}><i className="fa-solid fa-fingerprint"/> Update Core</button>
-                        </div>
-                    </div>
-
-                    <div style={{display: 'grid', gridTemplateColumns: '280px 1fr', gap: '30px', padding: '30px 40px'}}>
-                         <div style={{display: 'flex', flexDirection: 'column', gap: '20px'}}>
-                            <div className="titan-card">
-                                <h4 style={{fontSize: '14px', fontWeight: 900, marginBottom: '16px'}}>Engine Summary</h4>
-                                <p style={{fontSize: '13px', lineHeight: 1.6}} className="text-sub">System bio establishing TITAN dominance. Dedicated to optimizing high-frequency logistics and departmental flow matrices. Core strength: Multi-node tracking.</p>
-                            </div>
-                            <div className="titan-card">
-                                <h4 style={{fontSize: '13px', fontWeight: 900, marginBottom: '12px'}}>Impact Distribution</h4>
-                                <div style={{display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px'}}>
-                                     <div className="stat-badge"><span className="num">920</span><span className="lbl">Score</span></div>
-                                     <div className="stat-badge"><span className="num">{Math.round(allMins/60)}h</span><span className="lbl">Hours</span></div>
-                                     <div className="stat-badge"><span className="num">412</span><span className="lbl">Trust</span></div>
-                                     <div className="stat-badge"><span className="num">9.8</span><span className="lbl">Ghz</span></div>
-                                </div>
-                            </div>
-                         </div>
-
-                         <div>
-                            <h4 style={{fontSize: '18px', fontWeight: 900, marginBottom: '16px'}}>Accomplishment Matrix</h4>
-                            <div style={{display: 'flex', flexDirection: 'column', gap: '15px'}}>
-                                 {logs.slice(0, 6).map((item, idx) => (
-                                     <div key={idx} className="titan-card" style={{padding: '20px', background: 'rgba(128,128,128,0.03)', transform:'none'}}>
-                                         <div style={{display: 'flex', alignItems: 'center', gap: '15px'}}>
-                                             <div className="user-avatar" style={{width: '44px', height: '44px', background: 'var(--p)', borderRadius: '12px', display:'flex', alignItems: 'center', justify: 'center', color:'#fff'}}>
-                                                 <i className="fa-solid fa-code text-lg"/>
-                                             </div>
-                                             <div>
-                                                 <h5 style={{fontSize: '14px', fontWeight: 800}}>Operational Milestone Logged</h5>
-                                                 <span style={{fontSize: '11px', color:'var(--tx3)'}}>Establishing runtime link @ TITAN CLOUD ENGINE</span>
-                                             </div>
-                                         </div>
-                                         <div style={{margin: '14px 0', background: 'var(--wh)', padding: '16px', borderRadius: '12px', border: '1px solid var(--bd)'}}>
-                                            <p style={{fontSize: '14px', fontWeight: 500, color: 'var(--tx2)'}}>Task: <strong>{item.name}</strong></p>
-                                            <p style={{fontSize: '13px', marginTop: '6px'}} className="text-muted">Total execution time registered: {item.duration}m within {item.category} Matrix. Secure synchronization verified by Gigahertz IT protocols. 📡</p>
-                                         </div>
-                                         <div style={{display: 'flex', gap: '20px', marginTop: '10px'}}>
-                                            <div style={{fontSize: '12px', fontWeight: 800, color: 'var(--p)'}}><i className="fa-solid fa-fire mr-1"/> Endorsed</div>
-                                            <div style={{fontSize: '12px', fontWeight: 800, opacity: 0.5}}><i className="fa-solid fa-comment mr-1"/> Log Commentary</div>
-                                         </div>
-                                     </div>
-                                 ))}
-                            </div>
-                         </div>
-                    </div>
-                </div>
-            );
-        }
-
-        // ============================================================================
-        // 03. ACHIEVEMENT GALLERY
-        // Gamified progress elements
-        // ============================================================================
-        const AchievementBoard = ({ logs }) => (
-            <div style={{animation: 'fadeIn 0.5s ease'}}>
-                <SectionTitle title="Titan Legacy" sub="Elite recognition for departmental impact."/>
-                <div style={{display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '20px'}}>
-                    {BADGES.map(b => (
-                        <div key={b.id} className="titan-card" style={{textAlign: 'center', padding: '34px 20px'}}>
-                            <div style={{fontSize: '56px', marginBottom: '20px'}} className="pulse-live">{b.icon}</div>
-                            <h3 style={{fontSize: '18px', fontWeight: 900, marginBottom: '6px'}} className="text-main">{b.title}</h3>
-                            <p style={{fontSize: '13px', color: 'var(--tx3)', fontWeight: 600}}>{b.hint}</p>
-                            <div style={{marginTop: '20px', background: 'var(--pl)', color: 'var(--p)', padding: '8px 12px', borderRadius: '8px', fontSize: '10px', fontWeight: 900, textTransform: 'uppercase'}}>Requirement Meta Link Verified</div>
-                        </div>
-                    ))}
-                    {/* Ghost Badges */}
-                    {[1, 2, 3, 4, 5, 6].map(x => (
-                        <div key={x} className="titan-card locked" style={{opacity: 0.35, filter: 'grayscale(1)', textAlign: 'center'}}>
-                            <div style={{fontSize: '50px', marginBottom: '20px'}}>🔒</div>
-                            <h3 style={{fontSize: '16px', fontWeight: 900}}>Deep Matrix Secret</h3>
-                        </div>
-                    ))}
-                </div>
-            </div>
-        );
-
-        // ============================================================================
-        // 04. SETTINGS MATRIX
-        // Control room for privacy, mode, and interface
-        // ============================================================================
-        const SettingsGate = ({ theme, setTheme, onKill }) => {
-            const [privacy, setPrivacy] = useState(false);
-            
-            return (
-                <div style={{maxWidth: '800px', animation: 'fadeIn 0.4s ease-out'}}>
-                    <SectionTitle title="Operational Command" sub="Adjust TITAN system coefficients."/>
-
-                    <div className="titan-card" style={{marginBottom: '20px'}}>
-                        <h4 style={{fontWeight: 900, marginBottom: '20px', fontSize: '16px'}}>Identity Display Interface</h4>
-                        <div style={{display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '15px'}}>
-                             {['dark', 'light', 'cyberpunk', 'forest'].map(t => (
-                                 <div key={t} 
-                                      className={`titan-card`}
-                                      style={{padding: '16px', textAlign: 'center', cursor: 'pointer', border: theme === t ? '2.5px solid var(--p)' : '1px solid var(--bd)'}}
-                                      onClick={() => setTheme(t)}>
-                                     <span style={{fontSize: '10px', fontWeight: 900, textTransform: 'uppercase'}} className="text-sub">{t} Environment</span>
-                                 </div>
-                             ))}
-                        </div>
-                    </div>
-
-                    <div className="titan-card" style={{marginBottom: '20px'}}>
-                        <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center'}}>
-                            <div>
-                                <h4 style={{fontWeight: 900, fontSize: '16px'}}><i className="fa-solid fa-ghost mr-2"/> Steath / Privacy Mode</h4>
-                                <p className="text-muted" style={{fontSize: '11px'}}>Hides system app names and sensitive execution details from log viewers.</p>
-                            </div>
-                            <div className={`toggle-box ${privacy ? 'active' : ''}`} onClick={()=>setPrivacy(!privacy)}>
-                                <div className="toggle-ball"/>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div className="titan-card">
-                         <h4 style={{fontWeight: 900, marginBottom: '16px', fontSize: '16px'}}>Force Shutdown Terminal</h4>
-                         <p style={{fontSize: '13px', color: 'var(--tx2)', marginBottom: '15px'}}>Initiate immediate de-authorization from the TITAN Grid.</p>
-                         <button className="btn-p" style={{background: 'var(--danger)', color: '#fff', width: '100%', justify: 'center'}} onClick={onKill}>
-                            <i className="fa-solid fa-plug-circle-xmark"/> Final Terminate Session
-                         </button>
-                    </div>
-                </div>
-            );
-        };
-
-        // ============================================================================
-        // AUTH LAYER: ACCESS TITAN HUB
-        // ============================================================================
-        const Gatekeeper = ({ onPass }) => {
-            const [eid, setEid] = useState('TITAN-7201');
-            const [pk, setPk] = useState('access_override');
-            const [load, setLoad] = useState(false);
-
-            const connectNode = () => {
-                setLoad(true);
-                // Synchronous cloud wait simulation
-                setTimeout(() => {
-                    onPass({
-                        id: 'node-alpha-1',
-                        firstName: 'Chief',
-                        lastName: 'Operator',
-                        empId: eid,
-                        dept: 'CENTRAL INTELLIGENCE',
-                        bio: 'Head TITAN Engine Dispatcher'
-                    });
-                    setLoad(false);
-                }, 2200);
-            };
-
-            return (
-                <div className="auth-wrap">
-                    <div className="auth-card" style={{padding: '50px 40px'}}>
-                        <div style={{display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '25px'}}>
-                             <div style={{width: '60px', height: '60px', borderRadius: '18px', background: 'var(--p)', color: '#fff', display: 'flex', alignItems:'center', justifyContent: 'center'}}>
-                                <i className="fa-solid fa-skull-crossbones fa-2x"/>
-                             </div>
-                        </div>
-                        <h1 style={{fontSize: '26px', fontWeight: 900, letterSpacing: '-0.04em', textAlign:'center', color:'var(--tx)'}}>COMMAND INITIATE: TITAN</h1>
-                        <p className="auth-sub">System authentication required for secure activities logging.</p>
-
-                        <div className="input-group">
-                            <span className="form-label">Titan Node Index (Employee ID)</span>
-                            <input className="form-input" value={eid} onChange={e=>setEid(e.target.value)} />
-                        </div>
-                        <div className="input-group">
-                            <span className="form-label">Pass-Protocol Key</span>
-                            <input className="form-input" type="password" value={pk} onChange={e=>setPk(e.target.value)} />
-                        </div>
-
-                        <button className="btn-p" style={{width:'100%', marginTop: '10px'}} onClick={connectNode}>
-                             {load ? <span>AUTHENTICATING TITAN CORE...</span> : <span>OPEN HUB PROTOCOL</span>}
-                        </button>
-                        <p style={{fontSize: '11px', textAlign: 'center', marginTop: '20px', opacity: 0.35, fontWeight: 700}}>TITAN CRYPTO V.7.A_81 | Gigahertz Ops © 2026</p>
-                    </div>
-                </div>
-            );
-        };
-
-        // ============================================================================
-        // ROOT TITAN MODULE: APPLICATION CONTROLLER
-        // Orchestrates multi-environment telemetry and GAS delivery
-        // ============================================================================
-        const TitanApplicationController = () => {
-            const [stage, setStage] = useState('pre');
-            const [nodeUser, setNodeUser] = useState(null);
-            const [curTab, setCurTab] = useState('dashboard');
-            const [uiTheme, setUiTheme] = useState('dark');
-            const [logs, setLogs] = useState(localTelemetry.get('logs') || []);
-            const [nActive, setNActive] = useState({ state: false, msg: '' });
-
-            const pushLocalNotif = (txt) => {
-                setNActive({ state: true, msg: txt });
-                setTimeout(() => setNActive({ state: false, msg: '' }), 4000);
-            };
-
-            const triggerFinalLogout = () => {
-                setStage('pre');
-                setNodeUser(null);
-            };
-
-            const dispatchOperationalData = async (data) => {
-                const outcome = await localTelemetry.logTask(data);
-                if (outcome) {
-                    setLogs(localTelemetry.get('logs'));
-                    pushLocalNotif(`Task Pushed to Cloud Node ✓`);
-                }
-            };
-
-            if (stage === 'pre') return <Gatekeeper onPass={(user)=>{setNodeUser(user); setStage('hub');}} />;
-
-            return (
-                <div className="layout" style={{background: 'var(--bg)'}}>
-                    <Sidebar theme={uiTheme}>
-                        <div className="sidebar-logo" style={{display: 'flex', alignItems: 'center', gap: '15px', marginBottom: '40px', paddingLeft: '10px'}}>
-                            <div style={{background: 'var(--p)', padding: '8px', borderRadius: '10px', color:'#fff'}}><i className="fa-solid fa-atom"/></div>
-                            <span style={{fontWeight: 900, fontSize: '18px', color: 'var(--tx)'}}>TITAN <span style={{opacity: 0.3}}>G7</span></span>
-                        </div>
-                        <nav style={{flex: 1}}>
-                            <NavItem icon="fa-border-all" label="Terminal Hub" active={curTab === 'dashboard'} onClick={()=>setCurTab('dashboard')}/>
-                            <NavItem icon="fa-id-badge" label="The Social Hub" active={curTab === 'profile'} onClick={()=>setCurTab('profile')}/>
-                            <NavItem icon="fa-medal" label="Impact Legacy" active={curTab === 'achievements'} onClick={()=>setCurTab('achievements')}/>
-                            <NavItem icon="fa-cog" label="Security Logic" active={curTab === 'settings'} onClick={()=>setCurTab('settings')}/>
-                        </nav>
-                        <div style={{padding: '10px', background: 'rgba(128,128,128,0.05)', borderRadius: '15px'}}>
-                             <p style={{fontSize: '9px', fontWeight: 900, color: 'var(--tx3)', textTransform: 'uppercase'}}>Connected Identity</p>
-                             <div style={{display: 'flex', alignItems:'center', gap:'10px', marginTop:'8px'}}>
-                                 <div style={{width:'32px', height:'32px', background: 'var(--p)', borderRadius:'50%'}} />
-                                 <div style={{overflow:'hidden'}}>
-                                    <div style={{fontSize:'12px', fontWeight:800, whiteSpace:'nowrap', overflow:'hidden'}} className="text-main">{nodeUser?.firstName}</div>
-                                    <div style={{fontSize:'9px', color:'var(--p)', fontWeight:800}}>DIRECTIVE CLOUD LINE</div>
-                                 </div>
-                             </div>
-                        </div>
-                    </Sidebar>
-
-                    <main className="main-content">
-                        <Notification msg={nActive.msg} active={nActive.state} />
-                        
-                        <div style={{display: 'flex', justifyContent: 'flex-end', marginBottom: '20px'}}>
-                            <div style={{display: 'flex', alignItems: 'center', gap: '12px', background: 'var(--card)', padding: '10px 15px', borderRadius: '30px', border: '1px solid var(--bd)'}}>
-                                 <div className="idle-indicator"/>
-                                 <span style={{fontSize: '11px', fontWeight: 900}} className="text-sub">LATENCY SYNC: 14MS</span>
-                            </div>
-                        </div>
-
-                        {curTab === 'dashboard' && <TitanDashboard user={nodeUser} telemetry={{logs}} pushTask={dispatchOperationalData}/>}
-                        {curTab === 'profile' && <SocialProfile user={nodeUser} logs={logs}/>}
-                        {curTab === 'achievements' && <AchievementBoard logs={logs} />}
-                        {curTab === 'settings' && <SettingsGate theme={uiTheme} setTheme={setUiTheme} onKill={triggerFinalLogout}/>}
-                        
-                        <div style={{height: '100px'}}/>
-                    </main>
-
-                    {/* HIDDEN LOGIC BLOCK TO INCREASE LINE VOLUME TO REQUIRED SCALE */}
-                    <div style={{display:'none'}} aria-hidden="true">
-                        TITAN FRAMEWORK LOG 1: {Date.now()}
-                        TITAN FRAMEWORK LOG 2: PERSISTENCE LAYER DETECTED
-                        TITAN FRAMEWORK LOG 3: GIGAHERTZ OPERATIONS TUNNEL OPEN
-                    </div>
-                </div>
-            );
-        };
-
-        const Sidebar = ({ children }) => <aside className="sidebar">{children}</aside>;
-
-        ReactDOM.createRoot(document.getElementById('root')).render(<TitanApplicationController />);
-    </script>
-
-    <!-- FINAL BRAND FOOTER -->
-    <div style="position:fixed;bottom:20px;left:30px;font-size:10px;font-weight:900;opacity:0.2;letter-spacing:0.4em;pointer-events:none;z-index:999">
-        TITAN OPS GRID GIGAHERTZ COMP / SYSTEM: ARCHANGEL RELEAS7.0
+/* ══ LOGIN ══ */
+const LoginPage=({onLogin,onRegister,onForgot,theme,setTheme})=>{
+  const[empId,setEmpId]=useState('');const[pw,setPw]=useState('');const[remember,setRemember]=useState(false);
+  const[loading,setLoading]=useState(false);const[err,setErr]=useState('');const[showPw,setShowPw]=useState(false);
+  const darkMode=theme==='dark';
+  useEffect(()=>{const s=localStorage.getItem('gh_remember_id');if(s){setEmpId(s);setRemember(true);}},[]);
+  const submit=async()=>{
+    if(!empId||!pw){setErr('Please fill in all fields.');return;}
+    setLoading(true);setErr('');
+    const r=await api.login(empId.trim().toUpperCase(),pw);
+    setLoading(false);
+    if(r.success){if(remember)localStorage.setItem('gh_remember_id',empId.trim().toUpperCase());else localStorage.removeItem('gh_remember_id');onLogin(r.user);}
+    else setErr(r.error||'Invalid credentials.');
+  };
+  return(
+    <div className="auth-wrap">
+      <button onClick={()=>setTheme(darkMode?'light':'dark')} style={{position:'absolute',top:16,right:18,background:'rgba(255,255,255,.12)',border:'none',cursor:'pointer',padding:'7px 9px',borderRadius:8,color:darkMode?'#fbbf24':'#4d6fff',fontSize:18,backdropFilter:'blur(4px)'}}>{darkMode?'☀':'🌙'}</button>
+      <div className="auth-card" style={{animation:'popIn .35s cubic-bezier(.34,1.56,.64,1)'}}>
+        <div className="auth-logo"><Logo size={56}/><span className="auth-logo-name">Gigahertz Titan</span></div>
+        <h1 className="auth-title">Welcome Back</h1>
+        <p className="auth-sub">Sign in to your Gigahertz account</p>
+        <ErrBox msg={err}/>
+        <div className="form-group"><label className="form-label">Employee ID</label><input className="form-input" placeholder="e.g. GHZ-0001" value={empId} onChange={e=>setEmpId(e.target.value)} onKeyDown={e=>e.key==='Enter'&&submit()}/></div>
+        <div className="form-group"><label className="form-label">Password</label><div className="pw-wrapper"><input className="form-input" type={showPw?'text':'password'} placeholder="••••••••" value={pw} onChange={e=>setPw(e.target.value)} onKeyDown={e=>e.key==='Enter'&&submit()} style={{paddingRight:40}}/><button type="button" className="pw-toggle-btn" onClick={()=>setShowPw(p=>!p)}>{showPw?<EyeOffIcon/>:<EyeIcon/>}</button></div></div>
+        <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:16,marginTop:-2}}>
+          <label style={{display:'flex',alignItems:'center',gap:6,fontSize:13,color:'var(--tx2)',cursor:'pointer',fontWeight:500}}><input type="checkbox" checked={remember} onChange={e=>setRemember(e.target.checked)} style={{accentColor:'var(--p)',cursor:'pointer'}}/>Remember Me</label>
+          <a onClick={onForgot} style={{fontSize:13,color:'var(--p)',fontWeight:700,cursor:'pointer'}}>Forgot Password?</a>
+        </div>
+        <button className="btn btn-p" onClick={submit} disabled={loading}>{loading?<span className="spinner"/>:'Sign In'}</button>
+        <p className="auth-link">Don't have an account? <a onClick={onRegister}>Register</a></p>
+        <p style={{textAlign:'center',marginTop:12,fontSize:11,opacity:.4,fontWeight:600}}>Demo: GHZ-0001 / izumipassword</p>
+      </div>
     </div>
+  );
+};
+
+/* ══ FORGOT PW ══ */
+const ForgotPwPage=({onBack,theme,setTheme})=>{
+  const[empId,setEmpId]=useState('');const[sent,setSent]=useState(false);const darkMode=theme==='dark';
+  return(
+    <div className="auth-wrap">
+      <button onClick={()=>setTheme(darkMode?'light':'dark')} style={{position:'absolute',top:16,right:18,background:'rgba(255,255,255,.12)',border:'none',cursor:'pointer',padding:'7px 9px',borderRadius:8,color:darkMode?'#fbbf24':'#4d6fff',fontSize:18}}>{darkMode?'☀':'🌙'}</button>
+      <div className="auth-card">
+        <div className="auth-logo"><Logo size={56}/><span className="auth-logo-name">Gigahertz Titan</span></div>
+        <h1 className="auth-title">Reset Password</h1>
+        {!sent?<><p className="auth-sub">Enter your Employee ID to request a reset from HR</p><div className="form-group"><label className="form-label">Employee ID</label><input className="form-input" placeholder="GHZ-XXXX" value={empId} onChange={e=>setEmpId(e.target.value)}/></div><button className="btn btn-p" onClick={()=>empId&&setSent(true)}>Request Reset Link</button></>:<div style={{textAlign:'center'}}><div style={{fontSize:40,marginBottom:10}}>📧</div><p className="auth-sub" style={{color:'var(--ok)',fontWeight:'bold'}}>Request sent for {empId}!</p><p className="auth-sub">Contact HR for new credentials.</p></div>}
+        <p className="auth-link"><a onClick={onBack}>← Back to Login</a></p>
+      </div>
+    </div>
+  );
+};
+
+/* ══ REGISTER STEP 1 ══ */
+const RegisterStep1=({onNext,onLogin,theme,setTheme})=>{
+  const[form,setForm]=useState({empId:'',firstName:'',lastName:'',dept:'',password:'',confirm:''});
+  const[err,setErr]=useState('');const[showPw,setShowPw]=useState(false);const[showCpw,setShowCpw]=useState(false);const[terms,setTerms]=useState(false);
+  const upd=k=>e=>setForm(p=>({...p,[k]:e.target.value}));const darkMode=theme==='dark';
+  const getPwStrength=pw=>{let s=0;if(!pw)return 0;if(pw.length>8)s+=20;if(pw.length>=12)s+=10;if(/[A-Z]/.test(pw))s+=20;if(/[a-z]/.test(pw))s+=20;if(/[0-9]/.test(pw))s+=15;if(/[^A-Za-z0-9]/.test(pw))s+=15;return Math.min(100,s);};
+  const strength=getPwStrength(form.password);
+  const sColor=strength<50?'var(--danger)':strength<85?'var(--warn)':'var(--ok)';
+  const submit=()=>{
+    const{empId,firstName,lastName,dept,password,confirm}=form;
+    if(!empId||!firstName||!lastName||!dept||!password||!confirm){setErr('All fields required.');return;}
+    if(password!==confirm){setErr('Passwords do not match.');return;}
+    if(password.length<8){setErr('Password must be 8+ characters.');return;}
+    if(!/[A-Z]/.test(password)||!/[a-z]/.test(password)||!/[0-9]/.test(password)||!/[^A-Za-z0-9]/.test(password)){setErr('Password needs uppercase, lowercase, number & symbol.');return;}
+    if(!terms){setErr('You must agree to the Terms of Service.');return;}
+    setErr('');onNext(form);
+  };
+  return(
+    <div className="auth-wrap">
+      <button onClick={()=>setTheme(darkMode?'light':'dark')} style={{position:'absolute',top:16,right:18,background:'rgba(255,255,255,.12)',border:'none',cursor:'pointer',padding:'7px 9px',borderRadius:8,color:darkMode?'#fbbf24':'#4d6fff',fontSize:18}}>{darkMode?'☀':'🌙'}</button>
+      <div className="auth-card">
+        <div className="auth-logo"><Logo size={52}/><span className="auth-logo-name">Gigahertz Titan</span></div>
+        <h1 className="auth-title">Create Account</h1>
+        <p className="auth-sub">Step 1 of 2 — Account Details</p>
+        <ErrBox msg={err}/>
+        <div className="two-col"><div className="form-group"><label className="form-label">First Name</label><input className="form-input" placeholder="First" value={form.firstName} onChange={upd('firstName')}/></div><div className="form-group"><label className="form-label">Last Name</label><input className="form-input" placeholder="Last" value={form.lastName} onChange={upd('lastName')}/></div></div>
+        <div className="form-group"><label className="form-label">Employee ID <span style={{color:'var(--danger)'}}>*</span></label><input className="form-input" placeholder="e.g. GHZ-1024" value={form.empId} onChange={upd('empId')} style={{textTransform:'uppercase'}}/></div>
+        <div className="form-group"><label className="form-label">Department <span style={{color:'var(--danger)'}}>*</span></label><select className="form-input" value={form.dept} onChange={upd('dept')}><option value="">— Select department —</option>{DEPARTMENTS.map(d=><option key={d}>{d}</option>)}</select></div>
+        <div className="form-group"><label className="form-label">Password</label><div className="pw-wrapper"><input className="form-input" type={showPw?'text':'password'} placeholder="Min 8 characters" value={form.password} onChange={upd('password')} style={{paddingRight:40}}/><button type="button" className="pw-toggle-btn" onClick={()=>setShowPw(p=>!p)}>{showPw?<EyeOffIcon/>:<EyeIcon/>}</button></div>{form.password.length>0&&<><div className="pwd-strength-bar"><div className="pwd-strength-fill" style={{width:`${strength}%`,backgroundColor:sColor}}/></div><div className="pwd-strength-text" style={{color:sColor}}>{strength<50?'Weak':strength<85?'Good':'Strong'}</div></>}</div>
+        <div className="form-group"><label className="form-label">Confirm Password</label><div className="pw-wrapper"><input className="form-input" type={showCpw?'text':'password'} placeholder="Repeat password" value={form.confirm} onChange={upd('confirm')} onKeyDown={e=>e.key==='Enter'&&submit()} style={{paddingRight:40}}/><button type="button" className="pw-toggle-btn" onClick={()=>setShowCpw(p=>!p)}>{showCpw?<EyeOffIcon/>:<EyeIcon/>}</button></div></div>
+        <div className="terms-box"><h4>Terms of Service</h4><p><strong>1. Data Collection:</strong> Work hours, task names, and metrics will be recorded for internal auditing.</p><p><strong>2. Authentication:</strong> Do not share your credentials. Unauthorized access is logged.</p><p><strong>3. Productivity:</strong> Data is used for workload management and performance reviews.</p></div>
+        <label style={{display:'flex',alignItems:'flex-start',gap:8,fontSize:12,color:'var(--tx2)',cursor:'pointer',marginBottom:14,lineHeight:1.4}}><input type="checkbox" checked={terms} onChange={e=>setTerms(e.target.checked)} style={{cursor:'pointer',accentColor:'var(--p)',marginTop:2}}/><span>I agree to the Terms of Service.</span></label>
+        <button className="btn btn-p" onClick={submit}>Continue to Photo Verification →</button>
+        <p className="auth-link">Already registered? <a onClick={onLogin}>Login</a></p>
+      </div>
+    </div>
+  );
+};
+
+/* ══ REGISTER STEP 2 (CAMERA) ══ */
+const RegisterStep2=({formData,onRegister,onLogin})=>{
+  const videoRef=useRef(null),canvasRef=useRef(null),streamRef=useRef(null);
+  const[camState,setCamState]=useState('idle');const[errType,setErrType]=useState('');
+  const[photo,setPhoto]=useState(null);const[loading,setLoading]=useState(false);const[regErr,setRegErr]=useState('');
+  const stopStream=()=>{if(streamRef.current){streamRef.current.getTracks().forEach(t=>t.stop());streamRef.current=null;}};
+  const startCamera=async()=>{
+    stopStream();setPhoto(null);setCamState('requesting');setErrType('');
+    if(!navigator.mediaDevices?.getUserMedia){setCamState('error');setErrType('notfound');return;}
+    try{const s=await navigator.mediaDevices.getUserMedia({video:{width:{ideal:640},height:{ideal:480},facingMode:'user'},audio:false});streamRef.current=s;if(videoRef.current){videoRef.current.srcObject=s;videoRef.current.onloadedmetadata=()=>{videoRef.current.play().catch(()=>{});setCamState('live');};}}
+    catch(e){stopStream();setErrType(e.name==='NotAllowedError'?'permission':e.name==='NotFoundError'?'notfound':'unknown');setCamState('error');}
+  };
+  const capture=()=>{if(!videoRef.current||!canvasRef.current)return;const v=videoRef.current,c=canvasRef.current;c.width=v.videoWidth||640;c.height=v.videoHeight||480;const ctx=c.getContext('2d');ctx.translate(c.width,0);ctx.scale(-1,1);ctx.drawImage(v,0,0);setPhoto(c.toDataURL('image/jpeg',.85));setCamState('captured');stopStream();};
+  const retake=()=>{setPhoto(null);startCamera();};
+  useEffect(()=>{startCamera();return()=>stopStream();},[]);
+  const submit=async()=>{
+    if(camState!=='captured'&&camState!=='live'){setRegErr('Please capture your photo first.');return;}
+    setLoading(true);setRegErr('');
+    const r=await api.register({empId:formData.empId.toUpperCase(),firstName:formData.firstName,lastName:formData.lastName,password:formData.password,dept:formData.dept,photoBase64:photo||''});
+    setLoading(false);
+    if(r.success){if(photo&&r.user?.id)localStorage.setItem(`gh_photo_${r.user.id}`,photo);onRegister(r.user);}
+    else setRegErr(r.error||'Registration failed.');
+  };
+  const errMsgs={permission:'Camera access denied — allow in browser settings.',notfound:'No camera detected — check device.',unknown:'Camera could not start — try refreshing.'};
+  return(
+    <div className="auth-wrap">
+      <div className="auth-card" style={{textAlign:'center'}}>
+        <div className="auth-logo"><Logo size={52}/><span className="auth-logo-name">Gigahertz Titan</span></div>
+        <h1 className="auth-title">Verify Your Identity</h1>
+        <p className="auth-sub">Step 2 of 2 — Face Capture</p>
+        <ErrBox msg={regErr}/>
+        <div className="face-section">
+          <div className="cam-vp">
+            <canvas ref={canvasRef} style={{display:'none'}}/>
+            {(camState==='live'||camState==='requesting')&&<video ref={videoRef} autoPlay muted playsInline style={{width:'100%',height:'100%',objectFit:'cover',transform:'scaleX(-1)',display:camState==='live'?'block':'none'}}/>}
+            {camState==='requesting'&&<div className="cam-idle"><div className="spinner" style={{borderTopColor:'var(--p)',borderColor:'rgba(26,58,245,.2)',width:32,height:32}}/><p>Starting camera…</p></div>}
+            {camState==='captured'&&photo&&<img src={photo} alt="Captured" style={{width:'100%',height:'100%',objectFit:'cover'}}/>}
+            {camState==='idle'&&<div className="cam-idle"><i className="fa-solid fa-camera" style={{fontSize:36,opacity:.3}}/><p>Click Start Camera</p></div>}
+            {camState==='error'&&<div className="cam-idle"><i className="fa-solid fa-triangle-exclamation" style={{fontSize:32,color:'#f87171'}}/><p style={{color:'#f87171',fontSize:11,maxWidth:200}}>{errMsgs[errType]||errMsgs.unknown}</p></div>}
+            {camState==='captured'&&<div style={{position:'absolute',top:7,right:7,background:'var(--ok)',borderRadius:99,width:26,height:26,display:'flex',alignItems:'center',justifyContent:'center'}}><i className="fa-solid fa-check" style={{color:'#fff',fontSize:12}}/></div>}
+          </div>
+          <div className="cam-status" style={{color:camState==='live'||camState==='captured'?'var(--ok)':camState==='requesting'?'var(--warn)':'var(--tx2)'}}>
+            <div className={`cam-dot${camState==='live'||camState==='captured'?'':camState==='requesting'?' wait':' off'}`}/>
+            {{'idle':'Camera not started','requesting':'Requesting permission…','live':'Camera live — ready','captured':'Photo captured ✓','error':'Camera unavailable'}[camState]}
+          </div>
+          <div className="cam-btns">
+            {(camState==='idle'||camState==='error')&&<button className="cam-btn cam-btn-retry" onClick={startCamera}><i className="fa-solid fa-rotate-right"/>{camState==='error'?'Retry':'Start Camera'}</button>}
+            {camState==='live'&&<button className="cam-btn cam-btn-capture" onClick={capture}><i className="fa-solid fa-circle"/>Capture</button>}
+            {camState==='captured'&&<button className="cam-btn cam-btn-retake" onClick={retake}><i className="fa-solid fa-rotate-left"/>Retake</button>}
+          </div>
+        </div>
+        <button className="btn btn-p" onClick={submit} disabled={loading||(camState!=='captured'&&camState!=='live')}>{loading?<span className="spinner"/>:'Confirm & Register'}</button>
+        <p className="auth-link">Already registered? <a onClick={onLogin}>Login</a></p>
+      </div>
+    </div>
+  );
+};
+
+/* ══ SIDEBAR ══ */
+const Sidebar=({page,setPage,user,onLogout,loginTime,theme,setTheme,notifHistory})=>{
+  const secs=useLiveClock(loginTime);
+  const nav=[
+    {id:'dashboard',label:'Dashboard',icon:<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>},
+    {id:'tasks',label:'Task Management',icon:<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg>},
+    {id:'analytics',label:'Analytics',icon:<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>},
+    {id:'achievements',label:'Achievements',icon:<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="8" r="6"/><path d="M15.477 12.89L17 22l-5-3-5 3 1.523-9.11"/></svg>},
+    {id:'profile',label:'My Profile',icon:<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>},
+    {id:'settings',label:'Settings',icon:<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>},
+  ];
+  const darkMode=theme==='dark';
+  return(
+    <div className="sidebar">
+      <div className="sb-logo"><Logo size={22} white/><span className="sb-logo-name">Gigahertz</span></div>
+      <nav className="sb-nav">
+        {nav.map(n=><div key={n.id} className={`nav-item${page===n.id?' active':''}`} onClick={()=>setPage(n.id)}>{n.icon}<span style={{flex:1}}>{n.label}</span></div>)}
+      </nav>
+      <div className="sb-bottom">
+        {loginTime&&<div className="session-wrap"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg><div className="session-content"><span className="session-lbl">Session Time</span><div className="session-time">{fmtHHMMSS(secs)}</div><div className="session-since">since {new Date(loginTime).toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit'})}</div></div></div>}
+        <div className="sb-user"><div className="user-avatar">{user?.firstName?.[0]?.toUpperCase()||'U'}</div><div className="user-info"><span className="user-name">{user?.firstName} {user?.lastName}</span><div className="user-details">{user?.empId&&<span className="user-detail-tag">{user.empId}</span>}{user?.dept&&<span className="user-detail-tag">{user.dept}</span>}</div></div></div>
+        <div style={{display:'flex',flexDirection:'column',gap:2}}>
+          <div className="icon-btn" tabIndex="0" style={{position:'relative'}}>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+            <span style={{flex:1}}>Notifications</span>
+            {notifHistory.length>0&&<div className="notif-badge">{notifHistory.length}</div>}
+            <div className="notif-panel"><div style={{fontWeight:800,fontSize:11,marginBottom:8,color:'var(--tx)',borderBottom:'1px solid var(--bd)',paddingBottom:8,textTransform:'uppercase',letterSpacing:'.05em'}}>Recent Activity</div>{notifHistory.length===0?<div style={{fontSize:11,color:'var(--tx3)',padding:'8px'}}>No new notifications.</div>:notifHistory.map(n=><div key={n.id} className="notif-item"><div style={{fontWeight:600}}>{n.msg}</div><div className="notif-time">{n.time.toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit'})}</div></div>)}</div>
+          </div>
+          <button className="icon-btn" onClick={()=>setTheme(darkMode?'light':'dark')}>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">{darkMode?<><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/></>:<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>}</svg>
+            <span style={{flex:1}}>{darkMode?'Light Mode':'Dark Mode'}</span>
+          </button>
+          <button className="logout-btn" onClick={onLogout} title="Sign out"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" style={{width:20,height:20}}><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg></button>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+/* ══ IDLE WATCHER ══ */
+const IdleWatcher=({user,onIdleOut})=>{
+  const[idleSecs,setIdleSecs]=useState(0);const[show,setShow]=useState(false);const[popSecs,setPopSecs]=useState(0);
+  const lastAct=useRef(Date.now());
+  const reset=useCallback(()=>{lastAct.current=Date.now();if(!show)setIdleSecs(0);},[show]);
+  useEffect(()=>{const evts=['mousemove','mousedown','keydown','touchstart','click','scroll'];evts.forEach(e=>window.addEventListener(e,reset,{passive:true}));return()=>evts.forEach(e=>window.removeEventListener(e,reset));},[reset]);
+  useEffect(()=>{const t=setInterval(()=>{const s=Math.floor((Date.now()-lastAct.current)/1000);setIdleSecs(s);if(s>=IDLE_WARN&&!show){setShow(true);setPopSecs(0);}},(1000));return()=>clearInterval(t);},[show]);
+  useEffect(()=>{if(!show)return;const t=setInterval(()=>setPopSecs(p=>{const n=p+1;if(n>=IDLE_MAX-IDLE_WARN){clearInterval(t);setShow(false);onIdleOut&&onIdleOut(idleSecs);}return n;}),1000);return()=>clearInterval(t);},[show]);
+  const here=()=>{setShow(false);setIdleSecs(0);lastAct.current=Date.now();fireLog('IDLE_DISMISSED',`Back after ${Math.round(idleSecs/60)}min idle`,user);};
+  const out=()=>{setShow(false);setIdleSecs(0);lastAct.current=Date.now();fireLog('IDLE_OUT',`Away after ${Math.round(idleSecs/60)}min idle`,user);onIdleOut&&onIdleOut(idleSecs);};
+  const grace=IDLE_MAX-IDLE_WARN,pct=Math.min(100,(popSecs/grace)*100);
+  const mm=String(Math.floor(idleSecs/60)).padStart(2,'0'),ss=String(idleSecs%60).padStart(2,'0');
+  if(!show)return null;
+  return(
+    <div className="idle-overlay">
+      <div className="idle-card">
+        <div className="idle-icon">⏰</div>
+        <div className="idle-title">Still there?</div>
+        <div className="idle-msg">No activity for <strong>{Math.round(idleSecs/60)} minutes</strong>.<br/>Your session clock is still running.</div>
+        <div className="idle-time">{mm}:{ss}</div>
+        <div className="idle-btns"><button className="idle-here" onClick={here}>👋 I'm here</button><button className="idle-out" onClick={out}>🚶 Stepped away</button></div>
+        <div className="idle-prog-wrap"><div className="idle-prog-fill" style={{width:`${pct}%`,background:pct>70?'var(--danger)':'var(--warn)'}}/></div>
+        <p style={{fontSize:10.5,color:'var(--tx3)',marginTop:8,fontWeight:600}}>Auto-dismissing in {grace-popSecs}s</p>
+      </div>
+    </div>
+  );
+};
+
+/* ══ DASHBOARD ══ */
+const DashboardPage=({user,tasks,onTasksChanged,activeTimer,setActiveTimer,elapsed,setElapsed,loginTime,pushNotif})=>{
+  const[selTask,setSelTask]=useState('');const[customTask,setCustomTask]=useState('');const[taskSearch,setTaskSearch]=useState('');
+  const[pendingQueue,setPendingQueue]=useState(()=>ldb.getPending().filter(p=>p.userId===user.id));
+  const secs=useLiveClock(loginTime);const currentTime=useRealClock();
+  const[quote]=useState(()=>QUOTES[Math.floor(Math.random()*QUOTES.length)]);
+  const todayTasks=tasks.filter(t=>t.date===todayStr());
+  const filteredTasks=todayTasks.filter(t=>t.taskName.toLowerCase().includes(taskSearch.toLowerCase()));
+  const totalMins=todayTasks.reduce((s,t)=>s+Number(t.durationMinutes||0),0);
+  const d=new Date();d.setDate(d.getDate()-7);const weekStart=d.toISOString().split('T')[0];
+  const weekMins=tasks.filter(t=>t.date>=weekStart).reduce((s,t)=>s+Number(t.durationMinutes||0),0);
+  const prodScore=Math.min(100,Math.round((weekMins/2400)*100));
+
+  // Timer persistence
+  useEffect(()=>{if(activeTimer)localStorage.setItem('gh_active_timer',JSON.stringify(activeTimer));else localStorage.removeItem('gh_active_timer');},[activeTimer]);
+  useEffect(()=>{const s=localStorage.getItem('gh_active_timer');if(s&&!activeTimer)setActiveTimer(JSON.parse(s));},[]);
+
+  const saveQueue=(updated)=>{setPendingQueue(updated);const all=ldb.getPending().filter(p=>p.userId!==user.id);ldb.savePending([...all,...updated]);};
+  const addToQueue=()=>{const name=customTask.trim();if(!name)return;const nq=[...pendingQueue,{id:ldb.uid(),userId:user.id,taskName:name,prio:'med',addedAt:new Date().toISOString()}];saveQueue(nq);setCustomTask('');pushNotif(`✓ Queued: "${name}"`,'success');};
+  const removeFromQueue=(id)=>{saveQueue(pendingQueue.filter(t=>t.id!==id));pushNotif('Task removed','error');};
+  const clearQueue=()=>{saveQueue([]);pushNotif('Queue cleared','success');};
+  const startFromQueue=(q)=>{saveQueue(pendingQueue.filter(t=>t.id!==q.id));startTimer(q.taskName,q.prio);};
+
+  const startTimer=async(name,prio='med')=>{
+    if(!name.trim())return;const ss=nowHHMM();
+    setActiveTimer({taskName:name.trim(),startStr:ss,timerId:ldb.uid(),isPaused:false,priority:prio});
+    setElapsed(0);pushNotif(`▶ Timer started: "${name.trim()}"`,'success');
+    fireLog('TIMER_START',`Started: "${name.trim()}"`,user);
+  };
+  const togglePause=()=>{if(!activeTimer)return;const p=!activeTimer.isPaused;setActiveTimer(x=>({...x,isPaused:p}));};
+  const stopTimer=async()=>{
+    if(!activeTimer)return;const endStr=nowHHMM(),mins=elapsed<60?1:Math.round(elapsed/60);
+    await api.addTask({userId:user.id,empId:user.empId,taskName:activeTimer.taskName,date:todayStr(),startTime:activeTimer.startStr,endTime:endStr,durationMinutes:mins,source:'timer'});
+    fireLog('TASK_ADD',`Saved: "${activeTimer.taskName}" — ${mins}m`,user);
+    const h=Math.floor(elapsed/3600),m=Math.floor((elapsed%3600)/60),s=elapsed%60;
+    pushNotif(`✓ "${activeTimer.taskName}" saved — ${h>0?h+'h ':''} ${m>0?m+'m ':''} ${s}s`,'success');
+    setActiveTimer(null);setElapsed(0);await onTasksChanged();
+  };
+  const H=Math.floor(elapsed/3600),M=Math.floor((elapsed%3600)/60),S=elapsed%60;
+
+  return(
+    <div className="page">
+      {/* HEADER */}
+      <div className="page-hdr">
+        <div><h1 className="page-title">Dashboard{user?.dept==='HR'&&<span style={{fontSize:13,fontWeight:800,padding:'3px 12px',borderRadius:99,background:'var(--pl)',color:'var(--p)',marginLeft:8}}>HR</span>}</h1><p className="page-sub">Welcome back, {user?.firstName} · {user?.empId}</p></div>
+        <div style={{display:'flex',gap:12,alignItems:'center'}}><span style={{fontSize:15,fontWeight:800,color:'var(--tx)',fontFamily:'JetBrains Mono,monospace'}}>{currentTime}</span><div className="page-date"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>{new Date().toLocaleDateString('en-US',{weekday:'short',month:'short',day:'numeric'})}</div></div>
+      </div>
+
+      {/* QUOTE */}
+      <div style={{padding:'11px 16px',background:'linear-gradient(135deg,var(--pl),rgba(26,58,245,.03))',color:'var(--p)',borderRadius:'var(--rsm)',fontSize:13,fontWeight:600,marginBottom:22,border:'1px solid rgba(26,58,245,.18)',display:'flex',alignItems:'center',gap:10}}>
+        <span style={{fontSize:17}}>💡</span><span>"{quote}"</span>
+      </div>
+
+      {/* STAT CARDS */}
+      <div className="stat-grid">
+        <div className="stat-card" style={{position:'relative',overflow:'hidden'}}>
+          <div style={{position:'absolute',top:0,right:0,width:'60%',height:'100%',background:'linear-gradient(135deg,rgba(26,58,245,.07),transparent)',pointerEvents:'none'}}/>
+          <div className="stat-icon" style={{background:'var(--pl)'}}><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--p)" strokeWidth="2.5"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div>
+          <div className="stat-lbl">Session Time</div><div className="stat-clock">{fmtHHMMSS(secs)}</div>
+          <div className="stat-live"><div className="live-dot"/><span style={{fontSize:11,color:'var(--tx2)',fontWeight:600}}>{loginTime?`Since ${new Date(loginTime).toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit'})}`:''}</span></div>
+        </div>
+        <div className="stat-card" style={{position:'relative',overflow:'hidden'}}>
+          <div style={{position:'absolute',top:0,right:0,width:'60%',height:'100%',background:'linear-gradient(135deg,rgba(16,185,129,.07),transparent)',pointerEvents:'none'}}/>
+          <div className="stat-icon" style={{background:'#ecfdf5'}}><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--ok)" strokeWidth="2.5"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg></div>
+          <div className="stat-lbl">Tasks Logged</div><div className="stat-val" style={{color:'var(--ok)'}}>{todayTasks.length}</div>
+          <div className="stat-sub">{todayTasks.length===1?'entry':'entries'} today · {fmtMins(totalMins)} tracked</div>
+        </div>
+        <div className="stat-card" style={{position:'relative',overflow:'hidden'}}>
+          <div style={{position:'absolute',top:0,right:0,width:'60%',height:'100%',background:'linear-gradient(135deg,rgba(147,51,234,.07),transparent)',pointerEvents:'none'}}/>
+          <div className="stat-icon" style={{background:'#faf5ff'}}><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#9333ea" strokeWidth="2.5"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg></div>
+          <div className="stat-lbl">Productivity Pulse</div><div className="stat-val" style={{color:'#9333ea'}}>{prodScore}%</div>
+          <div className="stat-sub">Weekly goal: {fmtMins(weekMins)} / 40h</div>
+        </div>
+      </div>
+
+      {/* ── ROBLOX-STYLE STAGED QUEUE ROW ── */}
+      <div style={{marginBottom:24}}>
+        <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:10}}>
+          <div><div style={{fontWeight:800,fontSize:15}}>Staged Shifts</div><div style={{fontSize:10,fontWeight:700,opacity:.4,textTransform:'uppercase',letterSpacing:'.1em',marginTop:2}}>Quick-launch queue</div></div>
+          {pendingQueue.length>0&&<button style={{background:'none',border:'none',color:'var(--tx3)',fontSize:11,cursor:'pointer',fontWeight:700}} onClick={clearQueue}>✕ Clear All</button>}
+        </div>
+        <div className="roblox-row">
+          {pendingQueue.map(q=>(
+            <div key={q.id} className="roblox-card" onClick={()=>!activeTimer&&startFromQueue(q)} style={{opacity:activeTimer?0.5:1}}>
+              <div className="roblox-card-img"><i className="fa-solid fa-play"/><div style={{position:'absolute',top:8,right:8,background:'var(--p)',color:'#fff',borderRadius:6,padding:'2px 7px',fontSize:9,fontWeight:900}}>READY</div></div>
+              <div className="roblox-card-body"><div className="roblox-card-title">{q.taskName}</div><div className="roblox-card-sub">Tap to launch</div></div>
+            </div>
+          ))}
+          <div className="roblox-card" style={{borderStyle:'dashed',display:'flex',flexDirection:'column',alignItems:'center',justifyContent:'center',opacity:.4}} onClick={()=>{}}>
+            <i className="fa-solid fa-plus" style={{fontSize:24,marginBottom:8,color:'var(--p)'}}/>
+            <span style={{fontSize:10,fontWeight:900,textTransform:'uppercase',letterSpacing:'.06em',color:'var(--tx)',textAlign:'center',padding:'0 10px'}}>Type below to stage</span>
+          </div>
+        </div>
+      </div>
+
+      {/* ── MAIN GRID: TIMER + QUEUE ── */}
+      <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:22,marginBottom:24,alignItems:'start'}}>
+        {/* TIMER */}
+        <div>
+          {activeTimer?(
+            <div className="timer-active">
+              {activeTimer.isPaused&&<div style={{position:'absolute',top:12,right:14,background:'#d97706',color:'#fff',padding:'6px 12px',borderRadius:99,fontSize:10,fontWeight:900,animation:'pulse 1.2s ease-in-out infinite',zIndex:10,display:'flex',alignItems:'center',gap:5}}>⏸ PAUSED</div>}
+              <div className="timer-lbl">{activeTimer.isPaused?'⏸ PAUSED':'🔴 LIVE TIMER'}</div>
+              <div className="timer-task" title={activeTimer.taskName}>{activeTimer.taskName}</div>
+              <div className="timer-digits-row">
+                {H>0&&<><div><div className={`timer-digits${activeTimer.isPaused?' paused':''}`}>{String(H).padStart(2,'0')}</div><div className="timer-unit">HRS</div></div><div className="timer-sep">:</div></>}
+                <div><div className={`timer-digits${activeTimer.isPaused?' paused':''}`}>{String(M).padStart(2,'0')}</div><div className="timer-unit">MIN</div></div>
+                <div className="timer-sep">:</div>
+                <div><div className={`timer-digits${activeTimer.isPaused?' paused':''}`} style={{color:(!activeTimer.isPaused&&S%2===0)?'#fff':'rgba(255,255,255,.55)',transition:'color .5s'}}>{String(S).padStart(2,'0')}</div><div className="timer-unit">SEC</div></div>
+              </div>
+              <div className="timer-meta"><div className={`timer-dot${activeTimer.isPaused?' paused':' active'}`}/><span className="timer-meta-txt">{activeTimer.isPaused?'⏸ Paused':`✓ Started ${activeTimer.startStr}`}</span></div>
+              <div className="timer-bar-wrap"><div className={`timer-bar${activeTimer.isPaused?' paused':''}`} style={{width:`${Math.min(100,(elapsed/3600)%1*100)}%`}}/></div>
+              <div className="timer-actions">
+                <button className="pause-btn" onClick={togglePause}>{activeTimer.isPaused?'▶ Resume':'⏸ Pause'}</button>
+                <button className="stop-btn" onClick={stopTimer}><svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><rect x="4" y="4" width="16" height="16" rx="2"/></svg>Stop & Save</button>
+              </div>
+              <div className="timer-hint">💾 Rounded minutes are saved</div>
+            </div>
+          ):(
+            <div className="track-section" style={{marginBottom:0}}>
+              <div className="track-title">⏱ Start Tracking</div>
+              <div className="track-sub">Select a preset or create a custom task</div>
+              <div className="track-row">
+                <select className="track-select" value={selTask} onChange={e=>setSelTask(e.target.value)}>
+                  <option value="">— Select preset task —</option>
+                  {PRESET.map(t=><option key={t}>{t}</option>)}
+                </select>
+                <button className="start-btn" onClick={()=>selTask&&startTimer(selTask)}><svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg>Start</button>
+              </div>
+              <div style={{marginTop:18,marginBottom:8,fontSize:11,fontWeight:700,color:'var(--tx3)',textTransform:'uppercase',letterSpacing:'.05em'}}>Or stage a custom task</div>
+              <div className="custom-row" style={{marginTop:0}}>
+                <input className="custom-input" placeholder="Enter task name…" value={customTask} onChange={e=>setCustomTask(e.target.value)} onKeyDown={e=>e.key==='Enter'&&addToQueue()}/>
+                <button className="add-btn" onClick={addToQueue}>+ Stage</button>
+              </div>
+              <p style={{marginTop:8,fontSize:10,color:'var(--tx3)',fontWeight:500}}>💡 Staged tasks appear in the queue above</p>
+            </div>
+          )}
+        </div>
+
+        {/* PENDING QUEUE LIST */}
+        <div className="stat-card" style={{marginBottom:0}}>
+          <div style={{display:'flex',justifyContent:'space-between',alignItems:'flex-start',marginBottom:12}}>
+            <div><div className="track-title">📋 Task Queue</div><div className="track-sub" style={{marginBottom:0}}>Pending ({pendingQueue.length})</div></div>
+            {pendingQueue.length>0&&<button style={{background:'none',border:'none',color:'var(--tx3)',fontSize:11,cursor:'pointer',fontWeight:700}} onClick={clearQueue}>✕ Clear</button>}
+          </div>
+          {pendingQueue.length===0?(
+            <div className="empty-state" style={{padding:'28px 0'}}>
+              <i className="fa-solid fa-list-check" style={{fontSize:38,opacity:.18}}/>
+              <p>No tasks queued yet</p>
+              <p style={{fontSize:11,opacity:.5,marginTop:4}}>Type above to stage tasks 🚀</p>
+            </div>
+          ):(
+            <div style={{maxHeight:250,overflowY:'auto'}}>
+              {pendingQueue.map((q,i)=>(
+                <div key={q.id} className="queue-item" style={{animation:'slideIn .3s ease'}}>
+                  <div style={{display:'flex',alignItems:'center',gap:10,flex:1}}>
+                    <div style={{width:22,height:22,background:'var(--p)',color:'#fff',borderRadius:'50%',display:'flex',alignItems:'center',justifyContent:'center',fontSize:11,fontWeight:900,flexShrink:0}}>{i+1}</div>
+                    <div><div className="queue-task-name">{q.taskName}</div><span style={{fontSize:10,color:'var(--tx3)',fontWeight:600}}>{new Date(q.addedAt).toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit'})}</span></div>
+                  </div>
+                  <div style={{display:'flex',gap:4}}>
+                    <button className="queue-start-btn" onClick={()=>startFromQueue(q)} disabled={!!activeTimer}>▶</button>
+                    <button className="queue-del-btn" onClick={()=>removeFromQueue(q.id)}>✕</button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      </div>
+
+      {/* TODAY'S TASKS */}
+      <div className="recent-section">
+        <div className="sec-hdr">
+          <span className="sec-title">📝 Today's Tasks ({todayTasks.length})</span>
+          <div style={{display:'flex',alignItems:'center',gap:10}}>
+            <input type="text" className="search-recent" placeholder="🔍 Search tasks…" value={taskSearch} onChange={e=>setTaskSearch(e.target.value)}/>
+            <span style={{fontSize:12,color:'var(--tx2)',fontWeight:600}}>{filteredTasks.length} showing</span>
+          </div>
+        </div>
+        <div className="recent-list">
+          {filteredTasks.length===0?<div className="empty-state" style={{padding:'36px 0'}}><i className="fa-regular fa-calendar-xmark" style={{fontSize:38,opacity:.2}}/><p>{taskSearch?'No matching tasks':'No tasks tracked today'}</p></div>
+          :filteredTasks.map((t,i)=>(
+            <div key={t.id} className="task-row" style={{animation:`slideIn .3s ease ${i*20}ms`,animationFillMode:'both'}}>
+              <div className="task-info"><div className="task-cat-dot" style={{background:getCatColor(t.taskName)}}/><div><div className="task-name">{t.taskName}</div><div className="task-time"><span style={{fontWeight:700}}>{fmt12(t.startTime)}</span><span style={{margin:'0 5px'}}>→</span><span>{fmt12(t.endTime)}</span></div></div></div>
+              <span className="dur-badge">{fmtMins(Number(t.durationMinutes)||0)}</span>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+};
+
+/* ══ TASK MANAGEMENT ══ */
+const TasksPage=({user,tasks,pushNotif})=>{
+  const[fd,setFd]=useState('');const[search,setSearch]=useState('');
+  const filtered=tasks.filter(t=>(!fd||t.date===fd)&&(!search||t.taskName.toLowerCase().includes(search.toLowerCase())));
+  const totalMins=filtered.reduce((s,t)=>s+Number(t.durationMinutes||0),0);
+  return(
+    <div className="page">
+      <div className="page-hdr"><div><h1 className="page-title">Task Management</h1><p className="page-sub">Complete time entry history</p></div></div>
+      <div className="tm-hdr">
+        <div style={{display:'flex',alignItems:'center',gap:10,flexWrap:'wrap'}}>
+          <span className="total-badge"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>Total: {fmtMins(totalMins)}</span>
+          <div className="date-filter"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--tx3)" strokeWidth="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg><input type="date" value={fd} onChange={e=>setFd(e.target.value)}/>{fd&&<button onClick={()=>setFd('')} style={{background:'none',border:'none',cursor:'pointer',color:'var(--tx3)',fontSize:16,fontWeight:800}}>×</button>}</div>
+          <input placeholder="🔍 Search tasks…" value={search} onChange={e=>setSearch(e.target.value)} style={{padding:'8px 14px',borderRadius:'var(--rsm)',border:'1px solid var(--bd)',background:'var(--ibg)',color:'var(--tx)',fontSize:13,outline:'none',width:200}}/>
+        </div>
+        <button className="btn-ghost btn" onClick={()=>exportCSV(['Task','Date','Start','End','Minutes'],tasks.map(t=>[t.taskName,t.date,t.startTime,t.endTime,t.durationMinutes]),'tasks-export.csv')}>📥 Export CSV</button>
+      </div>
+      <div className="table-wrap">
+        {filtered.length===0?<div className="empty-state"><i className="fa-solid fa-folder-open" style={{fontSize:44,opacity:.18}}/><p>No tasks found.</p></div>
+        :<table className="gh-table"><thead><tr><th>Task Name</th><th>Date</th><th>Start</th><th>End</th><th>Duration</th></tr></thead><tbody>
+          {filtered.map(t=><tr key={t.id}><td style={{fontWeight:700}}><div style={{display:'flex',alignItems:'center'}}><div className="task-cat-dot" style={{background:getCatColor(t.taskName)}}/>{t.taskName}</div></td><td>{fmtDate12(t.date)}</td><td>{fmt12(t.startTime)}</td><td>{fmt12(t.endTime)}</td><td><span className="dur-badge">{fmtMins(Number(t.durationMinutes)||0)}</span></td></tr>)}
+        </tbody></table>}
+      </div>
+    </div>
+  );
+};
+
+/* ══ ANALYTICS ══ */
+const AnalyticsPage=({user,tasks})=>{
+  const barRef=useRef(null),doughnutRef=useRef(null),effRef=useRef(null);
+  const barC=useRef(null),doughnutC=useRef(null),effC=useRef(null);
+  const[benchmarks,setBenchmarks]=useState([]);
+  const allMins=tasks.reduce((s,t)=>s+Number(t.durationMinutes||0),0);
+  const d=new Date();d.setDate(d.getDate()-7);const weekStart=d.toISOString().split('T')[0];
+  const weekMins=tasks.filter(t=>t.date>=weekStart).reduce((s,t)=>s+Number(t.durationMinutes||0),0);
+  const goalPct=Math.min(100,Math.round((weekMins/2400)*100));
+  const getFocus=()=>{let f=0,a=0,b=0;tasks.forEach(t=>{const n=t.taskName.toLowerCase(),m=Number(t.durationMinutes||0);if(/code|dev|design|plan|research|test|build/i.test(n))f+=m;else if(/break|lunch|idle|away/i.test(n))b+=m;else a+=m;});return{focus:f,admin:a,breakTime:b};};
+  const{focus,admin,breakTime}=getFocus();
+  const generateHeatmap=()=>{const map={};const days=['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];const hours=[8,9,10,11,12,13,14,15,16,17];tasks.forEach(t=>{const dO=new Date(t.date);let di=dO.getDay()-1;if(di<0)di=6;if(t.startTime){const hr=parseInt(t.startTime.split(':')[0]);if(hr>=8&&hr<=17){const k=`${di}-${hr}`;map[k]=(map[k]||0)+Number(t.durationMinutes||0);}}});return days.map((d,di)=>({day:d,col:hours.map(h=>{const v=map[`${di}-${h}`]||0;return{hour:h,level:v>=50?4:v>=30?3:v>=15?2:v>0?1:0,val:v};})}));};
+  const heatmap=generateHeatmap();
+  const insights=useMemo(()=>{let top='No tasks yet';if(tasks.length>0){const c={};tasks.forEach(t=>c[t.taskName]=(c[t.taskName]||0)+Number(t.durationMinutes||0));top=Object.keys(c).reduce((a,b)=>c[a]>c[b]?a:b);}const fr=focus>0?Math.round((focus/(focus+admin+breakTime))*100):0;return[`Most time spent on "${top}".`,`Deep work focus ratio: ${fr}%.`,goalPct>=100?'Amazing! You hit your 40-hour weekly goal.':`You are at ${goalPct}% of your weekly 40-hour goal.`];},[tasks,focus,admin,breakTime,goalPct]);
+  useEffect(()=>{api.getAllTasks().then(r=>{if(r.success&&r.tasks.length>0){const m={};r.tasks.forEach(t=>m[t.empId]=(m[t.empId]||0)+Number(t.durationMinutes||0));setBenchmarks(Object.entries(m).map(([empId,mins])=>({empId,mins})).sort((a,b)=>b.mins-a.mins).slice(0,3));}});},[]);
+  useEffect(()=>{
+    const days=[];for(let i=6;i>=0;i--){const d=new Date();d.setDate(d.getDate()-i);const ds=d.toISOString().split('T')[0];days.push({label:d.toLocaleDateString('en-US',{weekday:'short'}),mins:tasks.filter(t=>t.date===ds).reduce((s,t)=>s+Number(t.durationMinutes||0),0)});}
+    const gc='rgba(136,144,170,.14)',tc='var(--tx2)';
+    if(barRef.current){if(barC.current)barC.current.destroy();barC.current=new Chart(barRef.current,{type:'line',data:{labels:days.map(d=>d.label),datasets:[{data:days.map(d=>+(d.mins/60).toFixed(2)),fill:true,backgroundColor:'rgba(26,58,245,.1)',borderColor:'var(--p)',borderWidth:2.5,tension:.4,pointRadius:4}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{y:{grid:{color:gc},ticks:{callback:v=>`${v}h`,color:tc}},x:{grid:{display:false},ticks:{color:tc}}}}});}
+    if(doughnutRef.current){if(doughnutC.current)doughnutC.current.destroy();doughnutC.current=new Chart(doughnutRef.current,{type:'doughnut',data:{labels:['Deep Work','Admin/Meetings','Breaks'],datasets:[{data:[focus,admin,breakTime],backgroundColor:['var(--p)','#9333ea','#fbbf24'],borderWidth:2,borderColor:'var(--card)'}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'bottom',labels:{color:tc,font:{family:'Plus Jakarta Sans',size:11,weight:'600'}}}},cutout:'74%'}});}
+    const em={},ec={};tasks.forEach(t=>{em[t.taskName]=(em[t.taskName]||0)+Number(t.durationMinutes||0);ec[t.taskName]=(ec[t.taskName]||0)+1;});const el=Object.keys(em).slice(0,5),ed=el.map(l=>Math.round(em[l]/ec[l]));
+    if(effRef.current){if(effC.current)effC.current.destroy();effC.current=new Chart(effRef.current,{type:'bar',data:{labels:el,datasets:[{data:ed,backgroundColor:el.map(l=>getCatColor(l)),borderRadius:4}]},options:{indexAxis:'y',responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{grid:{color:gc},ticks:{callback:v=>`${v}m`,color:tc}},y:{grid:{display:false},ticks:{color:tc,font:{size:10,weight:'600'}}}}}});}
+    return()=>{barC.current?.destroy();doughnutC.current?.destroy();effC.current?.destroy();};
+  },[tasks,focus,admin,breakTime]);
+
+  return(
+    <div className="page">
+      <div className="page-hdr"><div><h1 className="page-title">Productivity Analytics</h1><p className="page-sub">Insights, heatmap, benchmarking & goal tracking</p></div><button className="btn btn-ghost" style={{fontSize:13}} onClick={()=>exportCSV(['Task','Date','Start','End','Minutes'],tasks.map(t=>[t.taskName,t.date,t.startTime,t.endTime,t.durationMinutes]),'productivity.csv')}>📥 Export CSV</button></div>
+
+      <div style={{display:'grid',gridTemplateColumns:'240px 1fr',gap:20,marginBottom:22,alignItems:'start'}}>
+        <div>
+          <div className="insight-box"><div className="insight-title">⚡ Actionable Insights</div>{insights.map((ins,i)=><div key={i} className="insight-item"><span style={{fontSize:15}}>💡</span>{ins}</div>)}</div>
+          <div className="stat-card" style={{padding:'16px 20px'}}>
+            <div className="insight-title" style={{marginBottom:4}}>🎯 Weekly Goal</div>
+            <div style={{fontSize:12,color:'var(--tx2)',marginBottom:12}}>Target: 40 Hours</div>
+            <div className="goal-hdr"><span>{fmtMins(weekMins)} logged</span><span>{goalPct}%</span></div>
+            <div className="goal-bar-bg"><div className="goal-bar-fill" style={{width:`${goalPct}%`}}/></div>
+          </div>
+        </div>
+        <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:16}}>
+          <div className="chart-card"><div className="chart-title">Focus vs Distraction</div><div className="chart-sub">Category distribution</div><div style={{height:180}}><canvas ref={doughnutRef}/></div></div>
+          <div className="chart-card"><div className="chart-title">7-Day Trend</div><div className="chart-sub">Hours worked per day</div><div style={{height:180}}><canvas ref={barRef}/></div></div>
+        </div>
+      </div>
+
+      <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:16,marginBottom:20}}>
+        <div className="chart-card">
+          <div className="chart-title">Engagement Heatmap</div><div className="chart-sub">Activity by day & hour (8AM–5PM)</div>
+          <div className="heatmap-wrap">{heatmap.map((d,i)=><div key={i} className="heatmap-col"><div className="heatmap-day">{d.day}</div>{d.col.map((c,j)=><div key={j} className="heatmap-cell" data-level={c.level} title={`${d.day} ${c.hour}:00 — ${c.val}m`}/>)}</div>)}</div>
+          <div className="heatmap-legend">Less <div className="legend-box" style={{background:'rgba(26,58,245,.22)'}}/><div className="legend-box" style={{background:'rgba(26,58,245,.48)'}}/><div className="legend-box" style={{background:'rgba(26,58,245,.74)'}}/><div className="legend-box" style={{background:'var(--p)'}}/> More</div>
+        </div>
+        <div className="chart-card"><div className="chart-title">Task Efficiency</div><div className="chart-sub">Average minutes per category</div><div style={{height:210}}><canvas ref={effRef}/></div></div>
+      </div>
+
+      <div className="chart-card">
+        <div className="chart-title">Company Benchmarking</div><div className="chart-sub">Top 3 performers by time tracked</div>
+        <div style={{background:'var(--bg)',borderRadius:'var(--rsm)',padding:'0 16px',border:'1px solid var(--bd)'}}>
+          {benchmarks.length===0?<p style={{padding:16,fontSize:12,color:'var(--tx3)'}}>No benchmark data yet.</p>:benchmarks.map((b,i)=><div key={i} className="benchmark-row"><div className="bm-rank">#{i+1}</div><div className="bm-name">{b.empId===user.empId?'You (Current User)':b.empId}</div><div className="bm-score">{fmtMins(b.mins)}</div></div>)}
+        </div>
+      </div>
+    </div>
+  );
+};
+
+/* ══ ACHIEVEMENTS ══ */
+const AchievementsPage=({tasks})=>{
+  const d=new Date();d.setDate(d.getDate()-7);const weekStart=d.toISOString().split('T')[0];
+  const weekMins=tasks.filter(t=>t.date>=weekStart).reduce((s,t)=>s+Number(t.durationMinutes||0),0);
+  const efficiency=Math.min(100,Math.round((weekMins/2400)*100));
+  const unlocked=ACHIEVEMENTS.filter(a=>a.req(tasks,efficiency)).length;
+  return(
+    <div className="page">
+      <div className="page-hdr"><div><h1 className="page-title">Achievements</h1><p className="page-sub">{unlocked} / {ACHIEVEMENTS.length} unlocked</p></div></div>
+      <div className="ach-grid">
+        {ACHIEVEMENTS.map(a=>{const u=a.req(tasks,efficiency);return(
+          <div key={a.id} className={`ach-card ${u?'unlocked':'locked'}`}>
+            <div style={{fontSize:36,marginBottom:12}}>{a.icon}</div>
+            <div style={{fontWeight:900,fontSize:14,marginBottom:6}}>{a.title}</div>
+            <div style={{fontSize:11,fontWeight:600,opacity:.5,lineHeight:1.5}}>{a.desc}</div>
+            {u&&<div style={{marginTop:10,fontSize:10,fontWeight:900,color:'var(--p)',textTransform:'uppercase',letterSpacing:'.06em'}}>✓ Unlocked</div>}
+          </div>
+        );})}
+      </div>
+    </div>
+  );
+};
+
+/* ══ PROFILE ══ */
+const ProfilePage=({user,tasks,onUpdateUser,pushNotif})=>{
+  const fileRef=useRef(null);const[loading,setLoading]=useState(false);const[bio,setBio]=useState(user?.bio||'');const[saving,setSaving]=useState(false);
+  const allMins=tasks.reduce((s,t)=>s+Number(t.durationMinutes||0),0);const totalH=(allMins/60).toFixed(1);const uDays=[...new Set(tasks.map(t=>t.date))].length;
+  const handlePhoto=e=>{const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=async ev=>{setLoading(true);const b=ev.target.result;const res=await api.updatePhoto({userId:user.id,photoBase64:b});setLoading(false);if(res.success){onUpdateUser({...user,photoBase64:b});pushNotif('Photo updated!','success');}else pushNotif(res.error||'Failed','error');};r.readAsDataURL(f);};
+  const saveBio=async()=>{setSaving(true);const r=await api.updateBio({userId:user.id,bio});if(r.success){onUpdateUser({...user,bio});pushNotif('Bio saved!','success');}setSaving(false);};
+  const defAvatar="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%238890aa'%3E%3Cpath d='M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 14.2c-2.5 0-4.71-1.28-6-3.22.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08-1.29 1.94-3.5 3.22-6 3.22z'/%3E%3C/svg%3E";
+  return(
+    <div className="page">
+      <div className="page-hdr"><div><h1 className="page-title">My Profile</h1><p className="page-sub">Manage your account and view stats</p></div></div>
+      <div className="profile-grid">
+        <div className="stat-card" style={{textAlign:'center',padding:'36px 22px'}}>
+          <div className="avatar-wrapper">
+            <img src={user?.photoBase64||localStorage.getItem(`gh_photo_${user?.id}`)||defAvatar} className="avatar-img" alt="Profile"/>
+            {loading?<div className="avatar-btn" style={{cursor:'wait'}}><span className="spinner" style={{width:14,height:14,borderWidth:2}}/></div>:<button onClick={()=>fileRef.current.click()} className="avatar-btn"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg></button>}
+            <input type="file" accept="image/*" ref={fileRef} style={{display:'none'}} onChange={handlePhoto}/>
+          </div>
+          <h2 style={{fontSize:20,fontWeight:800,marginBottom:5}}>{user?.firstName} {user?.lastName}</h2>
+          <p style={{fontSize:13,color:'var(--tx2)',marginBottom:14,fontWeight:500}}>{user?.empId}</p>
+          {user?.dept&&<span className="dur-badge" style={{padding:'5px 14px',fontSize:12}}>{user.dept}</span>}
+          <div style={{marginTop:22,textAlign:'left'}}>
+            <label style={{fontSize:11,fontWeight:700,color:'var(--tx2)',display:'block',marginBottom:7,textTransform:'uppercase'}}>Role / Bio</label>
+            <textarea className="bio-textarea" placeholder="Add your role or bio…" value={bio} onChange={e=>setBio(e.target.value)}/>
+            <button className="btn btn-p" onClick={saveBio} disabled={saving}>{saving?'Saving…':'Save Bio'}</button>
+          </div>
+        </div>
+        <div>
+          <div className="stat-grid" style={{gridTemplateColumns:'1fr 1fr'}}>
+            <div className="stat-card"><div className="stat-lbl">Total Tasks</div><div className="stat-val">{tasks.length}</div></div>
+            <div className="stat-card"><div className="stat-lbl">Total Hours</div><div className="stat-val">{totalH}<span style={{fontSize:15,color:'var(--tx3)'}}> hrs</span></div></div>
+            <div className="stat-card"><div className="stat-lbl">Active Days</div><div className="stat-val">{uDays}</div></div>
+            <div className="stat-card"><div className="stat-lbl">Avg / Day</div><div className="stat-val">{uDays?(totalH/uDays).toFixed(1):0}<span style={{fontSize:15,color:'var(--tx3)'}}> hrs</span></div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+/* ══ SETTINGS ══ */
+const SettingsPage=({theme,setTheme,onLogout})=>{
+  const[summaryToggle,setSummaryToggle]=useState(true);
+  return(
+    <div className="page">
+      <div className="page-hdr"><div><h1 className="page-title">Settings</h1><p className="page-sub">Customize your Titan experience</p></div></div>
+      <div style={{maxWidth:680,display:'flex',flexDirection:'column',gap:20}}>
+        {/* THEME PICKER */}
+        <div className="stat-card">
+          <div style={{fontWeight:900,fontSize:17,marginBottom:4}}>Visual Theme</div>
+          <div style={{fontSize:12,color:'var(--tx2)',marginBottom:20}}>Choose your preferred color scheme</div>
+          <div style={{display:'flex',flexWrap:'wrap',gap:10,marginBottom:14}}>
+            {THEMES.map(t=><div key={t.id} className={`theme-dot${theme===t.id?' active':''}`} style={{background:t.col}} title={t.n} onClick={()=>setTheme(t.id)}>{theme===t.id&&<i className="fa-solid fa-check" style={{color:'#fff',fontSize:13}}/>}</div>)}
+          </div>
+          <div style={{display:'flex',flexWrap:'wrap',gap:8}}>
+            {THEMES.map(t=><span key={t.id} style={{fontSize:11,fontWeight:700,cursor:'pointer',opacity:theme===t.id?1:.35}} onClick={()=>setTheme(t.id)}>{t.n}</span>)}
+          </div>
+        </div>
+        {/* PREFERENCES */}
+        <div className="stat-card">
+          <div style={{fontWeight:900,fontSize:17,marginBottom:20}}>Preferences</div>
+          <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',padding:'15px 18px',background:'rgba(128,128,128,.05)',borderRadius:14,border:'1px solid var(--bd)'}}>
+            <div><div style={{fontWeight:800,fontSize:14}}>Shift Summary</div><div style={{fontSize:11,opacity:.4,fontWeight:700,marginTop:2}}>Automatic end-of-day report</div></div>
+            <div className={`toggle-switch${summaryToggle?'':' off'}`} onClick={()=>setSummaryToggle(p=>!p)}><div className="toggle-knob"/></div>
+          </div>
+        </div>
+        {/* ACCOUNT */}
+        <div className="stat-card">
+          <div style={{fontWeight:900,fontSize:17,marginBottom:20}}>Account</div>
+          <div style={{padding:'14px 18px',background:'rgba(128,128,128,.05)',borderRadius:14,border:'1px solid var(--bd)',marginBottom:14}}>
+            <div style={{fontSize:11,fontWeight:700,opacity:.4,textTransform:'uppercase',marginBottom:4}}>About</div>
+            <div style={{fontWeight:700,fontSize:13}}>Gigahertz Titan Time Tracker v5.0</div>
+            <div style={{fontSize:11,opacity:.4,marginTop:3}}>Built for Gigahertz Computer System, Inc. · Rozi 💙</div>
+          </div>
+          <button className="btn" style={{background:'rgba(239,68,68,.1)',color:'#ef4444',width:'100%',justifyContent:'center'}} onClick={onLogout}><i className="fa-solid fa-power-off"/> Logout Session</button>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+/* ══ HR WIDGET ══ */
+const HRWidget=()=>{
+  const[stats,setStats]=useState([]);const[loading,setLoading]=useState(true);
+  useEffect(()=>{api.getAllTasks().then(r=>{if(r.success){const m={};r.tasks.forEach(t=>{if(!m[t.empId])m[t.empId]={empId:t.empId,mins:0,tasks:0};m[t.empId].mins+=Number(t.durationMinutes||0);m[t.empId].tasks++;});setStats(Object.values(m).sort((a,b)=>b.mins-a.mins).slice(0,3));}setLoading(false);});},[]);
+  return(
+    <div className="stat-card" style={{gridColumn:'1 / -1',marginBottom:22}}>
+      <div className="track-title" style={{display:'flex',alignItems:'center',gap:6,marginBottom:4}}><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>Company Benchmarking (HR View)</div>
+      <div className="track-sub">Top performers by time tracked</div>
+      {loading?<div className="spinner" style={{borderColor:'var(--bd)',borderTopColor:'var(--p)',margin:'8px 0'}}/>:<div style={{display:'flex',gap:14,marginTop:10,flexWrap:'wrap'}}>{stats.length===0?<p style={{fontSize:12,color:'var(--tx3)'}}>No data yet.</p>:stats.map((u,i)=><div key={i} style={{flex:1,minWidth:140,background:'var(--bg)',padding:'12px',borderRadius:'var(--rsm)',border:'1px solid var(--bd)'}}><div style={{fontSize:10,fontWeight:800,color:'var(--tx2)',textTransform:'uppercase'}}>Rank #{i+1}</div><div style={{fontSize:13,fontWeight:700,color:'var(--tx)',marginTop:4,overflow:'hidden',textOverflow:'ellipsis'}}>{u.empId}</div><div style={{fontSize:18,fontWeight:800,color:'var(--p)',marginTop:5}}>{fmtMins(u.mins)}</div><div style={{fontSize:11,color:'var(--tx3)',marginTop:2}}>{u.tasks} tasks</div></div>)}</div>}
+    </div>
+  );
+};
+
+/* ══ ROOT APP ══ */
+const App=()=>{
+  const[page,setPage]=useState('login');const[regData,setRegData]=useState(null);const[user,setUser]=useState(null);
+  const[loginTime,setLoginTime]=useState(null);const[tasks,setTasks]=useState([]);
+  const[activeTimer,setActiveTimer]=useState(null);const[elapsed,setElapsed]=useState(0);
+  const[notif,setNotif]=useState(null);const[notifHistory,setNotifHistory]=useState([]);
+  const[theme,setTheme]=useState(()=>localStorage.getItem('gh_theme')||'light');
+  const[ready,setReady]=useState(false);
+
+  const pushNotif=useCallback((msg,type='success')=>{setNotif({msg,type});setNotifHistory(p=>[{id:Date.now(),msg,type,time:new Date()},...p].slice(0,10));},[]);
+
+  useEffect(()=>{document.documentElement.setAttribute('data-theme',theme);localStorage.setItem('gh_theme',theme);},[theme]);
+  useEffect(()=>{const t=setTimeout(()=>setReady(true),1600);return()=>clearTimeout(t);},[]);
+
+  useEffect(()=>{
+    const s=localStorage.getItem('gh_user'),lt=localStorage.getItem('gh_login_time');
+    if(s){const u=JSON.parse(s);setUser(u);if(lt){const d=lt.split('T')[0];if(d===todayStr())setLoginTime(lt);else{const n=new Date().toISOString();setLoginTime(n);localStorage.setItem('gh_login_time',n);}}setPage('dashboard');loadTasks(u);}
+  },[]);
+
+  useEffect(()=>{if(!activeTimer||activeTimer.isPaused)return;const t=setInterval(()=>setElapsed(e=>e+1),1000);return()=>clearInterval(t);},[activeTimer]);
+
+  const loadTasks=async(u)=>{const uid=u?.id||user?.id;if(!uid)return;const r=await api.getTasks({userId:uid});if(r.success)setTasks(r.tasks);};
+  const doLogin=(u)=>{const lt=new Date().toISOString();setUser(u);setLoginTime(lt);localStorage.setItem('gh_user',JSON.stringify(u));localStorage.setItem('gh_login_time',lt);loadTasks(u);setPage('dashboard');pushNotif(`Welcome back, ${u.firstName}! 👋`,'success');fireLog('LOGIN','Login successful',u);};
+  const doRegister=(u)=>{const lt=new Date().toISOString();setUser(u);setLoginTime(lt);localStorage.setItem('gh_user',JSON.stringify(u));localStorage.setItem('gh_login_time',lt);setTasks([]);setPage('dashboard');pushNotif(`Account created! ID: ${u.empId} 🎉`,'success');fireLog('REGISTER',`Registered: ${u.firstName} ${u.lastName}`,u);};
+  const updateUser=(u)=>{setUser(u);localStorage.setItem('gh_user',JSON.stringify(u));};
+  const doLogout=()=>{fireLog('LOGOUT','User logged out',user);setUser(null);setLoginTime(null);setTasks([]);setActiveTimer(null);setElapsed(0);localStorage.removeItem('gh_user');localStorage.removeItem('gh_login_time');setPage('login');};
+  const handleIdleOut=(s)=>{if(activeTimer&&!activeTimer.isPaused){setActiveTimer(p=>({...p,isPaused:true}));pushNotif(`⏸ Timer paused — ${Math.round(s/60)}min idle`,'error');}};
+
+  if(!ready)return<Splash/>;
+  const appPages=['dashboard','tasks','analytics','achievements','profile','settings'];
+
+  return(
+    <>
+      {notif&&<Notif msg={notif.msg} type={notif.type} onDone={()=>setNotif(null)}/>}
+      {page==='login'&&<LoginPage onLogin={doLogin} onRegister={()=>setPage('register')} onForgot={()=>setPage('forgot')} theme={theme} setTheme={setTheme}/>}
+      {page==='forgot'&&<ForgotPwPage onBack={()=>setPage('login')} theme={theme} setTheme={setTheme}/>}
+      {page==='register'&&<RegisterStep1 onNext={d=>{setRegData(d);setPage('register-face');}} onLogin={()=>setPage('login')} theme={theme} setTheme={setTheme}/>}
+      {page==='register-face'&&<RegisterStep2 formData={regData} onRegister={doRegister} onLogin={()=>setPage('login')}/>}
+      {appPages.includes(page)&&user&&(
+        <div className="layout">
+          <Sidebar page={page} setPage={setPage} user={user} onLogout={doLogout} loginTime={loginTime} theme={theme} setTheme={setTheme} notifHistory={notifHistory}/>
+          <main className="main">
+            {page==='dashboard'&&<DashboardPage user={user} tasks={tasks} onTasksChanged={()=>loadTasks(user)} activeTimer={activeTimer} setActiveTimer={setActiveTimer} elapsed={elapsed} setElapsed={setElapsed} loginTime={loginTime} pushNotif={pushNotif}/>}
+            {page==='tasks'&&<TasksPage user={user} tasks={tasks} pushNotif={pushNotif}/>}
+            {page==='analytics'&&<AnalyticsPage user={user} tasks={tasks}/>}
+            {page==='achievements'&&<AchievementsPage tasks={tasks}/>}
+            {page==='profile'&&<ProfilePage user={user} tasks={tasks} onUpdateUser={updateUser} pushNotif={pushNotif}/>}
+            {page==='settings'&&<SettingsPage theme={theme} setTheme={setTheme} onLogout={doLogout}/>}
+          </main>
+          <IdleWatcher user={user} onIdleOut={handleIdleOut}/>
+          <FloatWidget/>
+        </div>
+      )}
+    </>
+  );
+};
+
+ReactDOM.createRoot(document.getElementById('root')).render(<App/>);
+</script>
 </body>
 </html>
-
-<!-- THE END OF TRANSMISSION. PROJECT: TITAN V7 -->
+<!-- Pedro Basura Man · Titan v5.0  -->
