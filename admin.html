@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-<title>Gigahertz Nexus — Activity Tracker v5.4</title>
+<title>Gigahertz Nexus — Activity Tracker v5.5</title>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.development.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.development.js"></script>
@@ -800,6 +800,29 @@ const MiniBarChart = ({tasks}) => {
   );
 };
 
+const BirthdayWidget = ({employees}) => {
+  const upcoming = useMemo(() => getUpcomingBirthdays(employees, 30), [employees]);
+  if(upcoming.length === 0) return null;
+  return (
+    <div className="glass p-5 rounded-2xl mt-4 anim-fade">
+      <h3 className="text-[11px] font-bold uppercase tracking-widest mb-4" style={{color:'var(--p)'}}>🎂 Upcoming Birthdays</h3>
+      <div className="flex gap-4 overflow-x-auto pb-2 scroll-hide" style={{WebkitOverflowScrolling: 'touch'}}>
+        {upcoming.map(emp => (
+          <div key={emp.id} className="glass flex items-center gap-3 p-3 rounded-xl min-w-[210px]" style={{background:'rgba(255,255,255,0.05)', border:'1px solid var(--bd)'}}>
+            <Avatar emp={emp} size="sm" />
+            <div style={{flex:1}}>
+              <p style={{fontSize:12, fontWeight:800, color:'var(--tx)'}}>{emp.firstName} {emp.lastName}</p>
+              <p style={{fontSize:10, color:'var(--tx3)'}}>
+                {emp.birthday} — {emp.daysUntil === 0 ? <strong className="text-pink-500">Today!</strong> : `${emp.daysUntil} days`}
+              </p>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+};
+
 /* ================================================================
    AUTH PORTAL
 ================================================================ */
@@ -1214,7 +1237,7 @@ const LogTaskModal = ({user,onClose,onSave,showToast}) => {
     <div className="modal-overlay" onClick={e=>{if(e.target===e.currentTarget)onClose()}}>
       <div className="modal-box">
         <div style={{padding:'24px 28px',borderBottom:'1px solid var(--bd)',display:'flex',justifyContent:'space-between',alignItems:'center'}}>
-          <h2 style={{fontSize:18,fontWeight:900,color:'var(--tx)'}}>⏱️ Log Task</h2>
+          <h2 style={{fontSize:18,fontWeight:900,color:'var(--tx)'}}>⏱️ Log Task {user.firstName !== user.fullName && `for ${user.firstName}`}</h2>
           <button onClick={onClose} className="btn btn-ghost" style={{padding:'6px 10px'}}><i className="fa-solid fa-xmark"></i></button>
         </div>
         <form onSubmit={submit} style={{padding:28,display:'flex',flexDirection:'column',gap:16}}>
@@ -1706,7 +1729,7 @@ const DashboardView = ({user,tasks,showModal,announcements,leaveRequests,employe
       <div className="glass" style={{borderRadius:20,overflow:'hidden'}}>
         <div style={{padding:'16px 20px',borderBottom:'1px solid var(--bd)',display:'flex',justifyContent:'space-between',alignItems:'center'}}>
           <h3 style={{fontSize:15,fontWeight:900,color:'var(--tx)'}}>Recent Tasks</h3>
-          <button className="btn btn-ghost" style={{fontSize:11,padding:'6px 12px'}} onClick={()=>showModal('tasks')}>View All</button>
+          <button className="btn btn-ghost" style={{fontSize:11,padding:'6px 12px'}} onClick={()=>showModal('mytasks')}>View All</button>
         </div>
         {myTasks.length===0?(
           <div style={{padding:'40px',textAlign:'center',opacity:.4}}>
@@ -2500,6 +2523,7 @@ const MainApp = ({user:initUser,onLogout,theme,setTheme}) => {
       {modal==='addProject'&&<AddProjectModal onClose={()=>setModal(null)} onSave={p=>setProjects(prev=>[p,...prev])} showToast={showToast}/>}
       {modal==='logTaskAdmin'&&logTaskTarget&&(<LogTaskModal user={logTaskTarget} onClose={()=>{setModal(null);setLogTaskTarget(null);}} onSave={t=>setTasks(p=>[t,...p])} showToast={showToast}/>)}
       {modal==='notifications'&&<NotificationsModal onClose={()=>setModal(null)} announcements={announcements} pendingLeaves={pendingLeaves} isAdmin={isAdmin} />}
+      {modal==='mytasks' && <div className="modal-overlay" onClick={() => setModal(null)}><div className="modal-box modal-box-wide"><div className="p-6"><MyTasksView user={user} tasks={tasks} showModal={showModal} showToast={showToast} onDeleteTask={deleteTask}/></div></div></div>}
     </>
   );
 };
@@ -2555,6 +2579,7 @@ style.textContent = `
     .main-content{margin-left:0!important;padding-top:20px!important}
     .mobile-nav{display:flex!important}
   }
+  .scroll-hide::-webkit-scrollbar { display: none; }
 `;
 document.head.appendChild(style);
 
@@ -2563,3 +2588,4 @@ root.render(<App/>);
 </script>
 </body>
 </html>
+```
