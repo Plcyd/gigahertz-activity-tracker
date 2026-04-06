@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-<title>Gigahertz Nexus — Activity Tracker v5.2</title>
+<title>Gigahertz Nexus — Activity Tracker v5.4</title>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.development.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.development.js"></script>
@@ -481,7 +481,6 @@ const EMPLOYEES_INIT = rawRoster.map((r,idx) => {
   const parts = r.n.split(' ');
   const firstName = parts[0];
   const lastName = parts.slice(1).join(' ');
-  // Random birthday for birthday tracker
   const bMonth = Math.floor(Math.random()*12)+1;
   const bDay = Math.floor(Math.random()*28)+1;
   return {
@@ -498,7 +497,7 @@ const EMPLOYEES_INIT = rawRoster.map((r,idx) => {
     password: 'ghz2025',
     facePhoto: null,
     registeredDate: new Date(Date.now()-Math.random()*365*86400000).toISOString(),
-    birthday: `${String(bMonth).padStart(2,'0')}-${String(bDay).padStart(2,'0')}`, // MM-DD
+    birthday: `${String(bMonth).padStart(2,'0')}-${String(bDay).padStart(2,'0')}`,
     leaveBalance: Math.floor(Math.random()*10)+5,
     leavesUsed: Math.floor(Math.random()*5),
   };
@@ -509,7 +508,6 @@ const ADMIN_ACCOUNTS = [
   {id:'ADM-002',employeeId:'GHZ-0002',firstName:'James',lastName:'Beltran',email:'beltran.james@gmail.com',password:'jamespogi123',role:'ADMIN',deptId:5,status:'Active',fullName:'James Beltran',facePhoto:null,birthday:'05-14',leaveBalance:15,leavesUsed:2},
 ];
 
-// Hyacinth / Rozi special account
 const ROZI_ACCOUNT = {
   id:'SPL-001', employeeId:'GHZ-0003', firstName:'Hyacinth', lastName:'Rozi',
   email:'hyacinths.beige@gmail.com', password:'rozza2002', role:'Staff',
@@ -556,7 +554,7 @@ EMPLOYEES_INIT.slice(0,60).forEach(emp => {
       remarks: 'Completed on schedule.',
       month: d.getMonth()+1,
       year: d.getFullYear(),
-      source:'Manual',
+      source:'System',
     });
   }
 });
@@ -570,14 +568,12 @@ const PROJECTS_INIT = [
   {id:6,name:'Warehouse Reorganization',dept:'WAREHOUSE',status:'Completed',progress:100,lead:'Nilo Garcia',deadline:'2026-03-31'},
 ];
 
-// Initial announcements
 const ANNOUNCEMENTS_INIT = [
   {id:1,title:'Q2 Kickoff Meeting',body:'All department heads please attend the Q2 kickoff meeting on April 10, 2026 at 9:00 AM in the main conference room.',author:'Nexus Admin',authorId:'ADM-001',date:'2026-04-05',priority:'high',pinned:true},
   {id:2,title:'Payroll Cutoff Reminder',body:'Please submit your timesheets and task logs before April 8, 2026 (Friday) for the April payroll cycle.',author:'James Beltran',authorId:'ADM-002',date:'2026-04-04',priority:'medium',pinned:false},
   {id:3,title:'System Maintenance Notice',body:'Nexus Tracker will undergo scheduled maintenance on April 7, 2026 from 11:00 PM to 1:00 AM. Please save your work beforehand.',author:'Nexus Admin',authorId:'ADM-001',date:'2026-04-03',priority:'low',pinned:false},
 ];
 
-// Leave requests
 const LEAVE_REQUESTS_INIT = [
   {id:1,empId:1,empName:'Rich Jhen Calderon',type:'Vacation',startDate:'2026-04-10',endDate:'2026-04-11',days:2,status:'Approved',reason:'Family trip',appliedDate:'2026-04-02'},
   {id:2,empId:5,empName:'Kaye Magallosa',type:'Sick',startDate:'2026-04-08',endDate:'2026-04-08',days:1,status:'Pending',reason:'Medical appointment',appliedDate:'2026-04-05'},
@@ -614,7 +610,6 @@ const api = {
   _localLogin(p){
     const id=(p.identifier||'').trim().toLowerCase();
     const pw=(p.password||'').trim();
-    // Check Rozi special account
     if((id===ROZI_ACCOUNT.email.toLowerCase()||id===ROZI_ACCOUNT.fullName.toLowerCase()||id===ROZI_ACCOUNT.firstName.toLowerCase())&&pw===ROZI_ACCOUNT.password)
       return{success:true,user:{...ROZI_ACCOUNT}};
     const admin=ADMIN_ACCOUNTS.find(a=>(a.email.toLowerCase()===id||a.fullName.toLowerCase()===id)&&a.password===pw);
@@ -676,6 +671,17 @@ function exportToCSV(tasks,emp){
   a.click();
 }
 
+function exportProjectsToCSV(projects) {
+  const rows = [['Project Name', 'Department', 'Status', 'Progress (%)', 'Lead', 'Deadline']];
+  projects.forEach(p => rows.push([`"${p.name}"`, `"${p.dept}"`, p.status, p.progress, `"${p.lead||''}"`, p.deadline||'']));
+  const csv = rows.map(r => r.join(',')).join('\n');
+  const blob = new Blob([csv], {type: 'text/csv'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = `Gigahertz_Projects_Export.csv`;
+  a.click();
+}
+
 function getUpcomingBirthdays(employees, days=30) {
   const today = new Date();
   const results = [];
@@ -689,6 +695,15 @@ function getUpcomingBirthdays(employees, days=30) {
   });
   return results.sort((a,b)=>a.daysUntil-b.daysUntil);
 }
+
+const getLevelInfo = (totalHours) => {
+  const hrs = totalHours || 0;
+  const level = Math.floor(hrs / 20) + 1;
+  const currentLvlBase = (level - 1) * 20;
+  const nextLvlBase = level * 20;
+  const progress = ((hrs - currentLvlBase) / 20) * 100;
+  return { level, progress, nextLvlBase, hrs };
+};
 
 /* ================================================================
    SHARED COMPONENTS
@@ -762,9 +777,6 @@ const StatCard = ({title,value,icon,sub,onClick}) => (
   </div>
 );
 
-/* ================================================================
-   MINI BAR CHART (CSS only)
-================================================================ */
 const MiniBarChart = ({tasks}) => {
   const curYear = new Date().getFullYear();
   const data = MONTHS.map((m,i) => {
@@ -896,7 +908,7 @@ const AuthPortal = ({onLogin,theme,setTheme}) => {
             <img src="https://contents.smsupermalls.com/data/uploads/2020/07/GIGAHERTZ_COMPUTER_SYSTEM.jpg" alt="Logo" style={{width:'100%',height:'100%',objectFit:'contain',borderRadius:12}}/>
           </div>
           <h1 style={{fontSize:22,fontWeight:900,letterSpacing:'-.5px',color:'var(--tx)'}}>Gigahertz Nexus</h1>
-          <p style={{fontSize:10,fontWeight:700,textTransform:'uppercase',letterSpacing:'.15em',color:'var(--p)',marginTop:4}}>Activity Tracker v5.2</p>
+          <p style={{fontSize:10,fontWeight:700,textTransform:'uppercase',letterSpacing:'.15em',color:'var(--p)',marginTop:4}}>Activity Tracker v5.4</p>
         </div>
 
         <div style={{display:'flex',gap:4,background:'rgba(0,0,0,0.06)',padding:4,borderRadius:14,marginBottom:24}}>
@@ -1014,7 +1026,7 @@ const AuthPortal = ({onLogin,theme,setTheme}) => {
         )}
 
         <p style={{textAlign:'center',fontSize:9,fontWeight:700,textTransform:'uppercase',letterSpacing:'.12em',color:'var(--tx3)',marginTop:20}}>
-          Gigahertz Nexus v5.2 • {new Date().getFullYear()} • Built with 💙 for Gigahertz
+          Gigahertz Nexus v5.4 • {new Date().getFullYear()} • Built with 💙 for Gigahertz
         </p>
       </div>
     </div>
@@ -1024,7 +1036,7 @@ const AuthPortal = ({onLogin,theme,setTheme}) => {
 /* ================================================================
    MODALS: PROFILE, LOG TASK, LEAVES, ANNOUNCEMENT, PROJECT
 ================================================================ */
-const MyProfileModal = ({user,onClose,onSave,showToast}) => {
+const MyProfileModal = ({user,onClose,onSave,showToast,totalHours}) => {
   const [editing,setEditing]=useState(false);
   const [form,setForm]=useState({firstName:user.firstName,lastName:user.lastName,email:user.email||''});
   const [photo,setPhoto]=useState(user.facePhoto||null);
@@ -1043,6 +1055,7 @@ const MyProfileModal = ({user,onClose,onSave,showToast}) => {
 
   const takePhoto=()=>{
     const v=videoRef.current;const c=canvasRef.current;
+    if(!v||!c)return;
     c.width=v.videoWidth;c.height=v.videoHeight;
     c.getContext('2d').drawImage(v,0,0);
     setPhoto(c.toDataURL('image/jpeg',0.8));
@@ -1059,10 +1072,11 @@ const MyProfileModal = ({user,onClose,onSave,showToast}) => {
   };
 
   const dept=DEPARTMENTS.find(d=>d.id===user.deptId);
-  const myTasks=TASKS_INIT.filter(t=>t.empId===user.id);
-  const totalHrs=myTasks.reduce((s,t)=>s+(t.durationHours||0),0);
   const leaveUsed=user.leavesUsed||0;
   const leaveBalance=user.leaveBalance||10;
+  const isAdmin = user.role === 'ADMIN' || user.role === 'Super Admin' || user.role === 'Nexus Dev';
+  
+  const lvlInfo = getLevelInfo(totalHours);
 
   return(
     <div className="modal-overlay" onClick={e=>{if(e.target===e.currentTarget)onClose()}}>
@@ -1077,20 +1091,38 @@ const MyProfileModal = ({user,onClose,onSave,showToast}) => {
               {photo?<img src={photo} style={{width:'100%',height:'100%',objectFit:'cover'}} alt="face"/>
                 :<div style={{width:'100%',height:'100%',background:`linear-gradient(135deg,var(--p),var(--pd))`,display:'flex',alignItems:'center',justifyContent:'center',fontSize:28,fontWeight:900,color:'#fff'}}>{getInitials(user)}</div>}
             </div>
-            <div>
-              <p style={{fontSize:18,fontWeight:900,color:'var(--tx)'}}>{user.firstName} {user.lastName}</p>
+            <div style={{flex:1}}>
+              <p style={{fontSize:18,fontWeight:900,color:'var(--tx)',display:'flex',alignItems:'center',gap:6}}>
+                {user.firstName} {user.lastName}
+                {isAdmin && <span style={{fontSize:10,background:'var(--p)',color:'#fff',padding:'2px 6px',borderRadius:6}}>Admin</span>}
+              </p>
               <p style={{fontSize:11,fontWeight:700,color:'var(--p)',textTransform:'uppercase',letterSpacing:'.1em'}}>{user.employeeId}</p>
               <p style={{fontSize:11,color:'var(--tx3)',marginTop:2}}>{dept?.icon} {dept?.name} • {user.role}</p>
               {user.birthday&&<p style={{fontSize:11,color:'var(--tx3)',marginTop:2}}>🎂 Birthday: {user.birthday}</p>}
             </div>
+            <div style={{textAlign:'center', background:'var(--p)', color:'#fff', padding:'8px 12px', borderRadius:14, boxShadow:'0 4px 12px var(--shadow)'}}>
+              <p style={{fontSize:9, fontWeight:800, textTransform:'uppercase', letterSpacing:'.1em', opacity:.8}}>Level</p>
+              <p style={{fontSize:24, fontWeight:900}}>{lvlInfo.level}</p>
+            </div>
           </div>
-          <div style={{display:'grid',gridTemplateColumns:'1fr 1fr 1fr',gap:10}}>
-            {[{label:'Sessions',val:myTasks.length},{label:'Total Hours',val:totalHrs.toFixed(1)+'h'},{label:'Status',val:user.status}].map(s=>(
-              <div key={s.label} className="glass" style={{padding:'12px',borderRadius:14,textAlign:'center'}}>
-                <p style={{fontSize:18,fontWeight:900,color:'var(--p)'}}>{s.val}</p>
-                <p style={{fontSize:9,fontWeight:700,textTransform:'uppercase',letterSpacing:'.08em',color:'var(--tx3)',marginTop:2}}>{s.label}</p>
-              </div>
-            ))}
+          
+          <div>
+            <div style={{display:'flex',justifyContent:'space-between',fontSize:10,fontWeight:700,marginBottom:6,color:'var(--tx3)',textTransform:'uppercase',letterSpacing:'.05em'}}>
+              <span>XP Progress</span>
+              <span>{lvlInfo.hrs.toFixed(1)} / {lvlInfo.nextLvlBase} hrs</span>
+            </div>
+            <div className="progress-bar"><div className="progress-fill" style={{width:`${lvlInfo.progress}%`}}></div></div>
+          </div>
+
+          <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:10}}>
+            <div className="glass" style={{padding:'12px',borderRadius:14,textAlign:'center'}}>
+              <p style={{fontSize:18,fontWeight:900,color:'var(--p)'}}>{totalHours.toFixed(1)}h</p>
+              <p style={{fontSize:9,fontWeight:700,textTransform:'uppercase',letterSpacing:'.08em',color:'var(--tx3)',marginTop:2}}>Total Hours</p>
+            </div>
+            <div className="glass" style={{padding:'12px',borderRadius:14,textAlign:'center'}}>
+              <p style={{fontSize:18,fontWeight:900,color:'var(--p)'}}>{user.status}</p>
+              <p style={{fontSize:9,fontWeight:700,textTransform:'uppercase',letterSpacing:'.08em',color:'var(--tx3)',marginTop:2}}>Status</p>
+            </div>
           </div>
           <div className="glass" style={{borderRadius:14,padding:'14px 18px'}}>
             <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:10}}>
@@ -1159,6 +1191,7 @@ const LogTaskModal = ({user,onClose,onSave,showToast}) => {
     const newTask={
       id:Date.now(),
       empId:user.id,
+      empName: `${user.firstName} ${user.lastName}`, 
       taskName:form.taskName.trim(),
       category:form.category,
       date:form.date,
@@ -1170,7 +1203,6 @@ const LogTaskModal = ({user,onClose,onSave,showToast}) => {
       year:d.getFullYear(),
       source:'Self-Log',
     };
-    TASKS_INIT.unshift(newTask);
     await api.call('logTask',newTask);
     setLoading(false);
     onSave(newTask);
@@ -1255,7 +1287,6 @@ const LeaveRequestModal = ({user,onClose,onSave,showToast}) => {
       status:'Pending',
       appliedDate:today,
     };
-    LEAVE_REQUESTS_INIT.unshift(req);
     onSave(req);
     showToast(`Leave request submitted (${days} day${days>1?'s':''})`,'success');
     setLoading(false);
@@ -1316,7 +1347,6 @@ const AnnouncementModal = ({user,onClose,onSave,showToast}) => {
       authorId:user.id||user.employeeId,
       date:new Date().toISOString().split('T')[0],
     };
-    ANNOUNCEMENTS_INIT.unshift(ann);
     onSave(ann);
     showToast('Announcement posted!','success');
     setLoading(false);
@@ -1436,6 +1466,10 @@ const NotificationsModal = ({onClose, announcements, pendingLeaves, isAdmin}) =>
    VIEWS
 ================================================================ */
 const AdminDashView = ({employees,tasks,showModal,announcements,leaveRequests,showToast}) => {
+  const curMonth = new Date().getMonth() + 1;
+  const curYear = new Date().getFullYear();
+  const thisMonthTasks = tasks.filter(t => t.month === curMonth && t.year === curYear);
+
   const stats={
     total:employees.length,
     active:employees.filter(e=>e.status==='Active').length,
@@ -1446,6 +1480,17 @@ const AdminDashView = ({employees,tasks,showModal,announcements,leaveRequests,sh
     pendingLeaves:leaveRequests.filter(l=>l.status==='Pending').length,
   };
   const pinnedAnn=announcements.filter(a=>a.pinned);
+
+  // Category breakdown
+  const categoryData = useMemo(() => {
+    return TASK_CATEGORIES.map(c => ({
+      name: c,
+      hrs: thisMonthTasks.filter(t => (t.category || 'Admin') === c).reduce((sum, t) => sum + (t.durationHours || 0), 0)
+    })).filter(c => c.hrs > 0).sort((a,b)=>b.hrs-a.hrs);
+  }, [thisMonthTasks]);
+  const totalCategoryHrs = Math.max(1, categoryData.reduce((s,c)=>s+c.hrs,0));
+
+  const recentGlobalTasks = [...tasks].sort((a,b)=>new Date(b.date)-new Date(a.date)).slice(0,5);
 
   const mockExport = () => {
     showToast('Generating Analytics Report PDF...', 'info');
@@ -1472,36 +1517,78 @@ const AdminDashView = ({employees,tasks,showModal,announcements,leaveRequests,sh
       <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fit,minmax(140px,1fr))',gap:12}}>
         <StatCard title="Total Staff" value={stats.total} icon={<i className="fa-solid fa-users"/>}/>
         <StatCard title="Active" value={stats.active} icon={<i className="fa-solid fa-signal"/>}/>
-        <StatCard title="Idle" value={stats.idle} icon={<i className="fa-solid fa-mug-hot"/>}/>
-        <StatCard title="Absent" value={stats.absent} icon={<i className="fa-solid fa-triangle-exclamation"/>}/>
         <StatCard title="Total Hours" value={stats.totalHrs.toFixed(0)} icon={<i className="fa-solid fa-clock"/>}/>
         <StatCard title="Today's Logs" value={stats.todayLogs} icon={<i className="fa-solid fa-bolt"/>}/>
         <StatCard title="Pending Leaves" value={stats.pendingLeaves} icon={<i className="fa-solid fa-umbrella-beach"/>}/>
       </div>
 
-      <div className="glass" style={{borderRadius:20,padding:'20px 24px'}}>
-        <MiniBarChart tasks={tasks}/>
+      <div style={{display:'grid', gridTemplateColumns:'repeat(auto-fit,minmax(300px,1fr))', gap:20}}>
+        <div className="glass" style={{borderRadius:20,padding:'20px 24px'}}>
+          <MiniBarChart tasks={tasks}/>
+        </div>
+
+        {/* Live Feed */}
+        <div className="glass" style={{borderRadius:20,padding:'20px 24px'}}>
+          <h3 style={{fontSize:15,fontWeight:900,color:'var(--tx)',marginBottom:16}}><i className="fa-solid fa-satellite-dish mr-2" style={{color:'var(--p)'}}></i>Live Activity Feed</h3>
+          <div style={{display:'flex',flexDirection:'column',gap:12}}>
+            {recentGlobalTasks.length===0 ? <p style={{fontSize:12,color:'var(--tx3)'}}>No recent tasks logged.</p> : recentGlobalTasks.map((t, idx) => {
+              const emp = employees.find(e=>e.id===t.empId);
+              return (
+                <div key={idx} style={{display:'flex', alignItems:'flex-start', gap:10, paddingBottom:12, borderBottom: idx!==recentGlobalTasks.length-1?'1px solid var(--bd)':'none'}}>
+                  <Avatar emp={emp || {firstName:'?', lastName:''}} size="sm"/>
+                  <div style={{flex:1}}>
+                    <p style={{fontSize:12, color:'var(--tx)'}}>
+                      <span style={{fontWeight:800}}>{emp ? `${emp.firstName} ${emp.lastName}` : 'Unknown'}</span> logged <strong>{t.durationHours}h</strong> in <span className={`badge tag-${t.category||'Admin'}`} style={{fontSize:8, padding:'1px 4px'}}>{t.category||'Admin'}</span>
+                    </p>
+                    <p style={{fontSize:11, color:'var(--tx2)', marginTop:2}}>{t.taskName}</p>
+                    <p style={{fontSize:9, color:'var(--tx3)', marginTop:4}}>{fmtDate(t.date)}</p>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
       </div>
 
-      <div className="glass" style={{borderRadius:20,padding:'20px 24px'}}>
-        <h3 style={{fontSize:15,fontWeight:900,color:'var(--tx)',marginBottom:16}}>Workforce Distribution</h3>
-        <div style={{display:'flex',flexDirection:'column',gap:10}}>
-          {DEPARTMENTS.map(d=>{
-            const cnt=employees.filter(e=>e.deptId===d.id).length;
-            const pct=Math.max(4,(cnt/employees.length)*100);
-            return(
-              <div key={d.id} style={{display:'flex',alignItems:'center',gap:12}}>
-                <span style={{fontSize:18,width:28,textAlign:'center'}}>{d.icon}</span>
-                <div style={{flex:1}}>
+      <div style={{display:'grid', gridTemplateColumns:'repeat(auto-fit,minmax(300px,1fr))', gap:20}}>
+        <div className="glass" style={{borderRadius:20,padding:'20px 24px'}}>
+          <h3 style={{fontSize:15,fontWeight:900,color:'var(--tx)',marginBottom:16}}>Task Categories (This Month)</h3>
+          <div style={{display:'flex',flexDirection:'column',gap:12}}>
+            {categoryData.length===0 ? <p style={{fontSize:12,color:'var(--tx3)'}}>No categorized tasks this month.</p> : categoryData.map(c => {
+              const pct = (c.hrs/totalCategoryHrs)*100;
+              return (
+                <div key={c.name}>
                   <div style={{display:'flex',justifyContent:'space-between',fontSize:11,fontWeight:700,marginBottom:4}}>
-                    <span style={{color:'var(--tx2)'}}>{d.name}</span>
-                    <span style={{color:'var(--p)'}}>{cnt}</span>
+                    <span style={{color:'var(--tx2)'}}>{c.name}</span>
+                    <span style={{color:'var(--p)'}}>{c.hrs.toFixed(1)}h</span>
                   </div>
                   <div className="progress-bar"><div className="progress-fill" style={{width:`${pct}%`}}></div></div>
                 </div>
-              </div>
-            );
-          })}
+              );
+            })}
+          </div>
+        </div>
+        <div className="glass" style={{borderRadius:20,padding:'20px 24px'}}>
+          <h3 style={{fontSize:15,fontWeight:900,color:'var(--tx)',marginBottom:16}}>Workforce Distribution</h3>
+          <div style={{display:'grid', gridTemplateColumns:'repeat(auto-fit,minmax(200px,1fr))', gap:16}}>
+            {DEPARTMENTS.map(d=>{
+              const cnt=employees.filter(e=>e.deptId===d.id).length;
+              const pct=Math.max(4,(cnt/employees.length)*100);
+              if(cnt===0) return null;
+              return(
+                <div key={d.id} style={{display:'flex',alignItems:'center',gap:12}}>
+                  <span style={{fontSize:18,width:28,textAlign:'center'}}>{d.icon}</span>
+                  <div style={{flex:1}}>
+                    <div style={{display:'flex',justifyContent:'space-between',fontSize:11,fontWeight:700,marginBottom:4}}>
+                      <span style={{color:'var(--tx2)'}}>{d.name}</span>
+                      <span style={{color:'var(--p)'}}>{cnt}</span>
+                    </div>
+                    <div className="progress-bar"><div className="progress-fill" style={{width:`${pct}%`}}></div></div>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
         </div>
       </div>
 
@@ -1510,7 +1597,7 @@ const AdminDashView = ({employees,tasks,showModal,announcements,leaveRequests,sh
   );
 };
 
-const DashboardView = ({user,tasks,showModal,announcements,leaveRequests,employees}) => {
+const DashboardView = ({user,tasks,showModal,announcements,leaveRequests,employees,onDeleteTask,showToast}) => {
   const myTasks=tasks.filter(t=>t.empId===user.id);
   const totalHrs=myTasks.reduce((s,t)=>s+(t.durationHours||0),0);
   const curMonth=new Date().getMonth()+1;
@@ -1523,8 +1610,24 @@ const DashboardView = ({user,tasks,showModal,announcements,leaveRequests,employe
 
   const todayMD=`${String(new Date().getMonth()+1).padStart(2,'0')}-${String(new Date().getDate()).padStart(2,'0')}`;
   const isBirthday=user.birthday===todayMD;
-
   const isRozi=user.email==='hyacinths.beige@gmail.com'||user.firstName==='Hyacinth';
+
+  const categoryData = useMemo(() => {
+    return TASK_CATEGORIES.map(c => ({
+      name: c,
+      hrs: thisMonthTasks.filter(t => (t.category || 'Admin') === c).reduce((sum, t) => sum + (t.durationHours || 0), 0)
+    })).filter(c => c.hrs > 0).sort((a,b)=>b.hrs-a.hrs);
+  }, [thisMonthTasks]);
+  const totalCategoryHrs = Math.max(1, categoryData.reduce((s,c)=>s+c.hrs,0));
+
+  const todayISO = new Date().toISOString().split('T')[0];
+
+  const handleDelete = (id) => {
+    if(window.confirm('Are you sure you want to delete this task?')) {
+      onDeleteTask(id);
+      showToast('Task deleted successfully.', 'success');
+    }
+  };
 
   return(
     <div className="anim-fade" style={{display:'flex',flexDirection:'column',gap:20}}>
@@ -1576,8 +1679,28 @@ const DashboardView = ({user,tasks,showModal,announcements,leaveRequests,employe
         <StatCard title="Leave Balance" value={myLeaveBalance+'d'} icon={<i className="fa-solid fa-umbrella-beach"/>}/>
       </div>
 
-      <div className="glass" style={{borderRadius:20,padding:'20px 24px'}}>
-        <MiniBarChart tasks={myTasks}/>
+      <div style={{display:'grid', gridTemplateColumns:'repeat(auto-fit,minmax(300px,1fr))', gap:20}}>
+        <div className="glass" style={{borderRadius:20,padding:'20px 24px'}}>
+          <MiniBarChart tasks={myTasks}/>
+        </div>
+        {/* Category Breakdown */}
+        <div className="glass" style={{borderRadius:20,padding:'20px 24px'}}>
+          <h3 style={{fontSize:15,fontWeight:900,color:'var(--tx)',marginBottom:16}}>My Time Breakdown (This Month)</h3>
+          <div style={{display:'flex',flexDirection:'column',gap:12}}>
+            {categoryData.length===0 ? <p style={{fontSize:12,color:'var(--tx3)'}}>No logged tasks this month.</p> : categoryData.map(c => {
+              const pct = (c.hrs/totalCategoryHrs)*100;
+              return (
+                <div key={c.name}>
+                  <div style={{display:'flex',justifyContent:'space-between',fontSize:11,fontWeight:700,marginBottom:4}}>
+                    <span style={{color:'var(--tx2)'}}>{c.name}</span>
+                    <span style={{color:'var(--p)'}}>{c.hrs.toFixed(1)}h</span>
+                  </div>
+                  <div className="progress-bar"><div className="progress-fill" style={{width:`${pct}%`}}></div></div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
       </div>
 
       <div className="glass" style={{borderRadius:20,overflow:'hidden'}}>
@@ -1593,7 +1716,7 @@ const DashboardView = ({user,tasks,showModal,announcements,leaveRequests,employe
         ):(
           <div style={{overflowX:'auto'}}>
             <table className="nx-table">
-              <thead><tr><th>Task</th><th>Category</th><th>Date</th><th>Duration</th></tr></thead>
+              <thead><tr><th>Task</th><th>Category</th><th>Date</th><th>Duration</th><th>Action</th></tr></thead>
               <tbody>
                 {myTasks.slice(0,5).map(t=>(
                   <tr key={t.id}>
@@ -1601,6 +1724,13 @@ const DashboardView = ({user,tasks,showModal,announcements,leaveRequests,employe
                     <td><span className={`badge tag-${t.category||'Admin'}`} style={{fontSize:8}}>{t.category||'Admin'}</span></td>
                     <td style={{whiteSpace:'nowrap',color:'var(--tx3)',fontSize:12}}>{fmtDate(t.date)}</td>
                     <td><span style={{color:'var(--p)',fontWeight:900}}>{t.durationHours}h</span></td>
+                    <td>
+                      {t.date === todayISO ? (
+                        <button className="btn btn-ghost" style={{padding:'4px 8px', color:'#f87171', border:'none', background:'none'}} onClick={()=>handleDelete(t.id)} title="Delete Task">
+                          <i className="fa-solid fa-trash"></i>
+                        </button>
+                      ) : <span style={{fontSize:10, color:'var(--tx3)'}}>Locked</span>}
+                    </td>
                   </tr>
                 ))}
               </tbody>
@@ -1613,19 +1743,34 @@ const DashboardView = ({user,tasks,showModal,announcements,leaveRequests,employe
   );
 };
 
-const MyTasksView = ({user,tasks,showModal,showToast}) => {
+const MyTasksView = ({user,tasks,showModal,showToast,onDeleteTask}) => {
   const curMonth=new Date().getMonth()+1;
   const curYear=new Date().getFullYear();
   const [selMonth,setSelMonth]=useState(curMonth);
   const [selYear,setSelYear]=useState(curYear);
+  const [searchQuery,setSearchQuery]=useState('');
 
   const myTasks=tasks.filter(t=>t.empId===user.id);
-  const filtered=useMemo(()=>myTasks.filter(t=>t.month===selMonth&&t.year===selYear)
-    .sort((a,b)=>new Date(b.date)-new Date(a.date)),[myTasks,selMonth,selYear]);
-  const totalHrs=filtered.reduce((s,t)=>s+(t.durationHours||0),0);
+  const todayISO = new Date().toISOString().split('T')[0];
+  
+  const filtered=useMemo(()=>myTasks.filter(t=>{
+    const matchMonth = t.month === selMonth && t.year === selYear;
+    if(!matchMonth) return false;
+    if(!searchQuery.trim()) return true;
+    const q = searchQuery.toLowerCase();
+    return (t.taskName||'').toLowerCase().includes(q) || (t.remarks||'').toLowerCase().includes(q) || (t.category||'').toLowerCase().includes(q);
+  }).sort((a,b)=>new Date(b.date)-new Date(a.date)),[myTasks,selMonth,selYear,searchQuery]);
 
+  const totalHrs=filtered.reduce((s,t)=>s+(t.durationHours||0),0);
   const years=[...new Set(myTasks.map(t=>t.year))].sort((a,b)=>b-a);
   if(!years.includes(curYear))years.unshift(curYear);
+
+  const handleDelete = (id) => {
+    if(window.confirm('Are you sure you want to delete this task?')) {
+      onDeleteTask(id);
+      showToast('Task deleted successfully.', 'success');
+    }
+  };
 
   return(
     <div className="anim-fade" style={{display:'flex',flexDirection:'column',gap:16}}>
@@ -1653,8 +1798,11 @@ const MyTasksView = ({user,tasks,showModal,showToast}) => {
         ))}
       </div>
 
-      <div className="glass" style={{borderRadius:20,padding:'20px 24px'}}>
-        <MiniBarChart tasks={myTasks}/>
+      <div style={{display:'flex', gap:10, marginBottom:4}}>
+        <div style={{position:'relative',flex:1,maxWidth:400}}>
+          <i className="fa-solid fa-magnifying-glass" style={{position:'absolute',left:12,top:'50%',transform:'translateY(-50%)',color:'var(--tx3)',fontSize:12}}></i>
+          <input className="input" style={{paddingLeft:36}} placeholder="Search tasks or remarks..." value={searchQuery} onChange={e=>setSearchQuery(e.target.value)}/>
+        </div>
       </div>
 
       <div className="glass" style={{borderRadius:20,overflow:'hidden'}}>
@@ -1662,14 +1810,16 @@ const MyTasksView = ({user,tasks,showModal,showToast}) => {
           {filtered.length===0?(
             <div style={{padding:'48px',textAlign:'center',opacity:.4}}>
               <i className="fa-solid fa-calendar-xmark" style={{fontSize:40,display:'block',marginBottom:12}}></i>
-              <p style={{fontWeight:700,fontSize:13}}>No tasks for {MONTH_NAMES[selMonth-1]} {selYear}.</p>
-              <button className="btn btn-primary" onClick={()=>showModal('logTask')} style={{marginTop:16,fontSize:12}}>
-                <i className="fa-solid fa-plus"></i> Log a Task
-              </button>
+              <p style={{fontWeight:700,fontSize:13}}>No tasks found for this view.</p>
+              {!searchQuery && (
+                <button className="btn btn-primary" onClick={()=>showModal('logTask')} style={{marginTop:16,fontSize:12}}>
+                  <i className="fa-solid fa-plus"></i> Log a Task
+                </button>
+              )}
             </div>
           ):(
             <table className="nx-table" style={{width:'100%',minWidth:650}}>
-              <thead><tr><th>Task Name</th><th>Category</th><th>Date</th><th>Start</th><th>End</th><th>Hours</th><th>Remarks</th></tr></thead>
+              <thead><tr><th>Task Name</th><th>Category</th><th>Date</th><th>Start</th><th>End</th><th>Hours</th><th>Action</th></tr></thead>
               <tbody>
                 {filtered.map(t=>(
                   <tr key={t.id}>
@@ -1679,7 +1829,13 @@ const MyTasksView = ({user,tasks,showModal,showToast}) => {
                     <td style={{fontFamily:'monospace',fontSize:12}}>{t.startTime}</td>
                     <td style={{fontFamily:'monospace',fontSize:12}}>{t.endTime}</td>
                     <td><span style={{color:'var(--p)',fontWeight:900,fontSize:14}}>{t.durationHours}</span><span style={{fontSize:9,color:'var(--tx3)',marginLeft:2}}>hrs</span></td>
-                    <td style={{color:'var(--tx3)',fontSize:12,maxWidth:180}}><span style={{display:'block',overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap'}}>{t.remarks||'—'}</span></td>
+                    <td>
+                      {t.date === todayISO ? (
+                        <button className="btn btn-ghost" style={{padding:'4px 8px', color:'#f87171', border:'none', background:'none'}} onClick={()=>handleDelete(t.id)} title="Delete Task">
+                          <i className="fa-solid fa-trash"></i>
+                        </button>
+                      ) : <span style={{fontSize:10, color:'var(--tx3)'}}>Locked</span>}
+                    </td>
                   </tr>
                 ))}
               </tbody>
@@ -1697,7 +1853,6 @@ const MyTasksView = ({user,tasks,showModal,showToast}) => {
   );
 };
 
-/* Keeping AdminTrackerView, AdminDirectoryView, ProjectsView, AnnouncementsView, LeavesView exactly the same mostly just fixing Category display */
 const AdminTrackerView = ({employees,tasks,showToast}) => {
   const [selDept,setSelDept]=useState('ALL');
   const [selEmp,setSelEmp]=useState(null);
@@ -1807,8 +1962,6 @@ const AdminTrackerView = ({employees,tasks,showToast}) => {
   );
 };
 
-/* Same component structures for the rest: SettingsView, AdminDirectoryView, ProjectsView, AnnouncementsView, LeavesView, LeaderboardView */
-
 const AnnouncementsView = ({announcements,setAnnouncements,isAdmin,user,showModal,showToast}) => {
   const priorityColor = p => p==='high'?'#f87171':p==='medium'?'#fbbf24':'#4ade80';
   const priorityLabel = p => p==='high'?'🔴 Urgent':p==='medium'?'🟡 Medium':'🟢 Info';
@@ -1854,7 +2007,10 @@ const ProjectsView = ({projects,setProjects,showModal,showToast,isAdmin}) => {
     <div className="anim-fade" style={{display:'flex',flexDirection:'column',gap:16}}>
       <div style={{display:'flex',justifyContent:'space-between',alignItems:'flex-end',flexWrap:'wrap',gap:12}}>
         <div><h2 style={{fontSize:22,fontWeight:900,color:'var(--tx)'}}>Projects</h2><p style={{fontSize:12,color:'var(--tx3)',marginTop:2}}>{projects.length} total</p></div>
-        {isAdmin&&<button className="btn btn-primary" onClick={()=>showModal('addProject')}><i className="fa-solid fa-folder-plus"></i> New</button>}
+        <div style={{display:'flex', gap:10}}>
+          {isAdmin&&projects.length>0&&<button className="btn btn-ghost" onClick={()=>exportProjectsToCSV(projects)}><i className="fa-solid fa-file-csv"></i> Export CSV</button>}
+          {isAdmin&&<button className="btn btn-primary" onClick={()=>showModal('addProject')}><i className="fa-solid fa-folder-plus"></i> New</button>}
+        </div>
       </div>
       <div style={{display:'flex',gap:8,flexWrap:'wrap'}}>
         <div style={{position:'relative',flex:1,minWidth:180}}>
@@ -2037,7 +2193,89 @@ const LeavesView = ({user,leaveRequests,setLeaveRequests,showModal,showToast}) =
   );
 };
 
-const SettingsView = ({theme,setTheme,showToast}) => {
+const LeaderboardView = ({employees,tasks}) => {
+  const curMonth=new Date().getMonth()+1;
+  const curYear=new Date().getFullYear();
+  const [period,setPeriod]=useState('month');
+
+  const ranked = useMemo(()=>{
+    return [...employees].map(emp=>{
+      const empTasks = period==='month'
+        ? tasks.filter(t=>t.empId===emp.id&&t.month===curMonth&&t.year===curYear)
+        : tasks.filter(t=>t.empId===emp.id&&t.year===curYear);
+      const hrs = empTasks.reduce((s,t)=>s+(t.durationHours||0),0);
+      const dept=DEPARTMENTS.find(d=>d.id===emp.deptId);
+      return {...emp, hrs, taskCount:empTasks.length, dept};
+    }).filter(e=>e.hrs>0).sort((a,b)=>b.hrs-a.hrs).slice(0,20);
+  },[employees,tasks,period,curMonth,curYear]);
+
+  const maxHrs = ranked[0]?.hrs||1;
+  const medals=['🥇','🥈','🥉'];
+
+  return(
+    <div className="anim-fade" style={{display:'flex',flexDirection:'column',gap:16}}>
+      <div style={{display:'flex',justifyContent:'space-between',alignItems:'flex-end',flexWrap:'wrap',gap:12}}>
+        <div>
+          <h2 style={{fontSize:22,fontWeight:900,color:'var(--tx)'}}>🏆 Leaderboard</h2>
+          <p style={{fontSize:12,color:'var(--tx3)',marginTop:2}}>Top performers by logged hours</p>
+        </div>
+        <div style={{display:'flex',gap:6}}>
+          <button className={`month-tab ${period==='month'?'active':''}`} onClick={()=>setPeriod('month')}>This Month</button>
+          <button className={`month-tab ${period==='year'?'active':''}`} onClick={()=>setPeriod('year')}>This Year</button>
+        </div>
+      </div>
+
+      {ranked.length>=3&&(
+        <div style={{display:'grid',gridTemplateColumns:'1fr 1.2fr 1fr',gap:12,marginBottom:8}}>
+          {[ranked[1],ranked[0],ranked[2]].map((emp,i)=>{
+            const rank=i===1?0:i===0?1:2;
+            return(
+              <div key={emp.id} className="glass" style={{borderRadius:18,padding:'16px 12px',textAlign:'center',display:'flex',flexDirection:'column',alignItems:'center',gap:8,order:i===1?-1:i}}>
+                <div style={{fontSize:24}}>{medals[rank]}</div>
+                <Avatar emp={emp} size={i===1?'md':'sm'}/>
+                <div>
+                  <p style={{fontSize:11,fontWeight:900,color:'var(--tx)'}}>{emp.firstName} {emp.lastName.split(' ')[0]}</p>
+                  <p style={{fontSize:9,color:'var(--tx3)'}}>{emp.dept?.name}</p>
+                </div>
+                <p style={{fontSize:i===1?20:16,fontWeight:900,color:'var(--p)'}}>{emp.hrs.toFixed(1)}h</p>
+              </div>
+            );
+          })}
+        </div>
+      )}
+
+      <div className="glass" style={{borderRadius:20,overflow:'hidden'}}>
+        {ranked.length===0?(
+          <div style={{padding:'40px',textAlign:'center',opacity:.4}}>
+            <i className="fa-solid fa-trophy" style={{fontSize:36,display:'block',marginBottom:8}}></i>
+            <p style={{fontWeight:700,fontSize:12}}>No data for this period.</p>
+          </div>
+        ):(
+          ranked.map((emp,i)=>(
+            <div key={emp.id} style={{display:'flex',alignItems:'center',gap:12,padding:'14px 20px',borderBottom:'1px solid var(--bd)'}}>
+              <span style={{fontSize:i<3?18:14,fontWeight:900,width:28,textAlign:'center',color:i<3?'var(--p)':'var(--tx3)'}}>
+                {i<3?medals[i]:`#${i+1}`}
+              </span>
+              <Avatar emp={emp} size="sm"/>
+              <div style={{flex:1,overflow:'hidden'}}>
+                <p style={{fontSize:13,fontWeight:700,color:'var(--tx)',overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap'}}>{emp.firstName} {emp.lastName}</p>
+                <p style={{fontSize:10,color:'var(--tx3)'}}>{emp.dept?.icon} {emp.dept?.name} • {emp.taskCount} tasks</p>
+              </div>
+              <div style={{textAlign:'right',minWidth:60}}>
+                <p style={{fontSize:16,fontWeight:900,color:'var(--p)'}}>{emp.hrs.toFixed(1)}h</p>
+                <div style={{width:80,height:4,background:'rgba(0,0,0,0.1)',borderRadius:99,marginTop:4}}>
+                  <div style={{width:`${(emp.hrs/maxHrs)*100}%`,height:'100%',background:'linear-gradient(90deg,var(--p),var(--pd))',borderRadius:99,transition:'width 1s'}}></div>
+                </div>
+              </div>
+            </div>
+          ))
+        )}
+      </div>
+    </div>
+  );
+};
+
+const SettingsView = ({theme,setTheme,showToast,isAdmin,employees,tasks,projects}) => {
   const [syncing, setSyncing] = useState(false);
   const handleSync = async () => {
     setSyncing(true); showToast('Syncing data to cloud...', 'info');
@@ -2045,9 +2283,31 @@ const SettingsView = ({theme,setTheme,showToast}) => {
     if(res.success) showToast('Data synchronized successfully!', 'success');
     else showToast('Sync failed. Please check connection.', 'error');
   };
+
+  const handleDownloadBackup = () => {
+    const data = { employees, tasks, projects, exportDate: new Date().toISOString() };
+    const blob = new Blob([JSON.stringify(data, null, 2)], {type: 'application/json'});
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = `Gigahertz_DB_Backup_${new Date().toISOString().split('T')[0]}.json`;
+    a.click();
+    showToast('Database backup downloaded!', 'success');
+  };
+
   return(
     <div className="anim-fade" style={{display:'flex',flexDirection:'column',gap:20,maxWidth:600}}>
       <div><h2 style={{fontSize:22,fontWeight:900,color:'var(--tx)'}}>Settings</h2></div>
+      
+      {isAdmin && (
+        <div className="glass" style={{borderRadius:20,padding:'20px 24px', borderLeft:'4px solid var(--danger)'}}>
+          <h3 style={{fontSize:15,fontWeight:800,color:'var(--tx)',marginBottom:4}}><i className="fa-solid fa-shield-halved mr-2" style={{color:'var(--danger)'}}></i>Admin Tools</h3>
+          <p style={{fontSize:12,color:'var(--tx3)',marginBottom:12}}>Download a complete JSON backup of the system database.</p>
+          <button className="btn btn-ghost" style={{fontSize:12, color:'var(--danger)', border:'1px solid var(--danger)'}} onClick={handleDownloadBackup}>
+            <i className="fa-solid fa-download"></i> Download Database Backup
+          </button>
+        </div>
+      )}
+
       <div className="glass" style={{borderRadius:20,padding:'20px 24px'}}>
         <h3 style={{fontSize:15,fontWeight:800,color:'var(--tx)',marginBottom:4}}>🎨 Interface Theme</h3>
         <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fill,minmax(240px,1fr))',gap:10, marginTop:12}}>
@@ -2072,7 +2332,7 @@ const SettingsView = ({theme,setTheme,showToast}) => {
       <div className="glass" style={{borderRadius:20,padding:'20px 24px'}}>
         <h3 style={{fontSize:15,fontWeight:800,color:'var(--tx)',marginBottom:4}}>ℹ️ Build Info</h3>
         <div style={{display:'flex',flexDirection:'column',gap:6,fontSize:12,color:'var(--tx3)',marginTop:8}}>
-          <p>Version: <strong style={{color:'var(--tx)'}}>Gigahertz Nexus v5.2</strong></p><p>Year: <strong style={{color:'var(--tx)'}}>{new Date().getFullYear()}</strong></p>
+          <p>Version: <strong style={{color:'var(--tx)'}}>Gigahertz Nexus v5.4</strong></p><p>Year: <strong style={{color:'var(--tx)'}}>{new Date().getFullYear()}</strong></p>
           <p>Built with: <strong style={{color:'var(--tx)'}}>💙 for Gigahertz</strong></p>
         </div>
       </div>
@@ -2104,6 +2364,8 @@ const MainApp = ({user:initUser,onLogout,theme,setTheme}) => {
   const removeToast = useCallback(id=>setToasts(p=>p.filter(t=>t.id!==id)),[]);
   const showModal = useCallback(m=>setModal(m),[]);
 
+  const deleteTask = useCallback((id) => setTasks(p => p.filter(t => t.id !== id)), []);
+
   const adminNavItems = [
     {id:'dashboard',icon:'fa-chart-pie',label:'Dashboard'},
     {id:'tracker',icon:'fa-satellite-dish',label:'Tracker'},
@@ -2126,7 +2388,6 @@ const MainApp = ({user:initUser,onLogout,theme,setTheme}) => {
   const dept=DEPARTMENTS.find(d=>d.id===user.deptId);
 
   const pendingLeaves=leaveRequests.filter(l=>l.status==='Pending').length;
-  // Calculate unread notifications (simple mock: recent announcements + pending leaves if admin)
   const unreadCount = announcements.filter(a => (Date.now() - new Date(a.date).getTime()) < 259200000).length + (isAdmin ? pendingLeaves : 0);
 
   const cycleTheme = () => {
@@ -2134,6 +2395,9 @@ const MainApp = ({user:initUser,onLogout,theme,setTheme}) => {
     const next = THEMES[(idx + 1) % THEMES.length].id;
     setTheme(next);
   };
+
+  const myTotalHrs = tasks.filter(t=>t.empId===user.id).reduce((s,t)=>s+(t.durationHours||0),0);
+  const userLevel = getLevelInfo(myTotalHrs).level;
 
   return(
     <>
@@ -2143,7 +2407,7 @@ const MainApp = ({user:initUser,onLogout,theme,setTheme}) => {
       <aside className="sidebar">
         <div style={{padding:'16px',borderBottom:'1px solid var(--bd)',display:'flex',alignItems:'center',gap:12}}>
           <div style={{width:36,height:36,borderRadius:10,overflow:'hidden',background:'#fff',padding:3,flexShrink:0}}><img src="https://contents.smsupermalls.com/data/uploads/2020/07/GIGAHERTZ_COMPUTER_SYSTEM.jpg" alt="Logo" style={{width:'100%',height:'100%',objectFit:'contain'}}/></div>
-          <div><p style={{fontSize:12,fontWeight:900,color:'var(--tx)'}}>Gigahertz Nexus</p><p style={{fontSize:9,color:'var(--p)',fontWeight:700,textTransform:'uppercase',letterSpacing:'.08em'}}>v5.2</p></div>
+          <div><p style={{fontSize:12,fontWeight:900,color:'var(--tx)'}}>Gigahertz Nexus</p><p style={{fontSize:9,color:'var(--p)',fontWeight:700,textTransform:'uppercase',letterSpacing:'.08em'}}>v5.4</p></div>
         </div>
         <nav style={{padding:'12px',flex:1,display:'flex',flexDirection:'column',gap:4,overflowY:'auto'}}>
           {navItems.map(item=>(
@@ -2160,8 +2424,11 @@ const MainApp = ({user:initUser,onLogout,theme,setTheme}) => {
               {user.facePhoto?<img src={user.facePhoto} style={{width:'100%',height:'100%',objectFit:'cover',borderRadius:10}} alt="face"/>:<span style={{color:'#fff',fontSize:12,fontWeight:900}}>{getInitials(user)}</span>}
             </span>
             <div style={{overflow:'hidden',textAlign:'left'}}>
-              <p style={{fontSize:12,fontWeight:700,color:'var(--tx)',overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap'}}>{user.firstName} {user.lastName}</p>
-              <p style={{fontSize:9,color:'var(--tx3)'}}>{dept?.name}</p>
+              <p style={{fontSize:12,fontWeight:700,color:'var(--tx)',overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap',display:'flex',gap:4}}>
+                {user.firstName} {user.lastName}
+                {isAdmin && <span style={{fontSize:8,background:'var(--p)',color:'#fff',padding:'1px 4px',borderRadius:4,lineHeight:1}}>Admin</span>}
+              </p>
+              <p style={{fontSize:9,color:'var(--tx3)'}}>{dept?.name} • LVL {userLevel}</p>
             </div>
           </button>
           <button className="nav-item" onClick={onLogout} style={{color:'#f87171',marginTop:4}}>
@@ -2174,9 +2441,15 @@ const MainApp = ({user:initUser,onLogout,theme,setTheme}) => {
         <div className="desktop-only" style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:24}}>
           <div style={{display:'flex',alignItems:'center',gap:12}}>
             <div style={{width:36,height:36,borderRadius:10,overflow:'hidden',background:'#fff',padding:3}}><img src="https://contents.smsupermalls.com/data/uploads/2020/07/GIGAHERTZ_COMPUTER_SYSTEM.jpg" alt="Logo" style={{width:'100%',height:'100%',objectFit:'contain'}}/></div>
-            <div><p style={{fontSize:16,fontWeight:900,color:'var(--tx)'}}>Gigahertz Nexus</p><p style={{fontSize:10,color:'var(--tx3)',fontWeight:600}}>{user.firstName} {user.lastName} • {user.employeeId}</p></div>
+            <div>
+              <p style={{fontSize:16,fontWeight:900,color:'var(--tx)'}}>Gigahertz Nexus</p>
+              <p style={{fontSize:10,color:'var(--tx3)',fontWeight:600}}>
+                {user.firstName} {user.lastName} • {user.employeeId} {isAdmin && <span style={{color:'var(--p)'}}>(Admin)</span>}
+              </p>
+            </div>
           </div>
           <div style={{display:'flex',gap:10,alignItems:'center'}}>
+            <div className="badge" style={{background:'var(--p)', color:'#fff', padding:'5px 12px', fontSize:11}}>LVL {userLevel}</div>
             <button className="btn btn-ghost" onClick={cycleTheme} title="Switch Theme"><i className="fa-solid fa-palette"></i></button>
             <button className="btn btn-ghost relative" onClick={()=>setModal('notifications')}>
               <i className="fa-solid fa-bell"></i>
@@ -2190,16 +2463,16 @@ const MainApp = ({user:initUser,onLogout,theme,setTheme}) => {
         </div>
 
         {view==='dashboard'&&isAdmin&&<AdminDashView employees={employees} tasks={tasks} showModal={showModal} announcements={announcements} leaveRequests={leaveRequests} showToast={showToast}/>}
-        {view==='dashboard'&&!isAdmin&&<DashboardView user={user} tasks={tasks} showModal={showModal} announcements={announcements} leaveRequests={leaveRequests} employees={employees}/>}
+        {view==='dashboard'&&!isAdmin&&<DashboardView user={user} tasks={tasks} showModal={showModal} announcements={announcements} leaveRequests={leaveRequests} employees={employees} onDeleteTask={deleteTask} showToast={showToast}/>}
         {view==='tracker'&&isAdmin&&<AdminTrackerView employees={employees} tasks={tasks} showToast={showToast}/>}
         {view==='directory'&&isAdmin&&<AdminDirectoryView employees={employees} setEmployees={setEmployees} tasks={tasks} showToast={showToast} onLogTaskForEmp={emp=>{setLogTaskTarget(emp);setModal('logTaskAdmin');}}/>}
-        {view==='mytasks'&&!isAdmin&&<MyTasksView user={user} tasks={tasks} showModal={showModal} showToast={showToast}/>}
+        {view==='mytasks'&&!isAdmin&&<MyTasksView user={user} tasks={tasks} showModal={showModal} showToast={showToast} onDeleteTask={deleteTask}/>}
         {view==='leaves'&&isAdmin&&<AdminLeavesView leaveRequests={leaveRequests} setLeaveRequests={setLeaveRequests} employees={employees} showToast={showToast}/>}
         {view==='leaves'&&!isAdmin&&<LeavesView user={user} leaveRequests={leaveRequests} setLeaveRequests={setLeaveRequests} showModal={showModal} showToast={showToast}/>}
         {view==='announcements'&&<AnnouncementsView announcements={announcements} setAnnouncements={setAnnouncements} isAdmin={isAdmin} user={user} showModal={showModal} showToast={showToast}/>}
         {view==='leaderboard'&&<LeaderboardView employees={employees} tasks={tasks}/>}
         {view==='projects'&&<ProjectsView projects={projects} setProjects={setProjects} showModal={showModal} showToast={showToast} isAdmin={isAdmin}/>}
-        {view==='settings'&&<SettingsView theme={theme} setTheme={setTheme} showToast={showToast}/>}
+        {view==='settings'&&<SettingsView theme={theme} setTheme={setTheme} showToast={showToast} isAdmin={isAdmin} employees={employees} tasks={tasks} projects={projects}/>}
       </main>
 
       <nav className="mobile-nav">
@@ -2220,7 +2493,7 @@ const MainApp = ({user:initUser,onLogout,theme,setTheme}) => {
       </nav>
 
       {/* MODALS */}
-      {modal==='profile'&&<MyProfileModal user={user} onClose={()=>setModal(null)} onSave={setUser} showToast={showToast}/>}
+      {modal==='profile'&&<MyProfileModal user={user} onClose={()=>setModal(null)} onSave={setUser} showToast={showToast} totalHours={myTotalHrs}/>}
       {modal==='logTask'&&<LogTaskModal user={user} onClose={()=>setModal(null)} onSave={t=>setTasks(p=>[t,...p])} showToast={showToast}/>}
       {modal==='leaveRequest'&&<LeaveRequestModal user={user} onClose={()=>setModal(null)} onSave={r=>setLeaveRequests(p=>[r,...p])} showToast={showToast}/>}
       {modal==='announcement'&&<AnnouncementModal user={user} onClose={()=>setModal(null)} onSave={a=>setAnnouncements(p=>[a,...p])} showToast={showToast}/>}
@@ -2256,7 +2529,7 @@ const App = () => {
         </div>
         <div style={{textAlign:'center'}}>
           <p style={{fontSize:22,fontWeight:900,color:'var(--tx)'}}>Gigahertz Nexus</p>
-          <p style={{fontSize:11,fontWeight:700,textTransform:'uppercase',letterSpacing:'.15em',color:'var(--p)',marginTop:4}}>Activity Tracker v5.2</p>
+          <p style={{fontSize:11,fontWeight:700,textTransform:'uppercase',letterSpacing:'.15em',color:'var(--p)',marginTop:4}}>Activity Tracker v5.4</p>
         </div>
         <div style={{display:'flex',gap:8}}>
           {[0,1,2].map(i=><div key={i} style={{width:8,height:8,borderRadius:'50%',background:'var(--p)',animation:`pulse 1.2s ${i*.3}s infinite`}}></div>)}
