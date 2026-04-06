@@ -779,6 +779,7 @@ const AuthPortal = ({onLogin,theme,setTheme}) => {
   const QUICK=[
     {label:'🛡️ Admin',email:'admin@gigahertz.com',pw:'admin123'},
     {label:'🛡️ Beltran',email:'beltran.james@gmail.com',pw:'jamespogi123'},
+    {label: '🪻 Hyacinth', email:'hyacinths.beige@gmail.com',pw:'rozza2002'}, 
     {label:'👤 Employee',email:'piolo@gigahertz.com',pw:'ghz2025'},
   ];
 
@@ -1745,9 +1746,9 @@ const SettingsView = ({theme,setTheme,showToast}) => {
       <div className="glass" style={{borderRadius:20,padding:'20px 24px'}}>
         <h3 style={{fontSize:15,fontWeight:800,color:'var(--tx)',marginBottom:4}}>ℹ️ Build Info</h3>
         <div style={{display:'flex',flexDirection:'column',gap:6,fontSize:12,color:'var(--tx3)'}}>
-          <p>Version: <strong style={{color:'var(--tx)'}}>Gigahertz Nexus v4.0</strong></p>
+          <p>Version: <strong style={{color:'var(--tx)'}}>Gigahertz Nexus v4.4</strong></p>
           <p>Year: <strong style={{color:'var(--tx)'}}>{new Date().getFullYear()}</strong></p>
-          <p>Employees: <strong style={{color:'var(--tx)'}}>Rozi & team's fave tracker 💙</strong></p>
+          <p>Employees: <strong style={{color:'var(--tx)'}}>James & team's fave tracker 💙</strong></p>
         </div>
       </div>
     </div>
@@ -1816,11 +1817,11 @@ const MainApp = ({user:initUser,onLogout,theme,setTheme}) => {
       <aside className={`sidebar ${sidebarOpen?'':'hidden'} lg:sidebar`} style={{transform:undefined}}>
         <div style={{padding:'16px',borderBottom:'1px solid var(--bd)',display:'flex',alignItems:'center',gap:12}}>
           <div style={{width:36,height:36,borderRadius:10,overflow:'hidden',background:'#fff',padding:3,flexShrink:0}}>
-            <img src="https://contents.smsupermalls.com/data/uploads/2020/07/GIGAHERTZ_COMPUTER_SYSTEM.jpg" alt="Logo" style={{width:'100%',height:'100%',objectFit:'contain'}}/>
+            <img src="https://contents.smsupermalls.com/data/uploads/2020/07/GIGAHERTZ_COMPUTER_SYSTEM.jpg" alt="Logo" style={{width:'100%',height:'99%',objectFit:'contain'}}/>
           </div>
           <div>
             <p style={{fontSize:12,fontWeight:900,color:'var(--tx)'}}>Gigahertz Nexus</p>
-            <p style={{fontSize:9,color:'var(--p)',fontWeight:700,textTransform:'uppercase',letterSpacing:'.08em'}}>v4.0</p>
+            <p style={{fontSize:9,color:'var(--p)',fontWeight:700,textTransform:'uppercase',letterSpacing:'.08em'}}>v4.4/p>
           </div>
         </div>
         <nav style={{padding:'12px',flex:1,display:'flex',flexDirection:'column',gap:4}}>
