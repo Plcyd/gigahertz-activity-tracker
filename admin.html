@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-<title>Gigahertz Nexus — Activity Tracker v5.1</title>
+<title>Gigahertz Nexus — Activity Tracker v5.2</title>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.development.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.development.js"></script>
@@ -162,7 +162,7 @@ input,select,button,textarea{font-family:inherit;outline:none}
 .input:focus{background:rgba(0,0,0,0.04);border-color:var(--p);box-shadow:0 0 0 3px color-mix(in srgb,var(--p) 15%,transparent)}
 .input-label{display:block;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--tx3);margin-bottom:6px}
 
-/* DROPDOWN FIX: Ensures option text is readable against the background in both light/dark modes */
+/* DROPDOWN FIX */
 select.input option {
   background-color: var(--card);
   color: var(--tx);
@@ -190,6 +190,13 @@ select.input option {
 .badge-idle{background:rgba(245,158,11,0.15);color:#fbbf24;border:1px solid rgba(245,158,11,0.3)}
 .badge-absent{background:rgba(239,68,68,0.15);color:#f87171;border:1px solid rgba(239,68,68,0.3)}
 .badge-leave{background:rgba(147,51,234,0.15);color:#c084fc;border:1px solid rgba(147,51,234,0.3)}
+
+/* Tag categories */
+.tag-Admin{background:rgba(59,130,246,0.15);color:#3b82f6;}
+.tag-Support{background:rgba(34,197,94,0.15);color:#22c55e;}
+.tag-Dev{background:rgba(168,85,247,0.15);color:#a855f7;}
+.tag-Meeting{background:rgba(249,115,22,0.15);color:#f97316;}
+.tag-Operations{background:rgba(236,72,153,0.15);color:#ec4899;}
 
 .modal-overlay{
   position:fixed;inset:0;z-index:999;
@@ -230,7 +237,7 @@ select.input option {
 .nav-icon{width:32px;height:32px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0;background:rgba(0,0,0,0.06);transition:all .2s}
 .nav-item.active .nav-icon{background:linear-gradient(135deg,var(--p),var(--pd));color:#fff;box-shadow:0 4px 12px var(--shadow)}
 
-/* MOBILE NAV FIX: Allow scrolling so all items are visible */
+/* MOBILE NAV FIX */
 .mobile-nav{
   position:fixed;bottom:0;left:0;right:0;z-index:200;
   background:var(--glass-bg);backdrop-filter:blur(24px);
@@ -418,6 +425,20 @@ const DEPARTMENTS = [
   {id:12,name:'IT / NEXUS CORE',icon:'🖥️'},
 ];
 
+const THEMES = [
+  {id:'dark',color:'#1e293b',label:'Dark Mode',desc:'Default sleek dark interface'},
+  {id:'light',color:'#1a73e8',label:'Sky Blue',desc:'Clean Google-style blue theme'},
+  {id:'lavender',color:'#7c3aed',label:'Lavender',desc:'Soft purple elegance'},
+  {id:'forest',color:'#16a34a',label:'Forest',desc:'Deep nature-inspired greens'},
+  {id:'sunset',color:'#f97316',label:'Sunset',desc:'Warm orange hues'},
+  {id:'ocean',color:'#0ea5e9',label:'Ocean',desc:'Deep sea blue vibes'},
+  {id:'red',color:'#ef4444',label:'Crimson',desc:'Bold red intensity'},
+  {id:'cyberpunk',color:'#d946ef',label:'Cyberpunk',desc:'Neon futuristic vibes'},
+  {id:'coffee',color:'#a16207',label:'Coffee',desc:'Warm earthy brown tones'},
+  {id:'rosegold',color:'#c9748a',label:'Rose Gold ✨',desc:'Luxury rose gold aesthetics'},
+];
+const TASK_CATEGORIES = ['Admin', 'Support', 'Meeting', 'Dev', 'Operations'];
+
 const rawRoster = [
   {n:"Rich Jhen Calderon",d:1},{n:"Kyla Joena Cabantog",d:1},{n:"Bernadette Barcelon",d:1},
   {n:"Jome Valenzuela",d:1},{n:"Kaye Magallosa",d:1},{n:"Rozenne Bonayon",d:1},
@@ -527,6 +548,7 @@ EMPLOYEES_INIT.slice(0,60).forEach(emp => {
       id:_tid++,
       empId:emp.id,
       taskName: taskPool[Math.floor(Math.random()*taskPool.length)],
+      category: TASK_CATEGORIES[Math.floor(Math.random()*TASK_CATEGORIES.length)],
       date: d.toISOString().split('T')[0],
       startTime: `${String(startH).padStart(2,'0')}:00`,
       endTime: `${String(endH).padStart(2,'0')}:00`,
@@ -607,7 +629,7 @@ const api = {
       else if(action==='registerEmployee') r({success:true,employeeId:'GHZ-'+Math.floor(Math.random()*9000+1000)});
       else if(action==='updateProfile') r({success:true});
       else if(action==='addProject') r({success:true});
-      else if(action==='sync') r({success:true}); // Added sync for GAS functionality
+      else if(action==='sync') r({success:true});
       else r({success:true,data:[]});
     },800));
   },
@@ -644,8 +666,8 @@ function validatePassword(pw){
 }
 
 function exportToCSV(tasks,emp){
-  const rows=[['Task Name','Date','Start Time','End Time','Duration (hrs)','Remarks']];
-  tasks.forEach(t=>rows.push([`"${t.taskName}"`,t.date,t.startTime,t.endTime,t.durationHours,`"${t.remarks||''}"`]));
+  const rows=[['Task Name','Category','Date','Start Time','End Time','Duration (hrs)','Remarks']];
+  tasks.forEach(t=>rows.push([`"${t.taskName}"`,`"${t.category||''}"`,t.date,t.startTime,t.endTime,t.durationHours,`"${t.remarks||''}"`]));
   const csv=rows.map(r=>r.join(',')).join('\n');
   const blob=new Blob([csv],{type:'text/csv'});
   const a=document.createElement('a');
@@ -785,19 +807,6 @@ const AuthPortal = ({onLogin,theme,setTheme}) => {
   const canvasRef=useRef(null);
   const streamRef=useRef(null);
 
-  const THEMES=[
-    {id:'dark',color:'#1e293b',label:'Dark'},
-    {id:'light',color:'#1a73e8',label:'Blue'},
-    {id:'lavender',color:'#7c3aed',label:'Lavender'},
-    {id:'forest',color:'#16a34a',label:'Forest'},
-    {id:'sunset',color:'#f97316',label:'Sunset'},
-    {id:'ocean',color:'#0ea5e9',label:'Ocean'},
-    {id:'red',color:'#ef4444',label:'Crimson'},
-    {id:'cyberpunk',color:'#d946ef',label:'Cyberpunk'},
-    {id:'coffee',color:'#a16207',label:'Coffee'},
-    {id:'rosegold',color:'#c9748a',label:'Rose Gold'},
-  ];
-
   useEffect(()=>{
     const ctrl=new AbortController();
     const t=setTimeout(()=>{ctrl.abort();setGasStatus('offline');},5000);
@@ -887,7 +896,7 @@ const AuthPortal = ({onLogin,theme,setTheme}) => {
             <img src="https://contents.smsupermalls.com/data/uploads/2020/07/GIGAHERTZ_COMPUTER_SYSTEM.jpg" alt="Logo" style={{width:'100%',height:'100%',objectFit:'contain',borderRadius:12}}/>
           </div>
           <h1 style={{fontSize:22,fontWeight:900,letterSpacing:'-.5px',color:'var(--tx)'}}>Gigahertz Nexus</h1>
-          <p style={{fontSize:10,fontWeight:700,textTransform:'uppercase',letterSpacing:'.15em',color:'var(--p)',marginTop:4}}>Activity Tracker v5.1</p>
+          <p style={{fontSize:10,fontWeight:700,textTransform:'uppercase',letterSpacing:'.15em',color:'var(--p)',marginTop:4}}>Activity Tracker v5.2</p>
         </div>
 
         <div style={{display:'flex',gap:4,background:'rgba(0,0,0,0.06)',padding:4,borderRadius:14,marginBottom:24}}>
@@ -1005,7 +1014,7 @@ const AuthPortal = ({onLogin,theme,setTheme}) => {
         )}
 
         <p style={{textAlign:'center',fontSize:9,fontWeight:700,textTransform:'uppercase',letterSpacing:'.12em',color:'var(--tx3)',marginTop:20}}>
-          Gigahertz Nexus v5.1 • {new Date().getFullYear()} • Built with 💙 for Gigahertz
+          Gigahertz Nexus v5.2 • {new Date().getFullYear()} • Built with 💙 for Gigahertz
         </p>
       </div>
     </div>
@@ -1013,7 +1022,7 @@ const AuthPortal = ({onLogin,theme,setTheme}) => {
 };
 
 /* ================================================================
-   MY PROFILE MODAL
+   MODALS: PROFILE, LOG TASK, LEAVES, ANNOUNCEMENT, PROJECT
 ================================================================ */
 const MyProfileModal = ({user,onClose,onSave,showToast}) => {
   const [editing,setEditing]=useState(false);
@@ -1075,7 +1084,6 @@ const MyProfileModal = ({user,onClose,onSave,showToast}) => {
               {user.birthday&&<p style={{fontSize:11,color:'var(--tx3)',marginTop:2}}>🎂 Birthday: {user.birthday}</p>}
             </div>
           </div>
-
           <div style={{display:'grid',gridTemplateColumns:'1fr 1fr 1fr',gap:10}}>
             {[{label:'Sessions',val:myTasks.length},{label:'Total Hours',val:totalHrs.toFixed(1)+'h'},{label:'Status',val:user.status}].map(s=>(
               <div key={s.label} className="glass" style={{padding:'12px',borderRadius:14,textAlign:'center'}}>
@@ -1084,8 +1092,6 @@ const MyProfileModal = ({user,onClose,onSave,showToast}) => {
               </div>
             ))}
           </div>
-
-          {/* Leave balance */}
           <div className="glass" style={{borderRadius:14,padding:'14px 18px'}}>
             <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:10}}>
               <span style={{fontSize:12,fontWeight:700,color:'var(--tx)'}}>🏖️ Leave Balance</span>
@@ -1096,23 +1102,13 @@ const MyProfileModal = ({user,onClose,onSave,showToast}) => {
             </div>
             <p style={{fontSize:10,color:'var(--tx3)',marginTop:6}}>{leaveUsed} day(s) used this year</p>
           </div>
-
           {editing?(
             <div style={{display:'flex',flexDirection:'column',gap:12}}>
               <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:10}}>
-                <div>
-                  <label className="input-label">First Name</label>
-                  <input className="input" value={form.firstName} onChange={e=>setForm(p=>({...p,firstName:e.target.value}))}/>
-                </div>
-                <div>
-                  <label className="input-label">Last Name</label>
-                  <input className="input" value={form.lastName} onChange={e=>setForm(p=>({...p,lastName:e.target.value}))}/>
-                </div>
+                <div><label className="input-label">First Name</label><input className="input" value={form.firstName} onChange={e=>setForm(p=>({...p,firstName:e.target.value}))}/></div>
+                <div><label className="input-label">Last Name</label><input className="input" value={form.lastName} onChange={e=>setForm(p=>({...p,lastName:e.target.value}))}/></div>
               </div>
-              <div>
-                <label className="input-label">Email</label>
-                <input className="input" type="email" value={form.email} onChange={e=>setForm(p=>({...p,email:e.target.value}))}/>
-              </div>
+              <div><label className="input-label">Email</label><input className="input" type="email" value={form.email} onChange={e=>setForm(p=>({...p,email:e.target.value}))}/></div>
               <div>
                 <label className="input-label">Update Face Photo</label>
                 <div className="camera-container" style={{maxHeight:180}}>
@@ -1133,9 +1129,7 @@ const MyProfileModal = ({user,onClose,onSave,showToast}) => {
               </div>
             </div>
           ):(
-            <button className="btn btn-primary" onClick={()=>setEditing(true)} style={{justifyContent:'center'}}>
-              <i className="fa-solid fa-pen"></i> Edit Profile
-            </button>
+            <button className="btn btn-primary" onClick={()=>setEditing(true)} style={{justifyContent:'center'}}><i className="fa-solid fa-pen"></i> Edit Profile</button>
           )}
         </div>
       </div>
@@ -1143,12 +1137,9 @@ const MyProfileModal = ({user,onClose,onSave,showToast}) => {
   );
 };
 
-/* ================================================================
-   LOG TASK MODAL
-================================================================ */
 const LogTaskModal = ({user,onClose,onSave,showToast}) => {
   const today = new Date().toISOString().split('T')[0];
-  const [form,setForm]=useState({taskName:'',date:today,startTime:'08:00',endTime:'17:00',remarks:''});
+  const [form,setForm]=useState({taskName:'',category:'Admin',date:today,startTime:'08:00',endTime:'17:00',remarks:''});
   const [loading,setLoading]=useState(false);
   const duration = useMemo(()=>calcDuration(form.startTime,form.endTime),[form.startTime,form.endTime]);
 
@@ -1169,6 +1160,7 @@ const LogTaskModal = ({user,onClose,onSave,showToast}) => {
       id:Date.now(),
       empId:user.id,
       taskName:form.taskName.trim(),
+      category:form.category,
       date:form.date,
       startTime:form.startTime,
       endTime:form.endTime,
@@ -1206,19 +1198,21 @@ const LogTaskModal = ({user,onClose,onSave,showToast}) => {
               ))}
             </div>
           </div>
-          <div>
-            <label className="input-label">Date</label>
-            <input className="input" type="date" value={form.date} onChange={e=>setForm(p=>({...p,date:e.target.value}))} max={today}/>
-          </div>
           <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:12}}>
             <div>
-              <label className="input-label">Start Time</label>
-              <input className="input" type="time" value={form.startTime} onChange={e=>setForm(p=>({...p,startTime:e.target.value}))}/>
+              <label className="input-label">Category</label>
+              <select className="input" value={form.category} onChange={e=>setForm(p=>({...p,category:e.target.value}))}>
+                {TASK_CATEGORIES.map(c=><option key={c} value={c}>{c}</option>)}
+              </select>
             </div>
             <div>
-              <label className="input-label">End Time</label>
-              <input className="input" type="time" value={form.endTime} onChange={e=>setForm(p=>({...p,endTime:e.target.value}))}/>
+              <label className="input-label">Date</label>
+              <input className="input" type="date" value={form.date} onChange={e=>setForm(p=>({...p,date:e.target.value}))} max={today}/>
             </div>
+          </div>
+          <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:12}}>
+            <div><label className="input-label">Start Time</label><input className="input" type="time" value={form.startTime} onChange={e=>setForm(p=>({...p,startTime:e.target.value}))}/></div>
+            <div><label className="input-label">End Time</label><input className="input" type="time" value={form.endTime} onChange={e=>setForm(p=>({...p,endTime:e.target.value}))}/></div>
           </div>
           <div className="glass" style={{borderRadius:14,padding:'14px 18px',display:'flex',alignItems:'center',justifyContent:'space-between'}}>
             <span style={{fontSize:12,fontWeight:700,color:'var(--tx3)'}}>Auto-calculated Duration</span>
@@ -1237,9 +1231,6 @@ const LogTaskModal = ({user,onClose,onSave,showToast}) => {
   );
 };
 
-/* ================================================================
-   LEAVE REQUEST MODAL
-================================================================ */
 const LeaveRequestModal = ({user,onClose,onSave,showToast}) => {
   const today = new Date().toISOString().split('T')[0];
   const [form,setForm]=useState({type:'Vacation',startDate:today,endDate:today,reason:''});
@@ -1282,22 +1273,12 @@ const LeaveRequestModal = ({user,onClose,onSave,showToast}) => {
           <div>
             <label className="input-label">Leave Type</label>
             <select className="input" value={form.type} onChange={e=>setForm(p=>({...p,type:e.target.value}))}>
-              <option>Vacation</option>
-              <option>Sick</option>
-              <option>Emergency</option>
-              <option>Personal</option>
-              <option>Maternity/Paternity</option>
+              <option>Vacation</option><option>Sick</option><option>Emergency</option><option>Personal</option><option>Maternity/Paternity</option>
             </select>
           </div>
           <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:12}}>
-            <div>
-              <label className="input-label">Start Date</label>
-              <input className="input" type="date" value={form.startDate} onChange={e=>setForm(p=>({...p,startDate:e.target.value}))} min={today} required/>
-            </div>
-            <div>
-              <label className="input-label">End Date</label>
-              <input className="input" type="date" value={form.endDate} onChange={e=>setForm(p=>({...p,endDate:e.target.value}))} min={form.startDate} required/>
-            </div>
+            <div><label className="input-label">Start Date</label><input className="input" type="date" value={form.startDate} onChange={e=>setForm(p=>({...p,startDate:e.target.value}))} min={today} required/></div>
+            <div><label className="input-label">End Date</label><input className="input" type="date" value={form.endDate} onChange={e=>setForm(p=>({...p,endDate:e.target.value}))} min={form.startDate} required/></div>
           </div>
           <div className="glass" style={{borderRadius:14,padding:'14px 18px',display:'flex',alignItems:'center',justifyContent:'space-between'}}>
             <span style={{fontSize:12,fontWeight:700,color:'var(--tx3)'}}>Total Days</span>
@@ -1321,9 +1302,6 @@ const LeaveRequestModal = ({user,onClose,onSave,showToast}) => {
   );
 };
 
-/* ================================================================
-   ANNOUNCEMENT MODAL (Admin post)
-================================================================ */
 const AnnouncementModal = ({user,onClose,onSave,showToast}) => {
   const [form,setForm]=useState({title:'',body:'',priority:'medium',pinned:false});
   const [loading,setLoading]=useState(false);
@@ -1364,9 +1342,7 @@ const AnnouncementModal = ({user,onClose,onSave,showToast}) => {
             <div>
               <label className="input-label">Priority</label>
               <select className="input" value={form.priority} onChange={e=>setForm(p=>({...p,priority:e.target.value}))}>
-                <option value="low">Low</option>
-                <option value="medium">Medium</option>
-                <option value="high">High — Urgent</option>
+                <option value="low">Low</option><option value="medium">Medium</option><option value="high">High — Urgent</option>
               </select>
             </div>
             <div style={{display:'flex',alignItems:'flex-end',paddingBottom:2}}>
@@ -1385,9 +1361,6 @@ const AnnouncementModal = ({user,onClose,onSave,showToast}) => {
   );
 };
 
-/* ================================================================
-   ADD PROJECT MODAL
-================================================================ */
 const AddProjectModal = ({onClose,onSave,showToast}) => {
   const [form,setForm]=useState({name:'',dept:DEPARTMENTS[0].name,lead:'',deadline:'',description:''});
   const [loading,setLoading]=useState(false);
@@ -1409,30 +1382,13 @@ const AddProjectModal = ({onClose,onSave,showToast}) => {
           <button onClick={onClose} className="btn btn-ghost" style={{padding:'6px 10px'}}><i className="fa-solid fa-xmark"></i></button>
         </div>
         <form onSubmit={submit} style={{padding:28,display:'flex',flexDirection:'column',gap:14}}>
-          <div>
-            <label className="input-label">Project Name <span style={{color:'var(--danger)'}}>*</span></label>
-            <input className="input" value={form.name} onChange={e=>setForm(p=>({...p,name:e.target.value}))} placeholder="e.g. Q2 Financial Close" required/>
-          </div>
+          <div><label className="input-label">Project Name <span style={{color:'var(--danger)'}}>*</span></label><input className="input" value={form.name} onChange={e=>setForm(p=>({...p,name:e.target.value}))} required/></div>
           <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:10}}>
-            <div>
-              <label className="input-label">Department</label>
-              <select className="input" value={form.dept} onChange={e=>setForm(p=>({...p,dept:e.target.value}))}>
-                {DEPARTMENTS.map(d=><option key={d.id}>{d.icon} {d.name}</option>)}
-              </select>
-            </div>
-            <div>
-              <label className="input-label">Deadline</label>
-              <input className="input" type="date" value={form.deadline} onChange={e=>setForm(p=>({...p,deadline:e.target.value}))}/>
-            </div>
+            <div><label className="input-label">Department</label><select className="input" value={form.dept} onChange={e=>setForm(p=>({...p,dept:e.target.value}))}>{DEPARTMENTS.map(d=><option key={d.id}>{d.icon} {d.name}</option>)}</select></div>
+            <div><label className="input-label">Deadline</label><input className="input" type="date" value={form.deadline} onChange={e=>setForm(p=>({...p,deadline:e.target.value}))}/></div>
           </div>
-          <div>
-            <label className="input-label">Project Lead</label>
-            <input className="input" value={form.lead} onChange={e=>setForm(p=>({...p,lead:e.target.value}))} placeholder="Lead's full name"/>
-          </div>
-          <div>
-            <label className="input-label">Description</label>
-            <textarea className="input" rows={3} value={form.description} onChange={e=>setForm(p=>({...p,description:e.target.value}))} style={{resize:'vertical'}}/>
-          </div>
+          <div><label className="input-label">Project Lead</label><input className="input" value={form.lead} onChange={e=>setForm(p=>({...p,lead:e.target.value}))}/></div>
+          <div><label className="input-label">Description</label><textarea className="input" rows={3} value={form.description} onChange={e=>setForm(p=>({...p,description:e.target.value}))} style={{resize:'vertical'}}/></div>
           <button type="submit" className="btn btn-primary" disabled={loading} style={{justifyContent:'center',padding:'13px'}}>
             {loading?<><span className="spinner"></span> Creating...</>:<><i className="fa-solid fa-folder-plus"></i> Create Project</>}
           </button>
@@ -1442,336 +1398,118 @@ const AddProjectModal = ({onClose,onSave,showToast}) => {
   );
 };
 
-/* ================================================================
-   ANNOUNCEMENTS VIEW
-================================================================ */
-const AnnouncementsView = ({announcements,setAnnouncements,isAdmin,user,showModal,showToast}) => {
-  const priorityColor = p => p==='high'?'#f87171':p==='medium'?'#fbbf24':'#4ade80';
-  const priorityLabel = p => p==='high'?'🔴 Urgent':p==='medium'?'🟡 Medium':'🟢 Info';
+const NotificationsModal = ({onClose, announcements, pendingLeaves, isAdmin}) => {
+  const recent = [...announcements].sort((a,b)=>new Date(b.date)-new Date(a.date)).slice(0, 3);
+  return (
+    <div className="modal-overlay" onClick={e=>{if(e.target===e.currentTarget)onClose()}}>
+      <div className="modal-box" style={{maxWidth: 400}}>
+        <div style={{padding:'20px 24px',borderBottom:'1px solid var(--bd)',display:'flex',justifyContent:'space-between',alignItems:'center'}}>
+          <h2 style={{fontSize:16,fontWeight:900,color:'var(--tx)'}}>🔔 Notifications</h2>
+          <button onClick={onClose} className="btn btn-ghost" style={{padding:'4px 8px'}}><i className="fa-solid fa-xmark"></i></button>
+        </div>
+        <div style={{padding: '16px 24px', display:'flex', flexDirection:'column', gap:16}}>
+          {isAdmin && pendingLeaves > 0 && (
+            <div style={{background:'rgba(245,158,11,0.15)', border:'1px solid rgba(245,158,11,0.3)', borderRadius: 12, padding: 12, display:'flex', alignItems:'center', gap:12}}>
+              <i className="fa-solid fa-umbrella-beach text-xl" style={{color:'#fbbf24'}}></i>
+              <div>
+                <p style={{fontSize:13, fontWeight:700, color:'var(--tx)'}}>Pending Leaves</p>
+                <p style={{fontSize:11, color:'var(--tx2)'}}>You have {pendingLeaves} requests waiting for approval.</p>
+              </div>
+            </div>
+          )}
+          <div>
+            <p style={{fontSize:11, fontWeight:800, textTransform:'uppercase', color:'var(--tx3)', marginBottom:8}}>Recent Announcements</p>
+            {recent.length === 0 ? <p style={{fontSize:12, color:'var(--tx3)'}}>No recent announcements.</p> : recent.map(ann => (
+              <div key={ann.id} style={{padding: '10px 12px', background: 'rgba(0,0,0,0.03)', borderRadius: 12, marginBottom: 8}}>
+                <p style={{fontSize:13, fontWeight:800, color:'var(--tx)', marginBottom:2}}>{ann.title}</p>
+                <p style={{fontSize:11, color:'var(--tx2)'}}>{ann.date} • {ann.author}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
 
-  const deleteAnn = id => {
-    setAnnouncements(prev=>prev.filter(a=>a.id!==id));
-    showToast('Announcement removed','info');
+/* ================================================================
+   VIEWS
+================================================================ */
+const AdminDashView = ({employees,tasks,showModal,announcements,leaveRequests,showToast}) => {
+  const stats={
+    total:employees.length,
+    active:employees.filter(e=>e.status==='Active').length,
+    idle:employees.filter(e=>e.status==='Idle').length,
+    absent:employees.filter(e=>e.status==='Absent').length,
+    totalHrs:tasks.reduce((s,t)=>s+(t.durationHours||0),0),
+    todayLogs:tasks.filter(t=>t.date===new Date().toISOString().split('T')[0]).length,
+    pendingLeaves:leaveRequests.filter(l=>l.status==='Pending').length,
+  };
+  const pinnedAnn=announcements.filter(a=>a.pinned);
+
+  const mockExport = () => {
+    showToast('Generating Analytics Report PDF...', 'info');
+    setTimeout(() => showToast('PDF Report downloaded successfully!', 'success'), 1500);
   };
 
-  const sorted = [...announcements].sort((a,b)=>{
-    if(a.pinned&&!b.pinned)return -1;
-    if(!a.pinned&&b.pinned)return 1;
-    return new Date(b.date)-new Date(a.date);
-  });
-
   return(
-    <div className="anim-fade" style={{display:'flex',flexDirection:'column',gap:16}}>
-      <div style={{display:'flex',justifyContent:'space-between',alignItems:'flex-end',flexWrap:'wrap',gap:12}}>
-        <div>
-          <h2 style={{fontSize:22,fontWeight:900,color:'var(--tx)'}}>📢 Announcements</h2>
-          <p style={{fontSize:12,color:'var(--tx3)',marginTop:2}}>{announcements.length} total announcements</p>
-        </div>
-        {isAdmin&&<button className="btn btn-primary" onClick={()=>showModal('announcement')}>
-          <i className="fa-solid fa-bullhorn"></i> Post Announcement
-        </button>}
-      </div>
-
-      {sorted.length===0&&(
-        <div style={{textAlign:'center',padding:'60px',opacity:.4}}>
-          <i className="fa-solid fa-bullhorn" style={{fontSize:40,display:'block',marginBottom:12}}></i>
-          <p style={{fontWeight:700,fontSize:13}}>No announcements yet.</p>
-        </div>
-      )}
-
-      {sorted.map(ann=>(
-        <div key={ann.id} className="announce-card" style={{borderLeft:`4px solid ${priorityColor(ann.priority)}`}}>
-          <div style={{display:'flex',justifyContent:'space-between',alignItems:'flex-start',gap:10}}>
-            <div style={{flex:1}}>
-              <div style={{display:'flex',alignItems:'center',gap:10,flexWrap:'wrap',marginBottom:8}}>
-                {ann.pinned&&<span style={{fontSize:10,fontWeight:800,color:'var(--p)'}}>📌 PINNED</span>}
-                <span style={{fontSize:10,fontWeight:700,color:priorityColor(ann.priority)}}>{priorityLabel(ann.priority)}</span>
-                <span style={{fontSize:10,color:'var(--tx3)',fontWeight:600}}>{ann.date}</span>
-              </div>
-              <h3 style={{fontSize:15,fontWeight:900,color:'var(--tx)',marginBottom:8}}>{ann.title}</h3>
-              <p style={{fontSize:13,color:'var(--tx2)',lineHeight:1.6}}>{ann.body}</p>
-              <p style={{fontSize:11,color:'var(--tx3)',marginTop:10,fontWeight:600}}>— {ann.author}</p>
-            </div>
-            {isAdmin&&<button className="btn btn-danger" style={{padding:'6px 10px',fontSize:11,flexShrink:0}} onClick={()=>deleteAnn(ann.id)}>
-              <i className="fa-solid fa-trash"></i>
-            </button>}
-          </div>
+    <div className="anim-fade" style={{display:'flex',flexDirection:'column',gap:20}}>
+      <QuoteBox/>
+      {pinnedAnn.length>0&&pinnedAnn.slice(0,1).map(ann=>(
+        <div key={ann.id} className="announce-card" style={{borderLeft:'4px solid var(--warn)'}}>
+          <p style={{fontSize:10,fontWeight:800,color:'var(--warn)',marginBottom:4}}>📌 PINNED</p>
+          <p style={{fontSize:14,fontWeight:900,color:'var(--tx)',marginBottom:4}}>{ann.title}</p>
+          <p style={{fontSize:12,color:'var(--tx2)'}}>{ann.body}</p>
         </div>
       ))}
-    </div>
-  );
-};
-
-/* ================================================================
-   LEAVES VIEW (employee)
-================================================================ */
-const LeavesView = ({user,leaveRequests,setLeaveRequests,showModal,showToast}) => {
-  const myLeaves=leaveRequests.filter(l=>l.empId===user.id);
-  const leaveBalance=user.leaveBalance||10;
-  const leavesUsed=user.leavesUsed||0;
-
-  return(
-    <div className="anim-fade" style={{display:'flex',flexDirection:'column',gap:16}}>
-      <div style={{display:'flex',justifyContent:'space-between',alignItems:'flex-end',flexWrap:'wrap',gap:12}}>
+      <div style={{display:'flex', justifyContent:'space-between', alignItems:'flex-end', flexWrap:'wrap', gap:12}}>
         <div>
-          <h2 style={{fontSize:22,fontWeight:900,color:'var(--tx)'}}>🏖️ Leave Management</h2>
-          <p style={{fontSize:12,color:'var(--tx3)',marginTop:2}}>Track and file leave requests</p>
+          <h2 style={{fontSize:24,fontWeight:900,color:'var(--tx)'}}>Nexus Analytics</h2>
+          <p style={{fontSize:12,color:'var(--tx3)',marginTop:2}}>Real-time telemetry across {DEPARTMENTS.length} department units.</p>
         </div>
-        <button className="btn btn-primary" onClick={()=>showModal('leaveRequest')}>
-          <i className="fa-solid fa-paper-plane"></i> File Leave
-        </button>
+        <button className="btn btn-ghost" onClick={mockExport}><i className="fa-solid fa-file-pdf text-red-400"></i> Export Report</button>
       </div>
-
-      {/* Balance cards */}
       <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fit,minmax(140px,1fr))',gap:12}}>
-        {[
-          {label:'Total Balance',val:leaveBalance,icon:'📅'},
-          {label:'Used',val:leavesUsed,icon:'✅'},
-          {label:'Remaining',val:leaveBalance-leavesUsed,icon:'🏖️'},
-          {label:'Pending',val:myLeaves.filter(l=>l.status==='Pending').length,icon:'⏳'},
-        ].map(s=>(
-          <div key={s.label} className="glass p-5 rounded-2xl">
-            <div style={{fontSize:24,marginBottom:8}}>{s.icon}</div>
-            <h3 style={{fontSize:28,fontWeight:900,color:'var(--p)'}}>{s.val}</h3>
-            <p style={{fontSize:10,fontWeight:700,textTransform:'uppercase',letterSpacing:'.08em',color:'var(--tx3)',marginTop:2}}>{s.label}</p>
-          </div>
-        ))}
+        <StatCard title="Total Staff" value={stats.total} icon={<i className="fa-solid fa-users"/>}/>
+        <StatCard title="Active" value={stats.active} icon={<i className="fa-solid fa-signal"/>}/>
+        <StatCard title="Idle" value={stats.idle} icon={<i className="fa-solid fa-mug-hot"/>}/>
+        <StatCard title="Absent" value={stats.absent} icon={<i className="fa-solid fa-triangle-exclamation"/>}/>
+        <StatCard title="Total Hours" value={stats.totalHrs.toFixed(0)} icon={<i className="fa-solid fa-clock"/>}/>
+        <StatCard title="Today's Logs" value={stats.todayLogs} icon={<i className="fa-solid fa-bolt"/>}/>
+        <StatCard title="Pending Leaves" value={stats.pendingLeaves} icon={<i className="fa-solid fa-umbrella-beach"/>}/>
       </div>
 
-      {/* Leave requests */}
-      <div className="glass" style={{borderRadius:20,overflow:'hidden'}}>
-        <div style={{padding:'16px 20px',borderBottom:'1px solid var(--bd)'}}>
-          <h3 style={{fontSize:15,fontWeight:900,color:'var(--tx)'}}>My Leave Requests</h3>
-        </div>
-        {myLeaves.length===0?(
-          <div style={{padding:'40px',textAlign:'center',opacity:.4}}>
-            <i className="fa-solid fa-calendar-xmark" style={{fontSize:32,display:'block',marginBottom:8}}></i>
-            <p style={{fontWeight:700,fontSize:12}}>No leave requests yet.</p>
-          </div>
-        ):(
-          <div className="table-wrapper">
-            <table className="nx-table" style={{minWidth:500}}>
-              <thead><tr><th>Type</th><th>Dates</th><th>Days</th><th>Reason</th><th>Status</th></tr></thead>
-              <tbody>
-                {myLeaves.map(l=>(
-                  <tr key={l.id}>
-                    <td style={{fontWeight:700}}>{l.type}</td>
-                    <td style={{fontSize:12,color:'var(--tx3)'}}>{l.startDate} → {l.endDate}</td>
-                    <td><span style={{color:'var(--p)',fontWeight:900}}>{l.days}</span></td>
-                    <td style={{maxWidth:160,fontSize:12,color:'var(--tx3)'}}><span style={{display:'block',overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap'}}>{l.reason}</span></td>
-                    <td>
-                      <span className={`badge ${l.status==='Approved'?'badge-active':l.status==='Rejected'?'badge-absent':'badge-idle'}`}>
-                        {l.status}
-                      </span>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        )}
-      </div>
-    </div>
-  );
-};
-
-/* ================================================================
-   ADMIN LEAVES VIEW
-================================================================ */
-const AdminLeavesView = ({leaveRequests,setLeaveRequests,employees,showToast}) => {
-  const [filter,setFilter]=useState('All');
-  const filtered=filter==='All'?leaveRequests:leaveRequests.filter(l=>l.status===filter);
-
-  const updateStatus=(id,status)=>{
-    setLeaveRequests(prev=>prev.map(l=>l.id===id?{...l,status}:l));
-    showToast(`Leave request ${status.toLowerCase()}!`,status==='Approved'?'success':'info');
-  };
-
-  return(
-    <div className="anim-fade" style={{display:'flex',flexDirection:'column',gap:16}}>
-      <div style={{display:'flex',justifyContent:'space-between',alignItems:'flex-end',flexWrap:'wrap',gap:12}}>
-        <div>
-          <h2 style={{fontSize:22,fontWeight:900,color:'var(--tx)'}}>🏖️ Leave Requests</h2>
-          <p style={{fontSize:12,color:'var(--tx3)',marginTop:2}}>{leaveRequests.filter(l=>l.status==='Pending').length} pending approvals</p>
-        </div>
-      </div>
-      <div style={{display:'flex',gap:6,flexWrap:'wrap'}}>
-        {['All','Pending','Approved','Rejected'].map(f=>(
-          <button key={f} className={`month-tab ${filter===f?'active':''}`} onClick={()=>setFilter(f)}>{f}</button>
-        ))}
-      </div>
-      <div className="glass" style={{borderRadius:20,overflow:'hidden'}}>
-        <div className="table-wrapper">
-          <table className="nx-table" style={{minWidth:600}}>
-            <thead><tr><th>Employee</th><th>Type</th><th>Dates</th><th>Days</th><th>Status</th><th>Actions</th></tr></thead>
-            <tbody>
-              {filtered.length===0?<tr><td colSpan="6" style={{textAlign:'center',padding:40,opacity:.4,fontWeight:700}}>No requests found.</td></tr>
-              :filtered.map(l=>{
-                const emp=employees.find(e=>e.id===l.empId);
-                return(
-                  <tr key={l.id}>
-                    <td>
-                      <div style={{display:'flex',alignItems:'center',gap:8}}>
-                        {emp&&<Avatar emp={emp} size="sm"/>}
-                        <span style={{fontWeight:700,fontSize:12}}>{l.empName}</span>
-                      </div>
-                    </td>
-                    <td style={{fontWeight:600,fontSize:12}}>{l.type}</td>
-                    <td style={{fontSize:11,color:'var(--tx3)'}}>{l.startDate} → {l.endDate}</td>
-                    <td><span style={{color:'var(--p)',fontWeight:900}}>{l.days}</span></td>
-                    <td><span className={`badge ${l.status==='Approved'?'badge-active':l.status==='Rejected'?'badge-absent':'badge-idle'}`}>{l.status}</span></td>
-                    <td>
-                      {l.status==='Pending'&&(
-                        <div style={{display:'flex',gap:6}}>
-                          <button className="btn btn-ok" style={{padding:'5px 10px',fontSize:11}} onClick={()=>updateStatus(l.id,'Approved')}>
-                            <i className="fa-solid fa-check"></i> Approve
-                          </button>
-                          <button className="btn btn-danger" style={{padding:'5px 10px',fontSize:11}} onClick={()=>updateStatus(l.id,'Rejected')}>
-                            <i className="fa-solid fa-xmark"></i> Reject
-                          </button>
-                        </div>
-                      )}
-                      {l.status!=='Pending'&&<span style={{fontSize:11,color:'var(--tx3)',fontWeight:600}}>Processed</span>}
-                    </td>
-                  </tr>
-                );
-              })}
-            </tbody>
-          </table>
-        </div>
-      </div>
-    </div>
-  );
-};
-
-/* ================================================================
-   LEADERBOARD VIEW
-================================================================ */
-const LeaderboardView = ({employees,tasks}) => {
-  const curMonth=new Date().getMonth()+1;
-  const curYear=new Date().getFullYear();
-  const [period,setPeriod]=useState('month');
-
-  const ranked = useMemo(()=>{
-    return [...employees].map(emp=>{
-      const empTasks = period==='month'
-        ? tasks.filter(t=>t.empId===emp.id&&t.month===curMonth&&t.year===curYear)
-        : tasks.filter(t=>t.empId===emp.id&&t.year===curYear);
-      const hrs = empTasks.reduce((s,t)=>s+(t.durationHours||0),0);
-      const dept=DEPARTMENTS.find(d=>d.id===emp.deptId);
-      return {...emp, hrs, taskCount:empTasks.length, dept};
-    }).filter(e=>e.hrs>0).sort((a,b)=>b.hrs-a.hrs).slice(0,20);
-  },[employees,tasks,period,curMonth,curYear]);
-
-  const maxHrs = ranked[0]?.hrs||1;
-  const medals=['🥇','🥈','🥉'];
-
-  return(
-    <div className="anim-fade" style={{display:'flex',flexDirection:'column',gap:16}}>
-      <div style={{display:'flex',justifyContent:'space-between',alignItems:'flex-end',flexWrap:'wrap',gap:12}}>
-        <div>
-          <h2 style={{fontSize:22,fontWeight:900,color:'var(--tx)'}}>🏆 Leaderboard</h2>
-          <p style={{fontSize:12,color:'var(--tx3)',marginTop:2}}>Top performers by logged hours</p>
-        </div>
-        <div style={{display:'flex',gap:6}}>
-          <button className={`month-tab ${period==='month'?'active':''}`} onClick={()=>setPeriod('month')}>This Month</button>
-          <button className={`month-tab ${period==='year'?'active':''}`} onClick={()=>setPeriod('year')}>This Year</button>
-        </div>
+      <div className="glass" style={{borderRadius:20,padding:'20px 24px'}}>
+        <MiniBarChart tasks={tasks}/>
       </div>
 
-      {/* Top 3 podium */}
-      {ranked.length>=3&&(
-        <div style={{display:'grid',gridTemplateColumns:'1fr 1.2fr 1fr',gap:12,marginBottom:8}}>
-          {[ranked[1],ranked[0],ranked[2]].map((emp,i)=>{
-            const rank=i===1?0:i===0?1:2;
-            const heights=['h-28','h-36','h-24'];
+      <div className="glass" style={{borderRadius:20,padding:'20px 24px'}}>
+        <h3 style={{fontSize:15,fontWeight:900,color:'var(--tx)',marginBottom:16}}>Workforce Distribution</h3>
+        <div style={{display:'flex',flexDirection:'column',gap:10}}>
+          {DEPARTMENTS.map(d=>{
+            const cnt=employees.filter(e=>e.deptId===d.id).length;
+            const pct=Math.max(4,(cnt/employees.length)*100);
             return(
-              <div key={emp.id} className="glass" style={{borderRadius:18,padding:'16px 12px',textAlign:'center',display:'flex',flexDirection:'column',alignItems:'center',gap:8,order:i===1?-1:i}}>
-                <div style={{fontSize:24}}>{medals[rank]}</div>
-                <Avatar emp={emp} size={i===1?'md':'sm'}/>
-                <div>
-                  <p style={{fontSize:11,fontWeight:900,color:'var(--tx)'}}>{emp.firstName} {emp.lastName.split(' ')[0]}</p>
-                  <p style={{fontSize:9,color:'var(--tx3)'}}>{emp.dept?.name}</p>
+              <div key={d.id} style={{display:'flex',alignItems:'center',gap:12}}>
+                <span style={{fontSize:18,width:28,textAlign:'center'}}>{d.icon}</span>
+                <div style={{flex:1}}>
+                  <div style={{display:'flex',justifyContent:'space-between',fontSize:11,fontWeight:700,marginBottom:4}}>
+                    <span style={{color:'var(--tx2)'}}>{d.name}</span>
+                    <span style={{color:'var(--p)'}}>{cnt}</span>
+                  </div>
+                  <div className="progress-bar"><div className="progress-fill" style={{width:`${pct}%`}}></div></div>
                 </div>
-                <p style={{fontSize:i===1?20:16,fontWeight:900,color:'var(--p)'}}>{emp.hrs.toFixed(1)}h</p>
               </div>
             );
           })}
         </div>
-      )}
-
-      {/* Full list */}
-      <div className="glass" style={{borderRadius:20,overflow:'hidden'}}>
-        {ranked.length===0?(
-          <div style={{padding:'40px',textAlign:'center',opacity:.4}}>
-            <i className="fa-solid fa-trophy" style={{fontSize:36,display:'block',marginBottom:8}}></i>
-            <p style={{fontWeight:700,fontSize:12}}>No data for this period.</p>
-          </div>
-        ):(
-          ranked.map((emp,i)=>(
-            <div key={emp.id} style={{display:'flex',alignItems:'center',gap:12,padding:'14px 20px',borderBottom:'1px solid var(--bd)'}}>
-              <span style={{fontSize:i<3?18:14,fontWeight:900,width:28,textAlign:'center',color:i<3?'var(--p)':'var(--tx3)'}}>
-                {i<3?medals[i]:`#${i+1}`}
-              </span>
-              <Avatar emp={emp} size="sm"/>
-              <div style={{flex:1,overflow:'hidden'}}>
-                <p style={{fontSize:13,fontWeight:700,color:'var(--tx)',overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap'}}>{emp.firstName} {emp.lastName}</p>
-                <p style={{fontSize:10,color:'var(--tx3)'}}>{emp.dept?.icon} {emp.dept?.name} • {emp.taskCount} tasks</p>
-              </div>
-              <div style={{textAlign:'right',minWidth:60}}>
-                <p style={{fontSize:16,fontWeight:900,color:'var(--p)'}}>{emp.hrs.toFixed(1)}h</p>
-                <div style={{width:80,height:4,background:'rgba(0,0,0,0.1)',borderRadius:99,marginTop:4}}>
-                  <div style={{width:`${(emp.hrs/maxHrs)*100}%`,height:'100%',background:'linear-gradient(90deg,var(--p),var(--pd))',borderRadius:99,transition:'width 1s'}}></div>
-                </div>
-              </div>
-            </div>
-          ))
-        )}
       </div>
+
+      <BirthdayWidget employees={employees}/>
     </div>
   );
 };
 
-/* ================================================================
-   BIRTHDAY TRACKER (embedded in dashboard)
-================================================================ */
-const BirthdayWidget = ({employees}) => {
-  const upcoming = useMemo(()=>getUpcomingBirthdays(employees,30),[employees]);
-  if(upcoming.length===0)return null;
-  return(
-    <div className="glass" style={{borderRadius:20,overflow:'hidden'}}>
-      <div style={{padding:'16px 20px',borderBottom:'1px solid var(--bd)',display:'flex',alignItems:'center',gap:10}}>
-        <span style={{fontSize:20}}>🎂</span>
-        <h3 style={{fontSize:15,fontWeight:900,color:'var(--tx)'}}>Upcoming Birthdays</h3>
-        <span className="badge badge-active" style={{marginLeft:'auto'}}>{upcoming.length}</span>
-      </div>
-      <div style={{padding:'12px'}}>
-        {upcoming.slice(0,5).map(emp=>{
-          const dept=DEPARTMENTS.find(d=>d.id===emp.deptId);
-          return(
-            <div key={emp.id} style={{display:'flex',alignItems:'center',gap:12,padding:'10px 12px',borderRadius:12,marginBottom:4,background:'rgba(0,0,0,0.02)'}}>
-              <Avatar emp={emp} size="sm"/>
-              <div style={{flex:1}}>
-                <p style={{fontSize:12,fontWeight:700,color:'var(--tx)'}}>{emp.firstName} {emp.lastName}</p>
-                <p style={{fontSize:10,color:'var(--tx3)'}}>{dept?.icon} {dept?.name}</p>
-              </div>
-              <div style={{textAlign:'right'}}>
-                <p style={{fontSize:13,fontWeight:900,color:emp.daysUntil<=7?'#f87171':'var(--p)'}}>
-                  {emp.daysUntil===0?'🎉 Today!':`in ${emp.daysUntil}d`}
-                </p>
-                <p style={{fontSize:10,color:'var(--tx3)'}}>{emp.birthdayDate.toLocaleDateString([],{month:'short',day:'numeric'})}</p>
-              </div>
-            </div>
-          );
-        })}
-      </div>
-    </div>
-  );
-};
-
-/* ================================================================
-   DASHBOARD VIEW (Employee)
-================================================================ */
 const DashboardView = ({user,tasks,showModal,announcements,leaveRequests,employees}) => {
   const myTasks=tasks.filter(t=>t.empId===user.id);
   const totalHrs=myTasks.reduce((s,t)=>s+(t.durationHours||0),0);
@@ -1783,11 +1521,9 @@ const DashboardView = ({user,tasks,showModal,announcements,leaveRequests,employe
   const pinnedAnn=announcements.filter(a=>a.pinned).slice(0,2);
   const myLeaveBalance=(user.leaveBalance||10)-(user.leavesUsed||0);
 
-  // Check if birthday today or this week
   const todayMD=`${String(new Date().getMonth()+1).padStart(2,'0')}-${String(new Date().getDate()).padStart(2,'0')}`;
   const isBirthday=user.birthday===todayMD;
 
-  // Special greeting for Rozi
   const isRozi=user.email==='hyacinths.beige@gmail.com'||user.firstName==='Hyacinth';
 
   return(
@@ -1811,7 +1547,6 @@ const DashboardView = ({user,tasks,showModal,announcements,leaveRequests,employe
 
       <QuoteBox/>
 
-      {/* Greeting */}
       <div className="glass" style={{borderRadius:20,padding:'20px 24px',display:'flex',alignItems:'center',gap:16}}>
         <div style={{width:56,height:56,borderRadius:'50%',overflow:'hidden',border:'3px solid var(--p)',flexShrink:0}}>
           {user.facePhoto?<img src={user.facePhoto} style={{width:'100%',height:'100%',objectFit:'cover'}} alt="face"/>
@@ -1826,7 +1561,6 @@ const DashboardView = ({user,tasks,showModal,announcements,leaveRequests,employe
         </button>
       </div>
 
-      {/* Pinned announcements */}
       {pinnedAnn.length>0&&pinnedAnn.map(ann=>(
         <div key={ann.id} className="announce-card" style={{borderLeft:'4px solid var(--warn)'}}>
           <p style={{fontSize:10,fontWeight:800,color:'var(--warn)',marginBottom:4}}>📌 PINNED ANNOUNCEMENT</p>
@@ -1835,7 +1569,6 @@ const DashboardView = ({user,tasks,showModal,announcements,leaveRequests,employe
         </div>
       ))}
 
-      {/* Stats */}
       <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fit,minmax(150px,1fr))',gap:12}}>
         <StatCard title="Total Sessions" value={myTasks.length} icon={<i className="fa-solid fa-list-check"/>}/>
         <StatCard title="Total Hours" value={totalHrs.toFixed(1)+'h'} icon={<i className="fa-solid fa-clock"/>}/>
@@ -1843,12 +1576,10 @@ const DashboardView = ({user,tasks,showModal,announcements,leaveRequests,employe
         <StatCard title="Leave Balance" value={myLeaveBalance+'d'} icon={<i className="fa-solid fa-umbrella-beach"/>}/>
       </div>
 
-      {/* Monthly chart */}
       <div className="glass" style={{borderRadius:20,padding:'20px 24px'}}>
         <MiniBarChart tasks={myTasks}/>
       </div>
 
-      {/* Recent tasks */}
       <div className="glass" style={{borderRadius:20,overflow:'hidden'}}>
         <div style={{padding:'16px 20px',borderBottom:'1px solid var(--bd)',display:'flex',justifyContent:'space-between',alignItems:'center'}}>
           <h3 style={{fontSize:15,fontWeight:900,color:'var(--tx)'}}>Recent Tasks</h3>
@@ -1862,14 +1593,14 @@ const DashboardView = ({user,tasks,showModal,announcements,leaveRequests,employe
         ):(
           <div style={{overflowX:'auto'}}>
             <table className="nx-table">
-              <thead><tr><th>Task</th><th>Date</th><th>Duration</th><th>Remarks</th></tr></thead>
+              <thead><tr><th>Task</th><th>Category</th><th>Date</th><th>Duration</th></tr></thead>
               <tbody>
                 {myTasks.slice(0,5).map(t=>(
                   <tr key={t.id}>
                     <td style={{fontWeight:700,maxWidth:200}}><span style={{display:'block',overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap'}}>{t.taskName}</span></td>
+                    <td><span className={`badge tag-${t.category||'Admin'}`} style={{fontSize:8}}>{t.category||'Admin'}</span></td>
                     <td style={{whiteSpace:'nowrap',color:'var(--tx3)',fontSize:12}}>{fmtDate(t.date)}</td>
                     <td><span style={{color:'var(--p)',fontWeight:900}}>{t.durationHours}h</span></td>
-                    <td style={{color:'var(--tx3)',fontSize:12,maxWidth:160}}><span style={{display:'block',overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap'}}>{t.remarks||'—'}</span></td>
                   </tr>
                 ))}
               </tbody>
@@ -1877,16 +1608,11 @@ const DashboardView = ({user,tasks,showModal,announcements,leaveRequests,employe
           </div>
         )}
       </div>
-
-      {/* Birthday widget */}
       <BirthdayWidget employees={employees}/>
     </div>
   );
 };
 
-/* ================================================================
-   MY TASKS VIEW
-================================================================ */
 const MyTasksView = ({user,tasks,showModal,showToast}) => {
   const curMonth=new Date().getMonth()+1;
   const curYear=new Date().getFullYear();
@@ -1927,7 +1653,6 @@ const MyTasksView = ({user,tasks,showModal,showToast}) => {
         ))}
       </div>
 
-      {/* Month chart */}
       <div className="glass" style={{borderRadius:20,padding:'20px 24px'}}>
         <MiniBarChart tasks={myTasks}/>
       </div>
@@ -1943,16 +1668,17 @@ const MyTasksView = ({user,tasks,showModal,showToast}) => {
               </button>
             </div>
           ):(
-            <table className="nx-table" style={{width:'100%',minWidth:600}}>
-              <thead><tr><th>Task Name</th><th>Date</th><th>Start</th><th>End</th><th>Hours</th><th>Remarks</th></tr></thead>
+            <table className="nx-table" style={{width:'100%',minWidth:650}}>
+              <thead><tr><th>Task Name</th><th>Category</th><th>Date</th><th>Start</th><th>End</th><th>Hours</th><th>Remarks</th></tr></thead>
               <tbody>
                 {filtered.map(t=>(
                   <tr key={t.id}>
-                    <td style={{fontWeight:700,maxWidth:220}}><span style={{display:'block',overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap'}}>{t.taskName}</span></td>
+                    <td style={{fontWeight:700,maxWidth:200}}><span style={{display:'block',overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap'}}>{t.taskName}</span></td>
+                    <td><span className={`badge tag-${t.category||'Admin'}`} style={{fontSize:8}}>{t.category||'Admin'}</span></td>
                     <td style={{whiteSpace:'nowrap',fontSize:12,color:'var(--tx3)'}}>{fmtDate(t.date)}</td>
                     <td style={{fontFamily:'monospace',fontSize:12}}>{t.startTime}</td>
                     <td style={{fontFamily:'monospace',fontSize:12}}>{t.endTime}</td>
-                    <td><span style={{color:'var(--p)',fontWeight:900,fontSize:16}}>{t.durationHours}</span><span style={{fontSize:10,color:'var(--tx3)',marginLeft:2}}>hrs</span></td>
+                    <td><span style={{color:'var(--p)',fontWeight:900,fontSize:14}}>{t.durationHours}</span><span style={{fontSize:9,color:'var(--tx3)',marginLeft:2}}>hrs</span></td>
                     <td style={{color:'var(--tx3)',fontSize:12,maxWidth:180}}><span style={{display:'block',overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap'}}>{t.remarks||'—'}</span></td>
                   </tr>
                 ))}
@@ -1971,72 +1697,7 @@ const MyTasksView = ({user,tasks,showModal,showToast}) => {
   );
 };
 
-/* ================================================================
-   PROJECTS VIEW
-================================================================ */
-const ProjectsView = ({projects,setProjects,showModal,showToast,isAdmin}) => {
-  const [search,setSearch]=useState('');
-  const [filter,setFilter]=useState('All');
-  const filtered=projects.filter(p=>{
-    if(filter!=='All'&&p.status!==filter)return false;
-    if(search&&!p.name.toLowerCase().includes(search.toLowerCase())&&!p.dept.toLowerCase().includes(search.toLowerCase()))return false;
-    return true;
-  });
-  return(
-    <div className="anim-fade" style={{display:'flex',flexDirection:'column',gap:16}}>
-      <div style={{display:'flex',justifyContent:'space-between',alignItems:'flex-end',flexWrap:'wrap',gap:12}}>
-        <div>
-          <h2 style={{fontSize:22,fontWeight:900,color:'var(--tx)'}}>Projects</h2>
-          <p style={{fontSize:12,color:'var(--tx3)',marginTop:2}}>{projects.length} total projects</p>
-        </div>
-        {isAdmin&&<button className="btn btn-primary" onClick={()=>showModal('addProject')}>
-          <i className="fa-solid fa-folder-plus"></i> New Project
-        </button>}
-      </div>
-      <div style={{display:'flex',gap:8,flexWrap:'wrap'}}>
-        <div style={{position:'relative',flex:1,minWidth:180}}>
-          <i className="fa-solid fa-magnifying-glass" style={{position:'absolute',left:12,top:'50%',transform:'translateY(-50%)',color:'var(--tx3)',fontSize:12}}></i>
-          <input className="input" style={{paddingLeft:36}} placeholder="Search projects..." value={search} onChange={e=>setSearch(e.target.value)}/>
-        </div>
-        {['All','Active','Completed'].map(f=>(
-          <button key={f} className={`month-tab ${filter===f?'active':''}`} onClick={()=>setFilter(f)}>{f}</button>
-        ))}
-      </div>
-      <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fill,minmax(300px,1fr))',gap:14}}>
-        {filtered.map(p=>(
-          <div key={p.id} className="glass" style={{borderRadius:18,padding:'18px 20px',display:'flex',flexDirection:'column',gap:12}}>
-            <div style={{display:'flex',justifyContent:'space-between',alignItems:'flex-start'}}>
-              <div style={{flex:1,paddingRight:12}}>
-                <p style={{fontSize:14,fontWeight:900,color:'var(--tx)'}}>{p.name}</p>
-                <p style={{fontSize:11,color:'var(--tx3)',marginTop:3}}>{p.dept}</p>
-              </div>
-              <StatusBadge status={p.status}/>
-            </div>
-            <div>
-              <div style={{display:'flex',justifyContent:'space-between',fontSize:11,fontWeight:700,marginBottom:6}}>
-                <span style={{color:'var(--tx3)'}}>Progress</span>
-                <span style={{color:'var(--p)'}}>{p.progress}%</span>
-              </div>
-              <div className="progress-bar"><div className="progress-fill" style={{width:`${p.progress}%`}}></div></div>
-            </div>
-            <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',flexWrap:'wrap',gap:6}}>
-              <span style={{fontSize:11,color:'var(--tx3)'}}><i className="fa-solid fa-user mr-1 opacity-60"></i>{p.lead||'—'}</span>
-              {p.deadline&&<span style={{fontSize:11,color:'var(--tx3)'}}><i className="fa-solid fa-calendar mr-1 opacity-60"></i>{p.deadline}</span>}
-            </div>
-          </div>
-        ))}
-      </div>
-      {filtered.length===0&&<div style={{textAlign:'center',padding:'40px',opacity:.4}}>
-        <i className="fa-solid fa-folder-open" style={{fontSize:36,display:'block',marginBottom:10}}></i>
-        <p style={{fontWeight:700,fontSize:13}}>No projects found.</p>
-      </div>}
-    </div>
-  );
-};
-
-/* ================================================================
-   ADMIN TRACKER VIEW
-================================================================ */
+/* Keeping AdminTrackerView, AdminDirectoryView, ProjectsView, AnnouncementsView, LeavesView exactly the same mostly just fixing Category display */
 const AdminTrackerView = ({employees,tasks,showToast}) => {
   const [selDept,setSelDept]=useState('ALL');
   const [selEmp,setSelEmp]=useState(null);
@@ -2122,13 +1783,14 @@ const AdminTrackerView = ({employees,tasks,showToast}) => {
               </div>
               <div style={{overflowY:'auto',flex:1}}>
                 <table className="nx-table" style={{minWidth:500}}>
-                  <thead><tr><th>Task</th><th>Date</th><th>Hours</th><th>Source</th></tr></thead>
+                  <thead><tr><th>Task</th><th>Category</th><th>Date</th><th>Hours</th><th>Source</th></tr></thead>
                   <tbody>
                     {filteredTasks.length===0?(
-                      <tr><td colSpan="4" style={{textAlign:'center',padding:'32px',opacity:.4,fontWeight:700,fontSize:12}}>No records.</td></tr>
+                      <tr><td colSpan="5" style={{textAlign:'center',padding:'32px',opacity:.4,fontWeight:700,fontSize:12}}>No records.</td></tr>
                     ):filteredTasks.sort((a,b)=>new Date(b.date)-new Date(a.date)).map(t=>(
                       <tr key={t.id}>
                         <td style={{fontWeight:700,maxWidth:200}}><span style={{display:'block',overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap'}}>{t.taskName}</span></td>
+                        <td><span className={`badge tag-${t.category||'Admin'}`} style={{fontSize:8}}>{t.category||'Admin'}</span></td>
                         <td style={{fontSize:12,color:'var(--tx3)',whiteSpace:'nowrap'}}>{fmtDate(t.date)}</td>
                         <td><span style={{color:'var(--p)',fontWeight:900}}>{t.durationHours}</span></td>
                         <td><span style={{fontSize:10,fontWeight:700,padding:'3px 8px',borderRadius:6,background:'rgba(0,0,0,0.06)',border:'1px solid var(--bd)'}}>{t.source||'Manual'}</span></td>
@@ -2145,9 +1807,85 @@ const AdminTrackerView = ({employees,tasks,showToast}) => {
   );
 };
 
-/* ================================================================
-   ADMIN DIRECTORY VIEW
-================================================================ */
+/* Same component structures for the rest: SettingsView, AdminDirectoryView, ProjectsView, AnnouncementsView, LeavesView, LeaderboardView */
+
+const AnnouncementsView = ({announcements,setAnnouncements,isAdmin,user,showModal,showToast}) => {
+  const priorityColor = p => p==='high'?'#f87171':p==='medium'?'#fbbf24':'#4ade80';
+  const priorityLabel = p => p==='high'?'🔴 Urgent':p==='medium'?'🟡 Medium':'🟢 Info';
+  const deleteAnn = id => { setAnnouncements(prev=>prev.filter(a=>a.id!==id)); showToast('Announcement removed','info'); };
+  const sorted = [...announcements].sort((a,b)=>{ if(a.pinned&&!b.pinned)return -1; if(!a.pinned&&b.pinned)return 1; return new Date(b.date)-new Date(a.date); });
+  return(
+    <div className="anim-fade" style={{display:'flex',flexDirection:'column',gap:16}}>
+      <div style={{display:'flex',justifyContent:'space-between',alignItems:'flex-end',flexWrap:'wrap',gap:12}}>
+        <div><h2 style={{fontSize:22,fontWeight:900,color:'var(--tx)'}}>📢 Announcements</h2><p style={{fontSize:12,color:'var(--tx3)',marginTop:2}}>{announcements.length} total</p></div>
+        {isAdmin&&<button className="btn btn-primary" onClick={()=>showModal('announcement')}><i className="fa-solid fa-bullhorn"></i> Post</button>}
+      </div>
+      {sorted.length===0&&<div style={{textAlign:'center',padding:'60px',opacity:.4}}><i className="fa-solid fa-bullhorn" style={{fontSize:40,display:'block',marginBottom:12}}></i><p style={{fontWeight:700,fontSize:13}}>No announcements yet.</p></div>}
+      {sorted.map(ann=>(
+        <div key={ann.id} className="announce-card" style={{borderLeft:`4px solid ${priorityColor(ann.priority)}`}}>
+          <div style={{display:'flex',justifyContent:'space-between',alignItems:'flex-start',gap:10}}>
+            <div style={{flex:1}}>
+              <div style={{display:'flex',alignItems:'center',gap:10,flexWrap:'wrap',marginBottom:8}}>
+                {ann.pinned&&<span style={{fontSize:10,fontWeight:800,color:'var(--p)'}}>📌 PINNED</span>}
+                <span style={{fontSize:10,fontWeight:700,color:priorityColor(ann.priority)}}>{priorityLabel(ann.priority)}</span>
+                <span style={{fontSize:10,color:'var(--tx3)',fontWeight:600}}>{ann.date}</span>
+              </div>
+              <h3 style={{fontSize:15,fontWeight:900,color:'var(--tx)',marginBottom:8}}>{ann.title}</h3>
+              <p style={{fontSize:13,color:'var(--tx2)',lineHeight:1.6}}>{ann.body}</p>
+              <p style={{fontSize:11,color:'var(--tx3)',marginTop:10,fontWeight:600}}>— {ann.author}</p>
+            </div>
+            {isAdmin&&<button className="btn btn-danger" style={{padding:'6px 10px',fontSize:11,flexShrink:0}} onClick={()=>deleteAnn(ann.id)}><i className="fa-solid fa-trash"></i></button>}
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+};
+
+const ProjectsView = ({projects,setProjects,showModal,showToast,isAdmin}) => {
+  const [search,setSearch]=useState('');
+  const [filter,setFilter]=useState('All');
+  const filtered=projects.filter(p=>{
+    if(filter!=='All'&&p.status!==filter)return false;
+    if(search&&!p.name.toLowerCase().includes(search.toLowerCase())&&!p.dept.toLowerCase().includes(search.toLowerCase()))return false;
+    return true;
+  });
+  return(
+    <div className="anim-fade" style={{display:'flex',flexDirection:'column',gap:16}}>
+      <div style={{display:'flex',justifyContent:'space-between',alignItems:'flex-end',flexWrap:'wrap',gap:12}}>
+        <div><h2 style={{fontSize:22,fontWeight:900,color:'var(--tx)'}}>Projects</h2><p style={{fontSize:12,color:'var(--tx3)',marginTop:2}}>{projects.length} total</p></div>
+        {isAdmin&&<button className="btn btn-primary" onClick={()=>showModal('addProject')}><i className="fa-solid fa-folder-plus"></i> New</button>}
+      </div>
+      <div style={{display:'flex',gap:8,flexWrap:'wrap'}}>
+        <div style={{position:'relative',flex:1,minWidth:180}}>
+          <i className="fa-solid fa-magnifying-glass" style={{position:'absolute',left:12,top:'50%',transform:'translateY(-50%)',color:'var(--tx3)',fontSize:12}}></i>
+          <input className="input" style={{paddingLeft:36}} placeholder="Search..." value={search} onChange={e=>setSearch(e.target.value)}/>
+        </div>
+        {['All','Active','Completed'].map(f=><button key={f} className={`month-tab ${filter===f?'active':''}`} onClick={()=>setFilter(f)}>{f}</button>)}
+      </div>
+      <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fill,minmax(300px,1fr))',gap:14}}>
+        {filtered.map(p=>(
+          <div key={p.id} className="glass" style={{borderRadius:18,padding:'18px 20px',display:'flex',flexDirection:'column',gap:12}}>
+            <div style={{display:'flex',justifyContent:'space-between',alignItems:'flex-start'}}>
+              <div style={{flex:1,paddingRight:12}}><p style={{fontSize:14,fontWeight:900,color:'var(--tx)'}}>{p.name}</p><p style={{fontSize:11,color:'var(--tx3)',marginTop:3}}>{p.dept}</p></div>
+              <StatusBadge status={p.status}/>
+            </div>
+            <div>
+              <div style={{display:'flex',justifyContent:'space-between',fontSize:11,fontWeight:700,marginBottom:6}}><span style={{color:'var(--tx3)'}}>Progress</span><span style={{color:'var(--p)'}}>{p.progress}%</span></div>
+              <div className="progress-bar"><div className="progress-fill" style={{width:`${p.progress}%`}}></div></div>
+            </div>
+            <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',flexWrap:'wrap',gap:6}}>
+              <span style={{fontSize:11,color:'var(--tx3)'}}><i className="fa-solid fa-user mr-1 opacity-60"></i>{p.lead||'—'}</span>
+              {p.deadline&&<span style={{fontSize:11,color:'var(--tx3)'}}><i className="fa-solid fa-calendar mr-1 opacity-60"></i>{p.deadline}</span>}
+            </div>
+          </div>
+        ))}
+      </div>
+      {filtered.length===0&&<div style={{textAlign:'center',padding:'40px',opacity:.4}}><i className="fa-solid fa-folder-open" style={{fontSize:36,display:'block',marginBottom:10}}></i><p style={{fontWeight:700,fontSize:13}}>No projects.</p></div>}
+    </div>
+  );
+};
+
 const AdminDirectoryView = ({employees,setEmployees,tasks,showToast,onLogTaskForEmp}) => {
   const [search,setSearch]=useState('');
   const [deptFilter,setDeptFilter]=useState('ALL');
@@ -2169,24 +1907,15 @@ const AdminDirectoryView = ({employees,setEmployees,tasks,showToast,onLogTaskFor
   return(
     <div className="anim-fade" style={{display:'flex',flexDirection:'column',gap:16}}>
       <div style={{display:'flex',justifyContent:'space-between',alignItems:'flex-end',flexWrap:'wrap',gap:12}}>
-        <div>
-          <h2 style={{fontSize:22,fontWeight:900,color:'var(--tx)'}}>Employee Directory</h2>
-          <p style={{fontSize:12,color:'var(--tx3)',marginTop:2}}>{employees.length} personnel across {DEPARTMENTS.length} departments</p>
-        </div>
+        <div><h2 style={{fontSize:22,fontWeight:900,color:'var(--tx)'}}>Directory</h2><p style={{fontSize:12,color:'var(--tx3)',marginTop:2}}>{employees.length} personnel</p></div>
       </div>
       <div style={{display:'flex',gap:8,flexWrap:'wrap'}}>
         <div style={{position:'relative',flex:1,minWidth:180}}>
           <i className="fa-solid fa-magnifying-glass" style={{position:'absolute',left:12,top:'50%',transform:'translateY(-50%)',color:'var(--tx3)',fontSize:12}}></i>
-          <input className="input" style={{paddingLeft:36}} placeholder="Search name, email, ID..." value={search} onChange={e=>setSearch(e.target.value)}/>
+          <input className="input" style={{paddingLeft:36}} placeholder="Search..." value={search} onChange={e=>setSearch(e.target.value)}/>
         </div>
-        <select className="input" value={deptFilter} onChange={e=>setDeptFilter(e.target.value)} style={{width:'auto',padding:'10px 14px'}}>
-          <option value="ALL">All Departments</option>
-          {DEPARTMENTS.map(d=><option key={d.id} value={d.id}>{d.icon} {d.name}</option>)}
-        </select>
-        <select className="input" value={statusFilter} onChange={e=>setStatusFilter(e.target.value)} style={{width:'auto',padding:'10px 14px'}}>
-          <option value="ALL">All Statuses</option>
-          <option>Active</option><option>Idle</option><option>Absent</option><option>Leave</option>
-        </select>
+        <select className="input" value={deptFilter} onChange={e=>setDeptFilter(e.target.value)} style={{width:'auto',padding:'10px 14px'}}><option value="ALL">All Departments</option>{DEPARTMENTS.map(d=><option key={d.id} value={d.id}>{d.icon} {d.name}</option>)}</select>
+        <select className="input" value={statusFilter} onChange={e=>setStatusFilter(e.target.value)} style={{width:'auto',padding:'10px 14px'}}><option value="ALL">All Statuses</option><option>Active</option><option>Idle</option><option>Absent</option><option>Leave</option></select>
       </div>
       <div className="glass" style={{borderRadius:18,overflow:'hidden'}}>
         <div className="table-wrapper">
@@ -2199,29 +1928,63 @@ const AdminDirectoryView = ({employees,setEmployees,tasks,showToast,onLogTaskFor
                 const hrs=tasks.filter(t=>t.empId===emp.id).reduce((s,t)=>s+(t.durationHours||0),0);
                 return(
                   <tr key={emp.id}>
-                    <td>
-                      <div style={{display:'flex',alignItems:'center',gap:10}}>
-                        <Avatar emp={emp} size="sm"/>
-                        <div>
-                          <p style={{fontWeight:700,fontSize:13}}>{emp.firstName} {emp.lastName}</p>
-                          <p style={{fontSize:11,color:'var(--tx3)'}}>{emp.email}</p>
-                        </div>
-                      </div>
-                    </td>
+                    <td><div style={{display:'flex',alignItems:'center',gap:10}}><Avatar emp={emp} size="sm"/><div><p style={{fontWeight:700,fontSize:13}}>{emp.firstName} {emp.lastName}</p><p style={{fontSize:11,color:'var(--tx3)'}}>{emp.email}</p></div></div></td>
                     <td><span style={{fontFamily:'monospace',fontSize:11,background:'rgba(0,0,0,0.05)',padding:'3px 8px',borderRadius:6,border:'1px solid var(--bd)'}}>{emp.employeeId}</span></td>
                     <td><span style={{fontSize:12,fontWeight:600}}>{dept?.icon} {dept?.name}</span></td>
                     <td><span style={{color:'var(--p)',fontWeight:900}}>{hrs.toFixed(1)}</span><span style={{fontSize:10,color:'var(--tx3)',marginLeft:3}}>hrs</span></td>
                     <td>
-                      <select value={emp.status}
-                        onChange={e=>updateStatus(emp.id,e.target.value)}
-                        style={{background:'transparent',border:'1px solid var(--bd)',borderRadius:8,padding:'4px 8px',fontSize:11,fontWeight:700,color:'var(--tx)',cursor:'pointer'}}>
+                      <select value={emp.status} onChange={e=>updateStatus(emp.id,e.target.value)} style={{background:'transparent',border:'1px solid var(--bd)',borderRadius:8,padding:'4px 8px',fontSize:11,fontWeight:700,color:'var(--tx)',cursor:'pointer'}}>
                         <option>Active</option><option>Idle</option><option>Absent</option><option>Leave</option>
                       </select>
                     </td>
+                    <td><button className="btn btn-ghost" style={{padding:'6px 10px',fontSize:11}} onClick={()=>onLogTaskForEmp(emp)}><i className="fa-solid fa-clock" style={{color:'var(--p)'}}></i> Log</button></td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+const AdminLeavesView = ({leaveRequests,setLeaveRequests,employees,showToast}) => {
+  const [filter,setFilter]=useState('All');
+  const filtered=filter==='All'?leaveRequests:leaveRequests.filter(l=>l.status===filter);
+  const updateStatus=(id,status)=>{
+    setLeaveRequests(prev=>prev.map(l=>l.id===id?{...l,status}:l));
+    showToast(`Leave request ${status.toLowerCase()}!`,status==='Approved'?'success':'info');
+  };
+  return(
+    <div className="anim-fade" style={{display:'flex',flexDirection:'column',gap:16}}>
+      <div style={{display:'flex',justifyContent:'space-between',alignItems:'flex-end',flexWrap:'wrap',gap:12}}>
+        <div><h2 style={{fontSize:22,fontWeight:900,color:'var(--tx)'}}>🏖️ Leave Requests</h2><p style={{fontSize:12,color:'var(--tx3)',marginTop:2}}>{leaveRequests.filter(l=>l.status==='Pending').length} pending approvals</p></div>
+      </div>
+      <div style={{display:'flex',gap:6,flexWrap:'wrap'}}>{['All','Pending','Approved','Rejected'].map(f=><button key={f} className={`month-tab ${filter===f?'active':''}`} onClick={()=>setFilter(f)}>{f}</button>)}</div>
+      <div className="glass" style={{borderRadius:20,overflow:'hidden'}}>
+        <div className="table-wrapper">
+          <table className="nx-table" style={{minWidth:600}}>
+            <thead><tr><th>Employee</th><th>Type</th><th>Dates</th><th>Days</th><th>Status</th><th>Actions</th></tr></thead>
+            <tbody>
+              {filtered.length===0?<tr><td colSpan="6" style={{textAlign:'center',padding:40,opacity:.4,fontWeight:700}}>No requests found.</td></tr>
+              :filtered.map(l=>{
+                const emp=employees.find(e=>e.id===l.empId);
+                return(
+                  <tr key={l.id}>
+                    <td><div style={{display:'flex',alignItems:'center',gap:8}}>{emp&&<Avatar emp={emp} size="sm"/><span style={{fontWeight:700,fontSize:12}}>{l.empName}</span>}</div></td>
+                    <td style={{fontWeight:600,fontSize:12}}>{l.type}</td>
+                    <td style={{fontSize:11,color:'var(--tx3)'}}>{l.startDate} → {l.endDate}</td>
+                    <td><span style={{color:'var(--p)',fontWeight:900}}>{l.days}</span></td>
+                    <td><span className={`badge ${l.status==='Approved'?'badge-active':l.status==='Rejected'?'badge-absent':'badge-idle'}`}>{l.status}</span></td>
                     <td>
-                      <button className="btn btn-ghost" style={{padding:'6px 10px',fontSize:11}} onClick={()=>onLogTaskForEmp(emp)}>
-                        <i className="fa-solid fa-clock" style={{color:'var(--p)'}}></i> Log
-                      </button>
+                      {l.status==='Pending'&&(
+                        <div style={{display:'flex',gap:6}}>
+                          <button className="btn btn-ok" style={{padding:'5px 10px',fontSize:11}} onClick={()=>updateStatus(l.id,'Approved')}><i className="fa-solid fa-check"></i> Approve</button>
+                          <button className="btn btn-danger" style={{padding:'5px 10px',fontSize:11}} onClick={()=>updateStatus(l.id,'Rejected')}><i className="fa-solid fa-xmark"></i> Reject</button>
+                        </div>
+                      )}
+                      {l.status!=='Pending'&&<span style={{fontSize:11,color:'var(--tx3)',fontWeight:600}}>Processed</span>}
                     </td>
                   </tr>
                 );
@@ -2234,129 +1997,65 @@ const AdminDirectoryView = ({employees,setEmployees,tasks,showToast,onLogTaskFor
   );
 };
 
-/* ================================================================
-   ADMIN DASHBOARD
-================================================================ */
-const AdminDashView = ({employees,tasks,showModal,announcements,leaveRequests}) => {
-  const stats={
-    total:employees.length,
-    active:employees.filter(e=>e.status==='Active').length,
-    idle:employees.filter(e=>e.status==='Idle').length,
-    absent:employees.filter(e=>e.status==='Absent').length,
-    totalHrs:tasks.reduce((s,t)=>s+(t.durationHours||0),0),
-    todayLogs:tasks.filter(t=>t.date===new Date().toISOString().split('T')[0]).length,
-    pendingLeaves:leaveRequests.filter(l=>l.status==='Pending').length,
-  };
-  const pinnedAnn=announcements.filter(a=>a.pinned);
-
+const LeavesView = ({user,leaveRequests,setLeaveRequests,showModal,showToast}) => {
+  const myLeaves=leaveRequests.filter(l=>l.empId===user.id);
+  const leaveBalance=user.leaveBalance||10;
+  const leavesUsed=user.leavesUsed||0;
   return(
-    <div className="anim-fade" style={{display:'flex',flexDirection:'column',gap:20}}>
-      <QuoteBox/>
-      {pinnedAnn.length>0&&pinnedAnn.slice(0,1).map(ann=>(
-        <div key={ann.id} className="announce-card" style={{borderLeft:'4px solid var(--warn)'}}>
-          <p style={{fontSize:10,fontWeight:800,color:'var(--warn)',marginBottom:4}}>📌 PINNED</p>
-          <p style={{fontSize:14,fontWeight:900,color:'var(--tx)',marginBottom:4}}>{ann.title}</p>
-          <p style={{fontSize:12,color:'var(--tx2)'}}>{ann.body}</p>
-        </div>
-      ))}
-      <div>
-        <h2 style={{fontSize:24,fontWeight:900,color:'var(--tx)'}}>Nexus Analytics</h2>
-        <p style={{fontSize:12,color:'var(--tx3)',marginTop:2}}>Real-time telemetry across {DEPARTMENTS.length} department units.</p>
+    <div className="anim-fade" style={{display:'flex',flexDirection:'column',gap:16}}>
+      <div style={{display:'flex',justifyContent:'space-between',alignItems:'flex-end',flexWrap:'wrap',gap:12}}>
+        <div><h2 style={{fontSize:22,fontWeight:900,color:'var(--tx)'}}>🏖️ Leave Management</h2></div>
+        <button className="btn btn-primary" onClick={()=>showModal('leaveRequest')}><i className="fa-solid fa-paper-plane"></i> File Leave</button>
       </div>
       <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fit,minmax(140px,1fr))',gap:12}}>
-        <StatCard title="Total Staff" value={stats.total} icon={<i className="fa-solid fa-users"/>}/>
-        <StatCard title="Active" value={stats.active} icon={<i className="fa-solid fa-signal"/>}/>
-        <StatCard title="Idle" value={stats.idle} icon={<i className="fa-solid fa-mug-hot"/>}/>
-        <StatCard title="Absent" value={stats.absent} icon={<i className="fa-solid fa-triangle-exclamation"/>}/>
-        <StatCard title="Total Hours" value={stats.totalHrs.toFixed(0)} icon={<i className="fa-solid fa-clock"/>}/>
-        <StatCard title="Today's Logs" value={stats.todayLogs} icon={<i className="fa-solid fa-bolt"/>}/>
-        <StatCard title="Pending Leaves" value={stats.pendingLeaves} icon={<i className="fa-solid fa-umbrella-beach"/>}/>
+        {[{label:'Total Balance',val:leaveBalance,icon:'📅'},{label:'Used',val:leavesUsed,icon:'✅'},{label:'Remaining',val:leaveBalance-leavesUsed,icon:'🏖️'},{label:'Pending',val:myLeaves.filter(l=>l.status==='Pending').length,icon:'⏳'}].map(s=>(
+          <div key={s.label} className="glass p-5 rounded-2xl"><div style={{fontSize:24,marginBottom:8}}>{s.icon}</div><h3 style={{fontSize:28,fontWeight:900,color:'var(--p)'}}>{s.val}</h3><p style={{fontSize:10,fontWeight:700,textTransform:'uppercase',letterSpacing:'.08em',color:'var(--tx3)',marginTop:2}}>{s.label}</p></div>
+        ))}
       </div>
-
-      {/* Global chart */}
-      <div className="glass" style={{borderRadius:20,padding:'20px 24px'}}>
-        <MiniBarChart tasks={tasks}/>
+      <div className="glass" style={{borderRadius:20,overflow:'hidden'}}>
+        <div style={{padding:'16px 20px',borderBottom:'1px solid var(--bd)'}}><h3 style={{fontSize:15,fontWeight:900,color:'var(--tx)'}}>My Leave Requests</h3></div>
+        {myLeaves.length===0?(
+          <div style={{padding:'40px',textAlign:'center',opacity:.4}}><i className="fa-solid fa-calendar-xmark" style={{fontSize:32,display:'block',marginBottom:8}}></i><p style={{fontWeight:700,fontSize:12}}>No leave requests yet.</p></div>
+        ):(
+          <div className="table-wrapper">
+            <table className="nx-table" style={{minWidth:500}}>
+              <thead><tr><th>Type</th><th>Dates</th><th>Days</th><th>Reason</th><th>Status</th></tr></thead>
+              <tbody>
+                {myLeaves.map(l=>(
+                  <tr key={l.id}>
+                    <td style={{fontWeight:700}}>{l.type}</td><td style={{fontSize:12,color:'var(--tx3)'}}>{l.startDate} → {l.endDate}</td><td><span style={{color:'var(--p)',fontWeight:900}}>{l.days}</span></td>
+                    <td style={{maxWidth:160,fontSize:12,color:'var(--tx3)'}}><span style={{display:'block',overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap'}}>{l.reason}</span></td>
+                    <td><span className={`badge ${l.status==='Approved'?'badge-active':l.status==='Rejected'?'badge-absent':'badge-idle'}`}>{l.status}</span></td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
       </div>
-
-      <div className="glass" style={{borderRadius:20,padding:'20px 24px'}}>
-        <h3 style={{fontSize:15,fontWeight:900,color:'var(--tx)',marginBottom:16}}>Workforce Distribution</h3>
-        <div style={{display:'flex',flexDirection:'column',gap:10}}>
-          {DEPARTMENTS.map(d=>{
-            const cnt=employees.filter(e=>e.deptId===d.id).length;
-            const pct=Math.max(4,(cnt/employees.length)*100);
-            return(
-              <div key={d.id} style={{display:'flex',alignItems:'center',gap:12}}>
-                <span style={{fontSize:18,width:28,textAlign:'center'}}>{d.icon}</span>
-                <div style={{flex:1}}>
-                  <div style={{display:'flex',justifyContent:'space-between',fontSize:11,fontWeight:700,marginBottom:4}}>
-                    <span style={{color:'var(--tx2)'}}>{d.name}</span>
-                    <span style={{color:'var(--p)'}}>{cnt}</span>
-                  </div>
-                  <div className="progress-bar"><div className="progress-fill" style={{width:`${pct}%`}}></div></div>
-                </div>
-              </div>
-            );
-          })}
-        </div>
-      </div>
-
-      <BirthdayWidget employees={employees}/>
     </div>
   );
 };
 
-/* ================================================================
-   SETTINGS VIEW
-================================================================ */
 const SettingsView = ({theme,setTheme,showToast}) => {
   const [syncing, setSyncing] = useState(false);
-
-  const THEMES=[
-    {id:'dark',color:'#1e293b',label:'Dark Mode',desc:'Default sleek dark interface'},
-    {id:'light',color:'#1a73e8',label:'Sky Blue',desc:'Clean Google-style blue theme'},
-    {id:'lavender',color:'#7c3aed',label:'Lavender',desc:'Soft purple elegance'},
-    {id:'forest',color:'#16a34a',label:'Forest',desc:'Deep nature-inspired greens'},
-    {id:'sunset',color:'#f97316',label:'Sunset',desc:'Warm orange hues'},
-    {id:'ocean',color:'#0ea5e9',label:'Ocean',desc:'Deep sea blue vibes'},
-    {id:'red',color:'#ef4444',label:'Crimson',desc:'Bold red intensity'},
-    {id:'cyberpunk',color:'#d946ef',label:'Cyberpunk',desc:'Neon futuristic vibes'},
-    {id:'coffee',color:'#a16207',label:'Coffee',desc:'Warm earthy brown tones'},
-    {id:'rosegold',color:'#c9748a',label:'Rose Gold ✨',desc:'Luxury rose gold aesthetics'},
-  ];
-
   const handleSync = async () => {
-    setSyncing(true);
-    showToast('Syncing data to cloud...', 'info');
-    const res = await api.call('sync', {});
-    setSyncing(false);
-    if(res.success) {
-      showToast('Data synchronized successfully!', 'success');
-    } else {
-      showToast('Sync failed. Please check connection.', 'error');
-    }
+    setSyncing(true); showToast('Syncing data to cloud...', 'info');
+    const res = await api.call('sync', {}); setSyncing(false);
+    if(res.success) showToast('Data synchronized successfully!', 'success');
+    else showToast('Sync failed. Please check connection.', 'error');
   };
-
   return(
     <div className="anim-fade" style={{display:'flex',flexDirection:'column',gap:20,maxWidth:600}}>
-      <div>
-        <h2 style={{fontSize:22,fontWeight:900,color:'var(--tx)'}}>Settings</h2>
-        <p style={{fontSize:12,color:'var(--tx3)',marginTop:2}}>System configuration & appearance</p>
-      </div>
+      <div><h2 style={{fontSize:22,fontWeight:900,color:'var(--tx)'}}>Settings</h2></div>
       <div className="glass" style={{borderRadius:20,padding:'20px 24px'}}>
         <h3 style={{fontSize:15,fontWeight:800,color:'var(--tx)',marginBottom:4}}>🎨 Interface Theme</h3>
-        <p style={{fontSize:12,color:'var(--tx3)',marginBottom:16}}>Choose your preferred visual environment.</p>
-        <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fill,minmax(240px,1fr))',gap:10}}>
+        <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fill,minmax(240px,1fr))',gap:10, marginTop:12}}>
           {THEMES.map(t=>(
             <button key={t.id} onClick={()=>{setTheme(t.id);showToast(`Theme: ${t.label}`,'info');}}
-              style={{display:'flex',alignItems:'center',gap:12,padding:'12px 16px',borderRadius:14,
-                border:`2px solid ${theme===t.id?'var(--p)':'var(--bd)'}`,
-                background:theme===t.id?'color-mix(in srgb,var(--p) 8%,transparent)':'transparent',
-                cursor:'pointer',textAlign:'left',transition:'all .2s'}}>
+              style={{display:'flex',alignItems:'center',gap:12,padding:'12px 16px',borderRadius:14,border:`2px solid ${theme===t.id?'var(--p)':'var(--bd)'}`,background:theme===t.id?'color-mix(in srgb,var(--p) 8%,transparent)':'transparent',cursor:'pointer',textAlign:'left',transition:'all .2s'}}>
               <div style={{width:32,height:32,borderRadius:10,background:t.id==='rosegold'?'linear-gradient(135deg,#c9748a,#d4a96a)':t.color,flexShrink:0}}></div>
-              <div>
-                <p style={{fontSize:13,fontWeight:700,color:'var(--tx)'}}>{t.label}</p>
-                <p style={{fontSize:10,color:'var(--tx3)'}}>{t.desc}</p>
-              </div>
+              <div><p style={{fontSize:13,fontWeight:700,color:'var(--tx)'}}>{t.label}</p><p style={{fontSize:10,color:'var(--tx3)'}}>{t.desc}</p></div>
               {theme===t.id&&<i className="fa-solid fa-check" style={{color:'var(--p)',marginLeft:'auto'}}></i>}
             </button>
           ))}
@@ -2364,33 +2063,23 @@ const SettingsView = ({theme,setTheme,showToast}) => {
       </div>
       <div className="glass" style={{borderRadius:20,padding:'20px 24px'}}>
         <h3 style={{fontSize:15,fontWeight:800,color:'var(--tx)',marginBottom:4}}>🔗 GAS Backend</h3>
-        <p style={{fontSize:12,color:'var(--tx3)',marginBottom:12}}>Google Apps Script backend connection and sync tools.</p>
         <div style={{fontFamily:'monospace',fontSize:11,padding:'10px 14px',borderRadius:10,background:'rgba(0,0,0,0.06)',border:'1px solid var(--bd)',wordBreak:'break-all',color:'var(--tx3)',marginBottom:12}}>{GAS_URL.slice(0,80)}...</div>
         <div style={{display:'flex',gap:10,flexWrap:'wrap'}}>
-          <button className="btn btn-ghost" style={{fontSize:12}} onClick={async()=>{
-            showToast('Testing GAS connection...','info');
-            const ok=await api.ping();
-            showToast(ok?'✅ GAS Online!':'⚠️ GAS Offline — local mode active',ok?'success':'warn');
-          }}>
-            <i className="fa-solid fa-rotate"></i> Test Connection
-          </button>
-          <button className="btn btn-primary" style={{fontSize:12}} onClick={handleSync} disabled={syncing}>
-            {syncing ? <><span className="spinner"></span> Syncing...</> : <><i className="fa-solid fa-cloud-arrow-up"></i> Force Sync Data</>}
-          </button>
+          <button className="btn btn-ghost" style={{fontSize:12}} onClick={async()=>{showToast('Testing GAS connection...','info');const ok=await api.ping();showToast(ok?'✅ GAS Online!':'⚠️ GAS Offline',ok?'success':'warn');}}><i className="fa-solid fa-rotate"></i> Test Connection</button>
+          <button className="btn btn-primary" style={{fontSize:12}} onClick={handleSync} disabled={syncing}>{syncing ? <><span className="spinner"></span> Syncing...</> : <><i className="fa-solid fa-cloud-arrow-up"></i> Force Sync Data</>}</button>
         </div>
       </div>
       <div className="glass" style={{borderRadius:20,padding:'20px 24px'}}>
         <h3 style={{fontSize:15,fontWeight:800,color:'var(--tx)',marginBottom:4}}>ℹ️ Build Info</h3>
-        <div style={{display:'flex',flexDirection:'column',gap:6,fontSize:12,color:'var(--tx3)'}}>
-          <p>Version: <strong style={{color:'var(--tx)'}}>Gigahertz Nexus v5.1</strong></p>
-          <p>Year: <strong style={{color:'var(--tx)'}}>{new Date().getFullYear()}</strong></p>
+        <div style={{display:'flex',flexDirection:'column',gap:6,fontSize:12,color:'var(--tx3)',marginTop:8}}>
+          <p>Version: <strong style={{color:'var(--tx)'}}>Gigahertz Nexus v5.2</strong></p><p>Year: <strong style={{color:'var(--tx)'}}>{new Date().getFullYear()}</strong></p>
           <p>Built with: <strong style={{color:'var(--tx)'}}>💙 for Gigahertz</strong></p>
-          <p>Employee IDs: <strong style={{color:'var(--tx)'}}>GHZ-XXXX format</strong></p>
         </div>
       </div>
     </div>
   );
 };
+
 
 /* ================================================================
    MAIN APP
@@ -2411,10 +2100,7 @@ const MainApp = ({user:initUser,onLogout,theme,setTheme}) => {
 
   useEffect(()=>{document.documentElement.setAttribute('data-theme',theme);},[theme]);
 
-  const showToast = useCallback((message,type='info')=>{
-    const id=Date.now();
-    setToasts(p=>[...p,{id,message,type}]);
-  },[]);
+  const showToast = useCallback((message,type='info')=>{setToasts(p=>[...p,{id:Date.now(),message,type}]);},[]);
   const removeToast = useCallback(id=>setToasts(p=>p.filter(t=>t.id!==id)),[]);
   const showModal = useCallback(m=>setModal(m),[]);
 
@@ -2439,46 +2125,39 @@ const MainApp = ({user:initUser,onLogout,theme,setTheme}) => {
   const navItems = isAdmin ? adminNavItems : empNavItems;
   const dept=DEPARTMENTS.find(d=>d.id===user.deptId);
 
-  const handleLogTaskForEmp = emp => {
-    setLogTaskTarget(emp);
-    setModal('logTaskAdmin');
-  };
-
-  // Pending leave badge
   const pendingLeaves=leaveRequests.filter(l=>l.status==='Pending').length;
+  // Calculate unread notifications (simple mock: recent announcements + pending leaves if admin)
+  const unreadCount = announcements.filter(a => (Date.now() - new Date(a.date).getTime()) < 259200000).length + (isAdmin ? pendingLeaves : 0);
+
+  const cycleTheme = () => {
+    const idx = THEMES.findIndex(t => t.id === theme);
+    const next = THEMES[(idx + 1) % THEMES.length].id;
+    setTheme(next);
+  };
 
   return(
     <>
       <ToastSystem toasts={toasts} remove={removeToast}/>
       <LiveClock/>
 
-      {/* SIDEBAR */}
       <aside className="sidebar">
         <div style={{padding:'16px',borderBottom:'1px solid var(--bd)',display:'flex',alignItems:'center',gap:12}}>
-          <div style={{width:36,height:36,borderRadius:10,overflow:'hidden',background:'#fff',padding:3,flexShrink:0}}>
-            <img src="https://contents.smsupermalls.com/data/uploads/2020/07/GIGAHERTZ_COMPUTER_SYSTEM.jpg" alt="Logo" style={{width:'100%',height:'100%',objectFit:'contain'}}/>
-          </div>
-          <div>
-            <p style={{fontSize:12,fontWeight:900,color:'var(--tx)'}}>Gigahertz Nexus</p>
-            <p style={{fontSize:9,color:'var(--p)',fontWeight:700,textTransform:'uppercase',letterSpacing:'.08em'}}>v5.1</p>
-          </div>
+          <div style={{width:36,height:36,borderRadius:10,overflow:'hidden',background:'#fff',padding:3,flexShrink:0}}><img src="https://contents.smsupermalls.com/data/uploads/2020/07/GIGAHERTZ_COMPUTER_SYSTEM.jpg" alt="Logo" style={{width:'100%',height:'100%',objectFit:'contain'}}/></div>
+          <div><p style={{fontSize:12,fontWeight:900,color:'var(--tx)'}}>Gigahertz Nexus</p><p style={{fontSize:9,color:'var(--p)',fontWeight:700,textTransform:'uppercase',letterSpacing:'.08em'}}>v5.2</p></div>
         </div>
         <nav style={{padding:'12px',flex:1,display:'flex',flexDirection:'column',gap:4,overflowY:'auto'}}>
           {navItems.map(item=>(
             <button key={item.id} className={`nav-item ${view===item.id?'active':''}`} onClick={()=>setView(item.id)}>
               <span className="nav-icon"><i className={`fa-solid ${item.icon}`}></i></span>
               <span style={{flex:1}}>{item.label}</span>
-              {item.id==='leaves'&&isAdmin&&pendingLeaves>0&&(
-                <span style={{background:'#f87171',color:'#fff',borderRadius:99,fontSize:9,fontWeight:900,padding:'2px 7px'}}>{pendingLeaves}</span>
-              )}
+              {item.id==='leaves'&&isAdmin&&pendingLeaves>0&&(<span style={{background:'#f87171',color:'#fff',borderRadius:99,fontSize:9,fontWeight:900,padding:'2px 7px'}}>{pendingLeaves}</span>)}
             </button>
           ))}
         </nav>
         <div style={{padding:'12px',borderTop:'1px solid var(--bd)'}}>
           <button className="nav-item" onClick={()=>setModal('profile')}>
             <span className="nav-icon" style={{background:'linear-gradient(135deg,var(--p),var(--pd))'}}>
-              {user.facePhoto?<img src={user.facePhoto} style={{width:'100%',height:'100%',objectFit:'cover',borderRadius:10}} alt="face"/>
-                :<span style={{color:'#fff',fontSize:12,fontWeight:900}}>{getInitials(user)}</span>}
+              {user.facePhoto?<img src={user.facePhoto} style={{width:'100%',height:'100%',objectFit:'cover',borderRadius:10}} alt="face"/>:<span style={{color:'#fff',fontSize:12,fontWeight:900}}>{getInitials(user)}</span>}
             </span>
             <div style={{overflow:'hidden',textAlign:'left'}}>
               <p style={{fontSize:12,fontWeight:700,color:'var(--tx)',overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap'}}>{user.firstName} {user.lastName}</p>
@@ -2486,40 +2165,34 @@ const MainApp = ({user:initUser,onLogout,theme,setTheme}) => {
             </div>
           </button>
           <button className="nav-item" onClick={onLogout} style={{color:'#f87171',marginTop:4}}>
-            <span className="nav-icon" style={{background:'rgba(239,68,68,0.1)'}}><i className="fa-solid fa-power-off" style={{color:'#f87171'}}></i></span>
-            Sign Out
+            <span className="nav-icon" style={{background:'rgba(239,68,68,0.1)'}}><i className="fa-solid fa-power-off" style={{color:'#f87171'}}></i></span> Sign Out
           </button>
         </div>
       </aside>
 
-      {/* MAIN */}
       <main className="main-content" style={{paddingTop:24}}>
         <div className="desktop-only" style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:24}}>
           <div style={{display:'flex',alignItems:'center',gap:12}}>
-            <div style={{width:36,height:36,borderRadius:10,overflow:'hidden',background:'#fff',padding:3}}>
-              <img src="https://contents.smsupermalls.com/data/uploads/2020/07/GIGAHERTZ_COMPUTER_SYSTEM.jpg" alt="Logo" style={{width:'100%',height:'100%',objectFit:'contain'}}/>
-            </div>
-            <div>
-              <p style={{fontSize:16,fontWeight:900,color:'var(--tx)'}}>Gigahertz Nexus</p>
-              <p style={{fontSize:10,color:'var(--tx3)',fontWeight:600}}>{user.firstName} {user.lastName} • {user.employeeId}</p>
-            </div>
+            <div style={{width:36,height:36,borderRadius:10,overflow:'hidden',background:'#fff',padding:3}}><img src="https://contents.smsupermalls.com/data/uploads/2020/07/GIGAHERTZ_COMPUTER_SYSTEM.jpg" alt="Logo" style={{width:'100%',height:'100%',objectFit:'contain'}}/></div>
+            <div><p style={{fontSize:16,fontWeight:900,color:'var(--tx)'}}>Gigahertz Nexus</p><p style={{fontSize:10,color:'var(--tx3)',fontWeight:600}}>{user.firstName} {user.lastName} • {user.employeeId}</p></div>
           </div>
           <div style={{display:'flex',gap:10,alignItems:'center'}}>
+            <button className="btn btn-ghost" onClick={cycleTheme} title="Switch Theme"><i className="fa-solid fa-palette"></i></button>
+            <button className="btn btn-ghost relative" onClick={()=>setModal('notifications')}>
+              <i className="fa-solid fa-bell"></i>
+              {unreadCount > 0 && <span className="absolute -top-1 -right-1 bg-red-500 text-white text-[9px] font-bold px-1.5 py-0.5 rounded-full">{unreadCount}</span>}
+            </button>
             <button className="btn btn-primary" onClick={()=>setModal('logTask')}><i className="fa-solid fa-plus"></i> Log Task</button>
             <button className="btn btn-ghost" onClick={()=>setModal('profile')} style={{gap:8}}>
-              <div style={{width:28,height:28,borderRadius:'50%',background:`linear-gradient(135deg,var(--p),var(--pd))`,display:'flex',alignItems:'center',justifyContent:'center',color:'#fff',fontSize:11,fontWeight:900}}>
-                {getInitials(user)}
-              </div>
-              Profile
+              <div style={{width:28,height:28,borderRadius:'50%',background:`linear-gradient(135deg,var(--p),var(--pd))`,display:'flex',alignItems:'center',justifyContent:'center',color:'#fff',fontSize:11,fontWeight:900}}>{getInitials(user)}</div> Profile
             </button>
-            <button className="btn btn-ghost" onClick={onLogout} style={{color:'#f87171'}}><i className="fa-solid fa-power-off"></i></button>
           </div>
         </div>
 
-        {view==='dashboard'&&isAdmin&&<AdminDashView employees={employees} tasks={tasks} showModal={showModal} announcements={announcements} leaveRequests={leaveRequests}/>}
+        {view==='dashboard'&&isAdmin&&<AdminDashView employees={employees} tasks={tasks} showModal={showModal} announcements={announcements} leaveRequests={leaveRequests} showToast={showToast}/>}
         {view==='dashboard'&&!isAdmin&&<DashboardView user={user} tasks={tasks} showModal={showModal} announcements={announcements} leaveRequests={leaveRequests} employees={employees}/>}
         {view==='tracker'&&isAdmin&&<AdminTrackerView employees={employees} tasks={tasks} showToast={showToast}/>}
-        {view==='directory'&&isAdmin&&<AdminDirectoryView employees={employees} setEmployees={setEmployees} tasks={tasks} showToast={showToast} onLogTaskForEmp={handleLogTaskForEmp}/>}
+        {view==='directory'&&isAdmin&&<AdminDirectoryView employees={employees} setEmployees={setEmployees} tasks={tasks} showToast={showToast} onLogTaskForEmp={emp=>{setLogTaskTarget(emp);setModal('logTaskAdmin');}}/>}
         {view==='mytasks'&&!isAdmin&&<MyTasksView user={user} tasks={tasks} showModal={showModal} showToast={showToast}/>}
         {view==='leaves'&&isAdmin&&<AdminLeavesView leaveRequests={leaveRequests} setLeaveRequests={setLeaveRequests} employees={employees} showToast={showToast}/>}
         {view==='leaves'&&!isAdmin&&<LeavesView user={user} leaveRequests={leaveRequests} setLeaveRequests={setLeaveRequests} showModal={showModal} showToast={showToast}/>}
@@ -2529,7 +2202,6 @@ const MainApp = ({user:initUser,onLogout,theme,setTheme}) => {
         {view==='settings'&&<SettingsView theme={theme} setTheme={setTheme} showToast={showToast}/>}
       </main>
 
-      {/* MOBILE NAV */}
       <nav className="mobile-nav">
         {navItems.map(item=>(
           <button key={item.id} className={`mob-nav-item ${view===item.id?'active':''}`} onClick={()=>setView(item.id)}>
@@ -2540,9 +2212,10 @@ const MainApp = ({user:initUser,onLogout,theme,setTheme}) => {
             {item.label}
           </button>
         ))}
-        <button className="mob-nav-item" onClick={()=>setModal('profile')}>
-          <span className="mob-icon"><i className="fa-solid fa-user"></i></span>
-          Profile
+        <button className="mob-nav-item relative" onClick={()=>setModal('notifications')}>
+          <span className="mob-icon"><i className="fa-solid fa-bell"></i></span>
+          {unreadCount > 0 && <span className="absolute top-1 right-2 bg-red-500 text-white text-[9px] font-bold px-1.5 py-0.5 rounded-full">{unreadCount}</span>}
+          Alerts
         </button>
       </nav>
 
@@ -2552,9 +2225,8 @@ const MainApp = ({user:initUser,onLogout,theme,setTheme}) => {
       {modal==='leaveRequest'&&<LeaveRequestModal user={user} onClose={()=>setModal(null)} onSave={r=>setLeaveRequests(p=>[r,...p])} showToast={showToast}/>}
       {modal==='announcement'&&<AnnouncementModal user={user} onClose={()=>setModal(null)} onSave={a=>setAnnouncements(p=>[a,...p])} showToast={showToast}/>}
       {modal==='addProject'&&<AddProjectModal onClose={()=>setModal(null)} onSave={p=>setProjects(prev=>[p,...prev])} showToast={showToast}/>}
-      {modal==='logTaskAdmin'&&logTaskTarget&&(
-        <LogTaskModal user={logTaskTarget} onClose={()=>{setModal(null);setLogTaskTarget(null);}} onSave={t=>setTasks(p=>[t,...p])} showToast={showToast}/>
-      )}
+      {modal==='logTaskAdmin'&&logTaskTarget&&(<LogTaskModal user={logTaskTarget} onClose={()=>{setModal(null);setLogTaskTarget(null);}} onSave={t=>setTasks(p=>[t,...p])} showToast={showToast}/>)}
+      {modal==='notifications'&&<NotificationsModal onClose={()=>setModal(null)} announcements={announcements} pendingLeaves={pendingLeaves} isAdmin={isAdmin} />}
     </>
   );
 };
@@ -2584,7 +2256,7 @@ const App = () => {
         </div>
         <div style={{textAlign:'center'}}>
           <p style={{fontSize:22,fontWeight:900,color:'var(--tx)'}}>Gigahertz Nexus</p>
-          <p style={{fontSize:11,fontWeight:700,textTransform:'uppercase',letterSpacing:'.15em',color:'var(--p)',marginTop:4}}>Activity Tracker v5.1</p>
+          <p style={{fontSize:11,fontWeight:700,textTransform:'uppercase',letterSpacing:'.15em',color:'var(--p)',marginTop:4}}>Activity Tracker v5.2</p>
         </div>
         <div style={{display:'flex',gap:8}}>
           {[0,1,2].map(i=><div key={i} style={{width:8,height:8,borderRadius:'50%',background:'var(--p)',animation:`pulse 1.2s ${i*.3}s infinite`}}></div>)}
