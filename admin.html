@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-<title>Gigahertz Nexus — Activity Tracker v4.0</title>
+<title>Gigahertz Nexus — Activity Tracker v5.0</title>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.development.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.development.js"></script>
@@ -14,7 +14,7 @@
 
 <style>
 /* ============================================================
-   THEME SYSTEM — 7 THEMES
+   THEME SYSTEM — 8 THEMES
 ============================================================ */
 :root {
   --p:#1a73e8; --pd:#1557b0; --pl:#e8f0fe;
@@ -79,6 +79,16 @@
   --glass-bg:rgba(2,13,26,0.82); --glass-border:rgba(14,165,233,0.18);
   --shadow:rgba(14,165,233,0.25);
 }
+/* NEW THEME: Rose Gold */
+[data-theme="rosegold"] {
+  --p:#c9748a; --pd:#a85570; --pl:#fce4ec;
+  --bg:#1a0d11; --wh:#2a1118; --card:#3a1820;
+  --tx:#fce4ec; --tx2:#f8bbd0; --tx3:#e57fa0;
+  --bd:#7a2540; --danger:#f87171; --ok:#4ade80; --warn:#fbbf24;
+  --g1:#1a0d11; --g2:#2a1520; --g3:#1e1028;
+  --glass-bg:rgba(42,17,24,0.82); --glass-border:rgba(201,116,138,0.18);
+  --shadow:rgba(201,116,138,0.28);
+}
 
 /* ============================================================
    GLOBALS
@@ -102,9 +112,6 @@ input,select,button,textarea{font-family:inherit;outline:none}
 ::-webkit-scrollbar-thumb{background:var(--p);opacity:.4;border-radius:99px}
 ::placeholder{color:var(--tx3)}
 
-/* ============================================================
-   GLASS / CARD / BUTTON
-============================================================ */
 .glass{
   background:var(--glass-bg);
   backdrop-filter:blur(20px);
@@ -126,10 +133,9 @@ input,select,button,textarea{font-family:inherit;outline:none}
 .btn-ghost:hover{background:rgba(0,0,0,0.1);color:var(--tx)}
 .btn-danger{background:rgba(239,68,68,0.1);color:#ef4444;border:1px solid rgba(239,68,68,0.25)}
 .btn-danger:hover{background:#ef4444;color:#fff}
+.btn-ok{background:rgba(34,197,94,0.1);color:#22c55e;border:1px solid rgba(34,197,94,0.25)}
+.btn-ok:hover{background:#22c55e;color:#fff}
 
-/* ============================================================
-   INPUT FIELDS
-============================================================ */
 .input{
   width:100%;background:rgba(0,0,0,0.06);
   border:1.5px solid var(--bd);border-radius:12px;
@@ -138,19 +144,15 @@ input,select,button,textarea{font-family:inherit;outline:none}
 }
 .input:focus{background:rgba(0,0,0,0.04);border-color:var(--p);box-shadow:0 0 0 3px color-mix(in srgb,var(--p) 15%,transparent)}
 .input-label{display:block;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--tx3);margin-bottom:6px}
-.input-group{display:flex;flex-direction:column;gap:0}
 
-/* ============================================================
-   ANIMATIONS
-============================================================ */
 @keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
 @keyframes fadeIn{from{opacity:0}to{opacity:1}}
 @keyframes slideLeft{from{opacity:0;transform:translateX(30px)}to{opacity:1;transform:translateX(0)}}
 @keyframes spin{to{transform:rotate(360deg)}}
 @keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:.5}}
-@keyframes shimmer{0%{background-position:-200% center}100%{background-position:200% center}}
 @keyframes bounceIn{0%{transform:scale(.8);opacity:0}60%{transform:scale(1.05)}100%{transform:scale(1);opacity:1}}
+@keyframes shimmer{0%{background-position:-200% center}100%{background-position:200% center}}
 .anim-fade{animation:fadeUp .45s cubic-bezier(.4,0,.2,1) both}
 .anim-slide{animation:slideLeft .35s cubic-bezier(.4,0,.2,1) both}
 .anim-bounce{animation:bounceIn .4s cubic-bezier(.4,0,.2,1) both}
@@ -158,19 +160,14 @@ input,select,button,textarea{font-family:inherit;outline:none}
 .spinner{width:20px;height:20px;border:3px solid rgba(255,255,255,0.25);border-top-color:#fff;border-radius:50%;animation:spin .75s linear infinite;display:inline-block}
 .tab-nums{font-variant-numeric:tabular-nums}
 
-/* ============================================================
-   PROGRESS / BADGE
-============================================================ */
 .progress-bar{height:6px;background:rgba(0,0,0,0.1);border-radius:99px;overflow:hidden}
 .progress-fill{height:100%;background:linear-gradient(90deg,var(--p),#818cf8);border-radius:99px;transition:width 1.2s cubic-bezier(.4,0,.2,1)}
 .badge{display:inline-flex;align-items:center;gap:5px;padding:3px 10px;border-radius:99px;font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.08em}
 .badge-active{background:rgba(34,197,94,0.15);color:#4ade80;border:1px solid rgba(34,197,94,0.3)}
 .badge-idle{background:rgba(245,158,11,0.15);color:#fbbf24;border:1px solid rgba(245,158,11,0.3)}
 .badge-absent{background:rgba(239,68,68,0.15);color:#f87171;border:1px solid rgba(239,68,68,0.3)}
+.badge-leave{background:rgba(147,51,234,0.15);color:#c084fc;border:1px solid rgba(147,51,234,0.3)}
 
-/* ============================================================
-   MODALS
-============================================================ */
 .modal-overlay{
   position:fixed;inset:0;z-index:999;
   background:rgba(0,0,0,0.65);backdrop-filter:blur(12px);
@@ -184,14 +181,12 @@ input,select,button,textarea{font-family:inherit;outline:none}
   animation:bounceIn .35s cubic-bezier(.4,0,.2,1);
   box-shadow:0 32px 80px rgba(0,0,0,0.5);
 }
+.modal-box-wide{max-width:700px}
 @media(max-width:640px){
   .modal-box{max-width:100%;border-radius:20px 20px 0 0;margin-top:auto;max-height:92vh}
   .modal-overlay{align-items:flex-end;padding:0}
 }
 
-/* ============================================================
-   SIDEBAR NAV
-============================================================ */
 .sidebar{
   width:250px;min-height:100vh;
   background:var(--glass-bg);backdrop-filter:blur(20px);
@@ -212,9 +207,6 @@ input,select,button,textarea{font-family:inherit;outline:none}
 .nav-icon{width:32px;height:32px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0;background:rgba(0,0,0,0.06);transition:all .2s}
 .nav-item.active .nav-icon{background:linear-gradient(135deg,var(--p),var(--pd));color:#fff;box-shadow:0 4px 12px var(--shadow)}
 
-/* ============================================================
-   MOBILE NAV BAR
-============================================================ */
 .mobile-nav{
   position:fixed;bottom:0;left:0;right:0;z-index:200;
   background:var(--glass-bg);backdrop-filter:blur(24px);
@@ -232,9 +224,6 @@ input,select,button,textarea{font-family:inherit;outline:none}
 .mob-nav-item.active .mob-icon{background:linear-gradient(135deg,var(--p),var(--pd));color:#fff;box-shadow:0 4px 10px var(--shadow)}
 .mob-icon{width:38px;height:38px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:16px;background:rgba(0,0,0,0.06);transition:all .2s}
 
-/* ============================================================
-   MAIN CONTENT
-============================================================ */
 .main-content{margin-left:250px;min-height:100vh;padding:24px;transition:margin .35s}
 @media(max-width:768px){
   .main-content{margin-left:0;padding:16px;padding-bottom:100px}
@@ -243,9 +232,6 @@ input,select,button,textarea{font-family:inherit;outline:none}
   .desktop-only{display:none!important}
 }
 
-/* ============================================================
-   TOAST
-============================================================ */
 .toast-container{position:fixed;top:24px;right:24px;z-index:2000;display:flex;flex-direction:column;gap:10px;max-width:360px;width:calc(100% - 48px)}
 .toast{
   display:flex;align-items:center;gap:12px;
@@ -258,9 +244,6 @@ input,select,button,textarea{font-family:inherit;outline:none}
 }
 @media(max-width:640px){.toast-container{top:auto;bottom:90px;right:12px;width:calc(100% - 24px)}}
 
-/* ============================================================
-   AVATAR
-============================================================ */
 .avatar{border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:900;color:#fff;flex-shrink:0;overflow:hidden;border:2px solid var(--glass-border)}
 .avatar img{width:100%;height:100%;object-fit:cover}
 .av-sm{width:36px;height:36px;font-size:13px}
@@ -268,15 +251,9 @@ input,select,button,textarea{font-family:inherit;outline:none}
 .av-lg{width:64px;height:64px;font-size:24px}
 .av-xl{width:88px;height:88px;font-size:32px}
 
-/* ============================================================
-   STAT CARD HOVER
-============================================================ */
 .stat-card{transition:transform .25s,box-shadow .25s;cursor:default}
 .stat-card:hover{transform:translateY(-4px);box-shadow:0 20px 48px var(--shadow)}
 
-/* ============================================================
-   TABLE
-============================================================ */
 .nx-table{width:100%;border-collapse:collapse}
 .nx-table th{padding:12px 20px;text-align:left;font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.1em;color:var(--tx3);border-bottom:1px solid var(--bd)}
 .nx-table td{padding:14px 20px;border-bottom:1px solid rgba(0,0,0,0.04);font-size:13px}
@@ -285,11 +262,9 @@ input,select,button,textarea{font-family:inherit;outline:none}
 [data-theme="red"] .nx-table tbody tr:hover td,
 [data-theme="forest"] .nx-table tbody tr:hover td,
 [data-theme="sunset"] .nx-table tbody tr:hover td,
-[data-theme="ocean"] .nx-table tbody tr:hover td{background:rgba(255,255,255,0.03)}
+[data-theme="ocean"] .nx-table tbody tr:hover td,
+[data-theme="rosegold"] .nx-table tbody tr:hover td{background:rgba(255,255,255,0.03)}
 
-/* ============================================================
-   QUOTE BOX
-============================================================ */
 .quote-box{
   background:linear-gradient(135deg,color-mix(in srgb,var(--p) 8%,transparent),color-mix(in srgb,var(--pd) 5%,transparent));
   border:1px solid color-mix(in srgb,var(--p) 20%,transparent);
@@ -303,9 +278,6 @@ input,select,button,textarea{font-family:inherit;outline:none}
   font-family:Georgia,serif;
 }
 
-/* ============================================================
-   MONTH TABS
-============================================================ */
 .month-tab{
   padding:7px 14px;border-radius:10px;font-size:11px;font-weight:700;
   cursor:pointer;border:1px solid var(--bd);background:rgba(0,0,0,0.04);
@@ -314,21 +286,12 @@ input,select,button,textarea{font-family:inherit;outline:none}
 .month-tab.active{background:linear-gradient(135deg,var(--p),var(--pd));color:#fff;border-color:transparent;box-shadow:0 4px 12px var(--shadow)}
 .month-tab:hover:not(.active){border-color:var(--p);color:var(--p)}
 
-/* ============================================================
-   CAMERA / FACE CAPTURE
-============================================================ */
 .camera-container{border-radius:16px;overflow:hidden;background:#000;aspect-ratio:4/3;display:flex;align-items:center;justify-content:center;position:relative;border:2px solid var(--bd)}
 .camera-container video,.camera-container canvas,.camera-container img{width:100%;height:100%;object-fit:cover}
 
-/* ============================================================
-   PASSWORD STRENGTH
-============================================================ */
 .pw-strength{height:4px;border-radius:99px;margin-top:6px;transition:all .4s}
 .pw-msg{font-size:11px;font-weight:600;margin-top:4px}
 
-/* ============================================================
-   LIVE CLOCK (FIXED)
-============================================================ */
 .live-clock{
   position:fixed;bottom:24px;right:24px;z-index:50;
   background:var(--glass-bg);backdrop-filter:blur(20px);
@@ -340,9 +303,6 @@ input,select,button,textarea{font-family:inherit;outline:none}
 .live-clock:hover{transform:scale(1.04)}
 @media(max-width:768px){.live-clock{display:none}}
 
-/* ============================================================
-   LOADING SCREEN
-============================================================ */
 .loading-screen{
   position:fixed;inset:0;z-index:9999;
   background:var(--bg);display:flex;flex-direction:column;
@@ -350,19 +310,12 @@ input,select,button,textarea{font-family:inherit;outline:none}
 }
 .logo-pulse{animation:float 2s ease-in-out infinite}
 
-/* ============================================================
-   SCROLLABLE X for mobile tables
-============================================================ */
 .table-wrapper{overflow-x:auto;-webkit-overflow-scrolling:touch;border-radius:16px}
 
-/* ============================================================
-   THEME PICKER CIRCLES
-============================================================ */
 .theme-dot{width:28px;height:28px;border-radius:50%;cursor:pointer;transition:transform .2s;border:2px solid transparent}
 .theme-dot:hover{transform:scale(1.2)}
 .theme-dot.active{border-color:var(--tx);transform:scale(1.15)}
 
-/* AUTH PORTAL */
 .auth-bg{
   min-height:100vh;display:flex;align-items:center;justify-content:center;
   background:radial-gradient(ellipse at 20% 30%,var(--g2),transparent 60%),
@@ -370,16 +323,35 @@ input,select,button,textarea{font-family:inherit;outline:none}
              var(--g1);
   padding:20px;
 }
+
+/* Bar chart styles */
+.bar-chart-container{display:flex;align-items:flex-end;gap:6px;height:120px;padding:0 4px}
+.bar-item{display:flex;flex-direction:column;align-items:center;gap:4px;flex:1}
+.bar-fill{width:100%;border-radius:6px 6px 0 0;background:linear-gradient(180deg,var(--p),var(--pd));min-height:4px;transition:height .8s cubic-bezier(.4,0,.2,1)}
+.bar-label{font-size:9px;font-weight:700;color:var(--tx3);text-transform:uppercase}
+.bar-val{font-size:9px;font-weight:900;color:var(--p)}
+
+/* Announcement card */
+.announce-card{
+  background:linear-gradient(135deg,color-mix(in srgb,var(--p) 6%,transparent),color-mix(in srgb,var(--pd) 4%,transparent));
+  border:1px solid color-mix(in srgb,var(--p) 18%,transparent);
+  border-radius:16px;padding:16px 18px;position:relative;
+}
+.announce-pin{width:10px;height:10px;border-radius:50%;background:var(--p);flex-shrink:0;margin-top:4px;box-shadow:0 0 8px var(--p)}
+
+/* Leave status */
+.leave-bar{display:flex;height:8px;border-radius:99px;overflow:hidden;gap:2px}
+.leave-seg{border-radius:99px}
 </style>
 </head>
 <body>
 <div id="root"></div>
 
 <script type="text/babel">
-const { useState, useMemo, useEffect, useRef, useCallback, createContext, useContext } = React;
+const { useState, useMemo, useEffect, useRef, useCallback } = React;
 
 /* ================================================================
-   GAS URL — UPDATE THIS
+   GAS URL
 ================================================================ */
 const GAS_URL = "https://script.google.com/macros/s/AKfycbz7M99tseQaZkQMDp1aC2pGylAhrYgfbwDuRYV2WHgSECJN6CVH2fW3-APFvYLDe2p-ZQ/exec";
 
@@ -391,17 +363,14 @@ const QUOTES = [
   { q: "Success is not final, failure is not fatal — it is the courage to continue that counts.", a: "Winston Churchill" },
   { q: "Great things are not done by impulse, but by a series of small things brought together.", a: "Vincent van Gogh" },
   { q: "Your time is limited, don't waste it living someone else's life.", a: "Steve Jobs" },
-  { q: "The only way to do great work is to love what you do.", a: "Steve Jobs" },
   { q: "Work hard in silence; let success make the noise.", a: "Frank Ocean" },
   { q: "Discipline is the bridge between goals and accomplishment.", a: "Jim Rohn" },
-  { q: "Every expert was once a beginner. Start today.", a: "Helen Hayes" },
   { q: "Small progress is still progress.", a: "Unknown" },
   { q: "Your future self is watching you right now through your memories. Make them proud.", a: "Unknown" },
+  { q: "The only way to do great work is to love what you do.", a: "Steve Jobs" },
+  { q: "Every expert was once a beginner. Start today.", a: "Helen Hayes" },
 ];
 
-/* ================================================================
-   DEPARTMENT & ROSTER DATA
-================================================================ */
 const DEPARTMENTS = [
   {id:1,name:'ACCOUNTING',icon:'📊'},
   {id:2,name:'INTERNAL AUDIT',icon:'📋'},
@@ -459,9 +428,12 @@ const EMPLOYEES_INIT = rawRoster.map((r,idx) => {
   const parts = r.n.split(' ');
   const firstName = parts[0];
   const lastName = parts.slice(1).join(' ');
+  // Random birthday for birthday tracker
+  const bMonth = Math.floor(Math.random()*12)+1;
+  const bDay = Math.floor(Math.random()*28)+1;
   return {
     id: idx+1,
-    employeeId: `GHTZ-${++_eid}`,
+    employeeId: `GHZ-${++_eid}`,  // CHANGED: GHTZ -> GHZ
     deptId: r.d,
     firstName, lastName,
     fullName: r.n,
@@ -473,13 +445,24 @@ const EMPLOYEES_INIT = rawRoster.map((r,idx) => {
     password: 'ghz2025',
     facePhoto: null,
     registeredDate: new Date(Date.now()-Math.random()*365*86400000).toISOString(),
+    birthday: `${String(bMonth).padStart(2,'0')}-${String(bDay).padStart(2,'0')}`, // MM-DD
+    leaveBalance: Math.floor(Math.random()*10)+5,
+    leavesUsed: Math.floor(Math.random()*5),
   };
 });
 
 const ADMIN_ACCOUNTS = [
-  {id:'ADM-001',employeeId:'GHTZ-0001',firstName:'Nexus',lastName:'Admin',email:'admin@gigahertz.com',password:'admin123',role:'ADMIN',deptId:12,status:'Active',fullName:'Nexus Admin',facePhoto:null},
-  {id:'ADM-002',employeeId:'GHTZ-0002',firstName:'James',lastName:'Beltran',email:'beltran.james@gmail.com',password:'jamespogi123',role:'ADMIN',deptId:5,status:'Active',fullName:'James Beltran',facePhoto:null},
+  {id:'ADM-001',employeeId:'GHZ-0001',firstName:'Nexus',lastName:'Admin',email:'admin@gigahertz.com',password:'admin123',role:'ADMIN',deptId:12,status:'Active',fullName:'Nexus Admin',facePhoto:null,birthday:'01-01',leaveBalance:15,leavesUsed:0},
+  {id:'ADM-002',employeeId:'GHZ-0002',firstName:'James',lastName:'Beltran',email:'beltran.james@gmail.com',password:'jamespogi123',role:'ADMIN',deptId:5,status:'Active',fullName:'James Beltran',facePhoto:null,birthday:'05-14',leaveBalance:15,leavesUsed:2},
 ];
+
+// Hyacinth / Rozi special account
+const ROZI_ACCOUNT = {
+  id:'SPL-001', employeeId:'GHZ-0003', firstName:'Hyacinth', lastName:'Rozi',
+  email:'hyacinths.beige@gmail.com', password:'rozza2002', role:'Staff',
+  deptId:1, status:'Active', fullName:'Hyacinth Rozi', facePhoto:null,
+  birthday:'04-14', leaveBalance:10, leavesUsed:1,
+};
 
 /* Seed tasks */
 const taskPool = [
@@ -524,7 +507,6 @@ EMPLOYEES_INIT.slice(0,60).forEach(emp => {
   }
 });
 
-/* Projects seed */
 const PROJECTS_INIT = [
   {id:1,name:'Q2 Financial Close',dept:'ACCOUNTING',status:'Active',progress:72,lead:'Rich Jhen Calderon',deadline:'2026-06-30'},
   {id:2,name:'Employee Portal Upgrade',dept:'IT / NEXUS CORE',status:'Active',progress:55,lead:'Piolo Daniele',deadline:'2026-05-15'},
@@ -532,6 +514,20 @@ const PROJECTS_INIT = [
   {id:4,name:'New Hire Onboarding Batch',dept:'HR',status:'Active',progress:40,lead:'Alyssa Princess Laqui',deadline:'2026-05-01'},
   {id:5,name:'Summer Campaign',dept:'MARKETING',status:'Active',progress:30,lead:'Wigbert Sasis',deadline:'2026-06-01'},
   {id:6,name:'Warehouse Reorganization',dept:'WAREHOUSE',status:'Completed',progress:100,lead:'Nilo Garcia',deadline:'2026-03-31'},
+];
+
+// Initial announcements
+const ANNOUNCEMENTS_INIT = [
+  {id:1,title:'Q2 Kickoff Meeting',body:'All department heads please attend the Q2 kickoff meeting on April 10, 2026 at 9:00 AM in the main conference room.',author:'Nexus Admin',authorId:'ADM-001',date:'2026-04-05',priority:'high',pinned:true},
+  {id:2,title:'Payroll Cutoff Reminder',body:'Please submit your timesheets and task logs before April 8, 2026 (Friday) for the April payroll cycle.',author:'James Beltran',authorId:'ADM-002',date:'2026-04-04',priority:'medium',pinned:false},
+  {id:3,title:'System Maintenance Notice',body:'Nexus Tracker will undergo scheduled maintenance on April 7, 2026 from 11:00 PM to 1:00 AM. Please save your work beforehand.',author:'Nexus Admin',authorId:'ADM-001',date:'2026-04-03',priority:'low',pinned:false},
+];
+
+// Leave requests
+const LEAVE_REQUESTS_INIT = [
+  {id:1,empId:1,empName:'Rich Jhen Calderon',type:'Vacation',startDate:'2026-04-10',endDate:'2026-04-11',days:2,status:'Approved',reason:'Family trip',appliedDate:'2026-04-02'},
+  {id:2,empId:5,empName:'Kaye Magallosa',type:'Sick',startDate:'2026-04-08',endDate:'2026-04-08',days:1,status:'Pending',reason:'Medical appointment',appliedDate:'2026-04-05'},
+  {id:3,empId:12,empName:'Leomar Lazadas',type:'Vacation',startDate:'2026-04-15',endDate:'2026-04-17',days:3,status:'Pending',reason:'Personal matter',appliedDate:'2026-04-04'},
 ];
 
 /* ================================================================
@@ -564,6 +560,9 @@ const api = {
   _localLogin(p){
     const id=(p.identifier||'').trim().toLowerCase();
     const pw=(p.password||'').trim();
+    // Check Rozi special account
+    if((id===ROZI_ACCOUNT.email.toLowerCase()||id===ROZI_ACCOUNT.fullName.toLowerCase()||id===ROZI_ACCOUNT.firstName.toLowerCase())&&pw===ROZI_ACCOUNT.password)
+      return{success:true,user:{...ROZI_ACCOUNT}};
     const admin=ADMIN_ACCOUNTS.find(a=>(a.email.toLowerCase()===id||a.fullName.toLowerCase()===id)&&a.password===pw);
     if(admin)return{success:true,user:{...admin}};
     const emp=EMPLOYEES_INIT.find(e=>(e.email.toLowerCase()===id||e.fullName.toLowerCase()===id||e.firstName.toLowerCase()===id||e.employeeId.toLowerCase()===id)&&e.password===pw);
@@ -573,7 +572,7 @@ const api = {
   _local(action,payload){
     return new Promise(r=>setTimeout(()=>{
       if(action==='logTask') r({success:true,taskId:'LOCAL-'+Date.now()});
-      else if(action==='registerEmployee') r({success:true,employeeId:'GHTZ-'+Math.floor(Math.random()*9000+1000)});
+      else if(action==='registerEmployee') r({success:true,employeeId:'GHZ-'+Math.floor(Math.random()*9000+1000)});
       else if(action==='updateProfile') r({success:true});
       else if(action==='addProject') r({success:true});
       else r({success:true,data:[]});
@@ -622,21 +621,23 @@ function exportToCSV(tasks,emp){
   a.click();
 }
 
-/* ================================================================
-   DETECT MOBILE
-================================================================ */
-const isMobile = () => window.innerWidth <= 768;
-
-/* ================================================================
-   THEME CONTEXT
-================================================================ */
-const ThemeCtx = createContext({theme:'dark',setTheme:()=>{}});
+function getUpcomingBirthdays(employees, days=30) {
+  const today = new Date();
+  const results = [];
+  employees.forEach(emp => {
+    if(!emp.birthday) return;
+    const [bm, bd] = emp.birthday.split('-').map(Number);
+    const thisYear = new Date(today.getFullYear(), bm-1, bd);
+    if(thisYear < today) thisYear.setFullYear(today.getFullYear()+1);
+    const diff = Math.ceil((thisYear - today)/(1000*60*60*24));
+    if(diff <= days) results.push({...emp, daysUntil: diff, birthdayDate: thisYear});
+  });
+  return results.sort((a,b)=>a.daysUntil-b.daysUntil);
+}
 
 /* ================================================================
    SHARED COMPONENTS
 ================================================================ */
-
-/* LIVE CLOCK */
 const LiveClock = () => {
   const [t,setT]=useState(new Date());
   useEffect(()=>{const i=setInterval(()=>setT(new Date()),1000);return()=>clearInterval(i)},[]);
@@ -648,12 +649,9 @@ const LiveClock = () => {
   );
 };
 
-/* TOAST SYSTEM */
 const ToastSystem = ({toasts,remove}) => (
   <div className="toast-container">
-    {toasts.map(t=>(
-      <Toast key={t.id} toast={t} onClose={()=>remove(t.id)}/>
-    ))}
+    {toasts.map(t=><Toast key={t.id} toast={t} onClose={()=>remove(t.id)}/>)}
   </div>
 );
 
@@ -670,7 +668,6 @@ const Toast = ({toast,onClose}) => {
   );
 };
 
-/* AVATAR */
 const Avatar = ({emp,size='md',className=''}) => {
   const sz={sm:'av-sm',md:'av-md',lg:'av-lg',xl:'av-xl'}[size];
   return(
@@ -680,14 +677,12 @@ const Avatar = ({emp,size='md',className=''}) => {
   );
 };
 
-/* STATUS BADGE */
 const StatusBadge = ({status}) => {
-  const m={Active:{cls:'badge-active',icon:'fa-circle'},Idle:{cls:'badge-idle',icon:'fa-moon'},Absent:{cls:'badge-absent',icon:'fa-triangle-exclamation'},Logged:{cls:'badge-active',icon:'fa-check'},Completed:{cls:'badge-active',icon:'fa-check'}};
+  const m={Active:{cls:'badge-active',icon:'fa-circle'},Idle:{cls:'badge-idle',icon:'fa-moon'},Absent:{cls:'badge-absent',icon:'fa-triangle-exclamation'},Leave:{cls:'badge-leave',icon:'fa-umbrella-beach'},Logged:{cls:'badge-active',icon:'fa-check'},Completed:{cls:'badge-active',icon:'fa-check'}};
   const s=m[status]||{cls:'badge-idle',icon:'fa-circle'};
   return <span className={`badge ${s.cls}`}><i className={`fa-solid ${s.icon} text-[8px]`}></i>{status}</span>;
 };
 
-/* MOTIVATIONAL QUOTE BOX */
 const QuoteBox = () => {
   const [q]=useState(()=>QUOTES[Math.floor(Math.random()*QUOTES.length)]);
   return(
@@ -699,9 +694,8 @@ const QuoteBox = () => {
   );
 };
 
-/* STAT CARD */
-const StatCard = ({title,value,icon,color='blue',sub}) => (
-  <div className="glass p-5 rounded-2xl stat-card">
+const StatCard = ({title,value,icon,sub,onClick}) => (
+  <div className="glass p-5 rounded-2xl stat-card" onClick={onClick} style={{cursor:onClick?'pointer':'default'}}>
     <div className="flex justify-between items-start mb-3">
       <div className="w-10 h-10 rounded-xl flex items-center justify-center text-xl" style={{background:`color-mix(in srgb,var(--p) 12%,transparent)`,color:'var(--p)'}}>
         {icon}
@@ -714,19 +708,43 @@ const StatCard = ({title,value,icon,color='blue',sub}) => (
 );
 
 /* ================================================================
+   MINI BAR CHART (CSS only)
+================================================================ */
+const MiniBarChart = ({tasks}) => {
+  const curYear = new Date().getFullYear();
+  const data = MONTHS.map((m,i) => {
+    const hrs = tasks.filter(t=>t.month===i+1&&t.year===curYear).reduce((s,t)=>s+(t.durationHours||0),0);
+    return {label:m, val:hrs};
+  });
+  const maxVal = Math.max(...data.map(d=>d.val), 1);
+  return(
+    <div>
+      <p style={{fontSize:11,fontWeight:700,textTransform:'uppercase',letterSpacing:'.1em',color:'var(--tx3)',marginBottom:12}}>Monthly Hours — {curYear}</p>
+      <div className="bar-chart-container">
+        {data.map((d,i)=>(
+          <div key={i} className="bar-item" title={`${d.label}: ${d.val.toFixed(1)}h`}>
+            <div className="bar-val">{d.val>0?d.val.toFixed(0):''}</div>
+            <div className="bar-fill" style={{height:`${(d.val/maxVal)*80}px`}}></div>
+            <div className="bar-label">{d.label.slice(0,1)}</div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+};
+
+/* ================================================================
    AUTH PORTAL
 ================================================================ */
 const AuthPortal = ({onLogin,theme,setTheme}) => {
-  const [tab,setTab]=useState('login'); // 'login' | 'register'
+  const [tab,setTab]=useState('login');
   const [id,setId]=useState('');
   const [pw,setPw]=useState('');
   const [err,setErr]=useState('');
   const [loading,setLoading]=useState(false);
   const [showPw,setShowPw]=useState(false);
   const [gasStatus,setGasStatus]=useState('checking');
-
-  // Register form
-  const [regForm,setRegForm]=useState({employeeId:'GHTZ-'+String(Date.now()).slice(-6),firstName:'',lastName:'',email:'',password:'',confirmPw:'',deptId:1});
+  const [regForm,setRegForm]=useState({employeeId:'GHZ-'+String(Date.now()).slice(-6),firstName:'',lastName:'',email:'',password:'',confirmPw:'',deptId:1});
   const [regPhoto,setRegPhoto]=useState(null);
   const [pwStrength,setPwStrength]=useState({score:0,valid:false,checks:{}});
   const [cameraOn,setCameraOn]=useState(false);
@@ -742,6 +760,7 @@ const AuthPortal = ({onLogin,theme,setTheme}) => {
     {id:'sunset',color:'#f97316',label:'Sunset'},
     {id:'ocean',color:'#0ea5e9',label:'Ocean'},
     {id:'red',color:'#ef4444',label:'Crimson'},
+    {id:'rosegold',color:'#c9748a',label:'Rose Gold'},
   ];
 
   useEffect(()=>{
@@ -779,7 +798,7 @@ const AuthPortal = ({onLogin,theme,setTheme}) => {
   const QUICK=[
     {label:'🛡️ Admin',email:'admin@gigahertz.com',pw:'admin123'},
     {label:'🛡️ Beltran',email:'beltran.james@gmail.com',pw:'jamespogi123'},
-    {label: '🪻 Hyacinth', email:'hyacinths.beige@gmail.com',pw:'rozza2002'}, 
+    {label:'🪻 Hyacinth',email:'hyacinths.beige@gmail.com',pw:'rozza2002'},
     {label:'👤 Employee',email:'piolo@gigahertz.com',pw:'ghz2025'},
   ];
 
@@ -803,8 +822,7 @@ const AuthPortal = ({onLogin,theme,setTheme}) => {
     const res=await api.call('registerEmployee',payload);
     setLoading(false);
     if(res.success){
-      // Add to local roster
-      const newEmp={...payload,id:EMPLOYEES_INIT.length+1,role:'Staff',status:'Active',loginCount:0,totalHours:0,facePhoto:regPhoto};
+      const newEmp={...payload,id:EMPLOYEES_INIT.length+1,role:'Staff',status:'Active',loginCount:0,totalHours:0,facePhoto:regPhoto,leaveBalance:10,leavesUsed:0};
       EMPLOYEES_INIT.push(newEmp);
       setTab('login');setId(regForm.email||regForm.firstName);setPw(regForm.password);
       setErr('');
@@ -815,31 +833,28 @@ const AuthPortal = ({onLogin,theme,setTheme}) => {
   const pwLabels=['','Weak','Fair','Good','Strong'];
 
   return(
-    <div className="auth-bg" style={{minHeight:'100vh'}}>
-      {/* Theme dots */}
-      <div style={{position:'fixed',top:16,right:16,display:'flex',gap:8,zIndex:100}}>
+    <div className="auth-bg">
+      <div style={{position:'fixed',top:16,right:16,display:'flex',gap:8,zIndex:100,flexWrap:'wrap',maxWidth:280,justifyContent:'flex-end'}}>
         {THEMES.map(t=>(
           <div key={t.id} className={`theme-dot ${theme===t.id?'active':''}`}
-            style={{background:t.color}} onClick={()=>setTheme(t.id)} title={t.label}/>
+            style={{background:t.id==='rosegold'?'linear-gradient(135deg,#c9748a,#d4a96a)':t.color}}
+            onClick={()=>setTheme(t.id)} title={t.label}/>
         ))}
       </div>
-      {/* GAS status */}
       <div style={{position:'fixed',top:20,left:16,display:'flex',alignItems:'center',gap:8,zIndex:100}}>
         <span style={{width:8,height:8,borderRadius:'50%',background:gasStatus==='online'?'#4ade80':gasStatus==='offline'?'#f87171':'#fbbf24',display:'inline-block'}}></span>
         <span style={{fontSize:10,fontWeight:700,textTransform:'uppercase',letterSpacing:'.1em',color:'var(--tx3)'}}>GAS {gasStatus}</span>
       </div>
 
       <div className="glass anim-fade" style={{width:'100%',maxWidth:460,borderRadius:24,padding:'36px 32px',margin:'0 auto'}}>
-        {/* Logo */}
         <div style={{display:'flex',flexDirection:'column',alignItems:'center',marginBottom:24}}>
           <div style={{width:72,height:72,borderRadius:18,overflow:'hidden',background:'#fff',padding:6,border:'2px solid var(--bd)',marginBottom:12}}>
             <img src="https://contents.smsupermalls.com/data/uploads/2020/07/GIGAHERTZ_COMPUTER_SYSTEM.jpg" alt="Logo" style={{width:'100%',height:'100%',objectFit:'contain',borderRadius:12}}/>
           </div>
           <h1 style={{fontSize:22,fontWeight:900,letterSpacing:'-.5px',color:'var(--tx)'}}>Gigahertz Nexus</h1>
-          <p style={{fontSize:10,fontWeight:700,textTransform:'uppercase',letterSpacing:'.15em',color:'var(--p)',marginTop:4}}>Activity Tracker v4.0</p>
+          <p style={{fontSize:10,fontWeight:700,textTransform:'uppercase',letterSpacing:'.15em',color:'var(--p)',marginTop:4}}>Activity Tracker v5.0</p>
         </div>
 
-        {/* Tab switcher */}
         <div style={{display:'flex',gap:4,background:'rgba(0,0,0,0.06)',padding:4,borderRadius:14,marginBottom:24}}>
           {['login','register'].map(t=>(
             <button key={t} onClick={()=>{setTab(t);setErr('');}}
@@ -857,12 +872,11 @@ const AuthPortal = ({onLogin,theme,setTheme}) => {
           </div>
         )}
 
-        {/* LOGIN */}
         {tab==='login'&&(
           <form onSubmit={submitLogin} style={{display:'flex',flexDirection:'column',gap:16}}>
             <div>
               <label className="input-label">Employee ID / Email / Name</label>
-              <input className="input" type="text" value={id} onChange={e=>setId(e.target.value)} placeholder="user@gigahertz.com or GHTZ-0001" required autoComplete="username"/>
+              <input className="input" type="text" value={id} onChange={e=>setId(e.target.value)} placeholder="user@gigahertz.com or GHZ-0001" required autoComplete="username"/>
             </div>
             <div>
               <label className="input-label">Password</label>
@@ -876,7 +890,6 @@ const AuthPortal = ({onLogin,theme,setTheme}) => {
             <button type="submit" className="btn btn-primary" disabled={loading} style={{justifyContent:'center',padding:'13px',marginTop:4}}>
               {loading?<><span className="spinner"></span> Authenticating...</>:<><i className="fa-solid fa-right-to-bracket"></i> Sign In</>}
             </button>
-            {/* Quick login */}
             <div style={{borderTop:'1px solid var(--bd)',paddingTop:16,display:'flex',flexDirection:'column',gap:6}}>
               <p style={{fontSize:10,fontWeight:700,textTransform:'uppercase',letterSpacing:'.1em',color:'var(--tx3)',textAlign:'center',marginBottom:4}}>Quick Login — Testing</p>
               {QUICK.map(q=>(
@@ -889,12 +902,11 @@ const AuthPortal = ({onLogin,theme,setTheme}) => {
           </form>
         )}
 
-        {/* REGISTER */}
         {tab==='register'&&(
           <form onSubmit={submitRegister} style={{display:'flex',flexDirection:'column',gap:14}}>
             <div>
               <label className="input-label">Employee ID <span style={{color:'var(--danger)'}}>*</span></label>
-              <input className="input" value={regForm.employeeId} onChange={e=>setRegForm(p=>({...p,employeeId:e.target.value}))} placeholder="GHTZ-2026001" required style={{fontFamily:'monospace'}}/>
+              <input className="input" value={regForm.employeeId} onChange={e=>setRegForm(p=>({...p,employeeId:e.target.value}))} placeholder="GHZ-2026001" required style={{fontFamily:'monospace'}}/>
             </div>
             <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:10}}>
               <div>
@@ -921,9 +933,10 @@ const AuthPortal = ({onLogin,theme,setTheme}) => {
               <input className="input" type="password" value={regForm.password} onChange={e=>handlePwChange(e.target.value)} placeholder="Min 8 chars, uppercase, number" required/>
               {regForm.password&&(
                 <>
-                  <div className="pw-strength" style={{background:pwColors[pwStrength.score]||'#ef4444',width:`${pwStrength.score*25}%`,marginTop:6,transition:'all .4s'}}></div>
+                  <div className="pw-strength" style={{background:pwColors[pwStrength.score]||'#ef4444',width:`${pwStrength.score*25}%`,marginTop:6}}></div>
                   <p className="pw-msg" style={{color:pwColors[pwStrength.score]||'#ef4444'}}>
-                    {pwLabels[pwStrength.score]} {Object.entries(pwStrength.checks).filter(([,v])=>!v).map(([k])=>({length:'8+ chars',upper:'uppercase',lower:'lowercase',num:'number'}[k])).join(', ') && '— missing: '+Object.entries(pwStrength.checks).filter(([,v])=>!v).map(([k])=>({length:'8+ chars',upper:'uppercase',lower:'lowercase',num:'number'}[k])).join(', ')}
+                    {pwLabels[pwStrength.score]}
+                    {Object.entries(pwStrength.checks).filter(([,v])=>!v).length > 0 && ' — missing: '+Object.entries(pwStrength.checks).filter(([,v])=>!v).map(([k])=>({length:'8+ chars',upper:'uppercase',lower:'lowercase',num:'number'}[k])).join(', ')}
                   </p>
                 </>
               )}
@@ -933,7 +946,6 @@ const AuthPortal = ({onLogin,theme,setTheme}) => {
               <input className="input" type="password" value={regForm.confirmPw} onChange={e=>setRegForm(p=>({...p,confirmPw:e.target.value}))} placeholder="Repeat password" required/>
               {regForm.confirmPw&&regForm.password!==regForm.confirmPw&&<p className="pw-msg" style={{color:'#f87171'}}>Passwords do not match</p>}
             </div>
-            {/* Face capture */}
             <div>
               <label className="input-label">Face Photo (optional)</label>
               <div className="camera-container" style={{maxHeight:200}}>
@@ -958,7 +970,7 @@ const AuthPortal = ({onLogin,theme,setTheme}) => {
         )}
 
         <p style={{textAlign:'center',fontSize:9,fontWeight:700,textTransform:'uppercase',letterSpacing:'.12em',color:'var(--tx3)',marginTop:20}}>
-          Gigahertz Nexus v4.0 • {new Date().getFullYear()}
+          Gigahertz Nexus v5.0 • {new Date().getFullYear()} • Built with 💙 for Rozi
         </p>
       </div>
     </div>
@@ -1005,6 +1017,8 @@ const MyProfileModal = ({user,onClose,onSave,showToast}) => {
   const dept=DEPARTMENTS.find(d=>d.id===user.deptId);
   const myTasks=TASKS_INIT.filter(t=>t.empId===user.id);
   const totalHrs=myTasks.reduce((s,t)=>s+(t.durationHours||0),0);
+  const leaveUsed=user.leavesUsed||0;
+  const leaveBalance=user.leaveBalance||10;
 
   return(
     <div className="modal-overlay" onClick={e=>{if(e.target===e.currentTarget)onClose()}}>
@@ -1014,7 +1028,6 @@ const MyProfileModal = ({user,onClose,onSave,showToast}) => {
           <button onClick={onClose} className="btn btn-ghost" style={{padding:'6px 10px'}}><i className="fa-solid fa-xmark"></i></button>
         </div>
         <div style={{padding:28,display:'flex',flexDirection:'column',gap:20}}>
-          {/* Avatar section */}
           <div style={{display:'flex',alignItems:'center',gap:16}}>
             <div style={{width:80,height:80,borderRadius:'50%',overflow:'hidden',border:'3px solid var(--p)',flexShrink:0}}>
               {photo?<img src={photo} style={{width:'100%',height:'100%',objectFit:'cover'}} alt="face"/>
@@ -1024,12 +1037,12 @@ const MyProfileModal = ({user,onClose,onSave,showToast}) => {
               <p style={{fontSize:18,fontWeight:900,color:'var(--tx)'}}>{user.firstName} {user.lastName}</p>
               <p style={{fontSize:11,fontWeight:700,color:'var(--p)',textTransform:'uppercase',letterSpacing:'.1em'}}>{user.employeeId}</p>
               <p style={{fontSize:11,color:'var(--tx3)',marginTop:2}}>{dept?.icon} {dept?.name} • {user.role}</p>
+              {user.birthday&&<p style={{fontSize:11,color:'var(--tx3)',marginTop:2}}>🎂 Birthday: {user.birthday}</p>}
             </div>
           </div>
 
-          {/* Stats */}
           <div style={{display:'grid',gridTemplateColumns:'1fr 1fr 1fr',gap:10}}>
-            {[{label:'Total Sessions',val:myTasks.length},{label:'Total Hours',val:totalHrs.toFixed(1)+'h'},{label:'Status',val:user.status}].map(s=>(
+            {[{label:'Sessions',val:myTasks.length},{label:'Total Hours',val:totalHrs.toFixed(1)+'h'},{label:'Status',val:user.status}].map(s=>(
               <div key={s.label} className="glass" style={{padding:'12px',borderRadius:14,textAlign:'center'}}>
                 <p style={{fontSize:18,fontWeight:900,color:'var(--p)'}}>{s.val}</p>
                 <p style={{fontSize:9,fontWeight:700,textTransform:'uppercase',letterSpacing:'.08em',color:'var(--tx3)',marginTop:2}}>{s.label}</p>
@@ -1037,7 +1050,18 @@ const MyProfileModal = ({user,onClose,onSave,showToast}) => {
             ))}
           </div>
 
-          {/* Edit form */}
+          {/* Leave balance */}
+          <div className="glass" style={{borderRadius:14,padding:'14px 18px'}}>
+            <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:10}}>
+              <span style={{fontSize:12,fontWeight:700,color:'var(--tx)'}}>🏖️ Leave Balance</span>
+              <span style={{fontSize:12,fontWeight:900,color:'var(--p)'}}>{leaveBalance - leaveUsed} / {leaveBalance} days left</span>
+            </div>
+            <div className="progress-bar">
+              <div className="progress-fill" style={{width:`${((leaveBalance-leaveUsed)/leaveBalance)*100}%`,background:'linear-gradient(90deg,#4ade80,#22c55e)'}}></div>
+            </div>
+            <p style={{fontSize:10,color:'var(--tx3)',marginTop:6}}>{leaveUsed} day(s) used this year</p>
+          </div>
+
           {editing?(
             <div style={{display:'flex',flexDirection:'column',gap:12}}>
               <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:10}}>
@@ -1054,7 +1078,6 @@ const MyProfileModal = ({user,onClose,onSave,showToast}) => {
                 <label className="input-label">Email</label>
                 <input className="input" type="email" value={form.email} onChange={e=>setForm(p=>({...p,email:e.target.value}))}/>
               </div>
-              {/* Camera */}
               <div>
                 <label className="input-label">Update Face Photo</label>
                 <div className="camera-container" style={{maxHeight:180}}>
@@ -1092,8 +1115,15 @@ const LogTaskModal = ({user,onClose,onSave,showToast}) => {
   const today = new Date().toISOString().split('T')[0];
   const [form,setForm]=useState({taskName:'',date:today,startTime:'08:00',endTime:'17:00',remarks:''});
   const [loading,setLoading]=useState(false);
-
   const duration = useMemo(()=>calcDuration(form.startTime,form.endTime),[form.startTime,form.endTime]);
+
+  const QUICK_TASKS = [
+    'Processed and verified financial documents.',
+    'Conducted departmental review meeting.',
+    'Customer support and escalation handling.',
+    'Prepared monthly report.',
+    'System maintenance and diagnostics.',
+  ];
 
   const submit = async e => {
     e.preventDefault();
@@ -1117,7 +1147,7 @@ const LogTaskModal = ({user,onClose,onSave,showToast}) => {
     await api.call('logTask',newTask);
     setLoading(false);
     onSave(newTask);
-    showToast(`Task "${form.taskName}" logged (${duration}h)!`,'success');
+    showToast(`Task "${form.taskName.slice(0,30)}..." logged (${duration}h)!`,'success');
     onClose();
   };
 
@@ -1132,6 +1162,14 @@ const LogTaskModal = ({user,onClose,onSave,showToast}) => {
           <div>
             <label className="input-label">Task Name <span style={{color:'var(--danger)'}}>*</span></label>
             <input className="input" value={form.taskName} onChange={e=>setForm(p=>({...p,taskName:e.target.value}))} placeholder="e.g. Processed monthly financial reports" required/>
+            <div style={{display:'flex',flexWrap:'wrap',gap:6,marginTop:8}}>
+              {QUICK_TASKS.map((qt,i)=>(
+                <button key={i} type="button" onClick={()=>setForm(p=>({...p,taskName:qt}))}
+                  style={{fontSize:10,padding:'4px 10px',borderRadius:8,border:'1px solid var(--bd)',background:'rgba(0,0,0,0.04)',color:'var(--tx3)',cursor:'pointer',transition:'all .2s',fontWeight:600}}>
+                  {qt.slice(0,30)}...
+                </button>
+              ))}
+            </div>
           </div>
           <div>
             <label className="input-label">Date</label>
@@ -1147,17 +1185,164 @@ const LogTaskModal = ({user,onClose,onSave,showToast}) => {
               <input className="input" type="time" value={form.endTime} onChange={e=>setForm(p=>({...p,endTime:e.target.value}))}/>
             </div>
           </div>
-          {/* Live duration */}
           <div className="glass" style={{borderRadius:14,padding:'14px 18px',display:'flex',alignItems:'center',justifyContent:'space-between'}}>
             <span style={{fontSize:12,fontWeight:700,color:'var(--tx3)'}}>Auto-calculated Duration</span>
-            <span style={{fontSize:24,fontWeight:900,color:'var(--p)'}}>{duration > 0 ? duration+'h' : '—'}</span>
+            <span style={{fontSize:24,fontWeight:900,color:duration>0?'var(--p)':'var(--danger)'}}>{duration > 0 ? duration+'h' : '—'}</span>
           </div>
           <div>
             <label className="input-label">Remarks</label>
-            <textarea className="input" rows={3} value={form.remarks} onChange={e=>setForm(p=>({...p,remarks:e.target.value}))} placeholder="Additional notes or observations..." style={{resize:'vertical'}}/>
+            <textarea className="input" rows={3} value={form.remarks} onChange={e=>setForm(p=>({...p,remarks:e.target.value}))} placeholder="Additional notes..." style={{resize:'vertical'}}/>
           </div>
           <button type="submit" className="btn btn-primary" disabled={loading||duration<=0} style={{justifyContent:'center',padding:'13px'}}>
             {loading?<><span className="spinner"></span> Saving...</>:<><i className="fa-solid fa-clock"></i> Log Task</>}
+          </button>
+        </form>
+      </div>
+    </div>
+  );
+};
+
+/* ================================================================
+   LEAVE REQUEST MODAL
+================================================================ */
+const LeaveRequestModal = ({user,onClose,onSave,showToast}) => {
+  const today = new Date().toISOString().split('T')[0];
+  const [form,setForm]=useState({type:'Vacation',startDate:today,endDate:today,reason:''});
+  const [loading,setLoading]=useState(false);
+
+  const days = useMemo(()=>{
+    if(!form.startDate||!form.endDate)return 0;
+    const diff=(new Date(form.endDate)-new Date(form.startDate))/(1000*60*60*24)+1;
+    return Math.max(0,diff);
+  },[form.startDate,form.endDate]);
+
+  const submit = e => {
+    e.preventDefault();
+    if(days<=0)return;
+    setLoading(true);
+    const req={
+      id:Date.now(),
+      empId:user.id,
+      empName:user.fullName||`${user.firstName} ${user.lastName}`,
+      ...form,
+      days,
+      status:'Pending',
+      appliedDate:today,
+    };
+    LEAVE_REQUESTS_INIT.unshift(req);
+    onSave(req);
+    showToast(`Leave request submitted (${days} day${days>1?'s':''})`,'success');
+    setLoading(false);
+    onClose();
+  };
+
+  return(
+    <div className="modal-overlay" onClick={e=>{if(e.target===e.currentTarget)onClose()}}>
+      <div className="modal-box">
+        <div style={{padding:'24px 28px',borderBottom:'1px solid var(--bd)',display:'flex',justifyContent:'space-between',alignItems:'center'}}>
+          <h2 style={{fontSize:18,fontWeight:900,color:'var(--tx)'}}>🏖️ File Leave Request</h2>
+          <button onClick={onClose} className="btn btn-ghost" style={{padding:'6px 10px'}}><i className="fa-solid fa-xmark"></i></button>
+        </div>
+        <form onSubmit={submit} style={{padding:28,display:'flex',flexDirection:'column',gap:16}}>
+          <div>
+            <label className="input-label">Leave Type</label>
+            <select className="input" value={form.type} onChange={e=>setForm(p=>({...p,type:e.target.value}))}>
+              <option>Vacation</option>
+              <option>Sick</option>
+              <option>Emergency</option>
+              <option>Personal</option>
+              <option>Maternity/Paternity</option>
+            </select>
+          </div>
+          <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:12}}>
+            <div>
+              <label className="input-label">Start Date</label>
+              <input className="input" type="date" value={form.startDate} onChange={e=>setForm(p=>({...p,startDate:e.target.value}))} min={today} required/>
+            </div>
+            <div>
+              <label className="input-label">End Date</label>
+              <input className="input" type="date" value={form.endDate} onChange={e=>setForm(p=>({...p,endDate:e.target.value}))} min={form.startDate} required/>
+            </div>
+          </div>
+          <div className="glass" style={{borderRadius:14,padding:'14px 18px',display:'flex',alignItems:'center',justifyContent:'space-between'}}>
+            <span style={{fontSize:12,fontWeight:700,color:'var(--tx3)'}}>Total Days</span>
+            <span style={{fontSize:24,fontWeight:900,color:'var(--p)'}}>{days} day{days!==1?'s':''}</span>
+          </div>
+          <div>
+            <label className="input-label">Reason <span style={{color:'var(--danger)'}}>*</span></label>
+            <textarea className="input" rows={3} value={form.reason} onChange={e=>setForm(p=>({...p,reason:e.target.value}))} placeholder="Brief reason for leave..." required style={{resize:'vertical'}}/>
+          </div>
+          <div className="glass" style={{borderRadius:12,padding:'10px 14px'}}>
+            <p style={{fontSize:11,color:'var(--tx3)',fontWeight:600}}>
+              Remaining balance: <strong style={{color:'var(--ok)'}}>{(user.leaveBalance||10) - (user.leavesUsed||0)} days</strong>
+            </p>
+          </div>
+          <button type="submit" className="btn btn-primary" disabled={loading||days<=0} style={{justifyContent:'center',padding:'13px'}}>
+            {loading?<><span className="spinner"></span> Submitting...</>:<><i className="fa-solid fa-paper-plane"></i> Submit Request</>}
+          </button>
+        </form>
+      </div>
+    </div>
+  );
+};
+
+/* ================================================================
+   ANNOUNCEMENT MODAL (Admin post)
+================================================================ */
+const AnnouncementModal = ({user,onClose,onSave,showToast}) => {
+  const [form,setForm]=useState({title:'',body:'',priority:'medium',pinned:false});
+  const [loading,setLoading]=useState(false);
+  const submit = e => {
+    e.preventDefault();
+    if(!form.title.trim()||!form.body.trim())return;
+    setLoading(true);
+    const ann={
+      id:Date.now(),
+      ...form,
+      author:user.fullName||`${user.firstName} ${user.lastName}`,
+      authorId:user.id||user.employeeId,
+      date:new Date().toISOString().split('T')[0],
+    };
+    ANNOUNCEMENTS_INIT.unshift(ann);
+    onSave(ann);
+    showToast('Announcement posted!','success');
+    setLoading(false);
+    onClose();
+  };
+  return(
+    <div className="modal-overlay" onClick={e=>{if(e.target===e.currentTarget)onClose()}}>
+      <div className="modal-box">
+        <div style={{padding:'24px 28px',borderBottom:'1px solid var(--bd)',display:'flex',justifyContent:'space-between',alignItems:'center'}}>
+          <h2 style={{fontSize:18,fontWeight:900,color:'var(--tx)'}}>📢 Post Announcement</h2>
+          <button onClick={onClose} className="btn btn-ghost" style={{padding:'6px 10px'}}><i className="fa-solid fa-xmark"></i></button>
+        </div>
+        <form onSubmit={submit} style={{padding:28,display:'flex',flexDirection:'column',gap:16}}>
+          <div>
+            <label className="input-label">Title <span style={{color:'var(--danger)'}}>*</span></label>
+            <input className="input" value={form.title} onChange={e=>setForm(p=>({...p,title:e.target.value}))} placeholder="Announcement title..." required/>
+          </div>
+          <div>
+            <label className="input-label">Message <span style={{color:'var(--danger)'}}>*</span></label>
+            <textarea className="input" rows={4} value={form.body} onChange={e=>setForm(p=>({...p,body:e.target.value}))} placeholder="Write your announcement here..." required style={{resize:'vertical'}}/>
+          </div>
+          <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:12}}>
+            <div>
+              <label className="input-label">Priority</label>
+              <select className="input" value={form.priority} onChange={e=>setForm(p=>({...p,priority:e.target.value}))}>
+                <option value="low">Low</option>
+                <option value="medium">Medium</option>
+                <option value="high">High — Urgent</option>
+              </select>
+            </div>
+            <div style={{display:'flex',alignItems:'flex-end',paddingBottom:2}}>
+              <label style={{display:'flex',alignItems:'center',gap:10,cursor:'pointer'}}>
+                <input type="checkbox" checked={form.pinned} onChange={e=>setForm(p=>({...p,pinned:e.target.checked}))} style={{width:18,height:18,accentColor:'var(--p)'}}/>
+                <span style={{fontSize:13,fontWeight:700,color:'var(--tx)'}}>📌 Pin this</span>
+              </label>
+            </div>
+          </div>
+          <button type="submit" className="btn btn-primary" disabled={loading} style={{justifyContent:'center',padding:'13px'}}>
+            {loading?<><span className="spinner"></span> Posting...</>:<><i className="fa-solid fa-bullhorn"></i> Post Announcement</>}
           </button>
         </form>
       </div>
@@ -1223,9 +1408,336 @@ const AddProjectModal = ({onClose,onSave,showToast}) => {
 };
 
 /* ================================================================
-   DASHBOARD VIEW
+   ANNOUNCEMENTS VIEW
 ================================================================ */
-const DashboardView = ({user,tasks,showModal}) => {
+const AnnouncementsView = ({announcements,setAnnouncements,isAdmin,user,showModal,showToast}) => {
+  const priorityColor = p => p==='high'?'#f87171':p==='medium'?'#fbbf24':'#4ade80';
+  const priorityLabel = p => p==='high'?'🔴 Urgent':p==='medium'?'🟡 Medium':'🟢 Info';
+
+  const deleteAnn = id => {
+    setAnnouncements(prev=>prev.filter(a=>a.id!==id));
+    showToast('Announcement removed','info');
+  };
+
+  const sorted = [...announcements].sort((a,b)=>{
+    if(a.pinned&&!b.pinned)return -1;
+    if(!a.pinned&&b.pinned)return 1;
+    return new Date(b.date)-new Date(a.date);
+  });
+
+  return(
+    <div className="anim-fade" style={{display:'flex',flexDirection:'column',gap:16}}>
+      <div style={{display:'flex',justifyContent:'space-between',alignItems:'flex-end',flexWrap:'wrap',gap:12}}>
+        <div>
+          <h2 style={{fontSize:22,fontWeight:900,color:'var(--tx)'}}>📢 Announcements</h2>
+          <p style={{fontSize:12,color:'var(--tx3)',marginTop:2}}>{announcements.length} total announcements</p>
+        </div>
+        {isAdmin&&<button className="btn btn-primary" onClick={()=>showModal('announcement')}>
+          <i className="fa-solid fa-bullhorn"></i> Post Announcement
+        </button>}
+      </div>
+
+      {sorted.length===0&&(
+        <div style={{textAlign:'center',padding:'60px',opacity:.4}}>
+          <i className="fa-solid fa-bullhorn" style={{fontSize:40,display:'block',marginBottom:12}}></i>
+          <p style={{fontWeight:700,fontSize:13}}>No announcements yet.</p>
+        </div>
+      )}
+
+      {sorted.map(ann=>(
+        <div key={ann.id} className="announce-card" style={{borderLeft:`4px solid ${priorityColor(ann.priority)}`}}>
+          <div style={{display:'flex',justifyContent:'space-between',alignItems:'flex-start',gap:10}}>
+            <div style={{flex:1}}>
+              <div style={{display:'flex',alignItems:'center',gap:10,flexWrap:'wrap',marginBottom:8}}>
+                {ann.pinned&&<span style={{fontSize:10,fontWeight:800,color:'var(--p)'}}>📌 PINNED</span>}
+                <span style={{fontSize:10,fontWeight:700,color:priorityColor(ann.priority)}}>{priorityLabel(ann.priority)}</span>
+                <span style={{fontSize:10,color:'var(--tx3)',fontWeight:600}}>{ann.date}</span>
+              </div>
+              <h3 style={{fontSize:15,fontWeight:900,color:'var(--tx)',marginBottom:8}}>{ann.title}</h3>
+              <p style={{fontSize:13,color:'var(--tx2)',lineHeight:1.6}}>{ann.body}</p>
+              <p style={{fontSize:11,color:'var(--tx3)',marginTop:10,fontWeight:600}}>— {ann.author}</p>
+            </div>
+            {isAdmin&&<button className="btn btn-danger" style={{padding:'6px 10px',fontSize:11,flexShrink:0}} onClick={()=>deleteAnn(ann.id)}>
+              <i className="fa-solid fa-trash"></i>
+            </button>}
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+};
+
+/* ================================================================
+   LEAVES VIEW (employee)
+================================================================ */
+const LeavesView = ({user,leaveRequests,setLeaveRequests,showModal,showToast}) => {
+  const myLeaves=leaveRequests.filter(l=>l.empId===user.id);
+  const leaveBalance=user.leaveBalance||10;
+  const leavesUsed=user.leavesUsed||0;
+
+  return(
+    <div className="anim-fade" style={{display:'flex',flexDirection:'column',gap:16}}>
+      <div style={{display:'flex',justifyContent:'space-between',alignItems:'flex-end',flexWrap:'wrap',gap:12}}>
+        <div>
+          <h2 style={{fontSize:22,fontWeight:900,color:'var(--tx)'}}>🏖️ Leave Management</h2>
+          <p style={{fontSize:12,color:'var(--tx3)',marginTop:2}}>Track and file leave requests</p>
+        </div>
+        <button className="btn btn-primary" onClick={()=>showModal('leaveRequest')}>
+          <i className="fa-solid fa-paper-plane"></i> File Leave
+        </button>
+      </div>
+
+      {/* Balance cards */}
+      <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fit,minmax(140px,1fr))',gap:12}}>
+        {[
+          {label:'Total Balance',val:leaveBalance,icon:'📅'},
+          {label:'Used',val:leavesUsed,icon:'✅'},
+          {label:'Remaining',val:leaveBalance-leavesUsed,icon:'🏖️'},
+          {label:'Pending',val:myLeaves.filter(l=>l.status==='Pending').length,icon:'⏳'},
+        ].map(s=>(
+          <div key={s.label} className="glass p-5 rounded-2xl">
+            <div style={{fontSize:24,marginBottom:8}}>{s.icon}</div>
+            <h3 style={{fontSize:28,fontWeight:900,color:'var(--p)'}}>{s.val}</h3>
+            <p style={{fontSize:10,fontWeight:700,textTransform:'uppercase',letterSpacing:'.08em',color:'var(--tx3)',marginTop:2}}>{s.label}</p>
+          </div>
+        ))}
+      </div>
+
+      {/* Leave requests */}
+      <div className="glass" style={{borderRadius:20,overflow:'hidden'}}>
+        <div style={{padding:'16px 20px',borderBottom:'1px solid var(--bd)'}}>
+          <h3 style={{fontSize:15,fontWeight:900,color:'var(--tx)'}}>My Leave Requests</h3>
+        </div>
+        {myLeaves.length===0?(
+          <div style={{padding:'40px',textAlign:'center',opacity:.4}}>
+            <i className="fa-solid fa-calendar-xmark" style={{fontSize:32,display:'block',marginBottom:8}}></i>
+            <p style={{fontWeight:700,fontSize:12}}>No leave requests yet.</p>
+          </div>
+        ):(
+          <div className="table-wrapper">
+            <table className="nx-table" style={{minWidth:500}}>
+              <thead><tr><th>Type</th><th>Dates</th><th>Days</th><th>Reason</th><th>Status</th></tr></thead>
+              <tbody>
+                {myLeaves.map(l=>(
+                  <tr key={l.id}>
+                    <td style={{fontWeight:700}}>{l.type}</td>
+                    <td style={{fontSize:12,color:'var(--tx3)'}}>{l.startDate} → {l.endDate}</td>
+                    <td><span style={{color:'var(--p)',fontWeight:900}}>{l.days}</span></td>
+                    <td style={{maxWidth:160,fontSize:12,color:'var(--tx3)'}}><span style={{display:'block',overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap'}}>{l.reason}</span></td>
+                    <td>
+                      <span className={`badge ${l.status==='Approved'?'badge-active':l.status==='Rejected'?'badge-absent':'badge-idle'}`}>
+                        {l.status}
+                      </span>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+};
+
+/* ================================================================
+   ADMIN LEAVES VIEW
+================================================================ */
+const AdminLeavesView = ({leaveRequests,setLeaveRequests,employees,showToast}) => {
+  const [filter,setFilter]=useState('All');
+  const filtered=filter==='All'?leaveRequests:leaveRequests.filter(l=>l.status===filter);
+
+  const updateStatus=(id,status)=>{
+    setLeaveRequests(prev=>prev.map(l=>l.id===id?{...l,status}:l));
+    showToast(`Leave request ${status.toLowerCase()}!`,status==='Approved'?'success':'info');
+  };
+
+  return(
+    <div className="anim-fade" style={{display:'flex',flexDirection:'column',gap:16}}>
+      <div style={{display:'flex',justifyContent:'space-between',alignItems:'flex-end',flexWrap:'wrap',gap:12}}>
+        <div>
+          <h2 style={{fontSize:22,fontWeight:900,color:'var(--tx)'}}>🏖️ Leave Requests</h2>
+          <p style={{fontSize:12,color:'var(--tx3)',marginTop:2}}>{leaveRequests.filter(l=>l.status==='Pending').length} pending approvals</p>
+        </div>
+      </div>
+      <div style={{display:'flex',gap:6,flexWrap:'wrap'}}>
+        {['All','Pending','Approved','Rejected'].map(f=>(
+          <button key={f} className={`month-tab ${filter===f?'active':''}`} onClick={()=>setFilter(f)}>{f}</button>
+        ))}
+      </div>
+      <div className="glass" style={{borderRadius:20,overflow:'hidden'}}>
+        <div className="table-wrapper">
+          <table className="nx-table" style={{minWidth:600}}>
+            <thead><tr><th>Employee</th><th>Type</th><th>Dates</th><th>Days</th><th>Status</th><th>Actions</th></tr></thead>
+            <tbody>
+              {filtered.length===0?<tr><td colSpan="6" style={{textAlign:'center',padding:40,opacity:.4,fontWeight:700}}>No requests found.</td></tr>
+              :filtered.map(l=>{
+                const emp=employees.find(e=>e.id===l.empId);
+                return(
+                  <tr key={l.id}>
+                    <td>
+                      <div style={{display:'flex',alignItems:'center',gap:8}}>
+                        {emp&&<Avatar emp={emp} size="sm"/>}
+                        <span style={{fontWeight:700,fontSize:12}}>{l.empName}</span>
+                      </div>
+                    </td>
+                    <td style={{fontWeight:600,fontSize:12}}>{l.type}</td>
+                    <td style={{fontSize:11,color:'var(--tx3)'}}>{l.startDate} → {l.endDate}</td>
+                    <td><span style={{color:'var(--p)',fontWeight:900}}>{l.days}</span></td>
+                    <td><span className={`badge ${l.status==='Approved'?'badge-active':l.status==='Rejected'?'badge-absent':'badge-idle'}`}>{l.status}</span></td>
+                    <td>
+                      {l.status==='Pending'&&(
+                        <div style={{display:'flex',gap:6}}>
+                          <button className="btn btn-ok" style={{padding:'5px 10px',fontSize:11}} onClick={()=>updateStatus(l.id,'Approved')}>
+                            <i className="fa-solid fa-check"></i> Approve
+                          </button>
+                          <button className="btn btn-danger" style={{padding:'5px 10px',fontSize:11}} onClick={()=>updateStatus(l.id,'Rejected')}>
+                            <i className="fa-solid fa-xmark"></i> Reject
+                          </button>
+                        </div>
+                      )}
+                      {l.status!=='Pending'&&<span style={{fontSize:11,color:'var(--tx3)',fontWeight:600}}>Processed</span>}
+                    </td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+/* ================================================================
+   LEADERBOARD VIEW
+================================================================ */
+const LeaderboardView = ({employees,tasks}) => {
+  const curMonth=new Date().getMonth()+1;
+  const curYear=new Date().getFullYear();
+  const [period,setPeriod]=useState('month');
+
+  const ranked = useMemo(()=>{
+    return [...employees].map(emp=>{
+      const empTasks = period==='month'
+        ? tasks.filter(t=>t.empId===emp.id&&t.month===curMonth&&t.year===curYear)
+        : tasks.filter(t=>t.empId===emp.id&&t.year===curYear);
+      const hrs = empTasks.reduce((s,t)=>s+(t.durationHours||0),0);
+      const dept=DEPARTMENTS.find(d=>d.id===emp.deptId);
+      return {...emp, hrs, taskCount:empTasks.length, dept};
+    }).filter(e=>e.hrs>0).sort((a,b)=>b.hrs-a.hrs).slice(0,20);
+  },[employees,tasks,period,curMonth,curYear]);
+
+  const maxHrs = ranked[0]?.hrs||1;
+  const medals=['🥇','🥈','🥉'];
+
+  return(
+    <div className="anim-fade" style={{display:'flex',flexDirection:'column',gap:16}}>
+      <div style={{display:'flex',justifyContent:'space-between',alignItems:'flex-end',flexWrap:'wrap',gap:12}}>
+        <div>
+          <h2 style={{fontSize:22,fontWeight:900,color:'var(--tx)'}}>🏆 Leaderboard</h2>
+          <p style={{fontSize:12,color:'var(--tx3)',marginTop:2}}>Top performers by logged hours</p>
+        </div>
+        <div style={{display:'flex',gap:6}}>
+          <button className={`month-tab ${period==='month'?'active':''}`} onClick={()=>setPeriod('month')}>This Month</button>
+          <button className={`month-tab ${period==='year'?'active':''}`} onClick={()=>setPeriod('year')}>This Year</button>
+        </div>
+      </div>
+
+      {/* Top 3 podium */}
+      {ranked.length>=3&&(
+        <div style={{display:'grid',gridTemplateColumns:'1fr 1.2fr 1fr',gap:12,marginBottom:8}}>
+          {[ranked[1],ranked[0],ranked[2]].map((emp,i)=>{
+            const rank=i===1?0:i===0?1:2;
+            const heights=['h-28','h-36','h-24'];
+            return(
+              <div key={emp.id} className="glass" style={{borderRadius:18,padding:'16px 12px',textAlign:'center',display:'flex',flexDirection:'column',alignItems:'center',gap:8,order:i===1?-1:i}}>
+                <div style={{fontSize:24}}>{medals[rank]}</div>
+                <Avatar emp={emp} size={i===1?'md':'sm'}/>
+                <div>
+                  <p style={{fontSize:11,fontWeight:900,color:'var(--tx)'}}>{emp.firstName} {emp.lastName.split(' ')[0]}</p>
+                  <p style={{fontSize:9,color:'var(--tx3)'}}>{emp.dept?.name}</p>
+                </div>
+                <p style={{fontSize:i===1?20:16,fontWeight:900,color:'var(--p)'}}>{emp.hrs.toFixed(1)}h</p>
+              </div>
+            );
+          })}
+        </div>
+      )}
+
+      {/* Full list */}
+      <div className="glass" style={{borderRadius:20,overflow:'hidden'}}>
+        {ranked.length===0?(
+          <div style={{padding:'40px',textAlign:'center',opacity:.4}}>
+            <i className="fa-solid fa-trophy" style={{fontSize:36,display:'block',marginBottom:8}}></i>
+            <p style={{fontWeight:700,fontSize:12}}>No data for this period.</p>
+          </div>
+        ):(
+          ranked.map((emp,i)=>(
+            <div key={emp.id} style={{display:'flex',alignItems:'center',gap:12,padding:'14px 20px',borderBottom:'1px solid var(--bd)'}}>
+              <span style={{fontSize:i<3?18:14,fontWeight:900,width:28,textAlign:'center',color:i<3?'var(--p)':'var(--tx3)'}}>
+                {i<3?medals[i]:`#${i+1}`}
+              </span>
+              <Avatar emp={emp} size="sm"/>
+              <div style={{flex:1,overflow:'hidden'}}>
+                <p style={{fontSize:13,fontWeight:700,color:'var(--tx)',overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap'}}>{emp.firstName} {emp.lastName}</p>
+                <p style={{fontSize:10,color:'var(--tx3)'}}>{emp.dept?.icon} {emp.dept?.name} • {emp.taskCount} tasks</p>
+              </div>
+              <div style={{textAlign:'right',minWidth:60}}>
+                <p style={{fontSize:16,fontWeight:900,color:'var(--p)'}}>{emp.hrs.toFixed(1)}h</p>
+                <div style={{width:80,height:4,background:'rgba(0,0,0,0.1)',borderRadius:99,marginTop:4}}>
+                  <div style={{width:`${(emp.hrs/maxHrs)*100}%`,height:'100%',background:'linear-gradient(90deg,var(--p),var(--pd))',borderRadius:99,transition:'width 1s'}}></div>
+                </div>
+              </div>
+            </div>
+          ))
+        )}
+      </div>
+    </div>
+  );
+};
+
+/* ================================================================
+   BIRTHDAY TRACKER (embedded in dashboard)
+================================================================ */
+const BirthdayWidget = ({employees}) => {
+  const upcoming = useMemo(()=>getUpcomingBirthdays(employees,30),[employees]);
+  if(upcoming.length===0)return null;
+  return(
+    <div className="glass" style={{borderRadius:20,overflow:'hidden'}}>
+      <div style={{padding:'16px 20px',borderBottom:'1px solid var(--bd)',display:'flex',alignItems:'center',gap:10}}>
+        <span style={{fontSize:20}}>🎂</span>
+        <h3 style={{fontSize:15,fontWeight:900,color:'var(--tx)'}}>Upcoming Birthdays</h3>
+        <span className="badge badge-active" style={{marginLeft:'auto'}}>{upcoming.length}</span>
+      </div>
+      <div style={{padding:'12px'}}>
+        {upcoming.slice(0,5).map(emp=>{
+          const dept=DEPARTMENTS.find(d=>d.id===emp.deptId);
+          return(
+            <div key={emp.id} style={{display:'flex',alignItems:'center',gap:12,padding:'10px 12px',borderRadius:12,marginBottom:4,background:'rgba(0,0,0,0.02)'}}>
+              <Avatar emp={emp} size="sm"/>
+              <div style={{flex:1}}>
+                <p style={{fontSize:12,fontWeight:700,color:'var(--tx)'}}>{emp.firstName} {emp.lastName}</p>
+                <p style={{fontSize:10,color:'var(--tx3)'}}>{dept?.icon} {dept?.name}</p>
+              </div>
+              <div style={{textAlign:'right'}}>
+                <p style={{fontSize:13,fontWeight:900,color:emp.daysUntil<=7?'#f87171':'var(--p)'}}>
+                  {emp.daysUntil===0?'🎉 Today!':`in ${emp.daysUntil}d`}
+                </p>
+                <p style={{fontSize:10,color:'var(--tx3)'}}>{emp.birthdayDate.toLocaleDateString([],{month:'short',day:'numeric'})}</p>
+              </div>
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+};
+
+/* ================================================================
+   DASHBOARD VIEW (Employee)
+================================================================ */
+const DashboardView = ({user,tasks,showModal,announcements,leaveRequests,employees}) => {
   const myTasks=tasks.filter(t=>t.empId===user.id);
   const totalHrs=myTasks.reduce((s,t)=>s+(t.durationHours||0),0);
   const curMonth=new Date().getMonth()+1;
@@ -1233,10 +1745,37 @@ const DashboardView = ({user,tasks,showModal}) => {
   const thisMonthTasks=myTasks.filter(t=>t.month===curMonth&&t.year===curYear);
   const thisMonthHrs=thisMonthTasks.reduce((s,t)=>s+(t.durationHours||0),0);
   const dept=DEPARTMENTS.find(d=>d.id===user.deptId);
+  const pinnedAnn=announcements.filter(a=>a.pinned).slice(0,2);
+  const myLeaveBalance=(user.leaveBalance||10)-(user.leavesUsed||0);
+
+  // Check if birthday today or this week
+  const todayMD=`${String(new Date().getMonth()+1).padStart(2,'0')}-${String(new Date().getDate()).padStart(2,'0')}`;
+  const isBirthday=user.birthday===todayMD;
+
+  // Special greeting for Rozi
+  const isRozi=user.email==='hyacinths.beige@gmail.com'||user.firstName==='Hyacinth';
 
   return(
     <div className="anim-fade" style={{display:'flex',flexDirection:'column',gap:20}}>
+      {isBirthday&&(
+        <div style={{background:'linear-gradient(135deg,#f97316,#ec4899)',borderRadius:20,padding:'16px 24px',display:'flex',alignItems:'center',gap:16,color:'#fff'}}>
+          <span style={{fontSize:32}}>🎉</span>
+          <div>
+            <p style={{fontSize:16,fontWeight:900}}>Happy Birthday, {user.firstName}!</p>
+            <p style={{fontSize:12,opacity:.9}}>Wishing you an amazing day! 🎂✨</p>
+          </div>
+        </div>
+      )}
+
+      {isRozi&&(
+        <div style={{background:'linear-gradient(135deg,color-mix(in srgb,#c9748a 12%,transparent),color-mix(in srgb,#d4a96a 8%,transparent))',border:'1px solid color-mix(in srgb,#c9748a 25%,transparent)',borderRadius:20,padding:'14px 20px',display:'flex',alignItems:'center',gap:12}}>
+          <span style={{fontSize:24}}>🪻</span>
+          <p style={{fontSize:13,fontWeight:700,color:'var(--tx)'}}>Welcome back, Hyacinth! This system was built with 💙 — hope your day is as lovely as you are, Rozi.</p>
+        </div>
+      )}
+
       <QuoteBox/>
+
       {/* Greeting */}
       <div className="glass" style={{borderRadius:20,padding:'20px 24px',display:'flex',alignItems:'center',gap:16}}>
         <div style={{width:56,height:56,borderRadius:'50%',overflow:'hidden',border:'3px solid var(--p)',flexShrink:0}}>
@@ -1252,12 +1791,26 @@ const DashboardView = ({user,tasks,showModal}) => {
         </button>
       </div>
 
+      {/* Pinned announcements */}
+      {pinnedAnn.length>0&&pinnedAnn.map(ann=>(
+        <div key={ann.id} className="announce-card" style={{borderLeft:'4px solid var(--warn)'}}>
+          <p style={{fontSize:10,fontWeight:800,color:'var(--warn)',marginBottom:4}}>📌 PINNED ANNOUNCEMENT</p>
+          <p style={{fontSize:14,fontWeight:900,color:'var(--tx)',marginBottom:6}}>{ann.title}</p>
+          <p style={{fontSize:12,color:'var(--tx2)'}}>{ann.body}</p>
+        </div>
+      ))}
+
       {/* Stats */}
       <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fit,minmax(150px,1fr))',gap:12}}>
         <StatCard title="Total Sessions" value={myTasks.length} icon={<i className="fa-solid fa-list-check"/>}/>
         <StatCard title="Total Hours" value={totalHrs.toFixed(1)+'h'} icon={<i className="fa-solid fa-clock"/>}/>
         <StatCard title="This Month" value={thisMonthHrs.toFixed(1)+'h'} icon={<i className="fa-solid fa-calendar-check"/>}/>
-        <StatCard title="Tasks This Month" value={thisMonthTasks.length} icon={<i className="fa-solid fa-bolt"/>}/>
+        <StatCard title="Leave Balance" value={myLeaveBalance+'d'} icon={<i className="fa-solid fa-umbrella-beach"/>}/>
+      </div>
+
+      {/* Monthly chart */}
+      <div className="glass" style={{borderRadius:20,padding:'20px 24px'}}>
+        <MiniBarChart tasks={myTasks}/>
       </div>
 
       {/* Recent tasks */}
@@ -1289,6 +1842,9 @@ const DashboardView = ({user,tasks,showModal}) => {
           </div>
         )}
       </div>
+
+      {/* Birthday widget */}
+      <BirthdayWidget employees={employees}/>
     </div>
   );
 };
@@ -1330,16 +1886,17 @@ const MyTasksView = ({user,tasks,showModal,showToast}) => {
         </div>
       </div>
 
-      {/* Month tabs */}
       <div style={{display:'flex',gap:6,overflowX:'auto',paddingBottom:4}}>
         {MONTHS.map((m,i)=>(
-          <button key={i} className={`month-tab ${selMonth===i+1?'active':''}`} onClick={()=>setSelMonth(i+1)}>
-            {m}
-          </button>
+          <button key={i} className={`month-tab ${selMonth===i+1?'active':''}`} onClick={()=>setSelMonth(i+1)}>{m}</button>
         ))}
       </div>
 
-      {/* Table */}
+      {/* Month chart */}
+      <div className="glass" style={{borderRadius:20,padding:'20px 24px'}}>
+        <MiniBarChart tasks={myTasks}/>
+      </div>
+
       <div className="glass" style={{borderRadius:20,overflow:'hidden'}}>
         <div className="table-wrapper">
           {filtered.length===0?(
@@ -1401,7 +1958,6 @@ const ProjectsView = ({projects,setProjects,showModal,showToast,isAdmin}) => {
           <i className="fa-solid fa-folder-plus"></i> New Project
         </button>}
       </div>
-      {/* Filters */}
       <div style={{display:'flex',gap:8,flexWrap:'wrap'}}>
         <div style={{position:'relative',flex:1,minWidth:180}}>
           <i className="fa-solid fa-magnifying-glass" style={{position:'absolute',left:12,top:'50%',transform:'translateY(-50%)',color:'var(--tx3)',fontSize:12}}></i>
@@ -1411,7 +1967,6 @@ const ProjectsView = ({projects,setProjects,showModal,showToast,isAdmin}) => {
           <button key={f} className={`month-tab ${filter===f?'active':''}`} onClick={()=>setFilter(f)}>{f}</button>
         ))}
       </div>
-      {/* Cards */}
       <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fill,minmax(300px,1fr))',gap:14}}>
         {filtered.map(p=>(
           <div key={p.id} className="glass" style={{borderRadius:18,padding:'18px 20px',display:'flex',flexDirection:'column',gap:12}}>
@@ -1445,7 +2000,7 @@ const ProjectsView = ({projects,setProjects,showModal,showToast,isAdmin}) => {
 };
 
 /* ================================================================
-   ADMIN TRACKER VIEW (simplified for employee app)
+   ADMIN TRACKER VIEW
 ================================================================ */
 const AdminTrackerView = ({employees,tasks,showToast}) => {
   const [selDept,setSelDept]=useState('ALL');
@@ -1469,7 +2024,6 @@ const AdminTrackerView = ({employees,tasks,showToast}) => {
   return(
     <div className="anim-fade" style={{display:'flex',flexDirection:'column',gap:16}}>
       <h2 style={{fontSize:22,fontWeight:900,color:'var(--tx)'}}>Live Tracker</h2>
-      {/* Top: dept selector */}
       <div style={{display:'flex',gap:6,overflowX:'auto',paddingBottom:4}}>
         <button className={`month-tab ${selDept==='ALL'?'active':''}`} onClick={()=>{setSelDept('ALL');setSelEmp(null);}}>All</button>
         {DEPARTMENTS.map(d=>(
@@ -1479,7 +2033,6 @@ const AdminTrackerView = ({employees,tasks,showToast}) => {
         ))}
       </div>
       <div style={{display:'grid',gridTemplateColumns:'280px 1fr',gap:14}}>
-        {/* Employee list */}
         <div className="glass" style={{borderRadius:18,overflow:'hidden',height:'60vh',display:'flex',flexDirection:'column'}}>
           <div style={{padding:'12px',borderBottom:'1px solid var(--bd)'}}>
             <div style={{position:'relative'}}>
@@ -1506,7 +2059,6 @@ const AdminTrackerView = ({employees,tasks,showToast}) => {
           </div>
         </div>
 
-        {/* Task panel */}
         <div className="glass" style={{borderRadius:18,overflow:'hidden',height:'60vh',display:'flex',flexDirection:'column'}}>
           {!selEmp?(
             <div style={{flex:1,display:'flex',flexDirection:'column',alignItems:'center',justifyContent:'center',opacity:.3}}>
@@ -1534,23 +2086,21 @@ const AdminTrackerView = ({employees,tasks,showToast}) => {
                 </div>
               </div>
               <div style={{overflowY:'auto',flex:1}}>
-                <div className="table-wrapper">
-                  <table className="nx-table" style={{minWidth:500}}>
-                    <thead><tr><th>Task</th><th>Date</th><th>Hours</th><th>Source</th></tr></thead>
-                    <tbody>
-                      {filteredTasks.length===0?(
-                        <tr><td colSpan="4" style={{textAlign:'center',padding:'32px',opacity:.4,fontWeight:700,fontSize:12}}>No records.</td></tr>
-                      ):filteredTasks.sort((a,b)=>new Date(b.date)-new Date(a.date)).map(t=>(
-                        <tr key={t.id}>
-                          <td style={{fontWeight:700,maxWidth:200}}><span style={{display:'block',overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap'}}>{t.taskName}</span></td>
-                          <td style={{fontSize:12,color:'var(--tx3)',whiteSpace:'nowrap'}}>{fmtDate(t.date)}</td>
-                          <td><span style={{color:'var(--p)',fontWeight:900}}>{t.durationHours}</span></td>
-                          <td><span style={{fontSize:10,fontWeight:700,padding:'3px 8px',borderRadius:6,background:'rgba(0,0,0,0.06)',border:'1px solid var(--bd)'}}>{t.source||'Manual'}</span></td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
+                <table className="nx-table" style={{minWidth:500}}>
+                  <thead><tr><th>Task</th><th>Date</th><th>Hours</th><th>Source</th></tr></thead>
+                  <tbody>
+                    {filteredTasks.length===0?(
+                      <tr><td colSpan="4" style={{textAlign:'center',padding:'32px',opacity:.4,fontWeight:700,fontSize:12}}>No records.</td></tr>
+                    ):filteredTasks.sort((a,b)=>new Date(b.date)-new Date(a.date)).map(t=>(
+                      <tr key={t.id}>
+                        <td style={{fontWeight:700,maxWidth:200}}><span style={{display:'block',overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap'}}>{t.taskName}</span></td>
+                        <td style={{fontSize:12,color:'var(--tx3)',whiteSpace:'nowrap'}}>{fmtDate(t.date)}</td>
+                        <td><span style={{color:'var(--p)',fontWeight:900}}>{t.durationHours}</span></td>
+                        <td><span style={{fontSize:10,fontWeight:700,padding:'3px 8px',borderRadius:6,background:'rgba(0,0,0,0.06)',border:'1px solid var(--bd)'}}>{t.source||'Manual'}</span></td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
               </div>
             </>
           )}
@@ -1563,7 +2113,7 @@ const AdminTrackerView = ({employees,tasks,showToast}) => {
 /* ================================================================
    ADMIN DIRECTORY VIEW
 ================================================================ */
-const AdminDirectoryView = ({employees,tasks,showToast,onLogTaskForEmp}) => {
+const AdminDirectoryView = ({employees,setEmployees,tasks,showToast,onLogTaskForEmp}) => {
   const [search,setSearch]=useState('');
   const [deptFilter,setDeptFilter]=useState('ALL');
   const [statusFilter,setStatusFilter]=useState('ALL');
@@ -1576,6 +2126,11 @@ const AdminDirectoryView = ({employees,tasks,showToast,onLogTaskForEmp}) => {
     return list;
   },[employees,deptFilter,statusFilter,search]);
 
+  const updateStatus=(id,status)=>{
+    setEmployees(prev=>prev.map(e=>e.id===id?{...e,status}:e));
+    showToast(`Status updated to ${status}`,'success');
+  };
+
   return(
     <div className="anim-fade" style={{display:'flex',flexDirection:'column',gap:16}}>
       <div style={{display:'flex',justifyContent:'space-between',alignItems:'flex-end',flexWrap:'wrap',gap:12}}>
@@ -1584,7 +2139,6 @@ const AdminDirectoryView = ({employees,tasks,showToast,onLogTaskForEmp}) => {
           <p style={{fontSize:12,color:'var(--tx3)',marginTop:2}}>{employees.length} personnel across {DEPARTMENTS.length} departments</p>
         </div>
       </div>
-      {/* Filters */}
       <div style={{display:'flex',gap:8,flexWrap:'wrap'}}>
         <div style={{position:'relative',flex:1,minWidth:180}}>
           <i className="fa-solid fa-magnifying-glass" style={{position:'absolute',left:12,top:'50%',transform:'translateY(-50%)',color:'var(--tx3)',fontSize:12}}></i>
@@ -1596,12 +2150,12 @@ const AdminDirectoryView = ({employees,tasks,showToast,onLogTaskForEmp}) => {
         </select>
         <select className="input" value={statusFilter} onChange={e=>setStatusFilter(e.target.value)} style={{width:'auto',padding:'10px 14px'}}>
           <option value="ALL">All Statuses</option>
-          <option>Active</option><option>Idle</option><option>Absent</option>
+          <option>Active</option><option>Idle</option><option>Absent</option><option>Leave</option>
         </select>
       </div>
       <div className="glass" style={{borderRadius:18,overflow:'hidden'}}>
         <div className="table-wrapper">
-          <table className="nx-table" style={{minWidth:700}}>
+          <table className="nx-table" style={{minWidth:750}}>
             <thead><tr><th>Employee</th><th>ID</th><th>Department</th><th>Hours</th><th>Status</th><th>Actions</th></tr></thead>
             <tbody>
               {filtered.length===0?<tr><td colSpan="6" style={{textAlign:'center',padding:40,opacity:.4,fontWeight:700}}>No employees found.</td></tr>
@@ -1622,7 +2176,13 @@ const AdminDirectoryView = ({employees,tasks,showToast,onLogTaskForEmp}) => {
                     <td><span style={{fontFamily:'monospace',fontSize:11,background:'rgba(0,0,0,0.05)',padding:'3px 8px',borderRadius:6,border:'1px solid var(--bd)'}}>{emp.employeeId}</span></td>
                     <td><span style={{fontSize:12,fontWeight:600}}>{dept?.icon} {dept?.name}</span></td>
                     <td><span style={{color:'var(--p)',fontWeight:900}}>{hrs.toFixed(1)}</span><span style={{fontSize:10,color:'var(--tx3)',marginLeft:3}}>hrs</span></td>
-                    <td><StatusBadge status={emp.status}/></td>
+                    <td>
+                      <select value={emp.status}
+                        onChange={e=>updateStatus(emp.id,e.target.value)}
+                        style={{background:'transparent',border:'1px solid var(--bd)',borderRadius:8,padding:'4px 8px',fontSize:11,fontWeight:700,color:'var(--tx)',cursor:'pointer'}}>
+                        <option>Active</option><option>Idle</option><option>Absent</option><option>Leave</option>
+                      </select>
+                    </td>
                     <td>
                       <button className="btn btn-ghost" style={{padding:'6px 10px',fontSize:11}} onClick={()=>onLogTaskForEmp(emp)}>
                         <i className="fa-solid fa-clock" style={{color:'var(--p)'}}></i> Log
@@ -1642,7 +2202,7 @@ const AdminDirectoryView = ({employees,tasks,showToast,onLogTaskForEmp}) => {
 /* ================================================================
    ADMIN DASHBOARD
 ================================================================ */
-const AdminDashView = ({employees,tasks,showModal}) => {
+const AdminDashView = ({employees,tasks,showModal,announcements,leaveRequests}) => {
   const stats={
     total:employees.length,
     active:employees.filter(e=>e.status==='Active').length,
@@ -1650,10 +2210,20 @@ const AdminDashView = ({employees,tasks,showModal}) => {
     absent:employees.filter(e=>e.status==='Absent').length,
     totalHrs:tasks.reduce((s,t)=>s+(t.durationHours||0),0),
     todayLogs:tasks.filter(t=>t.date===new Date().toISOString().split('T')[0]).length,
+    pendingLeaves:leaveRequests.filter(l=>l.status==='Pending').length,
   };
+  const pinnedAnn=announcements.filter(a=>a.pinned);
+
   return(
     <div className="anim-fade" style={{display:'flex',flexDirection:'column',gap:20}}>
       <QuoteBox/>
+      {pinnedAnn.length>0&&pinnedAnn.slice(0,1).map(ann=>(
+        <div key={ann.id} className="announce-card" style={{borderLeft:'4px solid var(--warn)'}}>
+          <p style={{fontSize:10,fontWeight:800,color:'var(--warn)',marginBottom:4}}>📌 PINNED</p>
+          <p style={{fontSize:14,fontWeight:900,color:'var(--tx)',marginBottom:4}}>{ann.title}</p>
+          <p style={{fontSize:12,color:'var(--tx2)'}}>{ann.body}</p>
+        </div>
+      ))}
       <div>
         <h2 style={{fontSize:24,fontWeight:900,color:'var(--tx)'}}>Nexus Analytics</h2>
         <p style={{fontSize:12,color:'var(--tx3)',marginTop:2}}>Real-time telemetry across {DEPARTMENTS.length} department units.</p>
@@ -1665,8 +2235,14 @@ const AdminDashView = ({employees,tasks,showModal}) => {
         <StatCard title="Absent" value={stats.absent} icon={<i className="fa-solid fa-triangle-exclamation"/>}/>
         <StatCard title="Total Hours" value={stats.totalHrs.toFixed(0)} icon={<i className="fa-solid fa-clock"/>}/>
         <StatCard title="Today's Logs" value={stats.todayLogs} icon={<i className="fa-solid fa-bolt"/>}/>
+        <StatCard title="Pending Leaves" value={stats.pendingLeaves} icon={<i className="fa-solid fa-umbrella-beach"/>}/>
       </div>
-      {/* Dept breakdown */}
+
+      {/* Global chart */}
+      <div className="glass" style={{borderRadius:20,padding:'20px 24px'}}>
+        <MiniBarChart tasks={tasks}/>
+      </div>
+
       <div className="glass" style={{borderRadius:20,padding:'20px 24px'}}>
         <h3 style={{fontSize:15,fontWeight:900,color:'var(--tx)',marginBottom:16}}>Workforce Distribution</h3>
         <div style={{display:'flex',flexDirection:'column',gap:10}}>
@@ -1688,6 +2264,8 @@ const AdminDashView = ({employees,tasks,showModal}) => {
           })}
         </div>
       </div>
+
+      <BirthdayWidget employees={employees}/>
     </div>
   );
 };
@@ -1704,6 +2282,7 @@ const SettingsView = ({theme,setTheme,showToast}) => {
     {id:'sunset',color:'#f97316',label:'Sunset',desc:'Warm orange hues'},
     {id:'ocean',color:'#0ea5e9',label:'Ocean',desc:'Deep sea blue vibes'},
     {id:'red',color:'#ef4444',label:'Crimson',desc:'Bold red intensity'},
+    {id:'rosegold',color:'#c9748a',label:'Rose Gold ✨',desc:'Luxury rose gold for Rozi 🪻'},
   ];
   return(
     <div className="anim-fade" style={{display:'flex',flexDirection:'column',gap:20,maxWidth:600}}>
@@ -1721,7 +2300,7 @@ const SettingsView = ({theme,setTheme,showToast}) => {
                 border:`2px solid ${theme===t.id?'var(--p)':'var(--bd)'}`,
                 background:theme===t.id?'color-mix(in srgb,var(--p) 8%,transparent)':'transparent',
                 cursor:'pointer',textAlign:'left',transition:'all .2s'}}>
-              <div style={{width:32,height:32,borderRadius:10,background:t.color,flexShrink:0}}></div>
+              <div style={{width:32,height:32,borderRadius:10,background:t.id==='rosegold'?'linear-gradient(135deg,#c9748a,#d4a96a)':t.color,flexShrink:0}}></div>
               <div>
                 <p style={{fontSize:13,fontWeight:700,color:'var(--tx)'}}>{t.label}</p>
                 <p style={{fontSize:10,color:'var(--tx3)'}}>{t.desc}</p>
@@ -1738,7 +2317,7 @@ const SettingsView = ({theme,setTheme,showToast}) => {
         <button className="btn btn-ghost" style={{marginTop:10,fontSize:12}} onClick={async()=>{
           showToast('Testing GAS connection...','info');
           const ok=await api.ping();
-          showToast(ok?'✅ GAS Online!':'⚠️ GAS Offline — local mode',ok?'success':'warn');
+          showToast(ok?'✅ GAS Online!':'⚠️ GAS Offline — local mode active',ok?'success':'warn');
         }}>
           <i className="fa-solid fa-rotate"></i> Test Connection
         </button>
@@ -1746,9 +2325,10 @@ const SettingsView = ({theme,setTheme,showToast}) => {
       <div className="glass" style={{borderRadius:20,padding:'20px 24px'}}>
         <h3 style={{fontSize:15,fontWeight:800,color:'var(--tx)',marginBottom:4}}>ℹ️ Build Info</h3>
         <div style={{display:'flex',flexDirection:'column',gap:6,fontSize:12,color:'var(--tx3)'}}>
-          <p>Version: <strong style={{color:'var(--tx)'}}>Gigahertz Nexus v4.4</strong></p>
+          <p>Version: <strong style={{color:'var(--tx)'}}>Gigahertz Nexus v5.0</strong></p>
           <p>Year: <strong style={{color:'var(--tx)'}}>{new Date().getFullYear()}</strong></p>
-          <p>Employees: <strong style={{color:'var(--tx)'}}>James & team's fave tracker 💙</strong></p>
+          <p>Built with: <strong style={{color:'var(--tx)'}}>💙 and a little 🪻 for Rozi</strong></p>
+          <p>Employee IDs: <strong style={{color:'var(--tx)'}}>GHZ-XXXX format</strong></p>
         </div>
       </div>
     </div>
@@ -1756,18 +2336,19 @@ const SettingsView = ({theme,setTheme,showToast}) => {
 };
 
 /* ================================================================
-   MAIN APP (logged-in shell)
+   MAIN APP
 ================================================================ */
 const MainApp = ({user:initUser,onLogout,theme,setTheme}) => {
   const [user,setUser]=useState(initUser);
   const [view,setView]=useState('dashboard');
   const [tasks,setTasks]=useState(TASKS_INIT);
   const [projects,setProjects]=useState(PROJECTS_INIT);
-  const [employees]=useState(EMPLOYEES_INIT);
+  const [employees,setEmployees]=useState(EMPLOYEES_INIT);
+  const [announcements,setAnnouncements]=useState(ANNOUNCEMENTS_INIT);
+  const [leaveRequests,setLeaveRequests]=useState(LEAVE_REQUESTS_INIT);
   const [toasts,setToasts]=useState([]);
-  const [modal,setModal]=useState(null); // 'profile'|'logTask'|'addProject'|null
-  const [logTaskTarget,setLogTaskTarget]=useState(null); // for admin logging on behalf of emp
-  const [sidebarOpen,setSidebarOpen]=useState(false);
+  const [modal,setModal]=useState(null);
+  const [logTaskTarget,setLogTaskTarget]=useState(null);
 
   const isAdmin=user.role==='ADMIN'||user.role==='Super Admin'||user.role==='Nexus Dev';
 
@@ -1778,21 +2359,23 @@ const MainApp = ({user:initUser,onLogout,theme,setTheme}) => {
     setToasts(p=>[...p,{id,message,type}]);
   },[]);
   const removeToast = useCallback(id=>setToasts(p=>p.filter(t=>t.id!==id)),[]);
-
   const showModal = useCallback(m=>setModal(m),[]);
 
-  // Admin tabs
   const adminNavItems = [
     {id:'dashboard',icon:'fa-chart-pie',label:'Dashboard'},
     {id:'tracker',icon:'fa-satellite-dish',label:'Tracker'},
     {id:'directory',icon:'fa-address-book',label:'Directory'},
+    {id:'leaves',icon:'fa-umbrella-beach',label:'Leaves'},
+    {id:'announcements',icon:'fa-bullhorn',label:'Bulletin'},
+    {id:'leaderboard',icon:'fa-trophy',label:'Rankings'},
     {id:'projects',icon:'fa-folder-open',label:'Projects'},
     {id:'settings',icon:'fa-sliders',label:'Settings'},
   ];
-  // Employee tabs
   const empNavItems = [
     {id:'dashboard',icon:'fa-gauge-high',label:'Home'},
     {id:'mytasks',icon:'fa-list-check',label:'My Tasks'},
+    {id:'leaves',icon:'fa-umbrella-beach',label:'Leaves'},
+    {id:'announcements',icon:'fa-bullhorn',label:'Bulletin'},
     {id:'projects',icon:'fa-folder-open',label:'Projects'},
     {id:'settings',icon:'fa-sliders',label:'Settings'},
   ];
@@ -1804,38 +2387,39 @@ const MainApp = ({user:initUser,onLogout,theme,setTheme}) => {
     setModal('logTaskAdmin');
   };
 
-  const saveAdminTask = task => {
-    setTasks(p=>[task,...p]);
-  };
+  // Pending leave badge
+  const pendingLeaves=leaveRequests.filter(l=>l.status==='Pending').length;
 
   return(
     <>
       <ToastSystem toasts={toasts} remove={removeToast}/>
       <LiveClock/>
 
-      {/* SIDEBAR (desktop) */}
-      <aside className={`sidebar ${sidebarOpen?'':'hidden'} lg:sidebar`} style={{transform:undefined}}>
+      {/* SIDEBAR */}
+      <aside className="sidebar">
         <div style={{padding:'16px',borderBottom:'1px solid var(--bd)',display:'flex',alignItems:'center',gap:12}}>
           <div style={{width:36,height:36,borderRadius:10,overflow:'hidden',background:'#fff',padding:3,flexShrink:0}}>
-            <img src="https://contents.smsupermalls.com/data/uploads/2020/07/GIGAHERTZ_COMPUTER_SYSTEM.jpg" alt="Logo" style={{width:'100%',height:'99%',objectFit:'contain'}}/>
+            <img src="https://contents.smsupermalls.com/data/uploads/2020/07/GIGAHERTZ_COMPUTER_SYSTEM.jpg" alt="Logo" style={{width:'100%',height:'100%',objectFit:'contain'}}/>
           </div>
           <div>
             <p style={{fontSize:12,fontWeight:900,color:'var(--tx)'}}>Gigahertz Nexus</p>
-            <p style={{fontSize:9,color:'var(--p)',fontWeight:700,textTransform:'uppercase',letterSpacing:'.08em'}}>v4.4/p>
+            <p style={{fontSize:9,color:'var(--p)',fontWeight:700,textTransform:'uppercase',letterSpacing:'.08em'}}>v5.0</p>
           </div>
         </div>
-        <nav style={{padding:'12px',flex:1,display:'flex',flexDirection:'column',gap:4}}>
+        <nav style={{padding:'12px',flex:1,display:'flex',flexDirection:'column',gap:4,overflowY:'auto'}}>
           {navItems.map(item=>(
             <button key={item.id} className={`nav-item ${view===item.id?'active':''}`} onClick={()=>setView(item.id)}>
               <span className="nav-icon"><i className={`fa-solid ${item.icon}`}></i></span>
-              {item.label}
+              <span style={{flex:1}}>{item.label}</span>
+              {item.id==='leaves'&&isAdmin&&pendingLeaves>0&&(
+                <span style={{background:'#f87171',color:'#fff',borderRadius:99,fontSize:9,fontWeight:900,padding:'2px 7px'}}>{pendingLeaves}</span>
+              )}
             </button>
           ))}
         </nav>
-        {/* User area */}
         <div style={{padding:'12px',borderTop:'1px solid var(--bd)'}}>
           <button className="nav-item" onClick={()=>setModal('profile')}>
-            <span className="nav-icon" style={{background:'var(--p)',background:'linear-gradient(135deg,var(--p),var(--pd))'}}>
+            <span className="nav-icon" style={{background:'linear-gradient(135deg,var(--p),var(--pd))'}}>
               {user.facePhoto?<img src={user.facePhoto} style={{width:'100%',height:'100%',objectFit:'cover',borderRadius:10}} alt="face"/>
                 :<span style={{color:'#fff',fontSize:12,fontWeight:900}}>{getInitials(user)}</span>}
             </span>
@@ -1851,29 +2435,8 @@ const MainApp = ({user:initUser,onLogout,theme,setTheme}) => {
         </div>
       </aside>
 
-      {/* MOBILE TOP HEADER */}
-      <div style={{display:'none'}} className="block md:hidden" id="mob-header">
-        <div className="glass" style={{position:'fixed',top:0,left:0,right:0,zIndex:150,padding:'12px 16px',display:'flex',justifyContent:'space-between',alignItems:'center',borderBottom:'1px solid var(--bd)'}}>
-          <div style={{display:'flex',alignItems:'center',gap:10}}>
-            <div style={{width:30,height:30,borderRadius:8,overflow:'hidden',background:'#fff',padding:2}}>
-              <img src="https://contents.smsupermalls.com/data/uploads/2020/07/GIGAHERTZ_COMPUTER_SYSTEM.jpg" alt="Logo" style={{width:'100%',height:'100%',objectFit:'contain'}}/>
-            </div>
-            <span style={{fontSize:13,fontWeight:900,color:'var(--tx)'}}>Nexus</span>
-          </div>
-          <div style={{display:'flex',gap:8}}>
-            <button className="btn btn-primary" onClick={()=>setModal('logTask')} style={{padding:'7px 12px',fontSize:11}}>
-              <i className="fa-solid fa-plus"></i>
-            </button>
-            <button onClick={()=>setModal('profile')} style={{width:34,height:34,borderRadius:'50%',overflow:'hidden',border:'2px solid var(--p)',background:`linear-gradient(135deg,var(--p),var(--pd))`,display:'flex',alignItems:'center',justifyContent:'center',color:'#fff',fontWeight:900,fontSize:13,cursor:'pointer'}}>
-              {getInitials(user)}
-            </button>
-          </div>
-        </div>
-      </div>
-
       {/* MAIN */}
       <main className="main-content" style={{paddingTop:24}}>
-        {/* Desktop header */}
         <div className="desktop-only" style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:24}}>
           <div style={{display:'flex',alignItems:'center',gap:12}}>
             <div style={{width:36,height:36,borderRadius:10,overflow:'hidden',background:'#fff',padding:3}}>
@@ -1896,21 +2459,27 @@ const MainApp = ({user:initUser,onLogout,theme,setTheme}) => {
           </div>
         </div>
 
-        {/* Views */}
-        {view==='dashboard'&&isAdmin&&<AdminDashView employees={employees} tasks={tasks} showModal={showModal}/>}
-        {view==='dashboard'&&!isAdmin&&<DashboardView user={user} tasks={tasks} showModal={showModal}/>}
+        {view==='dashboard'&&isAdmin&&<AdminDashView employees={employees} tasks={tasks} showModal={showModal} announcements={announcements} leaveRequests={leaveRequests}/>}
+        {view==='dashboard'&&!isAdmin&&<DashboardView user={user} tasks={tasks} showModal={showModal} announcements={announcements} leaveRequests={leaveRequests} employees={employees}/>}
         {view==='tracker'&&isAdmin&&<AdminTrackerView employees={employees} tasks={tasks} showToast={showToast}/>}
-        {view==='directory'&&isAdmin&&<AdminDirectoryView employees={employees} tasks={tasks} showToast={showToast} onLogTaskForEmp={handleLogTaskForEmp}/>}
+        {view==='directory'&&isAdmin&&<AdminDirectoryView employees={employees} setEmployees={setEmployees} tasks={tasks} showToast={showToast} onLogTaskForEmp={handleLogTaskForEmp}/>}
         {view==='mytasks'&&!isAdmin&&<MyTasksView user={user} tasks={tasks} showModal={showModal} showToast={showToast}/>}
+        {view==='leaves'&&isAdmin&&<AdminLeavesView leaveRequests={leaveRequests} setLeaveRequests={setLeaveRequests} employees={employees} showToast={showToast}/>}
+        {view==='leaves'&&!isAdmin&&<LeavesView user={user} leaveRequests={leaveRequests} setLeaveRequests={setLeaveRequests} showModal={showModal} showToast={showToast}/>}
+        {view==='announcements'&&<AnnouncementsView announcements={announcements} setAnnouncements={setAnnouncements} isAdmin={isAdmin} user={user} showModal={showModal} showToast={showToast}/>}
+        {view==='leaderboard'&&<LeaderboardView employees={employees} tasks={tasks}/>}
         {view==='projects'&&<ProjectsView projects={projects} setProjects={setProjects} showModal={showModal} showToast={showToast} isAdmin={isAdmin}/>}
         {view==='settings'&&<SettingsView theme={theme} setTheme={setTheme} showToast={showToast}/>}
       </main>
 
       {/* MOBILE NAV */}
       <nav className="mobile-nav">
-        {navItems.map(item=>(
+        {navItems.slice(0,4).map(item=>(
           <button key={item.id} className={`mob-nav-item ${view===item.id?'active':''}`} onClick={()=>setView(item.id)}>
-            <span className="mob-icon"><i className={`fa-solid ${item.icon}`}></i></span>
+            <span className="mob-icon" style={{position:'relative'}}>
+              <i className={`fa-solid ${item.icon}`}></i>
+              {item.id==='leaves'&&isAdmin&&pendingLeaves>0&&<span style={{position:'absolute',top:-4,right:-4,background:'#f87171',color:'#fff',borderRadius:99,fontSize:8,fontWeight:900,padding:'1px 5px'}}>{pendingLeaves}</span>}
+            </span>
             {item.label}
           </button>
         ))}
@@ -1920,18 +2489,14 @@ const MainApp = ({user:initUser,onLogout,theme,setTheme}) => {
         </button>
       </nav>
 
-      {/* Sidebar toggle for tablet */}
-      <button onClick={()=>setSidebarOpen(p=>!p)} className="glass"
-        style={{position:'fixed',top:16,left:16,zIndex:200,width:38,height:38,borderRadius:10,border:'none',cursor:'pointer',display:'flex',alignItems:'center',justifyContent:'center',color:'var(--tx)'}}>
-        <i className="fa-solid fa-bars"></i>
-      </button>
-
       {/* MODALS */}
       {modal==='profile'&&<MyProfileModal user={user} onClose={()=>setModal(null)} onSave={setUser} showToast={showToast}/>}
       {modal==='logTask'&&<LogTaskModal user={user} onClose={()=>setModal(null)} onSave={t=>setTasks(p=>[t,...p])} showToast={showToast}/>}
+      {modal==='leaveRequest'&&<LeaveRequestModal user={user} onClose={()=>setModal(null)} onSave={r=>setLeaveRequests(p=>[r,...p])} showToast={showToast}/>}
+      {modal==='announcement'&&<AnnouncementModal user={user} onClose={()=>setModal(null)} onSave={a=>setAnnouncements(p=>[a,...p])} showToast={showToast}/>}
       {modal==='addProject'&&<AddProjectModal onClose={()=>setModal(null)} onSave={p=>setProjects(prev=>[p,...prev])} showToast={showToast}/>}
       {modal==='logTaskAdmin'&&logTaskTarget&&(
-        <LogTaskModal user={logTaskTarget} onClose={()=>{setModal(null);setLogTaskTarget(null);}} onSave={saveAdminTask} showToast={showToast}/>
+        <LogTaskModal user={logTaskTarget} onClose={()=>{setModal(null);setLogTaskTarget(null);}} onSave={t=>setTasks(p=>[t,...p])} showToast={showToast}/>
       )}
     </>
   );
@@ -1945,20 +2510,14 @@ const App = () => {
   const [theme,setTheme]=useState('dark');
   const [loading,setLoading]=useState(true);
 
-  useEffect(()=>{
-    document.documentElement.setAttribute('data-theme',theme);
-  },[theme]);
+  useEffect(()=>{document.documentElement.setAttribute('data-theme',theme);},[theme]);
 
   const changeTheme = t => {
     setTheme(t);
     document.documentElement.setAttribute('data-theme',t);
   };
 
-  // Splash screen
-  useEffect(()=>{
-    const t=setTimeout(()=>setLoading(false),1200);
-    return()=>clearTimeout(t);
-  },[]);
+  useEffect(()=>{const t=setTimeout(()=>setLoading(false),1200);return()=>clearTimeout(t);},[]);
 
   if(loading){
     return(
@@ -1968,7 +2527,7 @@ const App = () => {
         </div>
         <div style={{textAlign:'center'}}>
           <p style={{fontSize:22,fontWeight:900,color:'var(--tx)'}}>Gigahertz Nexus</p>
-          <p style={{fontSize:11,fontWeight:700,textTransform:'uppercase',letterSpacing:'.15em',color:'var(--p)',marginTop:4}}>Activity Tracker v4.0</p>
+          <p style={{fontSize:11,fontWeight:700,textTransform:'uppercase',letterSpacing:'.15em',color:'var(--p)',marginTop:4}}>Activity Tracker v5.0</p>
         </div>
         <div style={{display:'flex',gap:8}}>
           {[0,1,2].map(i=><div key={i} style={{width:8,height:8,borderRadius:'50%',background:'var(--p)',animation:`pulse 1.2s ${i*.3}s infinite`}}></div>)}
@@ -1981,20 +2540,18 @@ const App = () => {
   return <MainApp user={user} onLogout={()=>setUser(null)} theme={theme} setTheme={changeTheme}/>;
 };
 
-// Force sidebar CSS for desktop
+// Sidebar desktop fix
 const style = document.createElement('style');
 style.textContent = `
   @media(min-width:769px){
     .sidebar{transform:none!important;display:flex!important}
     .main-content{margin-left:250px!important}
-    #mob-header{display:none!important}
-    [id="mob-header"]{display:none!important}
-    button[onclick*="setSidebarOpen"]{display:none!important}
+    .mobile-nav{display:none!important}
   }
   @media(max-width:768px){
     .sidebar{display:none!important}
-    .main-content{margin-left:0!important;padding-top:72px!important}
-    #mob-header,.mobile-top-bar{display:flex!important}
+    .main-content{margin-left:0!important;padding-top:20px!important}
+    .mobile-nav{display:flex!important}
   }
 `;
 document.head.appendChild(style);
@@ -2002,31 +2559,5 @@ document.head.appendChild(style);
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(<App/>);
 </script>
-
-<!-- Mobile top header inject -->
-<script>
-// Inject mobile header after React renders
-</script>
 </body>
 </html>
-<!-- Mobile header fix -->
-<!-- If you are reading this, you should be sir Erik Chua -->
-<style>
-.mob-header-bar {
-  display: none;
-  position: fixed;
-  top: 0; left: 0; right: 0;
-  z-index: 150;
-  padding: 10px 16px;
-  align-items: center;
-  justify-content: space-between;
-  border-bottom: 1px solid var(--bd);
-  background: var(--glass-bg);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-}
-@media(max-width:768px) {
-  .mob-header-bar { display: flex !important; }
-  .main-content { padding-top: 72px !important; }
-}
-</style>
