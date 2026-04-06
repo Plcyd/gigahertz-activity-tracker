@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-<title>Gigahertz Nexus — Activity Tracker v5.0</title>
+<title>Gigahertz Nexus — Activity Tracker v5.1</title>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.development.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.development.js"></script>
@@ -14,7 +14,7 @@
 
 <style>
 /* ============================================================
-   THEME SYSTEM — 8 THEMES
+   THEME SYSTEM — 10 THEMES
 ============================================================ */
 :root {
   --p:#1a73e8; --pd:#1557b0; --pl:#e8f0fe;
@@ -79,7 +79,6 @@
   --glass-bg:rgba(2,13,26,0.82); --glass-border:rgba(14,165,233,0.18);
   --shadow:rgba(14,165,233,0.25);
 }
-/* NEW THEME: Rose Gold */
 [data-theme="rosegold"] {
   --p:#c9748a; --pd:#a85570; --pl:#fce4ec;
   --bg:#1a0d11; --wh:#2a1118; --card:#3a1820;
@@ -88,6 +87,24 @@
   --g1:#1a0d11; --g2:#2a1520; --g3:#1e1028;
   --glass-bg:rgba(42,17,24,0.82); --glass-border:rgba(201,116,138,0.18);
   --shadow:rgba(201,116,138,0.28);
+}
+[data-theme="cyberpunk"] {
+  --p:#d946ef; --pd:#c026d3; --pl:#fae8ff;
+  --bg:#0f172a; --wh:#1e293b; --card:#0f172a;
+  --tx:#fdf4ff; --tx2:#f5d0fe; --tx3:#e879f9;
+  --bd:#4a044e; --danger:#ef4444; --ok:#22c55e; --warn:#f59e0b;
+  --g1:#0f172a; --g2:#2e1065; --g3:#4a044e;
+  --glass-bg:rgba(15,23,42,0.85); --glass-border:rgba(217,70,239,0.3);
+  --shadow:rgba(217,70,239,0.4);
+}
+[data-theme="coffee"] {
+  --p:#a16207; --pd:#854d0e; --pl:#fefce8;
+  --bg:#fefce8; --wh:#ffffff; --card:#ffffff;
+  --tx:#422006; --tx2:#713f12; --tx3:#a16207;
+  --bd:#fef08a; --danger:#ef4444; --ok:#22c55e; --warn:#f59e0b;
+  --g1:#fefce8; --g2:#fef9c3; --g3:#fde047;
+  --glass-bg:rgba(255,255,255,0.9); --glass-border:rgba(161,98,7,0.2);
+  --shadow:rgba(161,98,7,0.15);
 }
 
 /* ============================================================
@@ -144,6 +161,12 @@ input,select,button,textarea{font-family:inherit;outline:none}
 }
 .input:focus{background:rgba(0,0,0,0.04);border-color:var(--p);box-shadow:0 0 0 3px color-mix(in srgb,var(--p) 15%,transparent)}
 .input-label{display:block;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--tx3);margin-bottom:6px}
+
+/* DROPDOWN FIX: Ensures option text is readable against the background in both light/dark modes */
+select.input option {
+  background-color: var(--card);
+  color: var(--tx);
+}
 
 @keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
 @keyframes fadeIn{from{opacity:0}to{opacity:1}}
@@ -207,18 +230,26 @@ input,select,button,textarea{font-family:inherit;outline:none}
 .nav-icon{width:32px;height:32px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0;background:rgba(0,0,0,0.06);transition:all .2s}
 .nav-item.active .nav-icon{background:linear-gradient(135deg,var(--p),var(--pd));color:#fff;box-shadow:0 4px 12px var(--shadow)}
 
+/* MOBILE NAV FIX: Allow scrolling so all items are visible */
 .mobile-nav{
   position:fixed;bottom:0;left:0;right:0;z-index:200;
   background:var(--glass-bg);backdrop-filter:blur(24px);
   border-top:1px solid var(--glass-border);
   display:none;padding:8px 0 max(8px,env(safe-area-inset-bottom));
   box-shadow:0 -8px 32px rgba(0,0,0,0.15);
+  overflow-x: auto;
+  overflow-y: hidden;
+  white-space: nowrap;
+  -webkit-overflow-scrolling: touch;
+  justify-content: flex-start;
 }
+.mobile-nav::-webkit-scrollbar { display: none; }
 .mob-nav-item{
   display:flex;flex-direction:column;align-items:center;gap:3px;
   padding:6px 12px;border-radius:12px;font-size:9px;font-weight:800;
   text-transform:uppercase;letter-spacing:.08em;cursor:pointer;
-  color:var(--tx3);border:none;background:none;flex:1;transition:all .2s;
+  color:var(--tx3);border:none;background:none;
+  flex: 0 0 auto; min-width: 72px; transition:all .2s;
 }
 .mob-nav-item.active{color:var(--p)}
 .mob-nav-item.active .mob-icon{background:linear-gradient(135deg,var(--p),var(--pd));color:#fff;box-shadow:0 4px 10px var(--shadow)}
@@ -263,6 +294,7 @@ input,select,button,textarea{font-family:inherit;outline:none}
 [data-theme="forest"] .nx-table tbody tr:hover td,
 [data-theme="sunset"] .nx-table tbody tr:hover td,
 [data-theme="ocean"] .nx-table tbody tr:hover td,
+[data-theme="cyberpunk"] .nx-table tbody tr:hover td,
 [data-theme="rosegold"] .nx-table tbody tr:hover td{background:rgba(255,255,255,0.03)}
 
 .quote-box{
@@ -433,7 +465,7 @@ const EMPLOYEES_INIT = rawRoster.map((r,idx) => {
   const bDay = Math.floor(Math.random()*28)+1;
   return {
     id: idx+1,
-    employeeId: `GHZ-${++_eid}`,  // CHANGED: GHTZ -> GHZ
+    employeeId: `GHZ-${++_eid}`,
     deptId: r.d,
     firstName, lastName,
     fullName: r.n,
@@ -575,8 +607,9 @@ const api = {
       else if(action==='registerEmployee') r({success:true,employeeId:'GHZ-'+Math.floor(Math.random()*9000+1000)});
       else if(action==='updateProfile') r({success:true});
       else if(action==='addProject') r({success:true});
+      else if(action==='sync') r({success:true}); // Added sync for GAS functionality
       else r({success:true,data:[]});
-    },250));
+    },800));
   },
   async ping(){
     try{
@@ -760,6 +793,8 @@ const AuthPortal = ({onLogin,theme,setTheme}) => {
     {id:'sunset',color:'#f97316',label:'Sunset'},
     {id:'ocean',color:'#0ea5e9',label:'Ocean'},
     {id:'red',color:'#ef4444',label:'Crimson'},
+    {id:'cyberpunk',color:'#d946ef',label:'Cyberpunk'},
+    {id:'coffee',color:'#a16207',label:'Coffee'},
     {id:'rosegold',color:'#c9748a',label:'Rose Gold'},
   ];
 
@@ -852,7 +887,7 @@ const AuthPortal = ({onLogin,theme,setTheme}) => {
             <img src="https://contents.smsupermalls.com/data/uploads/2020/07/GIGAHERTZ_COMPUTER_SYSTEM.jpg" alt="Logo" style={{width:'100%',height:'100%',objectFit:'contain',borderRadius:12}}/>
           </div>
           <h1 style={{fontSize:22,fontWeight:900,letterSpacing:'-.5px',color:'var(--tx)'}}>Gigahertz Nexus</h1>
-          <p style={{fontSize:10,fontWeight:700,textTransform:'uppercase',letterSpacing:'.15em',color:'var(--p)',marginTop:4}}>Activity Tracker v5.0</p>
+          <p style={{fontSize:10,fontWeight:700,textTransform:'uppercase',letterSpacing:'.15em',color:'var(--p)',marginTop:4}}>Activity Tracker v5.1</p>
         </div>
 
         <div style={{display:'flex',gap:4,background:'rgba(0,0,0,0.06)',padding:4,borderRadius:14,marginBottom:24}}>
@@ -970,7 +1005,7 @@ const AuthPortal = ({onLogin,theme,setTheme}) => {
         )}
 
         <p style={{textAlign:'center',fontSize:9,fontWeight:700,textTransform:'uppercase',letterSpacing:'.12em',color:'var(--tx3)',marginTop:20}}>
-          Gigahertz Nexus v5.0 • {new Date().getFullYear()} • Built with 💙 for Rozi
+          Gigahertz Nexus v5.1 • {new Date().getFullYear()} • Built with 💙 for Gigahertz
         </p>
       </div>
     </div>
@@ -2274,6 +2309,8 @@ const AdminDashView = ({employees,tasks,showModal,announcements,leaveRequests}) 
    SETTINGS VIEW
 ================================================================ */
 const SettingsView = ({theme,setTheme,showToast}) => {
+  const [syncing, setSyncing] = useState(false);
+
   const THEMES=[
     {id:'dark',color:'#1e293b',label:'Dark Mode',desc:'Default sleek dark interface'},
     {id:'light',color:'#1a73e8',label:'Sky Blue',desc:'Clean Google-style blue theme'},
@@ -2282,8 +2319,23 @@ const SettingsView = ({theme,setTheme,showToast}) => {
     {id:'sunset',color:'#f97316',label:'Sunset',desc:'Warm orange hues'},
     {id:'ocean',color:'#0ea5e9',label:'Ocean',desc:'Deep sea blue vibes'},
     {id:'red',color:'#ef4444',label:'Crimson',desc:'Bold red intensity'},
-    {id:'rosegold',color:'#c9748a',label:'Rose Gold ✨',desc:'Luxury rose gold for Rozi 🪻'},
+    {id:'cyberpunk',color:'#d946ef',label:'Cyberpunk',desc:'Neon futuristic vibes'},
+    {id:'coffee',color:'#a16207',label:'Coffee',desc:'Warm earthy brown tones'},
+    {id:'rosegold',color:'#c9748a',label:'Rose Gold ✨',desc:'Luxury rose gold aesthetics'},
   ];
+
+  const handleSync = async () => {
+    setSyncing(true);
+    showToast('Syncing data to cloud...', 'info');
+    const res = await api.call('sync', {});
+    setSyncing(false);
+    if(res.success) {
+      showToast('Data synchronized successfully!', 'success');
+    } else {
+      showToast('Sync failed. Please check connection.', 'error');
+    }
+  };
+
   return(
     <div className="anim-fade" style={{display:'flex',flexDirection:'column',gap:20,maxWidth:600}}>
       <div>
@@ -2312,22 +2364,27 @@ const SettingsView = ({theme,setTheme,showToast}) => {
       </div>
       <div className="glass" style={{borderRadius:20,padding:'20px 24px'}}>
         <h3 style={{fontSize:15,fontWeight:800,color:'var(--tx)',marginBottom:4}}>🔗 GAS Backend</h3>
-        <p style={{fontSize:12,color:'var(--tx3)',marginBottom:12}}>Google Apps Script backend connection.</p>
-        <div style={{fontFamily:'monospace',fontSize:11,padding:'10px 14px',borderRadius:10,background:'rgba(0,0,0,0.06)',border:'1px solid var(--bd)',wordBreak:'break-all',color:'var(--tx3)'}}>{GAS_URL.slice(0,80)}...</div>
-        <button className="btn btn-ghost" style={{marginTop:10,fontSize:12}} onClick={async()=>{
-          showToast('Testing GAS connection...','info');
-          const ok=await api.ping();
-          showToast(ok?'✅ GAS Online!':'⚠️ GAS Offline — local mode active',ok?'success':'warn');
-        }}>
-          <i className="fa-solid fa-rotate"></i> Test Connection
-        </button>
+        <p style={{fontSize:12,color:'var(--tx3)',marginBottom:12}}>Google Apps Script backend connection and sync tools.</p>
+        <div style={{fontFamily:'monospace',fontSize:11,padding:'10px 14px',borderRadius:10,background:'rgba(0,0,0,0.06)',border:'1px solid var(--bd)',wordBreak:'break-all',color:'var(--tx3)',marginBottom:12}}>{GAS_URL.slice(0,80)}...</div>
+        <div style={{display:'flex',gap:10,flexWrap:'wrap'}}>
+          <button className="btn btn-ghost" style={{fontSize:12}} onClick={async()=>{
+            showToast('Testing GAS connection...','info');
+            const ok=await api.ping();
+            showToast(ok?'✅ GAS Online!':'⚠️ GAS Offline — local mode active',ok?'success':'warn');
+          }}>
+            <i className="fa-solid fa-rotate"></i> Test Connection
+          </button>
+          <button className="btn btn-primary" style={{fontSize:12}} onClick={handleSync} disabled={syncing}>
+            {syncing ? <><span className="spinner"></span> Syncing...</> : <><i className="fa-solid fa-cloud-arrow-up"></i> Force Sync Data</>}
+          </button>
+        </div>
       </div>
       <div className="glass" style={{borderRadius:20,padding:'20px 24px'}}>
         <h3 style={{fontSize:15,fontWeight:800,color:'var(--tx)',marginBottom:4}}>ℹ️ Build Info</h3>
         <div style={{display:'flex',flexDirection:'column',gap:6,fontSize:12,color:'var(--tx3)'}}>
-          <p>Version: <strong style={{color:'var(--tx)'}}>Gigahertz Nexus v5.0</strong></p>
+          <p>Version: <strong style={{color:'var(--tx)'}}>Gigahertz Nexus v5.1</strong></p>
           <p>Year: <strong style={{color:'var(--tx)'}}>{new Date().getFullYear()}</strong></p>
-          <p>Built with: <strong style={{color:'var(--tx)'}}>💙 and a little 🪻 for Rozi</strong></p>
+          <p>Built with: <strong style={{color:'var(--tx)'}}>💙 for Gigahertz</strong></p>
           <p>Employee IDs: <strong style={{color:'var(--tx)'}}>GHZ-XXXX format</strong></p>
         </div>
       </div>
@@ -2403,7 +2460,7 @@ const MainApp = ({user:initUser,onLogout,theme,setTheme}) => {
           </div>
           <div>
             <p style={{fontSize:12,fontWeight:900,color:'var(--tx)'}}>Gigahertz Nexus</p>
-            <p style={{fontSize:9,color:'var(--p)',fontWeight:700,textTransform:'uppercase',letterSpacing:'.08em'}}>v5.0</p>
+            <p style={{fontSize:9,color:'var(--p)',fontWeight:700,textTransform:'uppercase',letterSpacing:'.08em'}}>v5.1</p>
           </div>
         </div>
         <nav style={{padding:'12px',flex:1,display:'flex',flexDirection:'column',gap:4,overflowY:'auto'}}>
@@ -2474,7 +2531,7 @@ const MainApp = ({user:initUser,onLogout,theme,setTheme}) => {
 
       {/* MOBILE NAV */}
       <nav className="mobile-nav">
-        {navItems.slice(0,4).map(item=>(
+        {navItems.map(item=>(
           <button key={item.id} className={`mob-nav-item ${view===item.id?'active':''}`} onClick={()=>setView(item.id)}>
             <span className="mob-icon" style={{position:'relative'}}>
               <i className={`fa-solid ${item.icon}`}></i>
@@ -2527,7 +2584,7 @@ const App = () => {
         </div>
         <div style={{textAlign:'center'}}>
           <p style={{fontSize:22,fontWeight:900,color:'var(--tx)'}}>Gigahertz Nexus</p>
-          <p style={{fontSize:11,fontWeight:700,textTransform:'uppercase',letterSpacing:'.15em',color:'var(--p)',marginTop:4}}>Activity Tracker v5.0</p>
+          <p style={{fontSize:11,fontWeight:700,textTransform:'uppercase',letterSpacing:'.15em',color:'var(--p)',marginTop:4}}>Activity Tracker v5.1</p>
         </div>
         <div style={{display:'flex',gap:8}}>
           {[0,1,2].map(i=><div key={i} style={{width:8,height:8,borderRadius:'50%',background:'var(--p)',animation:`pulse 1.2s ${i*.3}s infinite`}}></div>)}
