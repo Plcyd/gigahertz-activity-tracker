@@ -327,6 +327,25 @@ input,select,button,textarea{font-family:inherit;}
 
 <script>
 // ══════════════════════════════════════════════════════
+//  SAFE STORAGE WRAPPER — prevents iframe crash blocks
+// ══════════════════════════════════════════════════════
+const safeStorage = {
+  memory: {},
+  getItem: function(key) {
+    try { return localStorage.getItem(key); }
+    catch(e) { return this.memory[key] || null; }
+  },
+  setItem: function(key, value) {
+    try { localStorage.setItem(key, value); }
+    catch(e) { this.memory[key] = String(value); }
+  },
+  removeItem: function(key) {
+    try { localStorage.removeItem(key); }
+    catch(e) { delete this.memory[key]; }
+  }
+};
+
+// ══════════════════════════════════════════════════════
 //  ACTIVITY TRACKER — sends ALL frontend events to GAS
 // ══════════════════════════════════════════════════════
 const GAS_URL = 'https://script.google.com/macros/s/AKfycbyr7LyHpaTL7CuSl15LIKxxiaZCjKKdWqTjzP46GX_gj1IT5uBbArGS8IYCCF7tR9J-Jg/exec';
@@ -379,10 +398,10 @@ const ActivityTracker = (() => {
     };
     _queue.push(event);
     try {
-      const local = JSON.parse(localStorage.getItem('gh_activity') || '[]');
+      const local = JSON.parse(safeStorage.getItem('gh_activity') || '[]');
       local.push(Object.assign({ id: 'id_' + Math.random().toString(36).slice(2) }, event));
       if (local.length > 1000) local.splice(0, local.length - 1000);
-      localStorage.setItem('gh_activity', JSON.stringify(local));
+      safeStorage.setItem('gh_activity', JSON.stringify(local));
     } catch(e) {}
     if (_queue.length >= MAX_QUEUE) flush();
   }
@@ -494,25 +513,25 @@ const DEPARTMENTS = ['AUDIT','AMS','ACCOUNTING','HR','MARKETING','PROCESS IMPROV
 // ══ LOCAL DB ══
 const ldb = {
   getUsers: () => {
-    let users = JSON.parse(localStorage.getItem('gh_users') || '[]');
+    let users = JSON.parse(safeStorage.getItem('gh_users') || '[]');
     if (!users.find(u => u.empId === 'GHZ-0001')) {
       users.push({
         id: 'id_izumi123', empId: 'GHZ-0001', firstName: 'Izumi', lastName: 'Miyamura',
         password: 'izumipassword', dept: 'PRODUCT DEPARTMENT', photoBase64: '', createdAt: new Date().toISOString(), bio: ''
       });
-      localStorage.setItem('gh_users', JSON.stringify(users));
+      safeStorage.setItem('gh_users', JSON.stringify(users));
     }
     return users;
   },
-  saveUsers:   (u) => localStorage.setItem('gh_users', JSON.stringify(u)),
-  getTasks:    () => JSON.parse(localStorage.getItem('gh_tasks')   || '[]'),
-  saveTasks:   (t) => localStorage.setItem('gh_tasks', JSON.stringify(t)),
-  getPending:  () => JSON.parse(localStorage.getItem('gh_pending') || '[]'),
-  savePending: (p) => localStorage.setItem('gh_pending', JSON.stringify(p)),
+  saveUsers:   (u) => safeStorage.setItem('gh_users', JSON.stringify(u)),
+  getTasks:    () => JSON.parse(safeStorage.getItem('gh_tasks')   || '[]'),
+  saveTasks:   (t) => safeStorage.setItem('gh_tasks', JSON.stringify(t)),
+  getPending:  () => JSON.parse(safeStorage.getItem('gh_pending') || '[]'),
+  savePending: (p) => safeStorage.setItem('gh_pending', JSON.stringify(p)),
   uid: () => 'id_' + Math.random().toString(36).slice(2),
 };
 
-const localAPI = {
+const API = {
   async login(empId, password) {
     const users = ldb.getUsers();
     const u = users.find(u => u.empId === empId && u.password === password);
@@ -550,21 +569,21 @@ const localAPI = {
     return { success:false, error:'Task not found' };
   },
   async timerStart({ userId, empId, taskName }) {
-    const id=ldb.uid(), logs=JSON.parse(localStorage.getItem('gh_timerlogs')||'[]');
+    const id=ldb.uid(), logs=JSON.parse(safeStorage.getItem('gh_timerlogs')||'[]');
     logs.push({id,userId,empId,taskName,startedAt:new Date().toISOString(),stoppedAt:'',durationSeconds:0,savedAsTask:'NO'});
-    localStorage.setItem('gh_timerlogs',JSON.stringify(logs));
+    safeStorage.setItem('gh_timerlogs',JSON.stringify(logs));
     return { success:true, timerId:id };
   },
   async timerStop({ timerId, durationSeconds, savedAsTask }) {
-    const logs=JSON.parse(localStorage.getItem('gh_timerlogs')||'[]');
+    const logs=JSON.parse(safeStorage.getItem('gh_timerlogs')||'[]');
     const i=logs.findIndex(l=>l.id===timerId);
-    if(i>=0){logs[i].stoppedAt=new Date().toISOString();logs[i].durationSeconds=durationSeconds||0;logs[i].savedAsTask=savedAsTask?'YES':'NO';localStorage.setItem('gh_timerlogs',JSON.stringify(logs));}
+    if(i>=0){logs[i].stoppedAt=new Date().toISOString();logs[i].durationSeconds=durationSeconds||0;logs[i].savedAsTask=savedAsTask?'YES':'NO';safeStorage.setItem('gh_timerlogs',JSON.stringify(logs));}
     return { success:true };
   },
   async updatePhoto({ userId, photoBase64 }) {
     const users = ldb.getUsers();
     const i = users.findIndex(u => u.id === userId);
-    if(i >= 0) { users[i].photoBase64 = photoBase64; ldb.saveUsers(users); localStorage.setItem(`gh_photo_${userId}`, photoBase64); AdminSync.syncUser(users[i]); return { success:true }; }
+    if(i >= 0) { users[i].photoBase64 = photoBase64; ldb.saveUsers(users); safeStorage.setItem(`gh_photo_${userId}`, photoBase64); AdminSync.syncUser(users[i]); return { success:true }; }
     return { success:false, error:'User not found' };
   },
   async updateBio({ userId, bio }) {
@@ -575,7 +594,7 @@ const localAPI = {
   }
 };
 
-const api = localAPI;
+const api = API;
 
 // ══ HELPERS ══
 const todayStr  = () => new Date().toISOString().split('T')[0];
@@ -622,15 +641,18 @@ const useRealTimeClock = () => {
 // ══ ADMIN SYNC ══
 const AdminSync = {
   _channel: null,
-  init() { try { this._channel = new BroadcastChannel('gigahertz_sync'); } catch(e) {} },
+  init() { 
+    try { this._channel = new BroadcastChannel('gigahertz_sync'); } 
+    catch(e) {} 
+  },
   broadcast(event, data) {
     const payload = { event, data, timestamp: Date.now() };
     if (this._channel) { try { this._channel.postMessage(payload); } catch(e) {} }
     window.dispatchEvent(new CustomEvent(`gh-sync-${event}`, { detail: data }));
   },
   syncTask(task) {
-    const tasks = JSON.parse(localStorage.getItem('gh_tasks') || '[]');
-    if (!tasks.find(t => t.id === task.id)) { tasks.push(task); localStorage.setItem('gh_tasks', JSON.stringify(tasks)); }
+    const tasks = JSON.parse(safeStorage.getItem('gh_tasks') || '[]');
+    if (!tasks.find(t => t.id === task.id)) { tasks.push(task); safeStorage.setItem('gh_tasks', JSON.stringify(tasks)); }
     this.broadcast('task_added', task);
   },
   syncActivity(activity) { this.broadcast('activity_logged', activity); },
@@ -666,7 +688,7 @@ const LoginPage = ({onLogin, onGoRegister, onForgot, darkMode, toggleDark}) => {
   const [showPw, setShowPw]         = useState(false); // Controls password visibility
 
   useEffect(() => {
-    const savedId = localStorage.getItem('gh_remember_id');
+    const savedId = safeStorage.getItem('gh_remember_id');
     if (savedId) { setEmpIdInput(savedId); setRemember(true); }
     ActivityTracker.setPage('login');
   }, []);
@@ -679,8 +701,8 @@ const LoginPage = ({onLogin, onGoRegister, onForgot, darkMode, toggleDark}) => {
     const res = await api.login(identifier, pw);
     setLoading(false);
     if (res.success) {
-      if (remember) localStorage.setItem('gh_remember_id', identifier);
-      else          localStorage.removeItem('gh_remember_id');
+      if (remember) safeStorage.setItem('gh_remember_id', identifier);
+      else          safeStorage.removeItem('gh_remember_id');
       onLogin(res.user);
     } else {
       setErr(res.error || 'Invalid credentials.');
@@ -712,7 +734,6 @@ const LoginPage = ({onLogin, onGoRegister, onForgot, darkMode, toggleDark}) => {
             <input className="form-input" type={showPw?"text":"password"} placeholder="Password"
               value={pw} onChange={e=>setPw(e.target.value)} onKeyDown={e=>e.key==='Enter'&&submit()} style={{paddingRight:40}}/>
             <button type="button" className="pw-toggle-btn" onClick={()=>setShowPw(!showPw)}>
-              {/* Show crossed eye if visible, open eye if hidden */}
               {showPw ? <EyeOffIcon/> : <EyeIcon/>}
             </button>
           </div>
@@ -1025,12 +1046,12 @@ const DashboardPage = ({user, tasks, onTasksChanged, activeTimer, setActiveTimer
   const prodScore = Math.min(100, Math.round((weekMins / 2400) * 100));
 
   useEffect(() => {
-    if (activeTimer) localStorage.setItem('gh_active_timer', JSON.stringify(activeTimer));
-    else             localStorage.removeItem('gh_active_timer');
+    if (activeTimer) safeStorage.setItem('gh_active_timer', JSON.stringify(activeTimer));
+    else             safeStorage.removeItem('gh_active_timer');
   }, [activeTimer]);
 
   useEffect(() => {
-    const saved = localStorage.getItem('gh_active_timer');
+    const saved = safeStorage.getItem('gh_active_timer');
     if (saved && !activeTimer) setActiveTimer(JSON.parse(saved));
   }, []);
 
@@ -1530,7 +1551,7 @@ const ProfilePage = ({ user, tasks, onUpdateUser, pushNotif, toggleMenu }) => {
 
   const handleSaveBio = async () => {
     setSavingBio(true);
-    const res = await localAPI.updateBio({ userId:user.id, bio });
+    const res = await API.updateBio({ userId:user.id, bio });
     if (res.success) {
       onUpdateUser({ ...user, bio });
       pushNotif('Bio updated successfully!', 'success');
@@ -1552,7 +1573,7 @@ const ProfilePage = ({ user, tasks, onUpdateUser, pushNotif, toggleMenu }) => {
       <div className="profile-grid">
         <div className="stat-card" style={{textAlign:'center',padding:'40px 24px'}}>
           <div className="avatar-wrapper">
-            <img src={user?.photoBase64 || localStorage.getItem(`gh_photo_${user?.id}`) || defaultAvatar} className="avatar-img" alt="Profile"/>
+            <img src={user?.photoBase64 || safeStorage.getItem(`gh_photo_${user?.id}`) || defaultAvatar} className="avatar-img" alt="Profile"/>
             {loading
               ? <div className="avatar-btn" style={{cursor:'wait'}}><span className="spinner" style={{width:16,height:16,borderWidth:2}}/></div>
               : <button onClick={()=>fileInputRef.current.click()} className="avatar-btn">
@@ -1653,11 +1674,11 @@ const App = () => {
   const [elapsed, setElapsed]     = useState(0);
   const [notif, setNotif]         = useState(null);
   const [notifHistory, setNotifHistory] = useState([]);
-  const [darkMode, setDarkMode]   = useState(() => localStorage.getItem('gh_dark') === '1');
+  const [darkMode, setDarkMode]   = useState(() => safeStorage.getItem('gh_dark') === '1');
   const [sidebarOpen, setSidebarOpen] = useState(false);
   
   // DYNAMIC THEME ACCENT
-  const [themeAccent, setThemeAccent] = useState(() => localStorage.getItem('gh_accent') || 'blue');
+  const [themeAccent, setThemeAccent] = useState(() => safeStorage.getItem('gh_accent') || 'blue');
 
   const pushNotif = useCallback((msg, type) => {
     setNotif({msg, type});
@@ -1666,7 +1687,7 @@ const App = () => {
 
   useEffect(() => {
     document.documentElement.setAttribute('data-theme', darkMode ? 'dark' : 'light');
-    localStorage.setItem('gh_dark', darkMode ? '1' : '0');
+    safeStorage.setItem('gh_dark', darkMode ? '1' : '0');
   }, [darkMode]);
 
   useEffect(() => {
@@ -1683,15 +1704,15 @@ const App = () => {
     root.style.setProperty('--p', color.p);
     root.style.setProperty('--pd', color.pd);
     root.style.setProperty('--pl', color.pl);
-    localStorage.setItem('gh_accent', themeAccent);
+    safeStorage.setItem('gh_accent', themeAccent);
   }, [themeAccent, darkMode]);
 
   const toggleDark = () => setDarkMode(d => !d);
   const toggleMenu = () => setSidebarOpen(prev => !prev);
 
   useEffect(() => {
-    const saved = localStorage.getItem('gh_user');
-    const lt    = localStorage.getItem('gh_login_time');
+    const saved = safeStorage.getItem('gh_user');
+    const lt    = safeStorage.getItem('gh_login_time');
     if (saved) {
       const u = JSON.parse(saved);
       setUser(u);
@@ -1699,7 +1720,7 @@ const App = () => {
       if (lt) {
         const d = lt.split('T')[0];
         if (d === todayStr()) { setLoginTime(lt); }
-        else { const n = new Date().toISOString(); setLoginTime(n); localStorage.setItem('gh_login_time', n); }
+        else { const n = new Date().toISOString(); setLoginTime(n); safeStorage.setItem('gh_login_time', n); }
       }
       setPage('dashboard');
       ActivityTracker.setPage('dashboard');
@@ -1723,8 +1744,8 @@ const App = () => {
   const doLogin = (u) => {
     const lt = new Date().toISOString();
     setUser(u); setLoginTime(lt);
-    localStorage.setItem('gh_user', JSON.stringify(u));
-    localStorage.setItem('gh_login_time', lt);
+    safeStorage.setItem('gh_user', JSON.stringify(u));
+    safeStorage.setItem('gh_login_time', lt);
     ActivityTracker.login(u);
     ActivityTracker.setPage('dashboard');
     loadTasks(u);
@@ -1735,8 +1756,8 @@ const App = () => {
   const doRegister = (u) => {
     const lt = new Date().toISOString();
     setUser(u); setLoginTime(lt);
-    localStorage.setItem('gh_user', JSON.stringify(u));
-    localStorage.setItem('gh_login_time', lt);
+    safeStorage.setItem('gh_user', JSON.stringify(u));
+    safeStorage.setItem('gh_login_time', lt);
     ActivityTracker.register(u);
     ActivityTracker.setPage('dashboard');
     setTasks([]); setPage('dashboard');
@@ -1745,7 +1766,7 @@ const App = () => {
 
   const handleUpdateUser = (updatedUser) => {
     setUser(updatedUser);
-    localStorage.setItem('gh_user', JSON.stringify(updatedUser));
+    safeStorage.setItem('gh_user', JSON.stringify(updatedUser));
     ActivityTracker.setUser(updatedUser);
   };
 
@@ -1753,7 +1774,7 @@ const App = () => {
     ActivityTracker.logout();
     ActivityTracker.flush();
     setUser(null); setLoginTime(null); setTasks([]); setActiveTimer(null); setElapsed(0);
-    localStorage.removeItem('gh_user'); localStorage.removeItem('gh_login_time');
+    safeStorage.removeItem('gh_user'); safeStorage.removeItem('gh_login_time');
     ActivityTracker.clearUser();
     setPage('login');
   };
@@ -1799,4 +1820,6 @@ ReactDOM.createRoot(document.getElementById('root')).render(<App/>);
 </script>
 </body>
 </html>
+<!-- Sir Erik the BEst --> 
 
+<!
