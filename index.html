@@ -531,7 +531,7 @@ const ldb = {
   uid: () => 'id_' + Math.random().toString(36).slice(2),
 };
 
-const API = {
+const localAPI = {
   async login(empId, password) {
     const users = ldb.getUsers();
     const u = users.find(u => u.empId === empId && u.password === password);
@@ -594,7 +594,7 @@ const API = {
   }
 };
 
-const api = API;
+const api = localAPI;
 
 // ══ HELPERS ══
 const todayStr  = () => new Date().toISOString().split('T')[0];
@@ -1551,7 +1551,7 @@ const ProfilePage = ({ user, tasks, onUpdateUser, pushNotif, toggleMenu }) => {
 
   const handleSaveBio = async () => {
     setSavingBio(true);
-    const res = await API.updateBio({ userId:user.id, bio });
+    const res = await localAPI.updateBio({ userId:user.id, bio });
     if (res.success) {
       onUpdateUser({ ...user, bio });
       pushNotif('Bio updated successfully!', 'success');
@@ -1820,6 +1820,4 @@ ReactDOM.createRoot(document.getElementById('root')).render(<App/>);
 </script>
 </body>
 </html>
-<!-- Sir Erik the BEst --> 
 
-<!
