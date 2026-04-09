@@ -1922,7 +1922,7 @@ const App = () => {
                 style={{background:'var(--card)',border:'1px solid var(--bd)',padding:'6px 12px',borderRadius:99,cursor:'pointer',color:'var(--tx2)',fontSize:12,fontWeight:700,display:'flex',alignItems:'center',gap:6,boxShadow:'var(--sh)'}}>
                 {darkMode ? '☀ Light Mode' : '🌙 Dark Mode'}
               </button>
-            </div>
+            </div> 
             {page==='dashboard' && <DashboardPage user={user} tasks={tasks} onTasksChanged={()=>loadTasks(user)} activeTimer={activeTimer} setActiveTimer={setActiveTimer} elapsed={elapsed} setElapsed={setElapsed} loginTime={loginTime} pushNotif={pushNotif} toggleMenu={toggleMenu}/>}
             {page==='tasks'     && <TasksPage     user={user} tasks={tasks} onTasksChanged={()=>loadTasks(user)} pushNotif={pushNotif} toggleMenu={toggleMenu}/>}
             {page==='analytics' && <AnalyticsPage user={user} tasks={tasks} toggleMenu={toggleMenu}/>}
