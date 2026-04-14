@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light" data-style="neumorphic">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0,viewport-fit=cover"/>
+<title>Gigahertz Nexus — Ultimate Edition</title>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.2/babel.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+<style>
+/* ============================================================
+   THEME SYSTEM — 24 THEMES
+============================================================ */
+:root {
+  --p:#00a8ff; --pd:#0072ff; --pl:#e6f7ff;
+  --bg:#e0e5ec; --wh:#e0e5ec; --card:#e0e5ec;
+  --tx:#2d3436; --tx2:#4a5270; --tx3:#8890aa;
+  --bd:rgba(255,255,255,0.4); --danger:#ef4444; --ok:#22c55e; --warn:#f59e0b;
+  --neo-sh1: 9px 9px 16px rgb(163,177,198,0.6);
+  --neo-sh2: -9px -9px 16px rgba(255,255,255, 0.5);
+  --neo-in1: inset 6px 6px 10px 0 rgba(163,177,198, 0.5);
+  --neo-in2: inset -6px -6px 10px 0 rgba(255,255,255, 0.8);
+  --glass-bg:rgba(255,255,255,0.55); --glass-border:rgba(255,255,255,0.8);
+}
+
+[data-theme="light"] { --p:#1a3af5; --pd:#1228d4; --bg:#e0e5ec; --wh:#e0e5ec; --card:#e0e5ec; --tx:#0d1533; --tx2:#4a5270; --neo-sh1: 9px 9px 16px rgb(163,177,198,0.6); --neo-sh2: -9px -9px 16px rgba(255,255,255, 0.8); }
+[data-theme="dark"] { --p:#3b82f6; --pd:#2563eb; --bg:#1e293b; --wh:#1e293b; --card:#1e293b; --tx:#f8fafc; --tx2:#cbd5e1; --neo-sh1: 9px 9px 16px rgba(0,0,0,0.4); --neo-sh2: -9px -9px 16px rgba(255,255,255, 0.05); --neo-in1: inset 6px 6px 10px 0 rgba(0,0,0, 0.4); --neo-in2: inset -6px -6px 10px 0 rgba(255,255,255, 0.05); }
+[data-theme="gigahertz"] { --p:#facc15; --pd:#eab308; --bg:#1e3a8a; --wh:#1e40af; --card:#1e40af; --tx:#f8fafc; --neo-sh1: 9px 9px 16px rgba(0,0,0,0.5); --neo-sh2: -9px -9px 16px rgba(255,255,255, 0.1); }
+[data-theme="candy"] { --p:#ec4899; --pd:#db2777; --bg:#fdf2f8; --wh:#fdf2f8; --card:#fdf2f8; --tx:#831843; --neo-sh1: 9px 9px 16px rgba(236,72,153,0.2); --neo-sh2: -9px -9px 16px rgba(255,255,255, 0.9); }
+/* Add additional 20 themes here following the same pattern */
+
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Plus Jakarta Sans',system-ui,sans-serif;background:var(--bg);color:var(--tx);min-height:100vh;transition:all .3s ease;overflow-x:hidden;}
+input,select,button,textarea{font-family:inherit;outline:none;border:none;}
+::-webkit-scrollbar{width:6px;height:6px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:var(--p);opacity:.5;border-radius:99px}
+
+/* ============================================================
+   NEUMORPHIC LOGIN UI (Based on Uploaded Image)
+============================================================ */
+.auth-wrap {
+  min-height:100vh;display:flex;align-items:center;justify-content:center;
+  background:var(--bg); padding:20px;
+}
+.neo-card {
+  background:var(--card);
+  border-radius: 20px;
+  padding: 60px 40px 40px;
+  width: 100%; max-width: 400px;
+  position: relative;
+  box-shadow: var(--neo-sh1), var(--neo-sh2);
+  display: flex; flex-direction: column; align-items: center;
+}
+.neo-avatar {
+  width: 80px; height: 80px;
+  background: var(--p);
+  border-radius: 50%;
+  position: absolute;
+  top: -40px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex; align-items: center; justify-content: center;
+  box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+  border: 4px solid var(--bg);
+  color: #fff; font-size: 36px;
+}
+.neo-title {
+  font-size: 18px; font-weight: 700; color: var(--tx2);
+  margin-bottom: 30px; text-align: center;
+}
+.neo-input-wrap { width: 100%; margin-bottom: 20px; }
+.neo-input {
+  width: 100%;
+  padding: 14px 20px;
+  border-radius: 50px;
+  background: var(--bg);
+  color: var(--tx);
+  font-size: 14px; font-weight: 600;
+  box-shadow: var(--neo-in1), var(--neo-in2);
+  transition: all 0.2s ease;
+}
+.neo-input:focus { box-shadow: inset 8px 8px 12px 0 rgba(163,177,198, 0.6), inset -8px -8px 12px 0 rgba(255,255,255, 0.9); }
+.neo-input::placeholder { color: var(--tx3); font-weight: 500; }
+
+.neo-btn {
+  width: 100%;
+  padding: 14px;
+  border-radius: 50px;
+  background: var(--p);
+  color: #fff;
+  font-size: 15px; font-weight: 700;
+  cursor: pointer;
+  box-shadow: 4px 4px 10px rgba(0,0,0,0.2), -4px -4px 10px rgba(255,255,255,0.1);
+  transition: all 0.2s ease;
+  margin-top: 10px;
+}
+.neo-btn:active { box-shadow: inset 4px 4px 10px rgba(0,0,0,0.2); transform: translateY(2px); }
+
+.neo-link {
+  font-size: 12px; color: var(--tx3); font-weight: 600;
+  margin-top: 20px; cursor: pointer; transition: color 0.2s;
+}
+.neo-link:hover { color: var(--p); }
+
+/* ============================================================
+   DASHBOARD LAYOUT
+============================================================ */
+.layout { display:flex; min-height:100vh; position:relative; }
+.sidebar {
+  width:260px; height:100vh; background:var(--card);
+  position:fixed; top:0; left:0; z-index:100;
+  box-shadow: var(--neo-sh1);
+  display:flex; flexDirection:column; transition:transform 0.3s;
+}
+.main {
+  margin-left:260px; flex:1; min-height:100vh; padding:30px 40px;
+  display:flex; flexDirection:column; gap:24px; transition:margin 0.3s;
+}
+
+.neo-box {
+  background: var(--card); border-radius: 20px; padding: 24px;
+  box-shadow: var(--neo-sh1), var(--neo-sh2);
+}
+.neo-btn-icon {
+  width: 40px; height: 40px; border-radius: 50%;
+  background: var(--card); color: var(--p);
+  display: flex; align-items: center; justify-content: center;
+  box-shadow: var(--neo-sh1), var(--neo-sh2); cursor: pointer;
+}
+.neo-btn-icon:active { box-shadow: var(--neo-in1), var(--neo-in2); }
+
+/* Sidebar Nav */
+.nav-item {
+  display:flex; align-items:center; gap:14px; padding:14px 20px;
+  color:var(--tx2); font-weight:700; font-size:14px; cursor:pointer;
+  border-radius: 12px; margin: 0 16px 8px; transition: all 0.2s;
+}
+.nav-item:hover { background: rgba(0,0,0,0.03); }
+.nav-item.active {
+  background: var(--bg); color: var(--p);
+  box-shadow: var(--neo-in1), var(--neo-in2);
+}
+
+.gh-table { width:100%; border-collapse:collapse; text-align:left; }
+.gh-table th { padding:14px; font-size:12px; color:var(--tx3); text-transform:uppercase; border-bottom: 2px solid rgba(0,0,0,0.05); }
+.gh-table td { padding:14px; font-size:14px; font-weight:600; border-bottom: 1px solid rgba(0,0,0,0.05); }
+
+/* Mobile */
+@media (max-width: 768px) {
+  .sidebar { transform: translateX(-100%); }
+  .main { margin-left: 0; padding: 20px; padding-bottom: 90px; }
+  .mobile-nav {
+    display: flex; position: fixed; bottom: 0; left: 0; right: 0;
+    background: var(--card); padding: 10px 20px;
+    box-shadow: 0 -5px 20px rgba(0,0,0,0.1); z-index: 200;
+    justify-content: space-between; border-radius: 20px 20px 0 0;
+  }
+  .mob-nav-btn {
+    display: flex; flex-direction: column; align-items: center; gap: 4px;
+    font-size: 10px; font-weight: 700; color: var(--tx3);
+  }
+  .mob-nav-btn.active { color: var(--p); }
+}
+@media (min-width: 769px) { .mobile-nav { display: none; } }
+</style>
+</head>
+<body>
+<div id="root"></div>
+
+<script type="text/babel">
+const { useState, useEffect, useRef } = React;
+
+// Dummy DB
+const DB = {
+  PRESETS: ['Code Review', 'Client Meeting', 'Bug Fixing', 'System Architecture', 'Documentation', 'Break'],
+  THEMES: ['light', 'dark', 'gigahertz', 'candy', 'matrix', 'ocean', 'cyberpunk', 'coffee']
+};
+
+const AuthPage = ({ onLogin }) => {
+  const [empId, setEmpId] = useState('');
+  const [pw, setPw] = useState('');
+  const [err, setErr] = useState('');
+
+  const submit = () => {
+    // STRICT GHZ-#### FORMAT
+    const idRegex = /^GHZ-\d{4}$/;
+    if (!idRegex.test(empId.trim().toUpperCase())) {
+      setErr('Strict Format: GHZ-#### (e.g. GHZ-0001)');
+      return;
+    }
+    if (!pw) { setErr('Password required'); return; }
+    
+    setErr('');
+    onLogin({ empId: empId.toUpperCase(), firstName: 'Piolo', role: 'Dev' });
+  };
+
+  return (
+    <div className="auth-wrap">
+      <div className="neo-card">
+        <div className="neo-avatar"><i className="fa-solid fa-user"></i></div>
+        <h2 className="neo-title">Member Login</h2>
+        
+        {err && <div style={{color:'var(--danger)', fontSize:12, fontWeight:700, marginBottom:10}}>{err}</div>}
+        
+        <div className="neo-input-wrap">
+          <input className="neo-input" placeholder="Username (GHZ-####)" value={empId} onChange={e=>setEmpId(e.target.value)} />
+        </div>
+        <div className="neo-input-wrap">
+          <input className="neo-input" type="password" placeholder="Password" value={pw} onChange={e=>setPw(e.target.value)} />
+        </div>
+        
+        <button className="neo-btn" onClick={submit}>Sign In</button>
+        <div className="neo-link">Forgot Password?</div>
+      </div>
+    </div>
+  );
+};
+
+const Dashboard = ({ user, tasks, setTasks }) => {
+  const [activeTimer, setActiveTimer] = useState(null);
+  const [elapsed, setElapsed] = useState(0);
+  const [queue, setQueue] = useState([]);
+  const [selTask, setSelTask] = useState('');
+
+  useEffect(() => {
+    if (!activeTimer || activeTimer.paused) return;
+    const t = setInterval(() => setElapsed(prev => prev + 1), 1000);
+    return () => clearInterval(t);
+  }, [activeTimer]);
+
+  const startTask = (taskName) => {
+    if (!taskName) return;
+    const stamp = new Date().toLocaleString();
+    
+    // Auto queue logic
+    if (activeTimer) {
+      setQueue(prev => [{ ...activeTimer, elapsed, paused: true }, ...prev]);
+    }
+    
+    setActiveTimer({ name: taskName, start: stamp, paused: false });
+    setElapsed(0);
+    setSelTask('');
+  };
+
+  const stopTask = () => {
+    if (!activeTimer) return;
+    const mins = Math.max(1, Math.round(elapsed / 60));
+    setTasks(prev => [{
+      id: Date.now(),
+      name: activeTimer.name,
+      start: activeTimer.start,
+      end: new Date().toLocaleString(),
+      mins
+    }, ...prev]);
+    setActiveTimer(null);
+    setElapsed(0);
+  };
+
+  const resumeQueue = (q) => {
+    if (activeTimer) setQueue(prev => [{...activeTimer, elapsed, paused: true}, ...prev.filter(x => x.name !== q.name)]);
+    else setQueue(prev => prev.filter(x => x.name !== q.name));
+    setActiveTimer({ ...q, paused: false });
+    setElapsed(q.elapsed);
+  };
+
+  const totalMins = tasks.reduce((sum, t) => sum + t.mins, 0);
+  const prodScore = Math.min(100, Math.round((totalMins / 480) * 100)); // Based on 8hrs
+  
+  const H = Math.floor(elapsed / 3600);
+  const M = Math.floor((elapsed % 3600) / 60);
+  const S = elapsed % 60;
+
+  return (
+    <>
+      <div style={{display:'flex', justifyContent:'space-between', alignItems:'center'}}>
+        <div>
+          <h1 style={{fontSize:28, fontWeight:900}}>Dashboard</h1>
+          <p style={{color:'var(--tx3)', fontWeight:600}}>Welcome back, {user.firstName}</p>
+        </div>
+      </div>
+
+      <div style={{display:'grid', gridTemplateColumns:'repeat(auto-fit, minmax(200px, 1fr))', gap:20}}>
+        <div className="neo-box" style={{textAlign:'center'}}>
+          <div style={{fontSize:12, color:'var(--tx3)', fontWeight:800, textTransform:'uppercase'}}>Total Logged</div>
+          <div style={{fontSize:32, fontWeight:900, color:'var(--p)'}}>{tasks.length}</div>
+        </div>
+        <div className="neo-box" style={{textAlign:'center'}}>
+          <div style={{fontSize:12, color:'var(--tx3)', fontWeight:800, textTransform:'uppercase'}}>Total Minutes</div>
+          <div style={{fontSize:32, fontWeight:900, color:'var(--p)'}}>{totalMins}</div>
+        </div>
+        <div className="neo-box" style={{textAlign:'center'}}>
+          <div style={{fontSize:12, color:'var(--tx3)', fontWeight:800, textTransform:'uppercase'}}>Productivity</div>
+          <div style={{fontSize:32, fontWeight:900, color:'var(--p)'}}>{prodScore}%</div>
+        </div>
+      </div>
+
+      <div style={{display:'grid', gridTemplateColumns:'1fr 1fr', gap:24}}>
+        <div className="neo-box">
+          <h3 style={{fontSize:16, fontWeight:800, marginBottom:20}}>Time Tracker</h3>
+          {activeTimer ? (
+            <div style={{textAlign:'center', padding:'20px 0'}}>
+              <div style={{fontSize:20, fontWeight:800, color:'var(--tx)', marginBottom:10}}>{activeTimer.name}</div>
+              <div style={{fontSize:48, fontWeight:900, color:'var(--p)', fontFamily:'monospace'}}>{String(H).padStart(2,'0')}:{String(M).padStart(2,'0')}:{String(S).padStart(2,'0')}</div>
+              <button className="neo-btn" onClick={stopTask} style={{background:'var(--danger)', maxWidth:200, marginTop:20}}>Stop & Save</button>
+            </div>
+          ) : (
+            <div>
+              <select className="neo-input" style={{marginBottom:14}} value={selTask} onChange={e=>setSelTask(e.target.value)}>
+                <option value="">-- Choose Task --</option>
+                {DB.PRESETS.map(p=><option key={p}>{p}</option>)}
+              </select>
+              <input className="neo-input" placeholder="Or type custom task..." onKeyDown={e=>{if(e.key==='Enter') startTask(e.target.value)}} />
+              <button className="neo-btn" onClick={()=>startTask(selTask)} style={{marginTop:14}}>Start Tracking</button>
+            </div>
+          )}
+        </div>
+
+        <div className="neo-box">
+          <h3 style={{fontSize:16, fontWeight:800, marginBottom:20}}>Queue</h3>
+          {queue.length === 0 ? <p style={{color:'var(--tx3)', fontSize:13, fontWeight:600}}>No paused tasks.</p> : queue.map(q => (
+            <div key={q.name} style={{display:'flex', justifyContent:'space-between', alignItems:'center', padding:'10px 14px', background:'var(--bg)', borderRadius:12, marginBottom:10, boxShadow:'var(--neo-in1)'}}>
+              <div>
+                <div style={{fontWeight:800}}>{q.name}</div>
+                <div style={{fontSize:12, color:'var(--tx3)'}}>{Math.floor(q.elapsed/60)}m {q.elapsed%60}s</div>
+              </div>
+              <button className="neo-btn" style={{width:'auto', padding:'8px 16px', marginTop:0}} onClick={()=>resumeQueue(q)}>Resume</button>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <div className="neo-box">
+        <h3 style={{fontSize:16, fontWeight:800, marginBottom:20}}>Today's Logs</h3>
+        <div style={{overflowX:'auto'}}>
+          <table className="gh-table">
+            <thead><tr><th>Task</th><th>Start</th><th>End</th><th>Minutes</th></tr></thead>
+            <tbody>
+              {tasks.length === 0 ? <tr><td colSpan="4" style={{textAlign:'center', color:'var(--tx3)'}}>No logs yet.</td></tr> : tasks.map(t => (
+                <tr key={t.id}>
+                  <td style={{fontWeight:800}}>{t.name}</td>
+                  <td>{t.start}</td>
+                  <td>{t.end}</td>
+                  <td style={{color:'var(--p)', fontWeight:900}}>{t.mins}m</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </>
+  );
+};
+
+const Settings = ({ theme, setTheme }) => {
+  return (
+    <div className="neo-box">
+      <h2 style={{fontSize:24, fontWeight:900, marginBottom:20}}>Settings & Themes</h2>
+      <div style={{display:'grid', gridTemplateColumns:'repeat(auto-fill, minmax(150px, 1fr))', gap:16}}>
+        {DB.THEMES.map(t => (
+          <div key={t} onClick={()=>setTheme(t)} style={{
+            padding:'16px', borderRadius:'16px', textAlign:'center', cursor:'pointer', fontWeight:800, textTransform:'capitalize',
+            background:'var(--bg)', boxShadow: theme===t ? 'var(--neo-in1), var(--neo-in2)' : 'var(--neo-sh1), var(--neo-sh2)',
+            color: theme===t ? 'var(--p)' : 'var(--tx)'
+          }}>
+            {t}
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+};
+
+const App = () => {
+  const [user, setUser] = useState(null);
+  const [view, setView] = useState('dash');
+  const [theme, setTheme] = useState('light');
+  const [tasks, setTasks] = useState([]);
+
+  useEffect(() => { document.documentElement.setAttribute('data-theme', theme); }, [theme]);
+
+  if (!user) return <AuthPage onLogin={setUser} />;
+
+  return (
+    <div className="layout">
+      <aside className="sidebar">
+        <div style={{padding:'30px 20px', textAlign:'center', fontWeight:900, fontSize:20, color:'var(--p)'}}>
+          <i className="fa-solid fa-bolt"></i> GIGAHERTZ
+        </div>
+        <nav style={{flex:1, marginTop:20}}>
+          <div className={`nav-item ${view==='dash'?'active':''}`} onClick={()=>setView('dash')}><i className="fa-solid fa-home"></i> Dashboard</div>
+          <div className={`nav-item ${view==='settings'?'active':''}`} onClick={()=>setView('settings')}><i className="fa-solid fa-gear"></i> Settings</div>
+        </nav>
+        <div style={{padding:'20px'}}>
+          <div className="nav-item" onClick={()=>setUser(null)} style={{color:'var(--danger)', boxShadow:'var(--neo-sh1)'}}>
+            <i className="fa-solid fa-power-off"></i> Logout
+          </div>
+        </div>
+      </aside>
+
+      <main className="main">
+        {view === 'dash' && <Dashboard user={user} tasks={tasks} setTasks={setTasks} />}
+        {view === 'settings' && <Settings theme={theme} setTheme={setTheme} />}
+      </main>
+
+      <nav className="mobile-nav">
+        <div className={`mob-nav-btn ${view==='dash'?'active':''}`} onClick={()=>setView('dash')}><i className="fa-solid fa-home text-xl"></i> Home</div>
+        <div className={`mob-nav-btn ${view==='settings'?'active':''}`} onClick={()=>setView('settings')}><i className="fa-solid fa-gear text-xl"></i> Settings</div>
+        <div className="mob-nav-btn" onClick={()=>setUser(null)} style={{color:'var(--danger)'}}><i className="fa-solid fa-power-off text-xl"></i> Logout</div>
+      </nav>
+    </div>
+  );
+};
+
+ReactDOM.createRoot(document.getElementById('root')).render(<App/>);
+</script>
+</body>
+</html>
