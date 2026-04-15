@@ -13,7 +13,8 @@
 <link rel="icon" type="image/png" href="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQCAvsa7qD3KFRHjwrdxGM-gzFogoTraQnVUw&s">
 <style>
 :root{--p:#1a73e8;--pd:#1557b0;--pl:#e8f0fe;--bg:#e2e8f0;--wh:#ffffff;--card:rgba(255,255,255,0.7);--tx:#0f172a;--tx2:#334155;--tx3:#64748b;--bd:rgba(255,255,255,0.5);--danger:#ef4444;--ok:#22c55e;--warn:#f59e0b;--g1:#e2e8f0;--g2:#93c5fd;--g3:#c4b5fd;--glass-bg:rgba(255,255,255,0.55);--glass-border:rgba(255,255,255,0.8);--shadow:rgba(0,0,0,0.1)}
-[data-theme="gigahertz"]{--p:#60a5fa;--pd:#3b82f6;--pl:#dbeafe;--bg:#0f2463;--wh:#1e3a8a;--card:rgba(15,36,99,0.7);--tx:#f0f7ff;--tx2:#bfdbfe;--tx3:#93c5fd;--bd:rgba(255,255,255,0.15);--danger:#ef4444;--ok:#22c55e;--warn:#f59e0b;--g1:#0f2463;--g2:#1e40af;--g3:#1e3a8a;--glass-bg:rgba(15,36,99,0.5);--glass-border:rgba(147,197,253,0.3);--shadow:rgba(0,0,0,0.4)}
+[data-theme="gigahertz"]{--p:#3b82f6;--pd:#2563eb;--pl:#dbeafe;--bg:#eef2ff;--wh:#ffffff;--card:rgba(255,255,255,0.7);--tx:#0f172a;--tx2:#334155;--tx3:#64748b;--bd:rgba(0,0,0,0.05);--danger:#ef4444;--ok:#22c55e;--warn:#f59e0b;--g1:#eef2ff;--g2:#e0e7ff;--g3:#c7d2fe;--glass-bg:rgba(255,255,255,0.7);--glass-border:rgba(255,255,255,0.8);--shadow:rgba(0,0,0,0.05)}
+[data-theme="titan"]{--p:#10b981;--pd:#059669;--pl:#d1fae5;--bg:#020617;--wh:#0f172a;--card:rgba(15,23,42,0.7);--tx:#f8fafc;--tx2:#cbd5e1;--tx3:#64748b;--bd:rgba(255,255,255,0.05);--danger:#ef4444;--ok:#10b981;--warn:#f59e0b;--g1:#020617;--g2:#0f172a;--g3:#020617;--glass-bg:rgba(15,23,42,0.5);--glass-border:rgba(255,255,255,0.05);--shadow:rgba(0,0,0,0.5)}
 [data-theme="retro"]{--p:#000080;--pd:#000066;--pl:#c0c0c0;--bg:#008080;--wh:#c0c0c0;--card:rgba(192,192,192,0.4);--tx:#ffffff;--tx2:#e0e0e0;--tx3:#c0c0c0;--bd:rgba(255,255,255,0.4);--danger:#ff0000;--ok:#00ff00;--warn:#ffff00;--g1:#008080;--g2:#006666;--g3:#008080;--glass-bg:rgba(192,192,192,0.25);--glass-border:rgba(255,255,255,0.5);--shadow:rgba(0,0,0,0.5)}
 [data-theme="glasshouse"]{--p:#0ea5e9;--pd:#0284c7;--pl:#e0f2fe;--bg:#f0f9ff;--wh:#ffffff;--card:rgba(255,255,255,0.2);--tx:#0c4a6e;--tx2:#075985;--tx3:#38bdf8;--bd:rgba(255,255,255,0.7);--danger:#ef4444;--ok:#22c55e;--warn:#f59e0b;--g1:#f0f9ff;--g2:#bae6fd;--g3:#e0f2fe;--glass-bg:rgba(255,255,255,0.15);--glass-border:rgba(255,255,255,0.8);--shadow:rgba(2,132,199,0.1)}
 [data-theme="void"]{--p:#06b6d4;--pd:#0891b2;--pl:#cffafe;--bg:#000000;--wh:#0a0a0a;--card:rgba(10,10,10,0.6);--tx:#f8fafc;--tx2:#cbd5e1;--tx3:#94a3b8;--bd:rgba(6,182,212,0.3);--danger:#ef4444;--ok:#22c55e;--warn:#f59e0b;--g1:#000000;--g2:#0f172a;--g3:#000000;--glass-bg:rgba(5,5,5,0.7);--glass-border:rgba(6,182,212,0.4);--shadow:rgba(6,182,212,0.2)}
@@ -52,18 +53,19 @@ input,select,button,textarea{font-family:inherit;outline:none}
 ::placeholder{color:var(--tx3)}
 .glass{background:var(--glass-bg);backdrop-filter:blur(28px) saturate(180%);-webkit-backdrop-filter:blur(28px) saturate(180%);border:1px solid var(--glass-border);border-top:1px solid rgba(255,255,255,0.25);box-shadow:0 10px 30px var(--shadow),inset 0 1px 1px rgba(255,255,255,0.08);transition:all 0.4s cubic-bezier(0.16,1,0.3,1)}
 .glass:hover{box-shadow:0 15px 40px var(--shadow),inset 0 1px 1px rgba(255,255,255,0.12)}
+.glass-solid{background:var(--wh);border:1px solid var(--bd);box-shadow:0 4px 15px var(--shadow);border-radius:20px;}
 .btn{padding:12px 24px;border-radius:14px;font-weight:800;font-size:13px;cursor:pointer;transition:all 0.3s cubic-bezier(0.16,1,0.3,1);border:none;display:inline-flex;align-items:center;justify-content:center;gap:8px;letter-spacing:.02em}
-.btn-primary{background:linear-gradient(180deg,var(--p),var(--pd));color:#fff;box-shadow:0 4px 16px var(--shadow),inset 0 1px 1px rgba(255,255,255,0.3);text-shadow:0 1px 2px rgba(0,0,0,0.2);border-top:1px solid rgba(255,255,255,0.3)}
-.btn-primary:hover{filter:brightness(1.15);transform:translateY(-2px) scale(1.02);box-shadow:0 8px 24px var(--shadow)}
+.btn-primary{background:var(--p);color:#fff;box-shadow:0 4px 16px color-mix(in srgb,var(--p) 40%,transparent);}
+.btn-primary:hover{filter:brightness(1.15);transform:translateY(-2px);box-shadow:0 8px 24px color-mix(in srgb,var(--p) 60%,transparent)}
 .btn-primary:active{transform:translateY(1px) scale(0.98)}
-.btn-ghost{background:rgba(255,255,255,0.05);color:var(--tx2);border:1px solid var(--bd);backdrop-filter:blur(10px)}
-.btn-ghost:hover{background:rgba(255,255,255,0.12);color:var(--tx);box-shadow:0 4px 12px var(--shadow);transform:translateY(-1px)}
-.btn-danger{background:rgba(239,68,68,0.15);color:#ef4444;border:1px solid rgba(239,68,68,0.3);backdrop-filter:blur(10px)}
-.btn-danger:hover{background:#ef4444;color:#fff;box-shadow:0 4px 16px rgba(239,68,68,0.4);transform:translateY(-1px)}
-.btn-ok{background:rgba(34,197,94,0.15);color:#4ade80;border:1px solid rgba(34,197,94,0.3);backdrop-filter:blur(10px)}
-.btn-ok:hover{background:#22c55e;color:#fff;box-shadow:0 4px 16px rgba(34,197,94,0.4);transform:translateY(-1px)}
-.input{width:100%;background:rgba(0,0,0,0.15);border:1.5px solid var(--bd);border-radius:14px;padding:12px 16px;color:var(--tx);font-size:14px;font-weight:600;transition:all 0.3s cubic-bezier(0.16,1,0.3,1);box-shadow:inset 0 2px 4px rgba(0,0,0,0.08)}
-.input:focus{background:rgba(0,0,0,0.2);border-color:var(--p);box-shadow:0 0 0 4px color-mix(in srgb,var(--p) 20%,transparent),inset 0 2px 4px rgba(0,0,0,0.1);transform:translateY(-1px)}
+.btn-ghost{background:transparent;color:var(--tx2);border:1px solid var(--bd);}
+.btn-ghost:hover{background:rgba(0,0,0,0.05);color:var(--tx);}
+.btn-danger{background:rgba(239,68,68,0.15);color:#ef4444;border:1px solid rgba(239,68,68,0.3);}
+.btn-danger:hover{background:#ef4444;color:#fff;}
+.btn-ok{background:rgba(34,197,94,0.15);color:#4ade80;border:1px solid rgba(34,197,94,0.3);}
+.btn-ok:hover{background:#22c55e;color:#fff;}
+.input{width:100%;background:rgba(0,0,0,0.02);border:1px solid var(--bd);border-radius:12px;padding:12px 16px;color:var(--tx);font-size:14px;font-weight:600;transition:all 0.3s cubic-bezier(0.16,1,0.3,1);}
+.input:focus{background:rgba(0,0,0,0.05);border-color:var(--p);box-shadow:0 0 0 3px color-mix(in srgb,var(--p) 15%,transparent);}
 .input-label{display:block;font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.1em;color:var(--tx3);margin-bottom:8px}
 select.input option{background-color:var(--wh);color:var(--tx)}
 @keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
@@ -85,88 +87,74 @@ select.input option{background-color:var(--wh);color:var(--tx)}
 .progress-bar{height:6px;background:rgba(0,0,0,0.15);border-radius:99px;overflow:hidden;box-shadow:inset 0 1px 2px rgba(0,0,0,0.2)}
 .progress-fill{height:100%;background:linear-gradient(90deg,var(--p),var(--pd));border-radius:99px;transition:width 1.2s cubic-bezier(0.16,1,0.3,1)}
 .badge{display:inline-flex;align-items:center;gap:6px;padding:4px 12px;border-radius:99px;font-size:10px;font-weight:900;text-transform:uppercase;letter-spacing:.08em}
-.badge-active{background:rgba(34,197,94,0.2);color:#4ade80;border:1px solid rgba(34,197,94,0.4)}
-.badge-idle{background:rgba(245,158,11,0.2);color:#fbbf24;border:1px solid rgba(245,158,11,0.4)}
-.badge-absent{background:rgba(239,68,68,0.2);color:#f87171;border:1px solid rgba(239,68,68,0.4)}
+.badge-active{background:rgba(34,197,94,0.2);color:#10b981;border:1px solid rgba(34,197,94,0.4)}
+.badge-idle{background:rgba(245,158,11,0.2);color:#f59e0b;border:1px solid rgba(245,158,11,0.4)}
+.badge-absent{background:rgba(239,68,68,0.2);color:#ef4444;border:1px solid rgba(239,68,68,0.4)}
 .badge-leave{background:rgba(147,51,234,0.2);color:#c084fc;border:1px solid rgba(147,51,234,0.4)}
-.tag-Admin{background:rgba(59,130,246,0.2);color:#60a5fa;border:1px solid rgba(59,130,246,0.3)}
-.tag-Support{background:rgba(34,197,94,0.2);color:#4ade80;border:1px solid rgba(34,197,94,0.3)}
-.tag-Dev{background:rgba(168,85,247,0.2);color:#c084fc;border:1px solid rgba(168,85,247,0.3)}
-.tag-Meeting{background:rgba(249,115,22,0.2);color:#fb923c;border:1px solid rgba(249,115,22,0.3)}
-.tag-Operations{background:rgba(236,72,153,0.2);color:#f472b6;border:1px solid rgba(236,72,153,0.3)}
+.tag-Admin{background:rgba(59,130,246,0.15);color:#3b82f6;}
+.tag-Support{background:rgba(34,197,94,0.15);color:#22c55e;}
+.tag-Dev{background:rgba(168,85,247,0.15);color:#a855f7;}
+.tag-Meeting{background:rgba(249,115,22,0.15);color:#f97316;}
+.tag-Operations{background:rgba(236,72,153,0.15);color:#ec4899;}
 .modal-overlay{position:fixed;inset:0;z-index:999;background:rgba(0,0,0,0.6);backdrop-filter:blur(8px);display:flex;align-items:center;justify-content:center;padding:16px;animation:fadeIn 0.3s ease}
-.modal-box{background:var(--glass-bg);backdrop-filter:blur(30px) saturate(180%);border:1px solid var(--glass-border);border-top:1px solid rgba(255,255,255,0.3);border-radius:28px;width:100%;max-width:540px;max-height:90vh;overflow-y:auto;animation:bounceIn 0.5s cubic-bezier(0.16,1,0.3,1);box-shadow:0 32px 80px rgba(0,0,0,0.6),inset 0 1px 1px rgba(255,255,255,0.15)}
+.modal-box{background:var(--wh);border:1px solid var(--bd);border-radius:24px;width:100%;max-width:540px;max-height:90vh;overflow-y:auto;box-shadow:0 32px 80px rgba(0,0,0,0.4)}
 @media(max-width:640px){.modal-box{max-width:100%;border-radius:24px 24px 0 0;margin-top:auto;max-height:92vh}.modal-overlay{align-items:flex-end;padding:0}}
-.sidebar{width:260px;min-height:100vh;background:var(--glass-bg);backdrop-filter:blur(30px) saturate(180%);border-right:1px solid var(--glass-border);display:flex;flex-direction:column;position:fixed;top:0;left:0;z-index:100;transition:transform 0.4s cubic-bezier(0.16,1,0.3,1);box-shadow:4px 0 24px var(--shadow)}
+.sidebar{width:280px;min-height:100vh;background:var(--wh);border-right:1px solid var(--bd);display:flex;flex-direction:column;position:fixed;top:0;left:0;z-index:100;transition:transform 0.4s cubic-bezier(0.16,1,0.3,1);box-shadow:4px 0 24px var(--shadow)}
 .sidebar.hidden{transform:translateX(-100%)}
-.nav-item{display:flex;align-items:center;gap:14px;padding:12px 18px;border-radius:16px;font-size:13px;font-weight:800;cursor:pointer;transition:all 0.3s cubic-bezier(0.16,1,0.3,1);color:var(--tx2);border:none;background:transparent;width:100%;text-align:left}
-.nav-item:hover{background:rgba(255,255,255,0.08);color:var(--tx);transform:translateX(4px)}
-.nav-item.active{background:linear-gradient(135deg,color-mix(in srgb,var(--p) 20%,transparent),color-mix(in srgb,var(--pd) 10%,transparent));color:var(--tx);border:1px solid color-mix(in srgb,var(--p) 30%,transparent)}
-.nav-icon{width:36px;height:36px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;background:rgba(255,255,255,0.05);transition:all .3s}
-.nav-item.active .nav-icon{background:linear-gradient(180deg,var(--p),var(--pd));color:#fff;box-shadow:0 4px 12px var(--shadow)}
-.mobile-nav{position:fixed;bottom:0;left:0;right:0;z-index:200;background:var(--glass-bg);backdrop-filter:blur(30px) saturate(180%);border-top:1px solid var(--glass-border);display:none;padding:12px 12px max(12px,env(safe-area-inset-bottom));box-shadow:0 -10px 40px rgba(0,0,0,0.3);overflow-x:auto;overflow-y:hidden;-webkit-overflow-scrolling:touch;justify-content:flex-start;align-items:center;gap:8px;flex-wrap:nowrap}
+.nav-item{display:flex;align-items:center;gap:14px;padding:12px 20px;border-radius:12px;font-size:14px;font-weight:700;cursor:pointer;transition:all 0.3s ease;color:var(--tx2);border:none;background:transparent;width:100%;text-align:left;margin-bottom:4px;}
+.nav-item:hover{background:rgba(0,0,0,0.04);color:var(--tx);}
+.nav-item.active{background:color-mix(in srgb,var(--p) 10%,transparent);color:var(--p);}
+.nav-icon{width:24px;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;}
+.mobile-nav{position:fixed;bottom:0;left:0;right:0;z-index:200;background:var(--wh);border-top:1px solid var(--bd);display:none;padding:12px 12px max(12px,env(safe-area-inset-bottom));box-shadow:0 -10px 40px rgba(0,0,0,0.1);overflow-x:auto;overflow-y:hidden;-webkit-overflow-scrolling:touch;justify-content:flex-start;align-items:center;gap:8px;flex-wrap:nowrap}
 .mobile-nav::-webkit-scrollbar{display:none}
-.mob-nav-item{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;padding:8px 6px;border-radius:16px;font-size:10px;font-weight:900;text-transform:uppercase;letter-spacing:.08em;cursor:pointer;color:var(--tx3);border:none;background:transparent;flex:0 0 auto;min-width:80px;transition:all 0.3s cubic-bezier(0.16,1,0.3,1)}
-.mob-nav-item.active{color:var(--tx)}
-.mob-nav-item.active .mob-icon{background:linear-gradient(180deg,var(--p),var(--pd));color:#fff;box-shadow:0 4px 12px var(--shadow);transform:translateY(-4px)}
-.mob-icon{width:46px;height:46px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:20px;background:rgba(255,255,255,0.08);transition:all .3s}
-.main-content{margin-left:260px;min-height:100vh;padding:32px;transition:margin 0.4s cubic-bezier(0.16,1,0.3,1)}
-@media(max-width:768px){.main-content{margin-left:0;padding:16px;padding-bottom:120px}.sidebar{display:none}.mobile-nav{display:flex!important}.desktop-only{display:none!important}}
+.mob-nav-item{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;padding:8px 6px;border-radius:12px;font-size:10px;font-weight:800;text-transform:uppercase;cursor:pointer;color:var(--tx3);border:none;background:transparent;flex:0 0 auto;min-width:70px;transition:all 0.3s ease}
+.mob-nav-item.active{color:var(--p)}
+.mob-icon{width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px;background:rgba(0,0,0,0.04);transition:all .3s}
+.mob-nav-item.active .mob-icon{background:color-mix(in srgb,var(--p) 15%,transparent);color:var(--p);}
+.main-content{margin-left:280px;min-height:100vh;padding:40px;transition:margin 0.4s cubic-bezier(0.16,1,0.3,1)}
+@media(max-width:768px){.main-content{margin-left:0;padding:20px;padding-bottom:120px}.sidebar{display:none}.mobile-nav{display:flex!important}.desktop-only{display:none!important}}
 .toast-container{position:fixed;top:24px;right:24px;z-index:2000;display:flex;flex-direction:column;gap:12px;max-width:380px;width:calc(100% - 48px)}
-.toast{display:flex;align-items:center;gap:14px;padding:16px 20px;border-radius:18px;background:var(--glass-bg);backdrop-filter:blur(30px) saturate(180%);border:1px solid var(--glass-border);box-shadow:0 12px 40px rgba(0,0,0,0.4);animation:slideLeft 0.4s cubic-bezier(0.16,1,0.3,1);font-size:13px;font-weight:800;color:var(--tx)}
+.toast{display:flex;align-items:center;gap:14px;padding:16px 20px;border-radius:18px;background:var(--wh);border:1px solid var(--bd);box-shadow:0 12px 40px rgba(0,0,0,0.2);animation:slideLeft 0.4s cubic-bezier(0.16,1,0.3,1);font-size:13px;font-weight:800;color:var(--tx)}
 @media(max-width:640px){.toast-container{top:auto;bottom:110px;right:12px;width:calc(100% - 24px)}}
-.avatar{border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:900;color:#fff;flex-shrink:0;overflow:hidden;border:2px solid var(--glass-border);box-shadow:0 4px 10px rgba(0,0,0,0.2)}
+.avatar{border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:900;color:#fff;flex-shrink:0;overflow:hidden;border:2px solid var(--wh);box-shadow:0 4px 10px rgba(0,0,0,0.1)}
 .avatar img{width:100%;height:100%;object-fit:cover}
-.av-sm{width:38px;height:38px;font-size:14px}
-.av-md{width:50px;height:50px;font-size:18px}
-.av-lg{width:68px;height:68px;font-size:26px}
-.av-xl{width:96px;height:96px;font-size:36px}
-.stat-card{transition:transform 0.4s cubic-bezier(0.16,1,0.3,1),box-shadow 0.4s;cursor:default}
-.stat-card:hover{transform:translateY(-6px) scale(1.02);box-shadow:0 24px 50px var(--shadow)}
+.av-sm{width:40px;height:40px;font-size:14px}
+.av-md{width:56px;height:56px;font-size:20px}
+.av-lg{width:80px;height:80px;font-size:28px}
+.av-xl{width:120px;height:120px;font-size:40px}
 .nx-table{width:100%;border-collapse:separate;border-spacing:0}
-.nx-table th{padding:16px 24px;text-align:left;font-size:11px;font-weight:900;text-transform:uppercase;letter-spacing:.1em;color:var(--tx3);border-bottom:1px solid var(--bd);background:rgba(0,0,0,0.1)}
+.nx-table th{padding:16px 24px;text-align:left;font-size:11px;font-weight:900;text-transform:uppercase;letter-spacing:.1em;color:var(--tx3);border-bottom:1px solid var(--bd);background:rgba(0,0,0,0.03)}
 .nx-table td{padding:18px 24px;border-bottom:1px solid var(--bd);font-size:13px;font-weight:600}
 .nx-table tbody tr{transition:background .2s ease}
-.nx-table tbody tr:hover td{background:rgba(255,255,255,0.04)}
-.quote-box{background:linear-gradient(135deg,color-mix(in srgb,var(--p) 15%,transparent),color-mix(in srgb,var(--pd) 5%,transparent));border:1px solid color-mix(in srgb,var(--p) 30%,transparent);border-top:1px solid rgba(255,255,255,0.2);border-radius:24px;padding:28px 32px;position:relative;overflow:hidden;box-shadow:inset 0 1px 1px rgba(255,255,255,0.08),0 12px 30px rgba(0,0,0,0.15)}
-.quote-box::before{content:'"';font-size:160px;font-weight:900;color:var(--p);opacity:.1;position:absolute;top:-20px;left:10px;line-height:1;font-family:Georgia,serif}
-.month-tab{padding:10px 18px;border-radius:14px;font-size:12px;font-weight:800;cursor:pointer;border:1px solid var(--bd);background:rgba(255,255,255,0.05);color:var(--tx2);transition:all 0.3s cubic-bezier(0.16,1,0.3,1);white-space:nowrap}
-.month-tab.active{background:linear-gradient(180deg,var(--p),var(--pd));color:#fff;border-color:transparent;box-shadow:0 8px 20px var(--shadow);transform:translateY(-2px)}
-.month-tab:hover:not(.active){border-color:var(--p);color:var(--tx);background:rgba(255,255,255,0.08);transform:translateY(-1px)}
-.live-clock{position:fixed;bottom:24px;right:24px;z-index:50;background:var(--glass-bg);backdrop-filter:blur(30px) saturate(180%);border:1px solid var(--glass-border);border-radius:20px;padding:14px 24px;box-shadow:0 16px 40px var(--shadow);font-variant-numeric:tabular-nums;cursor:default;transition:transform 0.4s cubic-bezier(0.16,1,0.3,1)}
-.live-clock:hover{transform:scale(1.05) translateY(-6px)}
-@media(max-width:768px){.live-clock{display:none}}
+.nx-table tbody tr:hover td{background:rgba(0,0,0,0.02)}
+.quote-box{background:color-mix(in srgb,var(--p) 8%,transparent);border:1px solid color-mix(in srgb,var(--p) 20%,transparent);border-radius:16px;padding:16px 24px;position:relative;display:flex;align-items:center;gap:12px;margin-bottom:24px;}
+.quote-box i{color:#fbbf24;font-size:20px;}
+.quote-text{font-size:14px;font-weight:600;color:var(--tx);font-style:italic;}
+.month-tab{padding:8px 16px;border-radius:12px;font-size:13px;font-weight:700;cursor:pointer;border:1px solid transparent;background:transparent;color:var(--tx2);transition:all 0.3s ease;white-space:nowrap}
+.month-tab.active{background:color-mix(in srgb,var(--p) 15%,transparent);color:var(--p);border-color:color-mix(in srgb,var(--p) 30%,transparent);}
+.month-tab:hover:not(.active){background:rgba(0,0,0,0.04);color:var(--tx);}
+.live-clock{font-variant-numeric:tabular-nums;font-weight:800;font-size:18px;color:var(--tx);}
 .table-wrapper{overflow-x:auto;-webkit-overflow-scrolling:touch;border-radius:20px}
-.pw-strength{height:6px;border-radius:99px;margin-top:10px;transition:all .5s cubic-bezier(0.16,1,0.3,1)}
-.pw-msg{font-size:11px;font-weight:800;margin-top:6px}
+.timer-display{font-family:'Space Mono',monospace;font-size:40px;font-weight:700;color:var(--p);letter-spacing:2px;line-height:1;margin:10px 0;}
+.timer-running{animation:timerPulse 2s ease-in-out infinite}
+.dash-card{background:var(--wh);border-radius:20px;padding:24px;box-shadow:0 4px 20px var(--shadow);border:1px solid var(--bd);display:flex;flex-direction:column;}
+.dash-card-title{font-size:12px;font-weight:800;text-transform:uppercase;color:var(--tx3);margin-bottom:16px;display:flex;align-items:center;gap:8px;}
+.dash-card-title i{font-size:16px;color:var(--p);}
+.dash-card-value{font-size:36px;font-weight:900;color:var(--tx);line-height:1;}
+.dash-card-sub{font-size:12px;color:var(--tx3);margin-top:8px;font-weight:600;display:flex;align-items:center;gap:6px;}
+.task-queue-item{display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid var(--bd);transition:all .3s;}
+.task-queue-item:last-child{border-bottom:none;}
+.profile-cover{height:200px;background:linear-gradient(135deg,var(--p),var(--pd));border-radius:24px;position:relative;margin-bottom:60px;}
+.profile-avatar-container{position:absolute;bottom:-50px;left:50%;transform:translateX(-50%);border:4px solid var(--wh);border-radius:50%;}
+.feed-input{background:rgba(0,0,0,0.03);border:1px solid var(--bd);border-radius:16px;padding:16px;font-size:14px;color:var(--tx);resize:none;outline:none;width:100%;transition:all .3s;}
+.feed-input:focus{background:rgba(0,0,0,0.05);border-color:var(--p);}
+.feed-post{background:var(--wh);border:1px solid var(--bd);border-radius:20px;padding:20px;margin-bottom:16px;box-shadow:0 4px 12px var(--shadow);}
 .bar-chart-container{display:flex;align-items:flex-end;gap:10px;height:160px;padding:0 10px}
 .bar-item{display:flex;flex-direction:column;align-items:center;gap:8px;flex:1}
 .bar-fill{width:100%;border-radius:10px 10px 0 0;background:linear-gradient(180deg,var(--p),var(--pd));min-height:6px;transition:height 1.2s cubic-bezier(0.16,1,0.3,1)}
 .bar-label{font-size:11px;font-weight:900;color:var(--tx3);text-transform:uppercase}
 .bar-val{font-size:11px;font-weight:900;color:var(--p)}
-.announce-card{background:linear-gradient(135deg,color-mix(in srgb,var(--p) 8%,transparent),color-mix(in srgb,var(--pd) 5%,transparent));border:1px solid color-mix(in srgb,var(--p) 20%,transparent);border-radius:20px;padding:24px 28px;position:relative;transition:transform 0.3s ease}
-.announce-card:hover{transform:translateY(-2px)}
-.donut-chart{width:160px;height:160px;border-radius:50%;position:relative;display:flex;align-items:center;justify-content:center;box-shadow:inset 0 0 30px rgba(0,0,0,0.3),0 8px 24px rgba(0,0,0,0.2)}
-.donut-inner{width:100px;height:100px;background:var(--glass-bg);backdrop-filter:blur(12px);border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:20px;color:var(--tx);z-index:2}
-.chart-legend-dot{width:14px;height:14px;border-radius:4px;display:inline-block;flex-shrink:0}
-.toggle-switch{position:relative;width:48px;height:26px;display:inline-block}
-.toggle-switch input{opacity:0;width:0;height:0}
-.toggle-slider{position:absolute;cursor:pointer;top:0;left:0;right:0;bottom:0;background-color:rgba(0,0,0,0.3);border-radius:26px;transition:.4s cubic-bezier(0.16,1,0.3,1);border:1px solid var(--bd)}
-.toggle-slider:before{position:absolute;content:"";height:18px;width:18px;left:3px;bottom:3px;background-color:var(--tx);border-radius:50%;transition:.4s cubic-bezier(0.16,1,0.3,1)}
-input:checked+.toggle-slider{background:linear-gradient(90deg,var(--p),var(--pd))}
-input:checked+.toggle-slider:before{transform:translateX(22px);background-color:#fff}
-.timer-display{font-family:'Space Mono',monospace;font-size:48px;font-weight:700;color:var(--p);text-shadow:0 0 30px color-mix(in srgb,var(--p) 50%,transparent);letter-spacing:4px;line-height:1}
-.timer-running{animation:timerPulse 2s ease-in-out infinite}
-.task-queue-item{display:flex;align-items:center;gap:12px;padding:12px 16px;border-radius:16px;background:rgba(0,0,0,0.15);border:1px solid var(--bd);margin-bottom:8px;transition:all .3s}
-.task-queue-item:hover{background:rgba(255,255,255,0.06);border-color:var(--p)}
 .afk-overlay{position:fixed;inset:0;z-index:9998;background:rgba(0,0,0,0.85);backdrop-filter:blur(20px);display:flex;align-items:center;justify-content:center;animation:fadeIn 0.5s ease}
-.prod-ring-container{position:relative;width:140px;height:140px;display:flex;align-items:center;justify-content:center}
-.prod-ring-svg{position:absolute;top:0;left:0;transform:rotate(-90deg)}
-.prod-ring-inner{text-align:center;z-index:2}
-.shift-summary-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:14px}
-.shift-stat-box{background:rgba(0,0,0,0.15);border-radius:16px;padding:16px;text-align:center;border:1px solid var(--bd)}
-.kudos-card{background:rgba(255,255,255,0.04);border:1px solid var(--bd);border-radius:18px;padding:16px 20px;transition:all .3s}
-.kudos-card:hover{background:rgba(255,255,255,0.08);transform:translateY(-2px)}
 .focus-lock-overlay{position:fixed;inset:0;z-index:9990;background:rgba(0,0,0,0.92);backdrop-filter:blur(30px);display:flex;align-items:center;justify-content:center;animation:fadeIn 0.5s ease}
 .focus-timer{font-family:'Space Mono',monospace;font-size:80px;font-weight:700;line-height:1;letter-spacing:4px}
 .geo-badge{display:inline-flex;align-items:center;gap:6px;padding:6px 14px;border-radius:99px;font-size:11px;font-weight:800}
@@ -175,6 +163,23 @@ input:checked+.toggle-slider:before{transform:translateX(22px);background-color:
 .geo-checking{background:rgba(245,158,11,0.15);color:#fbbf24;border:1px solid rgba(245,158,11,0.4)}
 .landing-page{position:fixed;inset:0;z-index:5000;display:flex;align-items:center;justify-content:center;background:var(--bg);overflow:hidden}
 .landing-orb{position:absolute;border-radius:50%;filter:blur(80px);opacity:0.4;pointer-events:none}
+.prod-ring-container{position:relative;width:140px;height:140px;display:flex;align-items:center;justify-content:center}
+.prod-ring-svg{position:absolute;top:0;left:0;transform:rotate(-90deg)}
+.prod-ring-inner{text-align:center;z-index:2}
+.shift-summary-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:14px}
+.shift-stat-box{background:rgba(0,0,0,0.05);border-radius:16px;padding:16px;text-align:center;border:1px solid var(--bd)}
+.announce-card{background:var(--wh);border:1px solid var(--bd);border-radius:20px;padding:24px 28px;position:relative;transition:transform 0.3s ease;box-shadow:0 4px 15px var(--shadow)}
+.donut-chart{width:160px;height:160px;border-radius:50%;position:relative;display:flex;align-items:center;justify-content:center;box-shadow:inset 0 0 30px rgba(0,0,0,0.1),0 8px 24px var(--shadow)}
+.donut-inner{width:100px;height:100px;background:var(--wh);border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:20px;color:var(--tx);z-index:2}
+.chart-legend-dot{width:14px;height:14px;border-radius:4px;display:inline-block;flex-shrink:0}
+.toggle-switch{position:relative;width:48px;height:26px;display:inline-block}
+.toggle-switch input{opacity:0;width:0;height:0}
+.toggle-slider{position:absolute;cursor:pointer;top:0;left:0;right:0;bottom:0;background-color:rgba(0,0,0,0.1);border-radius:26px;transition:.4s cubic-bezier(0.16,1,0.3,1);border:1px solid var(--bd)}
+.toggle-slider:before{position:absolute;content:"";height:18px;width:18px;left:3px;bottom:3px;background-color:var(--tx);border-radius:50%;transition:.4s cubic-bezier(0.16,1,0.3,1)}
+input:checked+.toggle-slider{background:linear-gradient(90deg,var(--p),var(--pd))}
+input:checked+.toggle-slider:before{transform:translateX(22px);background-color:#fff}
+.pw-strength{height:6px;border-radius:99px;margin-top:10px;transition:all .5s cubic-bezier(0.16,1,0.3,1)}
+.pw-msg{font-size:11px;font-weight:800;margin-top:6px}
 @media print{.bg-orbs,.sidebar,.mobile-nav,.toast-container,.btn,.live-clock,.month-tab,select.input{display:none!important}.main-content{margin-left:0!important;padding:0!important}.glass{background:transparent!important;color:#000!important;box-shadow:none!important;border:1px solid #ccc!important;backdrop-filter:none!important}body{background:#fff!important;color:#000!important}*{color:#000!important;text-shadow:none!important}}
 </style>
 </head>
@@ -188,7 +193,7 @@ const { useState, useMemo, useEffect, useRef, useCallback } = React;
 const GAS_URL = "https://script.google.com/macros/s/AKfycbyXgU7wQD1KKUyHwoBFj52SdGeIuXJqOvOur2lqnDalNRBbjZQKX_K7a11lfKog1HHx/exec";
 
 const QUOTES = [
-  { q: "The secret of getting ahead is getting started.", a: "Mark Twain" },
+  { q: "Until we can manage time, we can manage nothing else.", a: "Peter Drucker" },
   { q: "Success is not final, failure is not fatal — it is the courage to continue that counts.", a: "Winston Churchill" },
   { q: "Great things are not done by impulse, but by a series of small things brought together.", a: "Vincent van Gogh" },
   { q: "Your time is limited, don't waste it living someone else's life.", a: "Steve Jobs" },
@@ -208,8 +213,8 @@ const DEPARTMENTS = [
 ];
 
 const THEMES = [
-  {id:'aurora',color:'#00d2ff',label:'Aurora Glass',desc:'Deep teal aero'},
   {id:'gigahertz',color:'#3b82f6',label:'Gigahertz Classic',desc:'Blue gradient classic'},
+  {id:'titan',color:'#10b981',label:'Titan Green',desc:'Green accent'},
   {id:'retro',color:'#008080',label:'Retro OS',desc:'Classic 90s aesthetic'},
   {id:'glasshouse',color:'#0ea5e9',label:'Glass House',desc:'Liquid clear glass'},
   {id:'matrix',color:'#22c55e',label:'The Matrix',desc:'Hacker terminal green'},
@@ -251,10 +256,7 @@ const PRESET_TASKS = [
   'Internal documentation and SOP update',
 ];
 
-// GHZ ID format: GHZ0000 (no dash)
 const GHZ_ID_REGEX = /^GHZ\d{4}$/;
-
-// OFFICE GEO: Gigahertz Quiapo area (approx)
 const OFFICE_LAT = 14.5994;
 const OFFICE_LNG = 120.9840;
 const GEO_RADIUS_METERS = 500;
@@ -378,80 +380,38 @@ const LEAVE_REQUESTS_INIT = [
   {id:1,empId:1,empName:'Rich Jhen Calderon',type:'Vacation',startDate:'2026-04-10',endDate:'2026-04-11',days:2,status:'Approved',reason:'Family trip',appliedDate:'2026-04-02'},
 ];
 
-const KUDOS_INIT = [
-  {id:1,fromId:'ADM-001',fromName:'Nexus Admin',toName:'James Beltran',toId:'ADM-002',message:'Outstanding job on the Q1 process improvement rollout! 🚀',date:'2026-04-08',emoji:'🌟'},
-  {id:2,fromId:1,fromName:'Rich Jhen Calderon',toName:'Kyla Joena Cabantog',toId:2,message:'Thanks for covering during the audit crunch. Super appreciate it! 💙',date:'2026-04-07',emoji:'💙'},
-];
-
 const AFK_TIMEOUT = 900;
 const POMODORO_DURATION = 25 * 60;
 
-// ================================================================
-// API BRIDGE (Connects React to Google Apps Script / google.script.run)
-// ================================================================
 const api = {
   _gasOk: null,
   async call(action, payload={}) {
     return new Promise(async (resolve) => {
-      // Setup payload mapping so frontend data matches GAS schema perfectly
       let gasAction = action;
       let gasPayload = { ...payload };
 
-      if (action === 'registerEmployee') {
-        gasAction = 'register';
-        gasPayload.empId = payload.employeeId;
-        gasPayload.dept = DEPARTMENTS.find(d => d.id === payload.deptId)?.name || 'IT';
-      } else if (action === 'updateProfile') {
-        gasAction = 'updateUserProfile';
-        gasPayload = { empId: payload.id || payload.employeeId, updates: payload };
-      } else if (action === 'logTask') {
-        gasAction = 'addTask';
-        gasPayload.empId = payload.empId || payload.employeeId;
-      } else if (action === 'login') {
-        gasAction = 'loginUser';
-      }
+      if (action === 'registerEmployee') { gasAction = 'register'; gasPayload.empId = payload.employeeId; gasPayload.dept = DEPARTMENTS.find(d => d.id === payload.deptId)?.name || 'IT'; }
+      else if (action === 'updateProfile') { gasAction = 'updateUserProfile'; gasPayload = { empId: payload.id || payload.employeeId, updates: payload }; }
+      else if (action === 'logTask') { gasAction = 'addTask'; gasPayload.empId = payload.empId || payload.employeeId; }
+      else if (action === 'login') { gasAction = 'loginUser'; }
 
-      // 1. Prioritize google.script.run (if running as container-bound)
       if (typeof google !== 'undefined' && google.script && google.script.run) {
         if (typeof google.script.run[gasAction] === 'function') {
-          google.script.run
-            .withSuccessHandler(res => { api._gasOk = true; resolve(res); })
-            .withFailureHandler(err => {
-              api._gasOk = false;
-              console.error("GAS Error:", err);
-              resolve(api._local(action, payload));
-            })
-            [gasAction](gasPayload);
+          google.script.run.withSuccessHandler(res => { api._gasOk = true; resolve(res); }).withFailureHandler(err => { api._gasOk = false; resolve(api._local(action, payload)); })[gasAction](gasPayload);
           return;
-        } else {
-          // If the direct function isn't exposed, we fallback to doPost (if supported)
-          console.warn(`Function ${gasAction} not found on google.script.run`);
         }
       }
 
-      // 2. Fallback to Web App Fetch API
       if (GAS_URL && GAS_URL.startsWith("https://script.google.com/macros/s/")) {
         try {
           const controller = new AbortController();
           const timeoutId = setTimeout(() => controller.abort(), 8000);
-          const res = await fetch(GAS_URL, {
-            method: 'POST',
-            body: JSON.stringify({ action: gasAction, ...gasPayload }),
-            headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-            signal: controller.signal
-          });
+          const res = await fetch(GAS_URL, { method: 'POST', body: JSON.stringify({ action: gasAction, ...gasPayload }), headers: { 'Content-Type': 'text/plain;charset=utf-8' }, signal: controller.signal });
           clearTimeout(timeoutId);
-          if (res.ok) {
-            const data = await res.json();
-            api._gasOk = true;
-            return resolve(data);
-          }
-        } catch (e) {
-          api._gasOk = false;
-        }
+          if (res.ok) { const data = await res.json(); api._gasOk = true; return resolve(data); }
+        } catch (e) { api._gasOk = false; }
       }
 
-      // 3. Absolute Fallback to Local Memory (Demo mode)
       if (action === 'login') return resolve(api._localLogin(payload));
       resolve(api._local(action, payload));
     });
@@ -459,11 +419,10 @@ const api = {
   _localLogin(p){
     const id=(p.identifier||'').trim().toLowerCase();
     const pw=(p.password||'').trim();
-    if((id===(ROZI_ACCOUNT.email||'').toLowerCase()||id===(ROZI_ACCOUNT.fullName||'').toLowerCase()||id===(ROZI_ACCOUNT.firstName||'').toLowerCase()||id===(ROZI_ACCOUNT.employeeId||'').toLowerCase())&&pw===ROZI_ACCOUNT.password)
-      return{success:true,user:{...ROZI_ACCOUNT}};
-    const admin=ADMIN_ACCOUNTS.find(a=>((a.email||'').toLowerCase()===id||(a.fullName||'').toLowerCase()===id||(a.employeeId||'').toLowerCase()===id)&&a.password===pw);
+    if(id==='rozi'&&pw==='hyacinth') return{success:true,user:{...ROZI_ACCOUNT}};
+    const admin=ADMIN_ACCOUNTS.find(a=>((a.email||'').toLowerCase()===id||(a.employeeId||'').toLowerCase()===id)&&a.password===pw);
     if(admin)return{success:true,user:{...admin}};
-    const emp=EMPLOYEES_INIT.find(e=>((e.email||'').toLowerCase()===id||(e.fullName||'').toLowerCase()===id||(e.firstName||'').toLowerCase()===id||(e.employeeId||'').toLowerCase()===id)&&e.password===pw);
+    const emp=EMPLOYEES_INIT.find(e=>((e.email||'').toLowerCase()===id||(e.employeeId||'').toLowerCase()===id)&&e.password===pw);
     if(emp)return{success:true,user:{...emp}};
     return{success:false, error:'Invalid credentials.'};
   },
@@ -472,22 +431,14 @@ const api = {
       if(action==='logTask') r({success:true,taskId:'LOCAL-'+Date.now()});
       else if(action==='registerEmployee') r({success:true,employeeId:payload.employeeId||'GHZ'+Math.floor(Math.random()*9000+1000)});
       else if(action==='updateProfile') r({success:true});
-      else if(action==='addProject') r({success:true});
       else if(action==='sync') r({success:true});
       else r({success:true,data:[]});
     },800));
   }
 };
 
-const fmtDate = iso => {
-  if(!iso) return '';
-  return new Date(iso+'T00:00:00').toLocaleDateString('en-PH',{year:'numeric',month:'short',day:'2-digit',weekday:'short'});
-};
-const fmtTimestamp = iso => {
-  if(!iso) return '';
-  const d = new Date(iso);
-  return d.toLocaleString('en-PH',{month:'short',day:'2-digit',year:'numeric',hour:'2-digit',minute:'2-digit',hour12:true});
-};
+const fmtDate = iso => { if(!iso) return ''; return new Date(iso+'T00:00:00').toLocaleDateString('en-PH',{year:'numeric',month:'short',day:'2-digit',weekday:'short'}); };
+const fmtTimestamp = iso => { if(!iso) return ''; const d = new Date(iso); return d.toLocaleString('en-PH',{month:'short',day:'2-digit',year:'numeric',hour:'2-digit',minute:'2-digit',hour12:true}); };
 const MONTHS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
 const MONTH_NAMES = ['January','February','March','April','May','June','July','August','September','October','November','December'];
 const AV_COLORS = ['from-blue-500 to-indigo-600','from-purple-500 to-pink-600','from-emerald-500 to-teal-600','from-orange-500 to-red-600','from-cyan-500 to-blue-600','from-rose-500 to-pink-600','from-amber-500 to-orange-600'];
@@ -618,24 +569,11 @@ const QuoteBox = () => {
   const [q]=useState(()=>QUOTES[Math.floor(Math.random()*QUOTES.length)]||QUOTES[0]);
   return(
     <div className="quote-box anim-fade">
-      <p className="text-[11px] font-bold uppercase tracking-widest mb-2" style={{color:'var(--p)'}}>✨ Daily Motivation</p>
-      <p className="text-sm font-semibold italic leading-relaxed" style={{color:'var(--tx)'}}>&ldquo;{q.q}&rdquo;</p>
-      <p className="text-[11px] font-bold mt-2" style={{color:'var(--p)'}}>— {q.a}</p>
+      <i className="fa-solid fa-lightbulb"></i>
+      <p className="quote-text">"{q.q}"</p>
     </div>
   );
 };
-
-const StatCard = ({title,value,icon,onClick}) => (
-  <div className="glass p-5 rounded-2xl stat-card" onClick={onClick} style={{cursor:onClick?'pointer':'default'}}>
-    <div className="flex justify-between items-start mb-3">
-      <div className="w-12 h-12 rounded-xl flex items-center justify-center text-2xl" style={{background:`color-mix(in srgb,var(--p) 20%,transparent)`,color:'var(--p)'}}>
-        {icon}
-      </div>
-    </div>
-    <h3 className="text-3xl font-black" style={{color:'var(--tx)'}}>{value}</h3>
-    <p className="text-[10px] font-bold uppercase tracking-widest mt-1" style={{color:'var(--tx3)'}}>{title}</p>
-  </div>
-);
 
 const MiniBarChart = ({tasks}) => {
   const curYear=new Date().getFullYear();
@@ -647,7 +585,6 @@ const MiniBarChart = ({tasks}) => {
   const maxVal=Math.max(...data.map(d=>d.val),1);
   return(
     <div>
-      <p style={{fontSize:11,fontWeight:800,textTransform:'uppercase',letterSpacing:'.1em',color:'var(--tx)',marginBottom:16}}>Activity Graph — {curYear}</p>
       <div className="bar-chart-container">
         {data.map((d,i)=>(
           <div key={i} className="bar-item" title={`${d.label}: ${d.val.toFixed(1)}h`}>
@@ -722,8 +659,8 @@ const BirthdayWidget = ({employees}) => {
   const birthdays=getUpcomingBirthdays(employees,30);
   if(birthdays.length===0)return null;
   return(
-    <div className="glass" style={{borderRadius:20,padding:'20px 24px'}}>
-      <h3 style={{fontSize:15,fontWeight:900,color:'var(--tx)',marginBottom:16}}>🎂 Upcoming Birthdays</h3>
+    <div className="dash-card">
+      <h3 style={{fontSize:14,fontWeight:900,color:'var(--tx)',marginBottom:16}}><i className="fa-solid fa-cake-candles text-pink-500 mr-2"></i> Upcoming Birthdays</h3>
       <div style={{display:'flex',flexDirection:'column',gap:12}}>
         {birthdays.map((emp,i)=>(
           <div key={emp.id} style={{display:'flex',alignItems:'center',justifyContent:'space-between',borderBottom:i!==birthdays.length-1?'1px solid var(--bd)':'none',paddingBottom:i!==birthdays.length-1?12:0}}>
@@ -744,11 +681,8 @@ const BirthdayWidget = ({employees}) => {
   );
 };
 
-// ================================================================
-// GEO WIDGET
-// ================================================================
 const GeoWidget = () => {
-  const [geoStatus,setGeoStatus]=useState('idle'); // idle|checking|inside|outside|denied
+  const [geoStatus,setGeoStatus]=useState('idle'); 
   const [distance,setDistance]=useState(null);
   const [coords,setCoords]=useState(null);
 
@@ -765,11 +699,11 @@ const GeoWidget = () => {
   };
 
   return(
-    <div className="glass" style={{borderRadius:16,padding:'16px 20px'}}>
+    <div className="dash-card">
       <div style={{display:'flex',alignItems:'center',justifyContent:'space-between',flexWrap:'wrap',gap:10}}>
         <div>
           <p style={{fontSize:12,fontWeight:800,textTransform:'uppercase',color:'var(--tx3)',letterSpacing:'.08em',marginBottom:6}}>
-            <i className="fa-solid fa-location-dot mr-2"></i>Geo-Fence Status
+            <i className="fa-solid fa-location-dot mr-2 text-red-500"></i>Geo-Fence Status
           </p>
           {geoStatus==='idle'&&<p style={{fontSize:12,color:'var(--tx3)',fontWeight:600}}>Check if you're within the Gigahertz office zone.</p>}
           {geoStatus==='checking'&&<span className="geo-badge geo-checking"><span className="spinner" style={{width:12,height:12,borderWidth:2}}></span> Locating...</span>}
@@ -785,12 +719,9 @@ const GeoWidget = () => {
   );
 };
 
-// ================================================================
-// AFK OVERLAY
-// ================================================================
 const AFKOverlay = ({secondsLeft, onResume}) => (
   <div className="afk-overlay">
-    <div className="glass anim-bounce" style={{borderRadius:28,padding:'48px 56px',textAlign:'center',maxWidth:420,width:'90%'}}>
+    <div className="glass anim-bounce" style={{borderRadius:28,padding:'48px 56px',textAlign:'center',maxWidth:420,width:'90%',background:'var(--wh)'}}>
       <div style={{fontSize:64,marginBottom:20}}>💤</div>
       <h2 style={{fontSize:24,fontWeight:900,color:'var(--tx)',marginBottom:12}}>Still there?</h2>
       <p style={{fontSize:14,color:'var(--tx2)',marginBottom:8,fontWeight:600}}>No activity detected for 15 minutes.</p>
@@ -806,9 +737,6 @@ const AFKOverlay = ({secondsLeft, onResume}) => (
   </div>
 );
 
-// ================================================================
-// FOCUS LOCK (POMODORO) OVERLAY
-// ================================================================
 const FocusLockOverlay = ({taskName, secondsLeft, onBreak, onStop}) => {
   const pct=((POMODORO_DURATION-secondsLeft)/POMODORO_DURATION)*100;
   const radius=90;
@@ -836,7 +764,7 @@ const FocusLockOverlay = ({taskName, secondsLeft, onBreak, onStop}) => {
         <p style={{fontSize:18,fontWeight:900,color:'#fff',marginBottom:8,opacity:.9}}>{taskName}</p>
         <p style={{fontSize:12,color:'rgba(255,255,255,0.4)',marginBottom:32,fontWeight:600}}>Stay focused. You're doing great. 💪</p>
         <div style={{display:'flex',gap:12,justifyContent:'center'}}>
-          <button className="btn btn-ghost" onClick={onBreak} style={{padding:'12px 24px'}}>
+          <button className="btn btn-ghost" onClick={onBreak} style={{padding:'12px 24px',borderColor:'rgba(255,255,255,0.2)',color:'#fff'}}>
             <i className="fa-solid fa-coffee"></i> Take Break
           </button>
           <button className="btn btn-danger" onClick={onStop} style={{padding:'12px 24px'}}>
@@ -848,9 +776,6 @@ const FocusLockOverlay = ({taskName, secondsLeft, onBreak, onStop}) => {
   );
 };
 
-// ================================================================
-// SHIFT SUMMARY MODAL
-// ================================================================
 const ShiftSummaryModal = ({onConfirmLogout, onCancel, tasks, user, sessionStartTime, productivityPct}) => {
   const safeUser=user||{};
   const todayISO=new Date().toISOString().split('T')[0];
@@ -863,7 +788,7 @@ const ShiftSummaryModal = ({onConfirmLogout, onCancel, tasks, user, sessionStart
   return(
     <div className="modal-overlay">
       <div className="modal-box" style={{maxWidth:620}}>
-        <div style={{padding:'32px 36px',borderBottom:'1px solid var(--bd)',background:'linear-gradient(135deg,color-mix(in srgb,var(--p) 15%,transparent),transparent)',borderRadius:'28px 28px 0 0',textAlign:'center'}}>
+        <div style={{padding:'32px 36px',borderBottom:'1px solid var(--bd)',background:'color-mix(in srgb,var(--p) 8%,transparent)',borderRadius:'24px 24px 0 0',textAlign:'center'}}>
           <div style={{fontSize:56,marginBottom:12}}>📋</div>
           <h2 style={{fontSize:22,fontWeight:900,color:'var(--tx)'}}>Shift Summary</h2>
           <p style={{fontSize:13,color:'var(--tx3)',marginTop:4,fontWeight:600}}>{new Date().toLocaleDateString('en-PH',{weekday:'long',year:'numeric',month:'long',day:'numeric'})}</p>
@@ -907,398 +832,22 @@ const ShiftSummaryModal = ({onConfirmLogout, onCancel, tasks, user, sessionStart
   );
 };
 
-// ================================================================
-// LANDING PAGE
-// ================================================================
-const LandingPage = ({onEnter,theme,setTheme}) => {
-  const [showThemes,setShowThemes]=useState(false);
-  const [entered,setEntered]=useState(false);
-
-  const handleEnter=()=>{setEntered(true);setTimeout(onEnter,600);};
-
-  return(
-    <div className="landing-page" style={{opacity:entered?0:1,transition:'opacity 0.6s ease'}}>
-      <div className="landing-orb" style={{width:'60vw',height:'60vw',background:'var(--g2)',top:'-20vw',left:'-10vw',animation:'floatOrbs 20s infinite alternate ease-in-out'}}></div>
-      <div className="landing-orb" style={{width:'45vw',height:'45vw',background:'var(--g3)',bottom:'-10vw',right:'-10vw',animation:'floatOrbs 25s infinite alternate-reverse ease-in-out'}}></div>
-
-      <div style={{textAlign:'center',zIndex:10,padding:'0 20px'}}>
-        <div style={{animation:'landingFloat 3s ease-in-out infinite',marginBottom:32}}>
-          <div style={{width:100,height:100,borderRadius:24,overflow:'hidden',background:'#fff',padding:8,margin:'0 auto',boxShadow:'0 20px 60px rgba(0,0,0,0.3)',border:'2px solid rgba(255,255,255,0.3)'}}>
-            <img src="https://contents.smsupermalls.com/data/uploads/2020/07/GIGAHERTZ_COMPUTER_SYSTEM.jpg" alt="Logo" style={{width:'100%',height:'100%',objectFit:'contain',borderRadius:16}}/>
-          </div>
-        </div>
-        <div style={{animation:'landingFadeIn 0.8s ease both',animationDelay:'0.1s'}}>
-          <h1 style={{fontSize:'clamp(32px,6vw,64px)',fontWeight:900,color:'var(--tx)',letterSpacing:'-2px',lineHeight:1.1,marginBottom:8}}>Gigahertz Nexus</h1>
-          <p style={{fontSize:'clamp(12px,2vw,16px)',fontWeight:700,color:'var(--p)',textTransform:'uppercase',letterSpacing:'.3em',marginBottom:8}}>Activity Tracker</p>
-          <p style={{fontSize:11,fontWeight:600,color:'var(--tx3)',letterSpacing:'.2em',marginBottom:40}}>v6.02 · Aero Edition</p>
-        </div>
-        <div style={{animation:'landingFadeIn 0.8s ease both',animationDelay:'0.3s',display:'flex',gap:12,justifyContent:'center',flexWrap:'wrap',marginBottom:48}}>
-          {['Timer Engine','Focus Lock','Kudos Board','Geo-Fence','AFK Guard'].map((f,i)=>(
-            <span key={f} className="badge" style={{background:'rgba(255,255,255,0.08)',color:'var(--tx2)',border:'1px solid var(--bd)',fontSize:11,padding:'6px 14px',animation:`landingFadeIn 0.8s ease ${0.4+i*0.1}s both`}}>
-              {f}
-            </span>
-          ))}
-        </div>
-        <div style={{animation:'landingFadeIn 0.8s ease both',animationDelay:'0.8s'}}>
-          <button className="btn btn-primary" onClick={handleEnter} style={{padding:'18px 48px',fontSize:16,borderRadius:20,boxShadow:'0 12px 40px var(--shadow)'}}>
-            <i className="fa-solid fa-right-to-bracket mr-2"></i> Enter the System
-          </button>
-        </div>
-        <div style={{animation:'landingFadeIn 0.8s ease both',animationDelay:'1s',marginTop:32}}>
-          <button className="btn btn-ghost" style={{fontSize:12,padding:'8px 16px'}} onClick={()=>setShowThemes(!showThemes)}>
-            <i className="fa-solid fa-palette mr-2"></i> Change Theme
-          </button>
-          {showThemes&&(
-            <div className="glass anim-fade" style={{marginTop:12,padding:16,borderRadius:20,display:'flex',gap:8,flexWrap:'wrap',justifyContent:'center',maxWidth:500,margin:'12px auto 0'}}>
-              {THEMES.map(t=>(
-                <button key={t.id} onClick={()=>{setTheme(t.id);LS.save('ghz_theme',t.id);setShowThemes(false);}}
-                  title={t.label}
-                  style={{width:32,height:32,borderRadius:10,background:t.color,border:`2px solid ${theme===t.id?'#fff':'transparent'}`,cursor:'pointer',transition:'all .2s',transform:theme===t.id?'scale(1.2)':'scale(1)'}}>
-                </button>
-              ))}
-            </div>
-          )}
-        </div>
-      </div>
-    </div>
-  );
-};
 
 // ================================================================
-// AUTH PORTAL
+// VIEWS
 // ================================================================
-const AuthPortal = ({onLogin,theme,setTheme}) => {
-  const [id,setId]=useState('');
-  const [pw,setPw]=useState('');
-  const [err,setErr]=useState('');
-  const [loading,setLoading]=useState(false);
-  const [showPw,setShowPw]=useState(false);
-  const [showThemes,setShowThemes]=useState(false);
-  const [gasStatus,setGasStatus]=useState('checking');
-  const [secretMode,setSecretMode]=useState(false);
-  const [regForm,setRegForm]=useState({employeeId:'GHZ',firstName:'',lastName:'',email:'',password:'',confirmPw:'',deptId:1});
-  const [regPhoto,setRegPhoto]=useState(null);
-  const [pwStrength,setPwStrength]=useState({score:0,valid:false,checks:{}});
-  const [cameraOn,setCameraOn]=useState(false);
-  const [secretMsg,setSecretMsg]=useState('');
-  const [regLoading,setRegLoading]=useState(false);
-  const videoRef=useRef(null);
-  const canvasRef=useRef(null);
-  const streamRef=useRef(null);
 
-  useEffect(()=>{
-    const ctrl=new AbortController();
-    const t=setTimeout(()=>{ctrl.abort();setGasStatus('offline');},5000);
-    fetch(GAS_URL,{method:'POST',body:JSON.stringify({action:'ping'}),headers:{'Content-Type':'text/plain;charset=utf-8'},signal:ctrl.signal})
-      .then(r=>{clearTimeout(t);api._gasOk=r.ok;setGasStatus(r.ok?'online':'offline');})
-      .catch(()=>{clearTimeout(t);api._gasOk=false;setGasStatus('offline');});
-    return()=>{clearTimeout(t);ctrl.abort();};
-  },[]);
+const DashboardView = ({ user, tasks, onSaveTask, showToast, onFocusLock }) => {
+  const safeUser = user || {};
+  const [t,setT]=useState(new Date());
+  useEffect(()=>{const i=setInterval(()=>setT(new Date()),1000);return()=>clearInterval(i)},[]);
+  const [q]=useState(()=>QUOTES[Math.floor(Math.random()*QUOTES.length)]||QUOTES[0]);
 
-  useEffect(()=>{
-    if(!cameraOn)return;
-    navigator.mediaDevices?.getUserMedia({video:true})
-      .then(s=>{streamRef.current=s;if(videoRef.current){videoRef.current.srcObject=s;videoRef.current.play();}})
-      .catch(()=>setCameraOn(false));
-    return()=>{if(streamRef.current){streamRef.current.getTracks().forEach(t=>t.stop());streamRef.current=null;}};
-  },[cameraOn]);
-
-  const takePhoto=()=>{
-    const v=videoRef.current;const c=canvasRef.current;
-    if(!v||!c)return;
-    c.width=v.videoWidth;c.height=v.videoHeight;
-    c.getContext('2d').drawImage(v,0,0);
-    setRegPhoto(c.toDataURL('image/jpeg',0.8));
-    if(streamRef.current){streamRef.current.getTracks().forEach(t=>t.stop());streamRef.current=null;}
-    setCameraOn(false);
-  };
-
-  const handlePwChange=v=>{setRegForm(p=>({...p,password:v}));setPwStrength(validatePassword(v));};
-
-  const submitLogin=async e=>{
-    e?.preventDefault();
-    if(id.trim()==='TEMPOROSA'&&pw==='SIRKEVS9001!'){
-      setSecretMode(true);setSecretMsg('🔓 Developer Access Granted!');
-      setId('');setPw('');setErr('');
-      setTimeout(()=>setSecretMsg(''),4000);
-      return;
-    }
-    if(id.trim().toLowerCase()==='rozi'&&pw==='hyacinth'){
-      setSecretMode(true);setSecretMsg('🪻 Project Hyacinth — Welcome, Rozi!');
-      setTheme('candy');LS.save('ghz_theme','candy');setId('');setPw('');setErr('');
-      setTimeout(()=>setSecretMsg(''),5000);
-      return;
-    }
-    if(!id.trim()||!pw.trim())return setErr('Please enter credentials.');
-    setLoading(true);setErr('');
-    const res=await api.call('login',{identifier:id.trim(),password:pw.trim()});
-    setLoading(false);
-    if(res.success)onLogin(res.user);
-    else setErr(res.error||'Authentication failed.');
-  };
-
-  const formatGHZId=v=>{
-    let val=v.toUpperCase().replace(/[^GHZ0-9]/g,'');
-    if(!val.startsWith('GHZ'))val='GHZ'+val.replace(/^GHZ/,'');
-    val='GHZ'+val.slice(3).replace(/\D/g,'').slice(0,4);
-    return val;
-  };
-
-  const submitRegister=async e=>{
-    e?.preventDefault();
-    if(!GHZ_ID_REGEX.test(regForm.employeeId))return setErr('Employee ID must be GHZ followed by 4 digits (e.g. GHZ2001).');
-    if(!regForm.firstName||!regForm.lastName||!regForm.password)return setErr('All fields required.');
-    if(!pwStrength.valid)return setErr('Password needs 8+ chars, uppercase, lowercase, and number.');
-    if(regForm.password!==regForm.confirmPw)return setErr('Passwords do not match.');
-    setRegLoading(true);setErr('');
-    const payload={...regForm,fullName:`${regForm.firstName} ${regForm.lastName}`,facePhoto:regPhoto,registeredDate:new Date().toISOString(),role:'Staff',status:'Active'};
-    const res=await api.call('registerEmployee',payload);
-    setRegLoading(false);
-    if(res.success){
-      const newEmp={...payload,id:EMPLOYEES_INIT.length+1,loginCount:0,totalHours:0,leaveBalance:10,leavesUsed:0};
-      EMPLOYEES_INIT.push(newEmp);
-      setSecretMode(false);
-      setSecretMsg('✅ Employee registered! You can now log in.');
-      setId(regForm.email||regForm.firstName);setPw(regForm.password);setErr('');
-      setTimeout(()=>setSecretMsg(''),5000);
-    } else {
-      setErr('Registration failed. Try again.');
-    }
-  };
-
-  const pwColors=['','#ef4444','#f97316','#fbbf24','#4ade80'];
-  const pwLabels=['','Weak','Fair','Good','Strong'];
-
-  return(
-    <div style={{minHeight:'100vh',display:'flex',alignItems:'center',justifyContent:'center',padding:20}}>
-      {secretMsg&&(
-        <div className="anim-bounce" style={{position:'fixed',top:40,left:'50%',transform:'translateX(-50%)',background:'var(--ok)',color:'#fff',padding:'12px 24px',borderRadius:20,fontWeight:'900',zIndex:9999,boxShadow:'0 8px 20px rgba(0,0,0,0.3)',textTransform:'uppercase',letterSpacing:'.05em',whiteSpace:'nowrap'}}>
-          {secretMsg}
-        </div>
-      )}
-      <div style={{position:'fixed',top:20,left:16,display:'flex',alignItems:'center',gap:8,zIndex:100}}>
-        <span style={{width:8,height:8,borderRadius:'50%',background:gasStatus==='online'?'#4ade80':gasStatus==='offline'?'#f87171':'#fbbf24',display:'inline-block'}}></span>
-        <span style={{fontSize:10,fontWeight:700,textTransform:'uppercase',letterSpacing:'.1em',color:'var(--tx3)'}}>GAS {gasStatus}</span>
-      </div>
-      <div style={{position:'fixed',bottom:24,left:24,zIndex:100}}>
-        <button onClick={()=>setShowThemes(!showThemes)} className="btn btn-ghost" style={{borderRadius:'50%',width:56,height:56,padding:0,display:'flex',alignItems:'center',justifyContent:'center'}}>
-          <i className={`fa-solid fa-gear text-xl transition-transform duration-500 ${showThemes?'rotate-90':''}`} style={{color:showThemes?'var(--p)':'var(--tx)'}}></i>
-        </button>
-        {showThemes&&(
-          <div className="glass anim-fade" style={{position:'absolute',bottom:70,left:0,padding:16,borderRadius:20,display:'flex',flexDirection:'column',gap:6,maxHeight:'60vh',overflowY:'auto',width:230}}>
-            <p style={{fontSize:11,fontWeight:800,textTransform:'uppercase',color:'var(--tx3)',marginBottom:4}}>Select Theme</p>
-            {THEMES.map(t=>(
-              <button key={t.id} onClick={()=>{setTheme(t.id);LS.save('ghz_theme',t.id);setShowThemes(false);}}
-                style={{display:'flex',alignItems:'center',gap:10,padding:'8px 12px',borderRadius:12,border:`1px solid ${theme===t.id?'var(--p)':'rgba(255,255,255,0.1)'}`,background:theme===t.id?'color-mix(in srgb,var(--p) 20%,transparent)':'rgba(0,0,0,0.15)',cursor:'pointer',textAlign:'left',transition:'all .2s'}}>
-                <div style={{width:20,height:20,borderRadius:6,background:t.color,flexShrink:0}}></div>
-                <span style={{fontSize:12,fontWeight:700,color:'var(--tx)'}}>{t.label}</span>
-              </button>
-            ))}
-          </div>
-        )}
-      </div>
-
-      <div className="glass anim-bounce" style={{width:'100%',maxWidth:460,borderRadius:28,padding:'40px 36px',margin:'0 auto'}}>
-        <div style={{display:'flex',flexDirection:'column',alignItems:'center',marginBottom:28}}>
-          <div style={{width:76,height:76,borderRadius:20,overflow:'hidden',background:'#fff',padding:6,border:'1px solid var(--bd)',marginBottom:16}}>
-            <img src="https://contents.smsupermalls.com/data/uploads/2020/07/GIGAHERTZ_COMPUTER_SYSTEM.jpg" alt="Logo" style={{width:'100%',height:'100%',objectFit:'contain',borderRadius:14}}/>
-          </div>
-          <h1 style={{fontSize:24,fontWeight:900,letterSpacing:'-.5px',color:'var(--tx)'}}>Gigahertz Nexus</h1>
-          <p style={{fontSize:11,fontWeight:800,textTransform:'uppercase',letterSpacing:'.15em',color:'var(--p)',marginTop:6}}>Activity Tracker v6.02</p>
-        </div>
-
-        {err&&(
-          <div className="anim-fade" style={{background:'rgba(239,68,68,0.2)',border:'1px solid rgba(239,68,68,0.4)',color:'#fca5a5',padding:'12px 16px',borderRadius:14,marginBottom:20,fontSize:13,fontWeight:700,display:'flex',alignItems:'center',gap:10}}>
-            <i className="fa-solid fa-triangle-exclamation"></i>{err}
-          </div>
-        )}
-
-        {!secretMode&&(
-          <form onSubmit={submitLogin} style={{display:'flex',flexDirection:'column',gap:16}}>
-            <div>
-              <label className="input-label">Employee ID / Email / Name</label>
-              <input className="input" type="text" value={id} onChange={e=>setId(e.target.value)} placeholder="GHZ2001 or user@gigahertz.com" required autoComplete="username"/>
-            </div>
-            <div>
-              <label className="input-label">Password</label>
-              <div style={{position:'relative'}}>
-                <input className="input" type={showPw?'text':'password'} value={pw} onChange={e=>setPw(e.target.value)} placeholder="••••••••" required autoComplete="current-password" style={{paddingRight:44}}/>
-                <button type="button" onClick={()=>setShowPw(p=>!p)} style={{position:'absolute',right:12,top:'50%',transform:'translateY(-50%)',background:'none',border:'none',cursor:'pointer',color:'var(--tx3)'}}>
-                  <i className={`fa-solid ${showPw?'fa-eye-slash':'fa-eye'}`}></i>
-                </button>
-              </div>
-            </div>
-            <button type="submit" className="btn btn-primary" disabled={loading} style={{justifyContent:'center',padding:'14px',marginTop:8,fontSize:14}}>
-              {loading?<><span className="spinner"></span> Authenticating...</>:<><i className="fa-solid fa-right-to-bracket"></i> Sign In</>}
-            </button>
-          </form>
-        )}
-
-        {secretMode&&(
-          <div className="anim-slide">
-            <div style={{background:'rgba(34,197,94,0.1)',border:'1px solid rgba(34,197,94,0.3)',borderRadius:14,padding:'12px 16px',marginBottom:20,display:'flex',alignItems:'center',gap:10}}>
-              <i className="fa-solid fa-shield-halved" style={{color:'#4ade80'}}></i>
-              <span style={{fontSize:13,fontWeight:800,color:'#4ade80'}}>Developer Registration Mode</span>
-            </div>
-            <form onSubmit={submitRegister} style={{display:'flex',flexDirection:'column',gap:14}}>
-              <div>
-                <label className="input-label">Employee ID <span style={{color:'var(--danger)'}}>*</span> <span style={{color:'var(--tx3)',fontWeight:600,textTransform:'none',letterSpacing:0}}>GHZ0000 format (no dash)</span></label>
-                <input className="input" value={regForm.employeeId} onChange={e=>setRegForm(p=>({...p,employeeId:formatGHZId(e.target.value)}))} placeholder="GHZ2001" required style={{fontFamily:'monospace'}}/>
-                {regForm.employeeId.length>3&&!GHZ_ID_REGEX.test(regForm.employeeId)&&<p style={{fontSize:11,color:'#f87171',fontWeight:700,marginTop:6}}>Must be GHZ followed by 4 digits exactly</p>}
-                {GHZ_ID_REGEX.test(regForm.employeeId)&&<p style={{fontSize:11,color:'#4ade80',fontWeight:700,marginTop:6}}>✓ Valid format</p>}
-              </div>
-              <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:10}}>
-                <div><label className="input-label">First Name <span style={{color:'var(--danger)'}}>*</span></label><input className="input" value={regForm.firstName} onChange={e=>setRegForm(p=>({...p,firstName:e.target.value}))} placeholder="Juan" required/></div>
-                <div><label className="input-label">Last Name <span style={{color:'var(--danger)'}}>*</span></label><input className="input" value={regForm.lastName} onChange={e=>setRegForm(p=>({...p,lastName:e.target.value}))} placeholder="Dela Cruz" required/></div>
-              </div>
-              <div><label className="input-label">Email (optional)</label><input className="input" type="email" value={regForm.email} onChange={e=>setRegForm(p=>({...p,email:e.target.value}))} placeholder="juan@gigahertz.com"/></div>
-              <div><label className="input-label">Department</label><select className="input" value={regForm.deptId} onChange={e=>setRegForm(p=>({...p,deptId:parseInt(e.target.value)}))}>
-                {DEPARTMENTS.map(d=><option key={d.id} value={d.id}>{d.icon} {d.name}</option>)}
-              </select></div>
-              <div>
-                <label className="input-label">Password <span style={{color:'var(--danger)'}}>*</span></label>
-                <input className="input" type="password" value={regForm.password} onChange={e=>handlePwChange(e.target.value)} placeholder="Min 8 chars, uppercase, number" required/>
-                {regForm.password&&(
-                  <>
-                    <div className="pw-strength" style={{background:pwColors[pwStrength.score]||'#ef4444',width:`${pwStrength.score*25}%`}}></div>
-                    <p className="pw-msg" style={{color:pwColors[pwStrength.score]||'#ef4444'}}>{pwLabels[pwStrength.score]}</p>
-                  </>
-                )}
-              </div>
-              <div><label className="input-label">Confirm Password <span style={{color:'var(--danger)'}}>*</span></label><input className="input" type="password" value={regForm.confirmPw} onChange={e=>setRegForm(p=>({...p,confirmPw:e.target.value}))} placeholder="Repeat password" required/>{regForm.confirmPw&&regForm.password!==regForm.confirmPw&&<p className="pw-msg" style={{color:'#f87171'}}>Passwords do not match</p>}</div>
-              <div>
-                <label className="input-label">Face Photo (optional)</label>
-                <div style={{borderRadius:16,overflow:'hidden',background:'#000',aspectRatio:'4/3',display:'flex',alignItems:'center',justifyContent:'center',position:'relative',border:'2px solid var(--bd)',maxHeight:180}}>
-                  {cameraOn&&<video ref={videoRef} autoPlay muted playsInline style={{width:'100%',height:'100%',objectFit:'cover'}}/>}
-                  {regPhoto&&!cameraOn&&<img src={regPhoto} alt="captured" style={{width:'100%',height:'100%',objectFit:'cover'}}/>}
-                  {!cameraOn&&!regPhoto&&<div style={{color:'var(--tx3)',textAlign:'center',padding:16}}><i className="fa-solid fa-camera" style={{fontSize:36,display:'block',marginBottom:8}}></i><p style={{fontSize:12,fontWeight:700}}>No photo captured</p></div>}
-                  <canvas ref={canvasRef} style={{display:'none'}}/>
-                </div>
-                <div style={{display:'flex',gap:8,marginTop:8}}>
-                  {!cameraOn&&<button type="button" className="btn btn-ghost" style={{fontSize:12,padding:'8px 14px'}} onClick={()=>setCameraOn(true)}><i className="fa-solid fa-video"></i> Camera</button>}
-                  {cameraOn&&<button type="button" className="btn btn-primary" style={{fontSize:12,padding:'8px 14px'}} onClick={takePhoto}><i className="fa-solid fa-camera"></i> Capture</button>}
-                  {regPhoto&&<button type="button" className="btn btn-danger" style={{fontSize:12,padding:'8px 14px'}} onClick={()=>setRegPhoto(null)}><i className="fa-solid fa-trash"></i> Remove</button>}
-                </div>
-              </div>
-              <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:10,marginTop:4}}>
-                <button type="button" className="btn btn-ghost" onClick={()=>{setSecretMode(false);setErr('');}} style={{justifyContent:'center'}}><i className="fa-solid fa-arrow-left"></i> Back</button>
-                <button type="submit" className="btn btn-primary" disabled={regLoading} style={{justifyContent:'center'}}>
-                  {regLoading?<><span className="spinner"></span> Registering...</>:<><i className="fa-solid fa-user-plus"></i> Register</>}
-                </button>
-              </div>
-            </form>
-          </div>
-        )}
-        <p style={{textAlign:'center',fontSize:10,fontWeight:800,textTransform:'uppercase',letterSpacing:'.15em',color:'var(--tx3)',marginTop:32}}>
-          v6.02 · {new Date().getFullYear()} · Built for bro & Rozi 🪻
-        </p>
-      </div>
-    </div>
-  );
-};
-
-// ================================================================
-// MODALS
-// ================================================================
-const ModalLayout = ({title,icon,onClose,children}) => (
-  <div className="modal-overlay" onClick={e=>{if(e.target===e.currentTarget)onClose()}}>
-    <div className="modal-box">
-      <div style={{padding:'24px 32px',borderBottom:'1px solid var(--bd)',display:'flex',justifyContent:'space-between',alignItems:'center',background:'rgba(0,0,0,0.1)'}}>
-        <h2 style={{fontSize:18,fontWeight:900,color:'var(--tx)'}}><i className={`fa-solid ${icon} mr-2`} style={{color:'var(--p)'}}></i> {title}</h2>
-        <button onClick={onClose} className="btn btn-ghost" style={{padding:'8px 12px',borderRadius:'50%'}}><i className="fa-solid fa-xmark"></i></button>
-      </div>
-      <div style={{padding:32}}>{children}</div>
-    </div>
-  </div>
-);
-
-const MyProfileModal = ({user,onClose,onSave,showToast,totalHours}) => {
-  const [editing,setEditing]=useState(false);
-  const safeUser=user||{};
-  const [form,setForm]=useState({firstName:safeUser.firstName||'',lastName:safeUser.lastName||'',email:safeUser.email||''});
-  const [photo,setPhoto]=useState(safeUser.facePhoto||null);
-  const [cameraOn,setCameraOn]=useState(false);
-  const videoRef=useRef(null);
-  const canvasRef=useRef(null);
-  const streamRef=useRef(null);
-  useEffect(()=>{
-    if(!cameraOn)return;
-    navigator.mediaDevices?.getUserMedia({video:true}).then(s=>{streamRef.current=s;if(videoRef.current){videoRef.current.srcObject=s;videoRef.current.play();}}).catch(()=>setCameraOn(false));
-    return()=>{if(streamRef.current){streamRef.current.getTracks().forEach(t=>t.stop());streamRef.current=null;}};
-  },[cameraOn]);
-  const takePhoto=()=>{const v=videoRef.current;const c=canvasRef.current;if(!v||!c)return;c.width=v.videoWidth;c.height=v.videoHeight;c.getContext('2d').drawImage(v,0,0);setPhoto(c.toDataURL('image/jpeg',0.8));if(streamRef.current){streamRef.current.getTracks().forEach(t=>t.stop());streamRef.current=null;}setCameraOn(false);};
-  const save=async()=>{const updated={...safeUser,...form,fullName:`${form.firstName} ${form.lastName}`,facePhoto:photo};await api.call('updateProfile',updated);onSave(updated);showToast('Profile updated!','success');onClose();};
-  const dept=DEPARTMENTS.find(d=>d.id===safeUser.deptId);
-  const leaveUsed=safeUser.leavesUsed||0;const leaveBalance=safeUser.leaveBalance||10;
-  const isAdmin=safeUser.role==='ADMIN'||safeUser.role==='Super Admin'||safeUser.role==='Nexus Dev';
-  const lvlHrs=totalHours||0;const level=Math.floor(lvlHrs/20)+1;const nextLvlBase=level*20;const lvlPct=Math.min(100,Math.max(0,((lvlHrs-(level-1)*20)/20)*100));
-  return(
-    <ModalLayout title="My Profile" icon="fa-user" onClose={onClose}>
-      <div style={{display:'flex',flexDirection:'column',gap:24}}>
-        <div style={{display:'flex',alignItems:'center',gap:16}}>
-          <div style={{width:80,height:80,borderRadius:'50%',overflow:'hidden',border:'3px solid var(--p)',flexShrink:0}}>
-            {photo?<img src={photo} style={{width:'100%',height:'100%',objectFit:'cover'}} alt="face"/>:<div style={{width:'100%',height:'100%',background:`linear-gradient(135deg,var(--p),var(--pd))`,display:'flex',alignItems:'center',justifyContent:'center',fontSize:28,fontWeight:900,color:'#fff'}}>{getInitials(safeUser)}</div>}
-          </div>
-          <div style={{flex:1}}>
-            <p style={{fontSize:18,fontWeight:900,color:'var(--tx)',display:'flex',alignItems:'center',gap:6}}>
-              {safeUser.firstName} {safeUser.lastName}
-              {isAdmin&&<span style={{fontSize:10,background:'var(--p)',color:'#fff',padding:'2px 6px',borderRadius:6}}>Admin</span>}
-            </p>
-            <p style={{fontSize:11,fontWeight:800,color:'var(--p)',textTransform:'uppercase',letterSpacing:'.1em'}}>{safeUser.employeeId}</p>
-            <p style={{fontSize:12,color:'var(--tx3)',marginTop:2}}>{dept?.icon} {dept?.name} • {safeUser.role}</p>
-            {safeUser.birthday&&<p style={{fontSize:11,color:'var(--tx3)',marginTop:2}}>🎂 Birthday: {safeUser.birthday}</p>}
-          </div>
-          <div style={{textAlign:'center',background:'var(--p)',color:'#fff',padding:'10px 14px',borderRadius:16,boxShadow:'0 4px 12px var(--shadow)'}}>
-            <p style={{fontSize:9,fontWeight:800,textTransform:'uppercase',letterSpacing:'.1em',opacity:.8}}>Level</p>
-            <p style={{fontSize:26,fontWeight:900}}>{level}</p>
-          </div>
-        </div>
-        <div>
-          <div style={{display:'flex',justifyContent:'space-between',fontSize:11,fontWeight:800,marginBottom:8,color:'var(--tx3)',textTransform:'uppercase',letterSpacing:'.05em'}}><span>XP Progress</span><span>{lvlHrs.toFixed(1)} / {nextLvlBase} hrs</span></div>
-          <div className="progress-bar"><div className="progress-fill" style={{width:`${lvlPct}%`}}></div></div>
-        </div>
-        <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:12}}>
-          <div className="glass" style={{padding:'14px',borderRadius:16,textAlign:'center'}}><p style={{fontSize:20,fontWeight:900,color:'var(--p)'}}>{lvlHrs.toFixed(1)}h</p><p style={{fontSize:10,fontWeight:800,textTransform:'uppercase',letterSpacing:'.08em',color:'var(--tx3)',marginTop:2}}>Total Hours</p></div>
-          <div className="glass" style={{padding:'14px',borderRadius:16,textAlign:'center'}}><p style={{fontSize:20,fontWeight:900,color:'var(--p)'}}>{safeUser.status||'Active'}</p><p style={{fontSize:10,fontWeight:800,textTransform:'uppercase',letterSpacing:'.08em',color:'var(--tx3)',marginTop:2}}>Status</p></div>
-        </div>
-        <div className="glass" style={{borderRadius:16,padding:'16px 20px'}}>
-          <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:12}}>
-            <span style={{fontSize:13,fontWeight:800,color:'var(--tx)'}}>🏖️ Leave Balance</span>
-            <span style={{fontSize:13,fontWeight:900,color:'var(--p)'}}>{leaveBalance-leaveUsed} / {leaveBalance} days</span>
-          </div>
-          <div className="progress-bar"><div className="progress-fill" style={{width:`${((leaveBalance-leaveUsed)/leaveBalance)*100}%`,background:'linear-gradient(90deg,#4ade80,#22c55e)'}}></div></div>
-        </div>
-        {editing?(
-          <div style={{display:'flex',flexDirection:'column',gap:14}}>
-            <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:12}}>
-              <div><label className="input-label">First Name</label><input className="input" value={form.firstName} onChange={e=>setForm(p=>({...p,firstName:e.target.value}))}/></div>
-              <div><label className="input-label">Last Name</label><input className="input" value={form.lastName} onChange={e=>setForm(p=>({...p,lastName:e.target.value}))}/></div>
-            </div>
-            <div><label className="input-label">Email</label><input className="input" type="email" value={form.email} onChange={e=>setForm(p=>({...p,email:e.target.value}))}/></div>
-            <div style={{display:'flex',gap:12,marginTop:6}}>
-              <button className="btn btn-primary" onClick={save} style={{flex:1,justifyContent:'center'}}><i className="fa-solid fa-floppy-disk"></i> Save</button>
-              <button className="btn btn-ghost" onClick={()=>setEditing(false)}>Cancel</button>
-            </div>
-          </div>
-        ):(
-          <button className="btn btn-primary" onClick={()=>setEditing(true)} style={{justifyContent:'center'}}><i className="fa-solid fa-pen"></i> Edit Profile</button>
-        )}
-      </div>
-    </ModalLayout>
-  );
-};
-
-// ================================================================
-// SMART TIMER ENGINE
-// ================================================================
-const TimerEngine = ({user, tasks, onSaveTask, showToast, onFocusLock}) => {
-  const safeUser=user||{};
   const [activeTimer,setActiveTimer]=useState(null);
   const [queue,setQueue]=useState([]);
   const [elapsed,setElapsed]=useState(0);
   const [selectedTask,setSelectedTask]=useState('');
   const [customInput,setCustomInput]=useState('');
-  const [isCustom,setIsCustom]=useState(false);
   const [category,setCategory]=useState('Admin');
   const intervalRef=useRef(null);
 
@@ -1316,55 +865,55 @@ const TimerEngine = ({user, tasks, onSaveTask, showToast, onFocusLock}) => {
     }
   },[safeUser.id]);
 
-  useEffect(()=>{
-    if(activeTimer){
-      LS.save(`timer_${safeUser.id}`,{activeTimer,queue});
-    }
-  },[activeTimer,queue]);
+  useEffect(()=>{ if(activeTimer) LS.save(`timer_${safeUser.id}`,{activeTimer,queue}); },[activeTimer,queue]);
 
   useEffect(()=>{
-    if(activeTimer&&activeTimer.status==='running'){
-      intervalRef.current=setInterval(()=>setElapsed(e=>e+1),1000);
-    } else {
-      clearInterval(intervalRef.current);
-    }
+    if(activeTimer&&activeTimer.status==='running'){ intervalRef.current=setInterval(()=>setElapsed(e=>e+1),1000); } 
+    else { clearInterval(intervalRef.current); }
     return()=>clearInterval(intervalRef.current);
   },[activeTimer?.status]);
 
-  const startNewTask=(name,cat)=>{
+  const handleStartTimer = (isQueue = false) => {
+    let taskName = selectedTask === '__custom__' ? customInput : selectedTask;
+    if(!taskName || !taskName.trim()) { showToast('Please select or enter a task','warn'); return; }
+    
     const now=new Date().toISOString();
-    const newTask={taskName:name,category:cat||category,startTime:now,lastResumeTime:now,elapsedSeconds:0,status:'running'};
-    if(activeTimer&&activeTimer.status==='running'){
-      const paused={...activeTimer,elapsedSeconds:elapsed,status:'paused'};
-      setQueue(q=>[...q,paused]);
-      showToast(`"${activeTimer.taskName.slice(0,20)}..." paused → queue`,'info');
+    const newTask={taskName:taskName.trim(),category,startTime:now,lastResumeTime:now,elapsedSeconds:0,status:isQueue?'paused':'running'};
+    
+    if(isQueue) {
+      setQueue(q=>[...q,newTask]);
+      showToast(`Added to queue: "${taskName.slice(0,20)}"`,'success');
+    } else {
+      if(activeTimer&&activeTimer.status==='running'){
+        const paused={...activeTimer,elapsedSeconds:elapsed,status:'paused'};
+        setQueue(q=>[...q,paused]);
+      }
+      setActiveTimer(newTask);
+      setElapsed(0);
+      showToast(`Started: "${taskName.slice(0,30)}"`,'success');
     }
-    setActiveTimer(newTask);
-    setElapsed(0);
-    setSelectedTask('');setCustomInput('');setIsCustom(false);
-    showToast(`Started: "${name.slice(0,30)}"`,'success');
+    setSelectedTask(''); setCustomInput('');
   };
 
-  const handleTaskSelect=(val)=>{
-    if(val==='__custom__'){setIsCustom(true);setSelectedTask('');return;}
-    if(val===''){setSelectedTask('');return;}
-    setSelectedTask(val);
-    setIsCustom(false);
-    if(val&&val!=='__custom__'){
-      startNewTask(val,category);
-    }
-  };
-
-  const pauseActive=()=>{
+  const stopAndSave=async()=>{
     if(!activeTimer)return;
-    setActiveTimer(t=>({...t,elapsedSeconds:elapsed,status:'paused'}));
-    showToast('Timer paused','warn');
-  };
-
-  const resumeActive=()=>{
+    const hrs=parseFloat((elapsed/3600).toFixed(2));
+    if(hrs<0.01){showToast('Task too short to save (<1 min)','warn');return;}
     const now=new Date().toISOString();
-    setActiveTimer(t=>({...t,status:'running',lastResumeTime:now}));
-    showToast('Timer resumed','success');
+    const d=new Date(activeTimer.startTime);
+    const task={
+      id:Date.now(),empId:safeUser.id,
+      taskName:activeTimer.taskName,category:activeTimer.category,
+      date:d.toISOString().split('T')[0],
+      startTime:`${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}`,
+      endTime:`${String(new Date().getHours()).padStart(2,'0')}:${String(new Date().getMinutes()).padStart(2,'0')}`,
+      startTimestamp:activeTimer.startTime, endTimestamp:now,
+      durationHours:hrs, remarks:'',month:d.getMonth()+1,year:d.getFullYear(),source:'System',
+    };
+    await api.call('logTask',task);
+    onSaveTask(task);
+    showToast(`Saved: "${activeTimer.taskName.slice(0,25)}" — ${hrs}h`,'success');
+    setActiveTimer(null); setElapsed(0); LS.remove(`timer_${safeUser.id}`);
   };
 
   const resumeFromQueue=(idx)=>{
@@ -1378,162 +927,246 @@ const TimerEngine = ({user, tasks, onSaveTask, showToast, onFocusLock}) => {
     const now=new Date().toISOString();
     setActiveTimer({...qTask,status:'running',lastResumeTime:now});
     setElapsed(qTask.elapsedSeconds||0);
-    showToast(`Resumed: "${qTask.taskName.slice(0,25)}"`,'success');
   };
-
-  const stopAndSave=async()=>{
-    if(!activeTimer)return;
-    const hrs=parseFloat((elapsed/3600).toFixed(2));
-    if(hrs<0.01){showToast('Task too short to save (<1 min)','warn');return;}
-    const now=new Date().toISOString();
-    const d=new Date(activeTimer.startTime);
-    const task={
-      id:Date.now(),empId:safeUser.id,
-      empName:`${safeUser.firstName||''} ${safeUser.lastName||''}`.trim(),
-      taskName:activeTimer.taskName,category:activeTimer.category,
-      date:d.toISOString().split('T')[0],
-      startTime:`${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}`,
-      endTime:`${String(new Date().getHours()).padStart(2,'0')}:${String(new Date().getMinutes()).padStart(2,'0')}`,
-      startTimestamp:activeTimer.startTime,
-      endTimestamp:now,
-      durationHours:hrs,
-      remarks:'',month:d.getMonth()+1,year:d.getFullYear(),source:'Timer Engine',
-    };
-    await api.call('logTask',task);
-    onSaveTask(task,false);
-    showToast(`Saved: "${activeTimer.taskName.slice(0,25)}" — ${hrs}h`,'success');
-    setActiveTimer(null);setElapsed(0);
-    LS.remove(`timer_${safeUser.id}`);
-  };
-
   const discardQueue=(idx)=>setQueue(q=>{const nq=[...q];nq.splice(idx,1);return nq;});
 
   const todayISO=new Date().toISOString().split('T')[0];
-  const todayTasks=(tasks||[]).filter(t=>t.empId===safeUser.id&&t.date===todayISO);
-  const sessionStart=activeTimer?.startTime||new Date().toISOString();
-  const sessionMinutes=Math.floor((Date.now()-new Date(sessionStart).getTime())/60000);
-  const loggedMinutes=Math.round((todayTasks.reduce((s,t)=>s+(t.durationHours||0),0)+elapsed/3600)*60);
-  const productivityPct=sessionMinutes>0?Math.min(100,(loggedMinutes/sessionMinutes)*100):0;
+  const todayTasks=(tasks||[]).filter(x=>x.empId===safeUser.id&&x.date===todayISO);
+  const loggedMinutes=Math.round(todayTasks.reduce((s,x)=>s+(x.durationHours||0),0)*60);
+  const sessionMinutes=Math.floor(elapsed/60) + loggedMinutes;
+  const effPct=sessionMinutes>0 ? Math.min(100, Math.round((loggedMinutes/sessionMinutes)*100)) : 0;
 
-  return(
-    <div style={{display:'flex',flexDirection:'column',gap:16}}>
-      <div className="glass" style={{borderRadius:24,padding:'28px 32px'}}>
-        <div style={{display:'flex',justifyContent:'space-between',alignItems:'flex-start',flexWrap:'wrap',gap:16,marginBottom:20}}>
-          <div>
-            <p style={{fontSize:12,fontWeight:800,textTransform:'uppercase',letterSpacing:'.1em',color:'var(--tx3)',marginBottom:6}}>⏱ Active Timer</p>
-            {activeTimer?(
-              <p style={{fontSize:16,fontWeight:900,color:'var(--tx)',marginBottom:4}}>{activeTimer.taskName}</p>
-            ):(
-              <p style={{fontSize:14,color:'var(--tx3)',fontWeight:600}}>No task running. Start one below.</p>
-            )}
-            {activeTimer&&<span className={`badge tag-${activeTimer.category}`} style={{fontSize:9}}>{activeTimer.category}</span>}
-            {activeTimer&&(
-              <p style={{fontSize:11,color:'var(--tx3)',marginTop:6,fontWeight:600}}>
-                Started: {fmtTimestamp(activeTimer.startTime)}
-              </p>
-            )}
-          </div>
-          <ProductivityRing percentage={productivityPct}/>
+  return (
+    <div className="anim-fade" style={{display:'flex',flexDirection:'column'}}>
+      <div style={{display:'flex',justifyContent:'space-between',alignItems:'flex-start',flexWrap:'wrap',gap:16,marginBottom:16}}>
+        <div>
+          <h2 style={{fontSize:28,fontWeight:900,color:'var(--tx)',letterSpacing:'-.5px'}}>Dashboard</h2>
+          <p style={{fontSize:14,color:'var(--tx3)',marginTop:4,fontWeight:600}}>Welcome back, {user.firstName} ({user.employeeId})</p>
         </div>
-        <div style={{textAlign:'center',margin:'8px 0 20px'}}>
-          <div className={`timer-display tab-nums ${activeTimer?.status==='running'?'timer-running':''}`}>
-            {fmtSeconds(elapsed)}
+        <div style={{display:'flex',alignItems:'center',gap:16}}>
+          <div className="live-clock">{t.toLocaleTimeString([],{hour:'2-digit',minute:'2-digit',second:'2-digit'})}</div>
+          <div style={{background:'color-mix(in srgb,var(--p) 10%,transparent)',color:'var(--p)',padding:'8px 16px',borderRadius:12,fontSize:13,fontWeight:700,display:'flex',alignItems:'center',gap:8}}>
+            <i className="fa-regular fa-calendar"></i> {t.toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'})}
           </div>
-        </div>
-        <div style={{display:'flex',gap:10,flexWrap:'wrap',justifyContent:'center'}}>
-          {activeTimer&&activeTimer.status==='running'&&(
-            <button className="btn btn-ghost" onClick={pauseActive} style={{padding:'12px 20px'}}>
-              <i className="fa-solid fa-pause"></i> Pause
-            </button>
-          )}
-          {activeTimer&&activeTimer.status==='paused'&&(
-            <button className="btn btn-ok" onClick={resumeActive} style={{padding:'12px 20px'}}>
-              <i className="fa-solid fa-play"></i> Resume
-            </button>
-          )}
-          {activeTimer&&activeTimer.status==='running'&&(
-            <button className="btn btn-ghost" onClick={()=>onFocusLock(activeTimer.taskName,elapsed)} style={{padding:'12px 20px',color:'var(--p)',borderColor:'var(--p)'}}>
-              <i className="fa-solid fa-lock"></i> Focus Lock
-            </button>
-          )}
-          {activeTimer&&(
-            <button className="btn btn-primary" onClick={stopAndSave} style={{padding:'12px 20px'}}>
-              <i className="fa-solid fa-floppy-disk"></i> Stop & Save
-            </button>
-          )}
         </div>
       </div>
 
-      <div className="glass" style={{borderRadius:24,padding:'24px 28px'}}>
-        <p style={{fontSize:13,fontWeight:900,color:'var(--tx)',marginBottom:16}}><i className="fa-solid fa-plus-circle mr-2" style={{color:'var(--p)'}}></i> Start New Task</p>
-        {activeTimer&&<div style={{background:'rgba(245,158,11,0.1)',border:'1px solid rgba(245,158,11,0.3)',borderRadius:12,padding:'10px 14px',marginBottom:16,fontSize:12,fontWeight:700,color:'#fbbf24'}}>
-          <i className="fa-solid fa-info-circle mr-2"></i>Selecting a new task will auto-pause the current one to the queue.
-        </div>}
-        <div style={{display:'flex',flexDirection:'column',gap:12}}>
-          <div>
-            <label className="input-label">Select or Enter Task Name</label>
-            <select className="input" value={isCustom?'__custom__':selectedTask} onChange={e=>handleTaskSelect(e.target.value)}>
-              <option value="">— Choose a task to start —</option>
+      <QuoteBox />
+
+      <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fit,minmax(250px,1fr))',gap:20,marginBottom:24}}>
+        <div className="dash-card">
+          <div className="dash-card-title"><i className="fa-regular fa-clock text-blue-500"></i> Session Time</div>
+          <div className={`dash-card-value tab-nums ${activeTimer?.status==='running'?'text-blue-600':''}`}>{fmtSeconds(elapsed)}</div>
+          <div className="dash-card-sub" style={{color:'#10b981'}}><i className="fa-solid fa-circle text-[8px]"></i> Since {activeTimer ? fmtTimestamp(activeTimer.startTime).split(',')[1] : 'Not started'}</div>
+        </div>
+        <div className="dash-card">
+          <div className="dash-card-title"><i className="fa-solid fa-check-double text-green-500"></i> Tasks Logged</div>
+          <div className="dash-card-value text-green-600">{todayTasks.length}</div>
+          <div className="dash-card-sub">entries today • {(loggedMinutes/60).toFixed(1)}h tracked</div>
+        </div>
+        <div className="dash-card">
+          <div className="dash-card-title"><i className="fa-solid fa-bolt text-purple-500"></i> Session Efficiency</div>
+          <div className="dash-card-value text-purple-600">{effPct}%</div>
+          <div className="dash-card-sub">All tasks: {(loggedMinutes/60).toFixed(1)}h / {(sessionMinutes/60).toFixed(1)}h</div>
+        </div>
+      </div>
+
+      <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fit,minmax(350px,1fr))',gap:20}}>
+        <div className="dash-card">
+          <div className="dash-card-title" style={{color:'var(--tx)',fontSize:14,marginBottom:6}}><i className="fa-solid fa-stopwatch"></i> Start Tracking</div>
+          <p style={{fontSize:12,color:'var(--tx3)',marginBottom:20}}>Select a task or create a new one</p>
+          
+          <div style={{display:'flex',gap:12,marginBottom:16}}>
+            <select className="input" style={{flex:1,background:'var(--bg)'}} value={selectedTask} onChange={e=>setSelectedTask(e.target.value)}>
+              <option value="">— Select preset task —</option>
               {PRESET_TASKS.map((t,i)=><option key={i} value={t}>{t}</option>)}
-              <option value="__custom__">✏️ Enter custom task name...</option>
+              <option value="__custom__">Custom Task...</option>
             </select>
+            {activeTimer && activeTimer.status === 'running' ? (
+              <button className="btn btn-danger" style={{padding:'12px 20px'}} onClick={stopAndSave}>Stop</button>
+            ) : (
+              <button className="btn btn-primary" style={{padding:'12px 20px'}} onClick={()=>handleStartTimer(false)}><i className="fa-solid fa-play"></i> Start</button>
+            )}
           </div>
-          {isCustom&&(
-            <div>
-              <label className="input-label">Custom Task Name</label>
-              <div style={{display:'flex',gap:8}}>
-                <input className="input" value={customInput} onChange={e=>setCustomInput(e.target.value)} placeholder="Describe your task..." style={{flex:1}} onKeyDown={e=>{if(e.key==='Enter'&&customInput.trim())startNewTask(customInput.trim(),category);}}/>
-                <button className="btn btn-ghost" onClick={()=>{setIsCustom(false);setCustomInput('');}} style={{padding:'12px 14px',fontSize:12}}>Cancel</button>
-              </div>
+          
+          {selectedTask === '__custom__' && (
+            <div style={{marginBottom:16}}>
+              <p style={{fontSize:10,fontWeight:800,textTransform:'uppercase',color:'var(--tx3)',marginBottom:8}}>Custom Task Name</p>
+              <input className="input" placeholder="Type here..." value={customInput} onChange={e=>setCustomInput(e.target.value)} />
             </div>
           )}
-          <div>
-            <label className="input-label">Category</label>
-            <select className="input" value={category} onChange={e=>setCategory(e.target.value)}>
-              {TASK_CATEGORIES.map(c=><option key={c}>{c}</option>)}
-            </select>
-          </div>
-          {isCustom&&(
-            <button className="btn btn-primary" style={{justifyContent:'center',padding:'14px'}}
-              onClick={()=>{if(!customInput.trim())return showToast('Please enter a task name','warn');startNewTask(customInput.trim(),category);}}>
-              <i className="fa-solid fa-play"></i> {activeTimer?'Switch Task':'Start Timer'}
-            </button>
-          )}
-        </div>
-      </div>
 
-      {queue.length>0&&(
-        <div className="glass" style={{borderRadius:24,padding:'24px 28px'}}>
-          <p style={{fontSize:13,fontWeight:900,color:'var(--tx)',marginBottom:16}}>
-            <i className="fa-solid fa-layer-group mr-2" style={{color:'var(--p)'}}></i> Task Queue ({queue.length})
-          </p>
-          {queue.map((qt,i)=>(
-            <div key={i} className="task-queue-item">
-              <div style={{flex:1,overflow:'hidden'}}>
-                <p style={{fontSize:13,fontWeight:800,color:'var(--tx)',overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap'}}>{qt.taskName}</p>
-                <p style={{fontSize:11,color:'var(--tx3)',marginTop:2}}>
-                  <span className={`badge tag-${qt.category}`} style={{fontSize:9,padding:'2px 8px'}}>{qt.category}</span>
-                  <span style={{marginLeft:8,fontFamily:'Space Mono'}}>{fmtSeconds(qt.elapsedSeconds||0)}</span>
-                </p>
-              </div>
-              <button className="btn btn-ok" style={{padding:'8px 14px',fontSize:12}} onClick={()=>resumeFromQueue(i)}>
+          <p style={{fontSize:10,fontWeight:800,textTransform:'uppercase',color:'var(--tx3)',marginBottom:8,marginTop:12}}>Select or Add Task to Queue</p>
+          <div style={{display:'flex',gap:12}}>
+            <select className="input" style={{flex:1,background:'var(--bg)'}} value={category} onChange={e=>setCategory(e.target.value)}>
+              {TASK_CATEGORIES.map(c=><option key={c} value={c}>{c}</option>)}
+            </select>
+            <button className="btn" style={{background:'var(--bg)',color:'var(--tx)',border:'1px solid var(--bd)'}} onClick={()=>handleStartTimer(true)}>+ Queue</button>
+          </div>
+          <div style={{display:'flex',gap:12,marginTop:16}}>
+             {activeTimer && activeTimer.status === 'running' && (
+              <button className="btn btn-ghost" onClick={()=>setActiveTimer(t=>({...t,elapsedSeconds:elapsed,status:'paused'}))} style={{flex:1}}>
+                <i className="fa-solid fa-pause"></i> Pause
+              </button>
+            )}
+            {activeTimer && activeTimer.status === 'paused' && (
+              <button className="btn btn-ok" onClick={()=>{const now=new Date().toISOString();setActiveTimer(t=>({...t,status:'running',lastResumeTime:now}));}} style={{flex:1}}>
                 <i className="fa-solid fa-play"></i> Resume
               </button>
-              <button className="btn btn-ghost" style={{padding:'8px 12px',fontSize:12,color:'var(--danger)'}} onClick={()=>discardQueue(i)}>
-                <i className="fa-solid fa-trash"></i>
+            )}
+            {activeTimer && activeTimer.status === 'running' && (
+              <button className="btn btn-ghost" onClick={()=>onFocusLock(activeTimer.taskName,elapsed)} style={{flex:1,color:'var(--p)',borderColor:'var(--p)'}}>
+                <i className="fa-solid fa-lock"></i> Focus
               </button>
-            </div>
-          ))}
+            )}
+          </div>
         </div>
-      )}
-      <GeoWidget/>
+
+        <div className="dash-card">
+          <div className="dash-card-title" style={{color:'var(--tx)',fontSize:14,marginBottom:6}}><i className="fa-solid fa-list-ul"></i> Task Queue</div>
+          <p style={{fontSize:12,color:'var(--tx3)',marginBottom:16}}>Pending tasks ({queue.length})</p>
+          
+          <div style={{flex:1,overflowY:'auto',maxHeight:250}}>
+            {queue.length === 0 ? (
+              <div style={{height:'100%',display:'flex',flexDirection:'column',alignItems:'center',justifyContent:'center',opacity:.5,padding:'20px 0'}}>
+                <i className="fa-solid fa-check-double" style={{fontSize:32,marginBottom:12}}></i>
+                <p style={{fontWeight:800,fontSize:14,color:'var(--tx)'}}>No tasks queued</p>
+                <p style={{fontSize:11,color:'var(--tx3)'}}>Add a task to get started 🚀</p>
+              </div>
+            ) : (
+              <div>
+                {queue.map((qt,i)=>(
+                  <div key={i} className="task-queue-item">
+                    <div style={{flex:1,overflow:'hidden'}}>
+                      <p style={{fontSize:13,fontWeight:700,color:'var(--tx)',overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap'}}>{qt.taskName}</p>
+                      <p style={{fontSize:11,color:'var(--tx3)',marginTop:4}}>
+                        <span className={`badge tag-${qt.category}`} style={{fontSize:9,padding:'2px 8px'}}>{qt.category}</span>
+                        <span style={{marginLeft:8,fontFamily:'Space Mono'}}>{fmtSeconds(qt.elapsedSeconds||0)}</span>
+                      </p>
+                    </div>
+                    <button className="btn btn-ghost" style={{padding:'6px 12px',fontSize:12,color:'var(--p)',borderColor:'var(--p)'}} onClick={()=>resumeFromQueue(i)}><i className="fa-solid fa-play"></i></button>
+                    <button className="btn btn-ghost" style={{padding:'6px 10px',fontSize:12,color:'var(--danger)'}} onClick={()=>discardQueue(i)}><i className="fa-solid fa-trash"></i></button>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+
+      <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fit,minmax(250px,1fr))',gap:20,marginTop:24}}>
+        <div className="dash-card">
+           <div className="dash-card-title" style={{color:'var(--tx)',fontSize:14,marginBottom:20}}>Category Breakdown</div>
+           <DonutChart data={TASK_CATEGORIES.map(c => ({
+              name: c, 
+              hrs: tasks.filter(t => t.empId === safeUser.id && t.month === new Date().getMonth()+1 && t.year === new Date().getFullYear() && t.category === c).reduce((s,t)=>s+(t.durationHours||0),0)
+           })).filter(c => c.hrs > 0)} />
+        </div>
+        <div className="dash-card">
+           <MiniBarChart tasks={tasks.filter(t => t.empId === safeUser.id)} />
+        </div>
+        <div style={{display:'flex',flexDirection:'column',gap:20}}>
+           <GeoWidget/>
+           <BirthdayWidget employees={EMPLOYEES_INIT} />
+        </div>
+      </div>
     </div>
   );
 };
 
-// ================================================================
-// MY TASKS VIEW
-// ================================================================
+const MyProfileView = ({ user, tasks }) => {
+  const safeUser = user || {};
+  const dept = DEPARTMENTS.find(d => d.id === safeUser.deptId) || {};
+  const totalHrs = tasks.filter(t => t.empId === safeUser.id).reduce((s,t) => s + (t.durationHours||0), 0);
+  const activeDays = [...new Set(tasks.filter(t => t.empId === safeUser.id).map(t=>t.date))].length;
+  const myTasksCount = tasks.filter(t => t.empId === safeUser.id).length;
+
+  const [posts, setPosts] = useState([
+    { id: 1, author: safeUser.firstName, empId: safeUser.employeeId, text: 'Finished compiling the Q2 analytics report.', time: 'Just now', likes: 0 },
+    { id: 2, author: safeUser.firstName, empId: safeUser.employeeId, text: 'Checking the inventory logs for discrepancies.', time: '2 hrs ago', likes: 2 },
+  ]);
+  const [newPost, setNewPost] = useState('');
+
+  const handlePost = () => {
+    if(!newPost.trim()) return;
+    setPosts([{id:Date.now(), author:safeUser.firstName, empId:safeUser.employeeId, text:newPost, time:'Just now', likes:0}, ...posts]);
+    setNewPost('');
+  };
+
+  return (
+    <div className="anim-fade" style={{display:'flex',flexDirection:'column',gap:24}}>
+      <div>
+        <h2 style={{fontSize:32,fontWeight:900,color:'var(--tx)',letterSpacing:'-.5px'}}>My Profile</h2>
+        <p style={{fontSize:13,color:'var(--tx3)',marginTop:4,fontWeight:600,display:'flex',gap:12}}>
+          <span style={{color:'var(--p)'}}>Social feed</span> <span>Stats</span> <span>Achievements</span>
+        </p>
+      </div>
+
+      <div style={{display:'grid',gridTemplateColumns:'360px 1fr',gap:24}}>
+        <div className="dash-card" style={{overflow:'hidden',display:'flex',flexDirection:'column',paddingBottom:32,paddingTop:0,paddingLeft:0,paddingRight:0,background:'var(--wh)'}}>
+          <div className="profile-cover" style={{backgroundImage:`url('https://i.pinimg.com/736x/5f/42/ee/5f42ee598a3eec0a7019622df1e51b14.jpg')`,backgroundSize:'cover',backgroundPosition:'center',borderRadius:0,marginBottom:80,height:220}}>
+            <button className="btn btn-ghost" style={{position:'absolute',bottom:12,right:12,background:'rgba(0,0,0,0.5)',color:'#fff',border:'none',fontSize:11,padding:'6px 12px'}}><i className="fa-solid fa-pen"></i> Edit Cover</button>
+            <div className="profile-avatar-container" style={{bottom:-60}}>
+              <Avatar emp={safeUser} size="xl" />
+              <button style={{position:'absolute',bottom:0,right:0,width:36,height:36,borderRadius:'50%',background:'var(--p)',color:'#fff',border:'3px solid var(--wh)',display:'flex',alignItems:'center',justifyContent:'center',cursor:'pointer'}}><i className="fa-solid fa-camera" style={{fontSize:14}}></i></button>
+            </div>
+          </div>
+          <div style={{padding:'0 24px',textAlign:'center'}}>
+            <h2 style={{fontSize:28,fontWeight:900,color:'var(--tx)',lineHeight:1.1}}>{safeUser.firstName} <br/> {safeUser.lastName}</h2>
+            <p style={{fontSize:12,fontWeight:800,textTransform:'uppercase',letterSpacing:'.1em',color:'var(--tx3)',marginTop:8}}>{dept.name || 'Department'}</p>
+            <p style={{fontSize:12,color:'var(--p)',fontWeight:600,marginTop:4}}><i className="fa-solid fa-location-dot"></i> {dept.name} Dept</p>
+            
+            <div style={{display:'flex',justifyContent:'center',gap:16,marginTop:24,background:'var(--bg)',borderRadius:16,padding:'16px',border:'1px solid var(--bd)'}}>
+              <div style={{textAlign:'center'}}><p style={{fontSize:20,fontWeight:900,color:'var(--p)'}}>{myTasksCount}</p><p style={{fontSize:9,fontWeight:800,textTransform:'uppercase',color:'var(--tx3)'}}>Tasks</p></div>
+              <div style={{width:1,background:'var(--bd)'}}></div>
+              <div style={{textAlign:'center'}}><p style={{fontSize:20,fontWeight:900,color:'var(--p)'}}>{totalHrs.toFixed(1)}h</p><p style={{fontSize:9,fontWeight:800,textTransform:'uppercase',color:'var(--tx3)'}}>Logged</p></div>
+              <div style={{width:1,background:'var(--bd)'}}></div>
+              <div style={{textAlign:'center'}}><p style={{fontSize:20,fontWeight:900,color:'var(--p)'}}>{activeDays}</p><p style={{fontSize:9,fontWeight:800,textTransform:'uppercase',color:'var(--tx3)'}}>Days</p></div>
+            </div>
+            
+            <div style={{marginTop:24,textAlign:'left'}}>
+              <p style={{fontSize:10,fontWeight:800,textTransform:'uppercase',color:'var(--tx3)',marginBottom:8}}>Bio</p>
+              <p style={{fontSize:13,color:'var(--tx)',lineHeight:1.6}}>I'm a dedicated member of the {dept.name} team, focusing on process efficiency and tracking performance metrics.</p>
+            </div>
+          </div>
+        </div>
+
+        <div style={{display:'flex',flexDirection:'column',gap:16}}>
+          <div className="dash-card" style={{padding:20,display:'flex',flexDirection:'column',gap:16}}>
+            <div style={{display:'flex',gap:16}}>
+              <Avatar emp={safeUser} size="md" />
+              <textarea className="feed-input" rows="2" placeholder="Share a work update, achievement, or tip..." value={newPost} onChange={e=>setNewPost(e.target.value)}></textarea>
+            </div>
+            <div style={{display:'flex',justifyContent:'space-between',alignItems:'center'}}>
+              <span style={{fontSize:11,color:'var(--tx3)',fontWeight:600}}>{newPost.length}/280</span>
+              <button className="btn btn-primary" style={{padding:'10px 40px',width:'100%',maxWidth:200}} onClick={handlePost}>Share</button>
+            </div>
+          </div>
+
+          {posts.map(p => (
+            <div key={p.id} className="feed-post" style={{border:'none',background:'var(--wh)',boxShadow:'0 4px 20px var(--shadow)'}}>
+              <div style={{display:'flex',alignItems:'center',gap:12,marginBottom:12}}>
+                <Avatar emp={safeUser} size="sm" />
+                <div>
+                  <p style={{fontSize:14,fontWeight:800,color:'var(--tx)'}}>{p.author} <span style={{fontSize:11,color:'var(--p)',fontWeight:600}}>· {p.empId}</span></p>
+                  <p style={{fontSize:11,color:'var(--tx3)'}}>{p.time}</p>
+                </div>
+              </div>
+              <p style={{fontSize:14,color:'var(--tx)',lineHeight:1.6,marginBottom:16}}>{p.text}</p>
+              <div style={{display:'flex',gap:16,borderTop:'1px solid var(--bd)',paddingTop:12}}>
+                <button style={{background:'none',border:'none',color:'var(--tx3)',fontSize:12,fontWeight:600,cursor:'pointer',display:'flex',alignItems:'center',gap:6}}><i className="fa-regular fa-heart"></i> {p.likes}</button>
+                <button style={{background:'none',border:'none',color:'var(--tx3)',fontSize:12,fontWeight:600,cursor:'pointer',display:'flex',alignItems:'center',gap:6}}><i className="fa-regular fa-comment"></i> Reply</button>
+                <button style={{background:'none',border:'none',color:'var(--tx3)',fontSize:12,fontWeight:600,cursor:'pointer',display:'flex',alignItems:'center',gap:6}}><i className="fa-solid fa-share-nodes"></i> Share</button>
+              </div>
+            </div>
+          ))}
+        </div>
+
+      </div>
+    </div>
+  );
+};
+
 const MyTasksView = ({user,tasks,showModal,showToast,onDeleteTask,onCloneTask}) => {
   const curMonth=new Date().getMonth()+1;const curYear=new Date().getFullYear();
   const [selMonth,setSelMonth]=useState(curMonth);const [selYear,setSelYear]=useState(curYear);
@@ -1581,7 +1214,6 @@ const MyTasksView = ({user,tasks,showModal,showToast,onDeleteTask,onCloneTask}) 
             <div style={{padding:'60px',textAlign:'center',opacity:.4}}>
               <i className="fa-solid fa-calendar-xmark" style={{fontSize:48,display:'block',marginBottom:16}}></i>
               <p style={{fontWeight:800,fontSize:14}}>No tasks found.</p>
-              {!searchQuery&&filterCat==='All'&&<button className="btn btn-primary" onClick={()=>showModal('logTask')} style={{marginTop:20,fontSize:13}}><i className="fa-solid fa-plus"></i> Log a Task</button>}
             </div>
           ):(
             <table className="nx-table" style={{width:'100%',minWidth:800}}>
@@ -1606,12 +1238,6 @@ const MyTasksView = ({user,tasks,showModal,showToast,onDeleteTask,onCloneTask}) 
             </table>
           )}
         </div>
-        {filtered.length>0&&(
-          <div style={{padding:'16px 24px',borderTop:'1px solid var(--bd)',display:'flex',justifyContent:'space-between',alignItems:'center',flexWrap:'wrap',gap:8,background:'rgba(0,0,0,0.1)'}}>
-            <span style={{fontSize:13,color:'var(--tx3)',fontWeight:700}}>{filtered.length} tasks in {MONTH_NAMES[selMonth-1]}</span>
-            <span style={{fontSize:16,fontWeight:900,color:'var(--p)'}}>{totalHrs.toFixed(2)} total hours</span>
-          </div>
-        )}
       </div>
     </div>
   );
@@ -1651,7 +1277,7 @@ const AdminTrackerView = ({employees,tasks,showToast}) => {
             <div style={{flex:1,display:'flex',flexDirection:'column',alignItems:'center',justifyContent:'center',opacity:.4}}><i className="fa-solid fa-satellite" style={{fontSize:48,display:'block',marginBottom:16}}></i><p style={{fontWeight:800,fontSize:14}}>Select a personnel</p></div>
           ):(
             <>
-              <div style={{padding:'20px 24px',borderBottom:'1px solid var(--bd)',display:'flex',alignItems:'center',justifyContent:'space-between',flexWrap:'wrap',gap:10,background:'rgba(0,0,0,0.1)'}}>
+              <div style={{padding:'20px 24px',borderBottom:'1px solid var(--bd)',display:'flex',alignItems:'center',justifyContent:'space-between',flexWrap:'wrap',gap:10,background:'rgba(0,0,0,0.03)'}}>
                 <div style={{display:'flex',alignItems:'center',gap:14}}><Avatar emp={selEmp} size="md"/><div><p style={{fontSize:18,fontWeight:900,color:'var(--tx)'}}>{selEmp.firstName||''} {selEmp.lastName||''}</p><p style={{fontSize:12,color:'var(--tx3)',fontWeight:600}}>{totalHrs.toFixed(1)}h total • {empTasks.length} sessions</p></div></div>
                 <div style={{display:'flex',gap:10}}>
                   <select className="input" value={selMonth} onChange={e=>setSelMonth(e.target.value)} style={{width:'auto',padding:'10px 16px',fontSize:13}}><option value="All">All Months</option>{MONTHS.map((m,i)=><option key={i} value={i+1}>{m}</option>)}</select>
@@ -1736,7 +1362,7 @@ const ProjectsView = ({projects,setProjects,showModal,showToast,isAdmin}) => {
             {isAdmin&&<button onClick={()=>handleDeleteProject(p.id)} style={{position:'absolute',top:16,right:16,background:'none',border:'none',color:'var(--danger)',cursor:'pointer',padding:6}}><i className="fa-solid fa-trash"></i></button>}
             <div style={{display:'flex',justifyContent:'space-between',alignItems:'flex-start'}}>
               <div style={{flex:1,paddingRight:30}}><p style={{fontSize:16,fontWeight:900,color:'var(--tx)'}}>{p.name}</p><p style={{fontSize:12,color:'var(--tx3)',marginTop:4,fontWeight:700}}>{p.dept}</p></div>
-              {isAdmin?(<select value={p.status} onChange={e=>handleStatusChange(p.id,e.target.value)} style={{background:'rgba(0,0,0,0.15)',border:'1px solid var(--bd)',borderRadius:8,padding:'4px 8px',fontSize:10,fontWeight:800,color:p.status==='Completed'?'#4ade80':'#fbbf24',cursor:'pointer'}}><option>Active</option><option>Completed</option></select>):(<StatusBadge status={p.status}/>)}
+              {isAdmin?(<select value={p.status} onChange={e=>handleStatusChange(p.id,e.target.value)} style={{background:'rgba(0,0,0,0.05)',border:'1px solid var(--bd)',borderRadius:8,padding:'4px 8px',fontSize:10,fontWeight:800,color:p.status==='Completed'?'#4ade80':'#fbbf24',cursor:'pointer'}}><option>Active</option><option>Completed</option></select>):(<StatusBadge status={p.status}/>)}
             </div>
             <div>
               <div style={{display:'flex',justifyContent:'space-between',fontSize:12,fontWeight:800,marginBottom:8}}><span style={{color:'var(--tx3)'}}>Progress</span><span style={{color:'var(--p)'}}>{p.progress}%</span></div>
@@ -1784,13 +1410,13 @@ const AdminDirectoryView = ({employees,setEmployees,tasks,showToast,onLogTaskFor
                 return(
                   <tr key={emp.id}>
                     <td><div style={{display:'flex',alignItems:'center',gap:14}}><Avatar emp={emp} size="md"/><div><p style={{fontWeight:800,fontSize:14}}>{emp.firstName||''} {emp.lastName||''}</p><p style={{fontSize:12,color:'var(--tx3)',fontWeight:600}}>{emp.email}</p></div></div></td>
-                    <td><span style={{fontFamily:'monospace',fontSize:12,background:'rgba(255,255,255,0.05)',padding:'4px 10px',borderRadius:8,border:'1px solid var(--bd)'}}>{emp.employeeId}</span></td>
+                    <td><span style={{fontFamily:'monospace',fontSize:12,background:'rgba(0,0,0,0.05)',padding:'4px 10px',borderRadius:8,border:'1px solid var(--bd)'}}>{emp.employeeId}</span></td>
                     <td><span style={{fontSize:13,fontWeight:700}}>{dept?.icon} {dept?.name}</span></td>
                     <td><span style={{color:'var(--p)',fontWeight:900,fontSize:15}}>{hrs.toFixed(1)}</span><span style={{fontSize:10,color:'var(--tx3)',marginLeft:4}}>hrs</span></td>
                     <td>
                       <div style={{display:'flex',gap:6,flexDirection:'column'}}>
-                        <select value={emp.role||'Staff'} onChange={e=>updateRole(emp.id,e.target.value)} style={{background:'rgba(0,0,0,0.15)',border:'1px solid var(--bd)',borderRadius:10,padding:'4px 8px',fontSize:11,fontWeight:700,color:'var(--tx)',cursor:'pointer'}}><option>Staff</option><option>ADMIN</option><option>Super Admin</option><option>Nexus Dev</option></select>
-                        <select value={emp.status||'Active'} onChange={e=>updateStatus(emp.id,e.target.value)} style={{background:'rgba(0,0,0,0.15)',border:'1px solid var(--bd)',borderRadius:10,padding:'4px 8px',fontSize:11,fontWeight:700,color:'var(--tx)',cursor:'pointer'}}><option>Active</option><option>Idle</option><option>Absent</option><option>Leave</option></select>
+                        <select value={emp.role||'Staff'} onChange={e=>updateRole(emp.id,e.target.value)} style={{background:'rgba(0,0,0,0.05)',border:'1px solid var(--bd)',borderRadius:10,padding:'4px 8px',fontSize:11,fontWeight:700,color:'var(--tx)',cursor:'pointer'}}><option>Staff</option><option>ADMIN</option><option>Super Admin</option><option>Nexus Dev</option></select>
+                        <select value={emp.status||'Active'} onChange={e=>updateStatus(emp.id,e.target.value)} style={{background:'rgba(0,0,0,0.05)',border:'1px solid var(--bd)',borderRadius:10,padding:'4px 8px',fontSize:11,fontWeight:700,color:'var(--tx)',cursor:'pointer'}}><option>Active</option><option>Idle</option><option>Absent</option><option>Leave</option></select>
                       </div>
                     </td>
                     <td><button className="btn btn-ghost" style={{padding:'8px 14px',fontSize:12}} onClick={()=>onLogTaskForEmp(emp)}><i className="fa-solid fa-clock mr-2" style={{color:'var(--p)'}}></i> Log Task</button></td>
@@ -1856,7 +1482,7 @@ const LeavesView = ({user,leaveRequests,showModal}) => {
         ))}
       </div>
       <div className="glass" style={{borderRadius:24,overflow:'hidden'}}>
-        <div style={{padding:'20px 28px',borderBottom:'1px solid var(--bd)',background:'rgba(0,0,0,0.1)'}}><h3 style={{fontSize:16,fontWeight:900,color:'var(--tx)'}}><i className="fa-solid fa-clock-rotate-left mr-2" style={{color:'var(--p)'}}></i>My Leave History</h3></div>
+        <div style={{padding:'20px 28px',borderBottom:'1px solid var(--bd)',background:'rgba(0,0,0,0.03)'}}><h3 style={{fontSize:16,fontWeight:900,color:'var(--tx)'}}><i className="fa-solid fa-clock-rotate-left mr-2" style={{color:'var(--p)'}}></i>My Leave History</h3></div>
         {myLeaves.length===0?(
           <div style={{padding:'60px',textAlign:'center',opacity:.4}}><i className="fa-solid fa-calendar-xmark" style={{fontSize:48,display:'block',marginBottom:16}}></i><p style={{fontWeight:800,fontSize:14}}>No leave requests yet.</p></div>
         ):(
@@ -1922,7 +1548,7 @@ const LeaderboardView = ({employees,tasks}) => {
             <div style={{flex:1,overflow:'hidden'}}><p style={{fontSize:14,fontWeight:800,color:'var(--tx)',overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap'}}>{emp.firstName||'Unknown'} {emp.lastName||''}</p><p style={{fontSize:11,color:'var(--tx3)',fontWeight:600,marginTop:2}}>{emp.dept?.icon||''} {emp.dept?.name||''} • {emp.taskCount} tasks</p></div>
             <div style={{textAlign:'right',minWidth:80}}>
               <p style={{fontSize:18,fontWeight:900,color:'var(--p)'}}>{emp.hrs.toFixed(1)}h</p>
-              <div style={{width:100,height:6,background:'rgba(0,0,0,0.15)',borderRadius:99,marginTop:6}}><div style={{width:`${(emp.hrs/maxHrs)*100}%`,height:'100%',background:'linear-gradient(90deg,var(--p),var(--pd))',borderRadius:99,transition:'width 1s cubic-bezier(0.16,1,0.3,1)'}}></div></div>
+              <div style={{width:100,height:6,background:'rgba(0,0,0,0.05)',borderRadius:99,marginTop:6}}><div style={{width:`${(emp.hrs/maxHrs)*100}%`,height:'100%',background:'linear-gradient(90deg,var(--p),var(--pd))',borderRadius:99,transition:'width 1s cubic-bezier(0.16,1,0.3,1)'}}></div></div>
             </div>
           </div>
         ))}
@@ -2001,6 +1627,7 @@ const SettingsView = ({theme,setTheme,showToast,animations,setAnimations,isAdmin
   );
 };
 
+
 // ================================================================
 // MAIN APP COMPONENT
 // ================================================================
@@ -2021,15 +1648,14 @@ const App = () => {
   // UI State
   const [toasts, setToasts] = useState([]);
   const [navOpen, setNavOpen] = useState(false);
-  const [activeModal, setActiveModal] = useState(null); // 'profile', 'shiftSummary'
+  const [activeModal, setActiveModal] = useState(null); 
   
   // AFK & Focus State
   const [lastActivity, setLastActivity] = useState(Date.now());
   const [isAFK, setIsAFK] = useState(false);
-  const [afkCountdown, setAfkCountdown] = useState(60); // 60 seconds auto-logout
-  const [focusLock, setFocusLock] = useState(null); // {taskName, secondsLeft, isActive}
+  const [afkCountdown, setAfkCountdown] = useState(60); 
+  const [focusLock, setFocusLock] = useState(null); 
 
-  // Session stats for Shift Summary
   const [sessionStart] = useState(Date.now());
   const [showShiftSummary, setShowShiftSummary] = useState(false);
 
@@ -2044,7 +1670,6 @@ const App = () => {
   useEffect(() => { LS.save('ghz_ann', announcements); }, [announcements]);
   useEffect(() => { LS.save('ghz_leaves', leaveRequests); }, [leaveRequests]);
 
-  // AFK Detector
   useEffect(() => {
     if(!user || isAFK || focusLock) return;
     const resetTimer = () => setLastActivity(Date.now());
@@ -2069,18 +1694,16 @@ const App = () => {
     };
   }, [user, lastActivity, isAFK, focusLock]);
 
-  // AFK Auto-logout countdown
   useEffect(() => {
     if (!isAFK) return;
     if (afkCountdown <= 0) {
-      handleLogout(true); // Force logout
+      handleLogout(true);
       return;
     }
     const timer = setTimeout(() => setAfkCountdown(c => c - 1), 1000);
     return () => clearTimeout(timer);
   }, [isAFK, afkCountdown]);
 
-  // Focus Lock Timer
   useEffect(() => {
     if (!focusLock || !focusLock.isActive) return;
     if (focusLock.secondsLeft <= 0) {
@@ -2103,14 +1726,12 @@ const App = () => {
 
   const handleLogin = (u) => {
     setUser(u);
-    api.call('sync', { empId: u.id }); // background sync
+    api.call('sync', { empId: u.id });
     showToast(`Welcome back, ${u.firstName}!`, 'success');
     setLastActivity(Date.now());
   };
 
-  const handleLogoutReq = () => {
-    setShowShiftSummary(true);
-  };
+  const handleLogoutReq = () => { setShowShiftSummary(true); };
 
   const handleLogout = (forced = false) => {
     if(forced) showToast('Auto-logged out due to inactivity.', 'warn');
@@ -2123,7 +1744,6 @@ const App = () => {
     setFocusLock(null);
     setShowLanding(true);
     
-    // Auto-pause any running timer in LS
     if(user) {
       const savedTimer = LS.load(`timer_${user.id}`);
       if(savedTimer && savedTimer.activeTimer && savedTimer.activeTimer.status === 'running') {
@@ -2135,43 +1755,26 @@ const App = () => {
     }
   };
 
-  const handleSaveTask = (task) => {
-    setTasks(prev => [task, ...prev]);
-  };
+  const handleSaveTask = (task) => { setTasks(prev => [task, ...prev]); };
 
   const handleFocusLock = (taskName, elapsedSecs) => {
-    // Only lock if we have a task running
-    setFocusLock({
-      taskName,
-      secondsLeft: POMODORO_DURATION,
-      isActive: true
-    });
+    setFocusLock({ taskName, secondsLeft: POMODORO_DURATION, isActive: true });
   };
 
   const isAdmin = user?.role === 'ADMIN' || user?.role === 'Super Admin' || user?.role === 'Nexus Dev';
   
-  // Calculate total hours for profile
-  const totalHrs = tasks.filter(t => t.empId === user?.id).reduce((s,t) => s + (t.durationHours||0), 0);
-  
-  // Quick Productivity Calculation for Shift Summary
   const todayISO = new Date().toISOString().split('T')[0];
   const todayTasks = tasks.filter(t => t.empId === user?.id && t.date === todayISO);
   const loggedMinutes = todayTasks.reduce((s,t) => s + (t.durationHours||0)*60, 0);
   const sessionMinutes = Math.floor((Date.now() - sessionStart) / 60000);
   const productivityPct = sessionMinutes > 0 ? Math.min(100, (loggedMinutes / sessionMinutes) * 100) : 0;
 
-  if (showLanding) {
-    return <LandingPage onEnter={() => setShowLanding(false)} theme={theme} setTheme={setTheme} />;
-  }
-
-  if (!user) {
-    return <AuthPortal onLogin={handleLogin} theme={theme} setTheme={setTheme} />;
-  }
+  if (showLanding) return <LandingPage onEnter={() => setShowLanding(false)} theme={theme} setTheme={setTheme} />;
+  if (!user) return <AuthPortal onLogin={handleLogin} theme={theme} setTheme={setTheme} />;
 
   return (
     <>
       <ToastSystem toasts={toasts} remove={removeToast} />
-      <LiveClock />
       
       {isAFK && <AFKOverlay secondsLeft={afkCountdown} onResume={() => { setIsAFK(false); setLastActivity(Date.now()); }} />}
       
@@ -2195,51 +1798,37 @@ const App = () => {
         />
       )}
 
-      {activeModal === 'profile' && (
-        <MyProfileModal 
-          user={user} 
-          totalHours={totalHrs}
-          onClose={() => setActiveModal(null)} 
-          onSave={setUser} 
-          showToast={showToast} 
-        />
-      )}
-
-      {/* SIDEBAR */}
+      {/* NEW SIDEBAR MATCHING IMAGE 1 & 2 */}
       <div className={`sidebar ${!navOpen ? 'desktop-only' : ''}`}>
-        <div style={{padding: '24px 20px', display: 'flex', alignItems: 'center', gap: '14px', borderBottom: '1px solid var(--bd)'}}>
-          <div style={{width: 42, height: 42, borderRadius: 12, background: 'linear-gradient(135deg, var(--p), var(--pd))', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff', fontSize: 20, boxShadow: '0 4px 12px var(--shadow)'}}>
-            <i className="fa-solid fa-bolt"></i>
-          </div>
-          <div>
-            <h1 style={{fontSize: 16, fontWeight: 900, letterSpacing: '-.5px', color: 'var(--tx)'}}>Nexus</h1>
-            <p style={{fontSize: 10, fontWeight: 800, textTransform: 'uppercase', letterSpacing: '.1em', color: 'var(--p)'}}>v6.02</p>
+        <div style={{padding: '24px', display: 'flex', alignItems: 'center', justifyContent:'center', borderBottom: '1px solid var(--bd)', marginBottom:12}}>
+          <div style={{background:'var(--wh)',padding:'8px 16px',borderRadius:12,boxShadow:'0 2px 10px rgba(0,0,0,0.05)',border:'1px solid var(--bd)'}}>
+             <h1 style={{fontSize: 18, fontWeight: 900, letterSpacing: '-.5px', color: 'var(--tx)', display:'flex', alignItems:'center', gap:8}}><img src="https://contents.smsupermalls.com/data/uploads/2020/07/GIGAHERTZ_COMPUTER_SYSTEM.jpg" style={{width:24,height:24}}/> GIGAHERTZ</h1>
           </div>
         </div>
 
-        <div style={{padding: '20px 16px', flex: 1, overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: 6}}>
-          <p style={{fontSize: 10, fontWeight: 800, textTransform: 'uppercase', letterSpacing: '.1em', color: 'var(--tx3)', marginLeft: 14, marginBottom: 4}}>Personal</p>
+        <div style={{padding: '0 16px', flex: 1, overflowY: 'auto', display: 'flex', flexDirection: 'column'}}>
           <button className={`nav-item ${activeTab === 'dashboard' ? 'active' : ''}`} onClick={() => {setActiveTab('dashboard'); setNavOpen(false);}}>
-            <div className="nav-icon"><i className="fa-solid fa-house"></i></div> Dashboard
+            <div className="nav-icon"><i className="fa-solid fa-table-cells-large"></i></div> Dashboard
           </button>
           <button className={`nav-item ${activeTab === 'mytasks' ? 'active' : ''}`} onClick={() => {setActiveTab('mytasks'); setNavOpen(false);}}>
-            <div className="nav-icon"><i className="fa-solid fa-list-check"></i></div> My Tasks
+            <div className="nav-icon"><i className="fa-solid fa-list-check"></i></div> Task Management
           </button>
           <button className={`nav-item ${activeTab === 'leaves' ? 'active' : ''}`} onClick={() => {setActiveTab('leaves'); setNavOpen(false);}}>
             <div className="nav-icon"><i className="fa-solid fa-umbrella-beach"></i></div> Leaves
           </button>
-          
-          <p style={{fontSize: 10, fontWeight: 800, textTransform: 'uppercase', letterSpacing: '.1em', color: 'var(--tx3)', marginLeft: 14, marginTop: 16, marginBottom: 4}}>Company</p>
           <button className={`nav-item ${activeTab === 'leaderboard' ? 'active' : ''}`} onClick={() => {setActiveTab('leaderboard'); setNavOpen(false);}}>
             <div className="nav-icon"><i className="fa-solid fa-trophy"></i></div> Leaderboard
           </button>
           <button className={`nav-item ${activeTab === 'announcements' ? 'active' : ''}`} onClick={() => {setActiveTab('announcements'); setNavOpen(false);}}>
             <div className="nav-icon"><i className="fa-solid fa-bullhorn"></i></div> Alerts
           </button>
+          <button className={`nav-item ${activeTab === 'profile' ? 'active' : ''}`} onClick={() => {setActiveTab('profile'); setNavOpen(false);}}>
+            <div className="nav-icon"><i className="fa-regular fa-user"></i></div> My Profile
+          </button>
 
           {isAdmin && (
             <>
-              <p style={{fontSize: 10, fontWeight: 800, textTransform: 'uppercase', letterSpacing: '.1em', color: 'var(--tx3)', marginLeft: 14, marginTop: 16, marginBottom: 4}}>Admin Controls</p>
+              <p style={{fontSize: 10, fontWeight: 800, textTransform: 'uppercase', letterSpacing: '.1em', color: 'var(--tx3)', marginLeft: 14, marginTop: 16, marginBottom: 4}}>Admin</p>
               <button className={`nav-item ${activeTab === 'adminTracker' ? 'active' : ''}`} onClick={() => {setActiveTab('adminTracker'); setNavOpen(false);}}>
                 <div className="nav-icon"><i className="fa-solid fa-satellite-dish"></i></div> Live Tracker
               </button>
@@ -2255,133 +1844,75 @@ const App = () => {
             </>
           )}
 
-          <button className={`nav-item ${activeTab === 'settings' ? 'active' : ''}`} style={{marginTop: 'auto'}} onClick={() => {setActiveTab('settings'); setNavOpen(false);}}>
+          <div style={{marginTop:32, padding:'0 12px'}}>
+             <p style={{fontSize:10,fontWeight:800,textTransform:'uppercase',color:'var(--tx3)',marginBottom:12}}>Theme Color</p>
+             <div style={{display:'flex',gap:10,flexWrap:'wrap'}}>
+               {THEMES.map(t=>(
+                 <button key={t.id} onClick={()=>setTheme(t.id)} style={{width:20,height:20,borderRadius:'50%',background:t.color,border:`2px solid ${theme===t.id?'var(--tx)':'transparent'}`,cursor:'pointer'}} title={t.label}></button>
+               ))}
+             </div>
+          </div>
+
+          <div style={{marginTop:24, background:'color-mix(in srgb,var(--p) 8%,transparent)', borderRadius:16, padding:'16px', display:'flex', alignItems:'center', gap:12, border:`1px solid color-mix(in srgb,var(--p) 20%,transparent)`}}>
+             <Avatar emp={user} size="sm" />
+             <div style={{overflow:'hidden'}}>
+               <p style={{fontSize:13,fontWeight:800,color:'var(--tx)',whiteSpace:'nowrap',textOverflow:'ellipsis',overflow:'hidden'}}>{user.firstName} {user.lastName}</p>
+               <p style={{fontSize:10,color:'var(--p)',fontWeight:700}}>{user.employeeId}</p>
+             </div>
+          </div>
+
+          <button className={`nav-item ${activeTab === 'settings' ? 'active' : ''}`} style={{marginTop: 16}} onClick={() => {setActiveTab('settings'); setNavOpen(false);}}>
             <div className="nav-icon"><i className="fa-solid fa-gear"></i></div> Settings
           </button>
+          
+          <button className={`nav-item`} onClick={()=>{setTheme(theme==='dark'||theme==='titan'?'gigahertz':'titan');LS.save('ghz_theme',theme==='dark'||theme==='titan'?'gigahertz':'titan')}}>
+            <div className="nav-icon"><i className="fa-regular fa-moon"></i></div> Dark Mode
+          </button>
         </div>
 
-        <div style={{padding: '16px', borderTop: '1px solid var(--bd)'}}>
-          <div className="glass" style={{borderRadius: 16, padding: 12, display: 'flex', alignItems: 'center', gap: 12, cursor: 'pointer'}} onClick={() => setActiveModal('profile')}>
-            <Avatar emp={user} size="sm" />
-            <div style={{flex: 1, overflow: 'hidden'}}>
-              <p style={{fontSize: 13, fontWeight: 800, color: 'var(--tx)', whiteSpace: 'nowrap', textOverflow: 'ellipsis', overflow: 'hidden'}}>{user.firstName}</p>
-              <p style={{fontSize: 10, color: 'var(--tx3)'}}>{user.employeeId}</p>
-            </div>
-          </div>
-          <button className="btn btn-ghost" style={{width: '100%', marginTop: 8, padding: '10px', fontSize: 12, color: 'var(--danger)', borderColor: 'rgba(239,68,68,0.2)'}} onClick={handleLogoutReq}>
-            <i className="fa-solid fa-power-off"></i> End Shift
+        <div style={{padding: '24px 16px'}}>
+          <button className="btn btn-primary" style={{width: '100%', padding: '14px', fontSize: 14, borderRadius:16}} onClick={handleLogoutReq}>
+             Log Out
           </button>
         </div>
       </div>
 
-      {/* MOBILE NAV (Bottom) */}
       <div className="mobile-nav">
         <button className={`mob-nav-item ${activeTab === 'dashboard' ? 'active' : ''}`} onClick={() => setActiveTab('dashboard')}>
-          <div className="mob-icon"><i className="fa-solid fa-house"></i></div>
-          <span>Dash</span>
+          <div className="mob-icon"><i className="fa-solid fa-house"></i></div><span>Dash</span>
         </button>
         <button className={`mob-nav-item ${activeTab === 'mytasks' ? 'active' : ''}`} onClick={() => setActiveTab('mytasks')}>
-          <div className="mob-icon"><i className="fa-solid fa-list-check"></i></div>
-          <span>Tasks</span>
+          <div className="mob-icon"><i className="fa-solid fa-list-check"></i></div><span>Tasks</span>
         </button>
-        <button className="mob-nav-item" onClick={() => setActiveModal('profile')}>
-          <div className="mob-icon"><Avatar emp={user} size="sm" /></div>
-          <span>Profile</span>
+        <button className={`mob-nav-item ${activeTab === 'profile' ? 'active' : ''}`} onClick={() => setActiveTab('profile')}>
+          <div className="mob-icon"><Avatar emp={user} size="sm" /></div><span>Profile</span>
         </button>
-        {isAdmin && (
-          <button className={`mob-nav-item ${activeTab === 'adminTracker' ? 'active' : ''}`} onClick={() => setActiveTab('adminTracker')}>
-            <div className="mob-icon"><i className="fa-solid fa-satellite-dish"></i></div>
-            <span>Track</span>
-          </button>
-        )}
         <button className="mob-nav-item" style={{color: 'var(--danger)'}} onClick={handleLogoutReq}>
-          <div className="mob-icon" style={{background: 'rgba(239,68,68,0.1)'}}><i className="fa-solid fa-power-off"></i></div>
-          <span>Exit</span>
+          <div className="mob-icon" style={{background: 'rgba(239,68,68,0.1)'}}><i className="fa-solid fa-power-off"></i></div><span>Exit</span>
         </button>
       </div>
 
-      {/* MAIN CONTENT */}
-      <div className="main-content">
-        {/* HEADER FOR MOBILE ONLY */}
-        <div className="desktop-only" style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 24, paddingBottom: 16, borderBottom: '1px solid var(--bd)'}}>
-          <div style={{display: 'flex', alignItems: 'center', gap: 12}}>
-            <div style={{width: 36, height: 36, borderRadius: 10, background: 'var(--p)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff', fontSize: 16}}>
-              <i className="fa-solid fa-bolt"></i>
-            </div>
-            <h1 style={{fontSize: 20, fontWeight: 900, color: 'var(--tx)'}}>Nexus Tracker</h1>
-          </div>
-          <Avatar emp={user} size="sm" />
+      <div className="main-content" style={{background:'var(--bg)'}}>
+        <div style={{maxWidth:1200, margin:'0 auto'}}>
+          {activeTab === 'dashboard' && <DashboardView user={user} tasks={tasks} onSaveTask={t=>setTasks(p=>[t,...p])} showToast={showToast} onFocusLock={handleFocusLock} />}
+          {activeTab === 'mytasks' && <MyTasksView user={user} tasks={tasks} showModal={()=>{}} showToast={showToast} onDeleteTask={id=>setTasks(p=>p.filter(t=>t.id!==id))} onCloneTask={t=>{setTasks(p=>[{...t,id:Date.now()},...p]);showToast('Cloned!','success');}} />}
+          {activeTab === 'profile' && <MyProfileView user={user} tasks={tasks} />}
+          {activeTab === 'leaves' && <LeavesView user={user} leaveRequests={leaveRequests} showModal={()=>{}} />}
+          {activeTab === 'leaderboard' && <LeaderboardView employees={employees} tasks={tasks} />}
+          {activeTab === 'announcements' && <AnnouncementsView announcements={announcements} setAnnouncements={setAnnouncements} isAdmin={isAdmin} user={user} showToast={showToast} />}
+          {activeTab === 'adminTracker' && <AdminTrackerView employees={employees} tasks={tasks} showToast={showToast} />}
+          {activeTab === 'adminDirectory' && <AdminDirectoryView employees={employees} setEmployees={setEmployees} tasks={tasks} showToast={showToast} onLogTaskForEmp={()=>{}} />}
+          {activeTab === 'adminProjects' && <ProjectsView projects={projects} setProjects={setProjects} showToast={showToast} isAdmin={isAdmin} />}
+          {activeTab === 'adminLeaves' && <AdminLeavesView leaveRequests={leaveRequests} setLeaveRequests={setLeaveRequests} employees={employees} showToast={showToast} />}
+          {activeTab === 'settings' && <SettingsView theme={theme} setTheme={setTheme} showToast={showToast} animations={animations} setAnimations={setAnimations} isAdmin={isAdmin} employees={employees} tasks={tasks} projects={projects} onImport={d=>{if(d.employees)setEmployees(d.employees);if(d.tasks)setTasks(d.tasks);if(d.projects)setProjects(d.projects);}} />}
         </div>
-
-        {activeTab === 'dashboard' && (
-          <div className="anim-fade" style={{display: 'flex', flexDirection: 'column', gap: 24}}>
-            <div>
-              <h2 style={{fontSize: 32, fontWeight: 900, color: 'var(--tx)', letterSpacing: '-.5px'}}>
-                {new Date().getHours() < 12 ? 'Good morning' : new Date().getHours() < 18 ? 'Good afternoon' : 'Good evening'}, {user.firstName}! 👋
-              </h2>
-              <p style={{fontSize: 14, color: 'var(--tx3)', marginTop: 4, fontWeight: 600}}>
-                {new Date().toLocaleDateString('en-PH', {weekday:'long', month:'long', day:'numeric'})}
-              </p>
-            </div>
-
-            <div style={{display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: 20}}>
-              {/* Left Column: Timer & Quotes */}
-              <div style={{display: 'flex', flexDirection: 'column', gap: 20}}>
-                <QuoteBox />
-                <TimerEngine 
-                  user={user} 
-                  tasks={tasks} 
-                  onSaveTask={handleSaveTask} 
-                  showToast={showToast}
-                  onFocusLock={handleFocusLock}
-                />
-              </div>
-
-              {/* Right Column: Stats & Data */}
-              <div style={{display: 'flex', flexDirection: 'column', gap: 20}}>
-                <div style={{display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16}}>
-                  <StatCard title="Hours Today" value={todayTasks.reduce((s,t)=>s+(t.durationHours||0),0).toFixed(1)} icon={<i className="fa-solid fa-clock"></i>} />
-                  <StatCard title="Tasks Logged" value={todayTasks.length} icon={<i className="fa-solid fa-check-double"></i>} onClick={() => setActiveTab('mytasks')} />
-                </div>
-                
-                <div className="glass" style={{borderRadius: 24, padding: '24px 28px'}}>
-                  <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20}}>
-                    <h3 style={{fontSize: 16, fontWeight: 900, color: 'var(--tx)'}}>Category Breakdown</h3>
-                  </div>
-                  <DonutChart data={TASK_CATEGORIES.map(c => ({
-                    name: c, 
-                    hrs: tasks.filter(t => t.empId === user.id && t.month === new Date().getMonth()+1 && t.year === new Date().getFullYear() && t.category === c).reduce((s,t)=>s+(t.durationHours||0),0)
-                  })).filter(c => c.hrs > 0)} />
-                </div>
-
-                <div className="glass" style={{borderRadius: 24, padding: '24px 28px'}}>
-                  <MiniBarChart tasks={tasks.filter(t => t.empId === user.id)} />
-                </div>
-
-                <BirthdayWidget employees={employees} />
-              </div>
-            </div>
-          </div>
-        )}
-
-        {activeTab === 'mytasks' && <MyTasksView user={user} tasks={tasks} showModal={()=>setActiveTab('dashboard')} showToast={showToast} onDeleteTask={id=>setTasks(p=>p.filter(t=>t.id!==id))} onCloneTask={t=>{handleSaveTask({...t, id:Date.now(), startTimestamp:new Date().toISOString(), endTimestamp:new Date().toISOString()}); showToast('Task cloned','success');}} />}
-        {activeTab === 'leaderboard' && <LeaderboardView employees={employees} tasks={tasks} />}
-        {activeTab === 'announcements' && <AnnouncementsView announcements={announcements} setAnnouncements={setAnnouncements} isAdmin={isAdmin} user={user} showToast={showToast} />}
-        {activeTab === 'leaves' && <LeavesView user={user} leaveRequests={leaveRequests} showModal={()=>{}} />}
-        
-        {isAdmin && activeTab === 'adminTracker' && <AdminTrackerView employees={employees} tasks={tasks} showToast={showToast} />}
-        {isAdmin && activeTab === 'adminDirectory' && <AdminDirectoryView employees={employees} setEmployees={setEmployees} tasks={tasks} showToast={showToast} onLogTaskForEmp={()=>{}} />}
-        {isAdmin && activeTab === 'adminProjects' && <ProjectsView projects={projects} setProjects={setProjects} showToast={showToast} isAdmin={isAdmin} />}
-        {isAdmin && activeTab === 'adminLeaves' && <AdminLeavesView leaveRequests={leaveRequests} setLeaveRequests={setLeaveRequests} employees={employees} showToast={showToast} />}
-        
-        {activeTab === 'settings' && <SettingsView theme={theme} setTheme={setTheme} showToast={showToast} animations={animations} setAnimations={setAnimations} isAdmin={isAdmin} employees={employees} tasks={tasks} projects={projects} onImport={d=>{if(d.employees)setEmployees(d.employees);if(d.tasks)setTasks(d.tasks);if(d.projects)setProjects(d.projects);}} />}
-
       </div>
     </>
   );
 };
 
-ReactDOM.render(<App />, document.getElementById('root'));
+const root = ReactDOM.createRoot(document.getElementById('root'));
+root.render(<App />);
 </script>
 </body>
 </html>
