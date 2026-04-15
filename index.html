@@ -184,6 +184,7 @@ input:checked+.toggle-slider:before{transform:translateX(22px);background-color:
 <script type="text/babel">
 const { useState, useMemo, useEffect, useRef, useCallback } = React;
 
+// IMPORTANT: Keep this GAS URL exactly as is (for fallback / Web App fetching)
 const GAS_URL = "https://script.google.com/macros/s/AKfycbyXgU7wQD1KKUyHwoBFj52SdGeIuXJqOvOur2lqnDalNRBbjZQKX_K7a11lfKog1HHx/exec";
 
 const QUOTES = [
@@ -385,29 +386,75 @@ const KUDOS_INIT = [
 const AFK_TIMEOUT = 900;
 const POMODORO_DURATION = 25 * 60;
 
+// ================================================================
+// API BRIDGE (Connects React to Google Apps Script / google.script.run)
+// ================================================================
 const api = {
   _gasOk: null,
   async call(action, payload={}) {
-    if(action!=='login'){
-      try{
-        const res = await Promise.race([
-          fetch(GAS_URL,{method:'POST',body:JSON.stringify({action,...payload}),headers:{'Content-Type':'text/plain;charset=utf-8'}}),
-          new Promise((_,rej)=>setTimeout(()=>rej(new Error('timeout')),8000))
-        ]);
-        if(res.ok){const data=await res.json();api._gasOk=true;return data;}
-      }catch(e){api._gasOk=false;}
-      return api._local(action,payload);
-    }
-    const local = api._localLogin(payload);
-    if(local.success) return local;
-    try{
-      const res = await Promise.race([
-        fetch(GAS_URL,{method:'POST',body:JSON.stringify({action:'login',...payload}),headers:{'Content-Type':'text/plain;charset=utf-8'}}),
-        new Promise((_,rej)=>setTimeout(()=>rej(new Error('timeout')),6000))
-      ]);
-      if(res.ok){const data=await res.json();api._gasOk=true;if(data.success)return data;}
-    }catch(e){api._gasOk=false;}
-    return {success:false,error:'Invalid credentials.'};
+    return new Promise(async (resolve) => {
+      // Setup payload mapping so frontend data matches GAS schema perfectly
+      let gasAction = action;
+      let gasPayload = { ...payload };
+
+      if (action === 'registerEmployee') {
+        gasAction = 'register';
+        gasPayload.empId = payload.employeeId;
+        gasPayload.dept = DEPARTMENTS.find(d => d.id === payload.deptId)?.name || 'IT';
+      } else if (action === 'updateProfile') {
+        gasAction = 'updateUserProfile';
+        gasPayload = { empId: payload.id || payload.employeeId, updates: payload };
+      } else if (action === 'logTask') {
+        gasAction = 'addTask';
+        gasPayload.empId = payload.empId || payload.employeeId;
+      } else if (action === 'login') {
+        gasAction = 'loginUser';
+      }
+
+      // 1. Prioritize google.script.run (if running as container-bound)
+      if (typeof google !== 'undefined' && google.script && google.script.run) {
+        if (typeof google.script.run[gasAction] === 'function') {
+          google.script.run
+            .withSuccessHandler(res => { api._gasOk = true; resolve(res); })
+            .withFailureHandler(err => {
+              api._gasOk = false;
+              console.error("GAS Error:", err);
+              resolve(api._local(action, payload));
+            })
+            [gasAction](gasPayload);
+          return;
+        } else {
+          // If the direct function isn't exposed, we fallback to doPost (if supported)
+          console.warn(`Function ${gasAction} not found on google.script.run`);
+        }
+      }
+
+      // 2. Fallback to Web App Fetch API
+      if (GAS_URL && GAS_URL.startsWith("https://script.google.com/macros/s/")) {
+        try {
+          const controller = new AbortController();
+          const timeoutId = setTimeout(() => controller.abort(), 8000);
+          const res = await fetch(GAS_URL, {
+            method: 'POST',
+            body: JSON.stringify({ action: gasAction, ...gasPayload }),
+            headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+            signal: controller.signal
+          });
+          clearTimeout(timeoutId);
+          if (res.ok) {
+            const data = await res.json();
+            api._gasOk = true;
+            return resolve(data);
+          }
+        } catch (e) {
+          api._gasOk = false;
+        }
+      }
+
+      // 3. Absolute Fallback to Local Memory (Demo mode)
+      if (action === 'login') return resolve(api._localLogin(payload));
+      resolve(api._local(action, payload));
+    });
   },
   _localLogin(p){
     const id=(p.identifier||'').trim().toLowerCase();
@@ -418,7 +465,7 @@ const api = {
     if(admin)return{success:true,user:{...admin}};
     const emp=EMPLOYEES_INIT.find(e=>((e.email||'').toLowerCase()===id||(e.fullName||'').toLowerCase()===id||(e.firstName||'').toLowerCase()===id||(e.employeeId||'').toLowerCase()===id)&&e.password===pw);
     if(emp)return{success:true,user:{...emp}};
-    return{success:false};
+    return{success:false, error:'Invalid credentials.'};
   },
   _local(action,payload){
     return new Promise(r=>setTimeout(()=>{
@@ -429,13 +476,6 @@ const api = {
       else if(action==='sync') r({success:true});
       else r({success:true,data:[]});
     },800));
-  },
-  async ping(){
-    try{
-      const r=await Promise.race([fetch(GAS_URL,{method:'POST',body:JSON.stringify({action:'ping'}),headers:{'Content-Type':'text/plain;charset=utf-8'}}),new Promise((_,rej)=>setTimeout(()=>rej(),4000))]);
-      api._gasOk=r.ok;
-    }catch{api._gasOk=false;}
-    return api._gasOk;
   }
 };
 
@@ -524,7 +564,8 @@ const LS = {
   load(key, def=null){ try{ const v=localStorage.getItem(key); return v?JSON.parse(v):def; }catch(e){ return def; } },
   remove(key){ try{ localStorage.removeItem(key); }catch(e){} }
 };
-    // ================================================================
+
+// ================================================================
 // SHARED COMPONENTS
 // ================================================================
 const LiveClock = () => {
@@ -922,7 +963,8 @@ const LandingPage = ({onEnter,theme,setTheme}) => {
     </div>
   );
 };
-  // ================================================================
+
+// ================================================================
 // AUTH PORTAL
 // ================================================================
 const AuthPortal = ({onLogin,theme,setTheme}) => {
@@ -1308,7 +1350,6 @@ const TimerEngine = ({user, tasks, onSaveTask, showToast, onFocusLock}) => {
     if(val===''){setSelectedTask('');return;}
     setSelectedTask(val);
     setIsCustom(false);
-    // Auto-start: switch task immediately on select
     if(val&&val!=='__custom__'){
       startNewTask(val,category);
     }
@@ -1489,574 +1530,8 @@ const TimerEngine = ({user, tasks, onSaveTask, showToast, onFocusLock}) => {
     </div>
   );
 };
-  // ================================================================
-// AUTH PORTAL
-// ================================================================
-const AuthPortal = ({onLogin,theme,setTheme}) => {
-  const [id,setId]=useState('');
-  const [pw,setPw]=useState('');
-  const [err,setErr]=useState('');
-  const [loading,setLoading]=useState(false);
-  const [showPw,setShowPw]=useState(false);
-  const [showThemes,setShowThemes]=useState(false);
-  const [gasStatus,setGasStatus]=useState('checking');
-  const [secretMode,setSecretMode]=useState(false);
-  const [regForm,setRegForm]=useState({employeeId:'GHZ',firstName:'',lastName:'',email:'',password:'',confirmPw:'',deptId:1});
-  const [regPhoto,setRegPhoto]=useState(null);
-  const [pwStrength,setPwStrength]=useState({score:0,valid:false,checks:{}});
-  const [cameraOn,setCameraOn]=useState(false);
-  const [secretMsg,setSecretMsg]=useState('');
-  const [regLoading,setRegLoading]=useState(false);
-  const videoRef=useRef(null);
-  const canvasRef=useRef(null);
-  const streamRef=useRef(null);
-
-  useEffect(()=>{
-    const ctrl=new AbortController();
-    const t=setTimeout(()=>{ctrl.abort();setGasStatus('offline');},5000);
-    fetch(GAS_URL,{method:'POST',body:JSON.stringify({action:'ping'}),headers:{'Content-Type':'text/plain;charset=utf-8'},signal:ctrl.signal})
-      .then(r=>{clearTimeout(t);api._gasOk=r.ok;setGasStatus(r.ok?'online':'offline');})
-      .catch(()=>{clearTimeout(t);api._gasOk=false;setGasStatus('offline');});
-    return()=>{clearTimeout(t);ctrl.abort();};
-  },[]);
-
-  useEffect(()=>{
-    if(!cameraOn)return;
-    navigator.mediaDevices?.getUserMedia({video:true})
-      .then(s=>{streamRef.current=s;if(videoRef.current){videoRef.current.srcObject=s;videoRef.current.play();}})
-      .catch(()=>setCameraOn(false));
-    return()=>{if(streamRef.current){streamRef.current.getTracks().forEach(t=>t.stop());streamRef.current=null;}};
-  },[cameraOn]);
-
-  const takePhoto=()=>{
-    const v=videoRef.current;const c=canvasRef.current;
-    if(!v||!c)return;
-    c.width=v.videoWidth;c.height=v.videoHeight;
-    c.getContext('2d').drawImage(v,0,0);
-    setRegPhoto(c.toDataURL('image/jpeg',0.8));
-    if(streamRef.current){streamRef.current.getTracks().forEach(t=>t.stop());streamRef.current=null;}
-    setCameraOn(false);
-  };
-
-  const handlePwChange=v=>{setRegForm(p=>({...p,password:v}));setPwStrength(validatePassword(v));};
-
-  const submitLogin=async e=>{
-    e?.preventDefault();
-    if(id.trim()==='TEMPOROSA'&&pw==='SIRKEVS9001!'){
-      setSecretMode(true);setSecretMsg('🔓 Developer Access Granted!');
-      setId('');setPw('');setErr('');
-      setTimeout(()=>setSecretMsg(''),4000);
-      return;
-    }
-    if(id.trim().toLowerCase()==='rozi'&&pw==='hyacinth'){
-      setSecretMode(true);setSecretMsg('🪻 Project Hyacinth — Welcome, Rozi!');
-      setTheme('candy');LS.save('ghz_theme','candy');setId('');setPw('');setErr('');
-      setTimeout(()=>setSecretMsg(''),5000);
-      return;
-    }
-    if(!id.trim()||!pw.trim())return setErr('Please enter credentials.');
-    setLoading(true);setErr('');
-    const res=await api.call('login',{identifier:id.trim(),password:pw.trim()});
-    setLoading(false);
-    if(res.success)onLogin(res.user);
-    else setErr(res.error||'Authentication failed.');
-  };
-
-  const formatGHZId=v=>{
-    let val=v.toUpperCase().replace(/[^GHZ0-9]/g,'');
-    if(!val.startsWith('GHZ'))val='GHZ'+val.replace(/^GHZ/,'');
-    val='GHZ'+val.slice(3).replace(/\D/g,'').slice(0,4);
-    return val;
-  };
-
-  const submitRegister=async e=>{
-    e?.preventDefault();
-    if(!GHZ_ID_REGEX.test(regForm.employeeId))return setErr('Employee ID must be GHZ followed by 4 digits (e.g. GHZ2001).');
-    if(!regForm.firstName||!regForm.lastName||!regForm.password)return setErr('All fields required.');
-    if(!pwStrength.valid)return setErr('Password needs 8+ chars, uppercase, lowercase, and number.');
-    if(regForm.password!==regForm.confirmPw)return setErr('Passwords do not match.');
-    setRegLoading(true);setErr('');
-    const payload={...regForm,fullName:`${regForm.firstName} ${regForm.lastName}`,facePhoto:regPhoto,registeredDate:new Date().toISOString(),role:'Staff',status:'Active'};
-    const res=await api.call('registerEmployee',payload);
-    setRegLoading(false);
-    if(res.success){
-      const newEmp={...payload,id:EMPLOYEES_INIT.length+1,loginCount:0,totalHours:0,leaveBalance:10,leavesUsed:0};
-      EMPLOYEES_INIT.push(newEmp);
-      setSecretMode(false);
-      setSecretMsg('✅ Employee registered! You can now log in.');
-      setId(regForm.email||regForm.firstName);setPw(regForm.password);setErr('');
-      setTimeout(()=>setSecretMsg(''),5000);
-    } else {
-      setErr('Registration failed. Try again.');
-    }
-  };
-
-  const pwColors=['','#ef4444','#f97316','#fbbf24','#4ade80'];
-  const pwLabels=['','Weak','Fair','Good','Strong'];
-
-  return(
-    <div style={{minHeight:'100vh',display:'flex',alignItems:'center',justifyContent:'center',padding:20}}>
-      {secretMsg&&(
-        <div className="anim-bounce" style={{position:'fixed',top:40,left:'50%',transform:'translateX(-50%)',background:'var(--ok)',color:'#fff',padding:'12px 24px',borderRadius:20,fontWeight:'900',zIndex:9999,boxShadow:'0 8px 20px rgba(0,0,0,0.3)',textTransform:'uppercase',letterSpacing:'.05em',whiteSpace:'nowrap'}}>
-          {secretMsg}
-        </div>
-      )}
-      <div style={{position:'fixed',top:20,left:16,display:'flex',alignItems:'center',gap:8,zIndex:100}}>
-        <span style={{width:8,height:8,borderRadius:'50%',background:gasStatus==='online'?'#4ade80':gasStatus==='offline'?'#f87171':'#fbbf24',display:'inline-block'}}></span>
-        <span style={{fontSize:10,fontWeight:700,textTransform:'uppercase',letterSpacing:'.1em',color:'var(--tx3)'}}>GAS {gasStatus}</span>
-      </div>
-      <div style={{position:'fixed',bottom:24,left:24,zIndex:100}}>
-        <button onClick={()=>setShowThemes(!showThemes)} className="btn btn-ghost" style={{borderRadius:'50%',width:56,height:56,padding:0,display:'flex',alignItems:'center',justifyContent:'center'}}>
-          <i className={`fa-solid fa-gear text-xl transition-transform duration-500 ${showThemes?'rotate-90':''}`} style={{color:showThemes?'var(--p)':'var(--tx)'}}></i>
-        </button>
-        {showThemes&&(
-          <div className="glass anim-fade" style={{position:'absolute',bottom:70,left:0,padding:16,borderRadius:20,display:'flex',flexDirection:'column',gap:6,maxHeight:'60vh',overflowY:'auto',width:230}}>
-            <p style={{fontSize:11,fontWeight:800,textTransform:'uppercase',color:'var(--tx3)',marginBottom:4}}>Select Theme</p>
-            {THEMES.map(t=>(
-              <button key={t.id} onClick={()=>{setTheme(t.id);LS.save('ghz_theme',t.id);setShowThemes(false);}}
-                style={{display:'flex',alignItems:'center',gap:10,padding:'8px 12px',borderRadius:12,border:`1px solid ${theme===t.id?'var(--p)':'rgba(255,255,255,0.1)'}`,background:theme===t.id?'color-mix(in srgb,var(--p) 20%,transparent)':'rgba(0,0,0,0.15)',cursor:'pointer',textAlign:'left',transition:'all .2s'}}>
-                <div style={{width:20,height:20,borderRadius:6,background:t.color,flexShrink:0}}></div>
-                <span style={{fontSize:12,fontWeight:700,color:'var(--tx)'}}>{t.label}</span>
-              </button>
-            ))}
-          </div>
-        )}
-      </div>
-
-      <div className="glass anim-bounce" style={{width:'100%',maxWidth:460,borderRadius:28,padding:'40px 36px',margin:'0 auto'}}>
-        <div style={{display:'flex',flexDirection:'column',alignItems:'center',marginBottom:28}}>
-          <div style={{width:76,height:76,borderRadius:20,overflow:'hidden',background:'#fff',padding:6,border:'1px solid var(--bd)',marginBottom:16}}>
-            <img src="https://contents.smsupermalls.com/data/uploads/2020/07/GIGAHERTZ_COMPUTER_SYSTEM.jpg" alt="Logo" style={{width:'100%',height:'100%',objectFit:'contain',borderRadius:14}}/>
-          </div>
-          <h1 style={{fontSize:24,fontWeight:900,letterSpacing:'-.5px',color:'var(--tx)'}}>Gigahertz Nexus</h1>
-          <p style={{fontSize:11,fontWeight:800,textTransform:'uppercase',letterSpacing:'.15em',color:'var(--p)',marginTop:6}}>Activity Tracker v6.02</p>
-        </div>
-
-        {err&&(
-          <div className="anim-fade" style={{background:'rgba(239,68,68,0.2)',border:'1px solid rgba(239,68,68,0.4)',color:'#fca5a5',padding:'12px 16px',borderRadius:14,marginBottom:20,fontSize:13,fontWeight:700,display:'flex',alignItems:'center',gap:10}}>
-            <i className="fa-solid fa-triangle-exclamation"></i>{err}
-          </div>
-        )}
-
-        {!secretMode&&(
-          <form onSubmit={submitLogin} style={{display:'flex',flexDirection:'column',gap:16}}>
-            <div>
-              <label className="input-label">Employee ID / Email / Name</label>
-              <input className="input" type="text" value={id} onChange={e=>setId(e.target.value)} placeholder="GHZ2001 or user@gigahertz.com" required autoComplete="username"/>
-            </div>
-            <div>
-              <label className="input-label">Password</label>
-              <div style={{position:'relative'}}>
-                <input className="input" type={showPw?'text':'password'} value={pw} onChange={e=>setPw(e.target.value)} placeholder="••••••••" required autoComplete="current-password" style={{paddingRight:44}}/>
-                <button type="button" onClick={()=>setShowPw(p=>!p)} style={{position:'absolute',right:12,top:'50%',transform:'translateY(-50%)',background:'none',border:'none',cursor:'pointer',color:'var(--tx3)'}}>
-                  <i className={`fa-solid ${showPw?'fa-eye-slash':'fa-eye'}`}></i>
-                </button>
-              </div>
-            </div>
-            <button type="submit" className="btn btn-primary" disabled={loading} style={{justifyContent:'center',padding:'14px',marginTop:8,fontSize:14}}>
-              {loading?<><span className="spinner"></span> Authenticating...</>:<><i className="fa-solid fa-right-to-bracket"></i> Sign In</>}
-            </button>
-          </form>
-        )}
-
-        {secretMode&&(
-          <div className="anim-slide">
-            <div style={{background:'rgba(34,197,94,0.1)',border:'1px solid rgba(34,197,94,0.3)',borderRadius:14,padding:'12px 16px',marginBottom:20,display:'flex',alignItems:'center',gap:10}}>
-              <i className="fa-solid fa-shield-halved" style={{color:'#4ade80'}}></i>
-              <span style={{fontSize:13,fontWeight:800,color:'#4ade80'}}>Developer Registration Mode</span>
-            </div>
-            <form onSubmit={submitRegister} style={{display:'flex',flexDirection:'column',gap:14}}>
-              <div>
-                <label className="input-label">Employee ID <span style={{color:'var(--danger)'}}>*</span> <span style={{color:'var(--tx3)',fontWeight:600,textTransform:'none',letterSpacing:0}}>GHZ0000 format (no dash)</span></label>
-                <input className="input" value={regForm.employeeId} onChange={e=>setRegForm(p=>({...p,employeeId:formatGHZId(e.target.value)}))} placeholder="GHZ2001" required style={{fontFamily:'monospace'}}/>
-                {regForm.employeeId.length>3&&!GHZ_ID_REGEX.test(regForm.employeeId)&&<p style={{fontSize:11,color:'#f87171',fontWeight:700,marginTop:6}}>Must be GHZ followed by 4 digits exactly</p>}
-                {GHZ_ID_REGEX.test(regForm.employeeId)&&<p style={{fontSize:11,color:'#4ade80',fontWeight:700,marginTop:6}}>✓ Valid format</p>}
-              </div>
-              <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:10}}>
-                <div><label className="input-label">First Name <span style={{color:'var(--danger)'}}>*</span></label><input className="input" value={regForm.firstName} onChange={e=>setRegForm(p=>({...p,firstName:e.target.value}))} placeholder="Juan" required/></div>
-                <div><label className="input-label">Last Name <span style={{color:'var(--danger)'}}>*</span></label><input className="input" value={regForm.lastName} onChange={e=>setRegForm(p=>({...p,lastName:e.target.value}))} placeholder="Dela Cruz" required/></div>
-              </div>
-              <div><label className="input-label">Email (optional)</label><input className="input" type="email" value={regForm.email} onChange={e=>setRegForm(p=>({...p,email:e.target.value}))} placeholder="juan@gigahertz.com"/></div>
-              <div><label className="input-label">Department</label><select className="input" value={regForm.deptId} onChange={e=>setRegForm(p=>({...p,deptId:parseInt(e.target.value)}))}>
-                {DEPARTMENTS.map(d=><option key={d.id} value={d.id}>{d.icon} {d.name}</option>)}
-              </select></div>
-              <div>
-                <label className="input-label">Password <span style={{color:'var(--danger)'}}>*</span></label>
-                <input className="input" type="password" value={regForm.password} onChange={e=>handlePwChange(e.target.value)} placeholder="Min 8 chars, uppercase, number" required/>
-                {regForm.password&&(
-                  <>
-                    <div className="pw-strength" style={{background:pwColors[pwStrength.score]||'#ef4444',width:`${pwStrength.score*25}%`}}></div>
-                    <p className="pw-msg" style={{color:pwColors[pwStrength.score]||'#ef4444'}}>{pwLabels[pwStrength.score]}</p>
-                  </>
-                )}
-              </div>
-              <div><label className="input-label">Confirm Password <span style={{color:'var(--danger)'}}>*</span></label><input className="input" type="password" value={regForm.confirmPw} onChange={e=>setRegForm(p=>({...p,confirmPw:e.target.value}))} placeholder="Repeat password" required/>{regForm.confirmPw&&regForm.password!==regForm.confirmPw&&<p className="pw-msg" style={{color:'#f87171'}}>Passwords do not match</p>}</div>
-              <div>
-                <label className="input-label">Face Photo (optional)</label>
-                <div style={{borderRadius:16,overflow:'hidden',background:'#000',aspectRatio:'4/3',display:'flex',alignItems:'center',justifyContent:'center',position:'relative',border:'2px solid var(--bd)',maxHeight:180}}>
-                  {cameraOn&&<video ref={videoRef} autoPlay muted playsInline style={{width:'100%',height:'100%',objectFit:'cover'}}/>}
-                  {regPhoto&&!cameraOn&&<img src={regPhoto} alt="captured" style={{width:'100%',height:'100%',objectFit:'cover'}}/>}
-                  {!cameraOn&&!regPhoto&&<div style={{color:'var(--tx3)',textAlign:'center',padding:16}}><i className="fa-solid fa-camera" style={{fontSize:36,display:'block',marginBottom:8}}></i><p style={{fontSize:12,fontWeight:700}}>No photo captured</p></div>}
-                  <canvas ref={canvasRef} style={{display:'none'}}/>
-                </div>
-                <div style={{display:'flex',gap:8,marginTop:8}}>
-                  {!cameraOn&&<button type="button" className="btn btn-ghost" style={{fontSize:12,padding:'8px 14px'}} onClick={()=>setCameraOn(true)}><i className="fa-solid fa-video"></i> Camera</button>}
-                  {cameraOn&&<button type="button" className="btn btn-primary" style={{fontSize:12,padding:'8px 14px'}} onClick={takePhoto}><i className="fa-solid fa-camera"></i> Capture</button>}
-                  {regPhoto&&<button type="button" className="btn btn-danger" style={{fontSize:12,padding:'8px 14px'}} onClick={()=>setRegPhoto(null)}><i className="fa-solid fa-trash"></i> Remove</button>}
-                </div>
-              </div>
-              <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:10,marginTop:4}}>
-                <button type="button" className="btn btn-ghost" onClick={()=>{setSecretMode(false);setErr('');}} style={{justifyContent:'center'}}><i className="fa-solid fa-arrow-left"></i> Back</button>
-                <button type="submit" className="btn btn-primary" disabled={regLoading} style={{justifyContent:'center'}}>
-                  {regLoading?<><span className="spinner"></span> Registering...</>:<><i className="fa-solid fa-user-plus"></i> Register</>}
-                </button>
-              </div>
-            </form>
-          </div>
-        )}
-        <p style={{textAlign:'center',fontSize:10,fontWeight:800,textTransform:'uppercase',letterSpacing:'.15em',color:'var(--tx3)',marginTop:32}}>
-          v6.02 · {new Date().getFullYear()} · Built for bro & Rozi 🪻
-        </p>
-      </div>
-    </div>
-  );
-};
 
 // ================================================================
-// MODALS
-// ================================================================
-const ModalLayout = ({title,icon,onClose,children}) => (
-  <div className="modal-overlay" onClick={e=>{if(e.target===e.currentTarget)onClose()}}>
-    <div className="modal-box">
-      <div style={{padding:'24px 32px',borderBottom:'1px solid var(--bd)',display:'flex',justifyContent:'space-between',alignItems:'center',background:'rgba(0,0,0,0.1)'}}>
-        <h2 style={{fontSize:18,fontWeight:900,color:'var(--tx)'}}><i className={`fa-solid ${icon} mr-2`} style={{color:'var(--p)'}}></i> {title}</h2>
-        <button onClick={onClose} className="btn btn-ghost" style={{padding:'8px 12px',borderRadius:'50%'}}><i className="fa-solid fa-xmark"></i></button>
-      </div>
-      <div style={{padding:32}}>{children}</div>
-    </div>
-  </div>
-);
-
-const MyProfileModal = ({user,onClose,onSave,showToast,totalHours}) => {
-  const [editing,setEditing]=useState(false);
-  const safeUser=user||{};
-  const [form,setForm]=useState({firstName:safeUser.firstName||'',lastName:safeUser.lastName||'',email:safeUser.email||''});
-  const [photo,setPhoto]=useState(safeUser.facePhoto||null);
-  const [cameraOn,setCameraOn]=useState(false);
-  const videoRef=useRef(null);
-  const canvasRef=useRef(null);
-  const streamRef=useRef(null);
-  useEffect(()=>{
-    if(!cameraOn)return;
-    navigator.mediaDevices?.getUserMedia({video:true}).then(s=>{streamRef.current=s;if(videoRef.current){videoRef.current.srcObject=s;videoRef.current.play();}}).catch(()=>setCameraOn(false));
-    return()=>{if(streamRef.current){streamRef.current.getTracks().forEach(t=>t.stop());streamRef.current=null;}};
-  },[cameraOn]);
-  const takePhoto=()=>{const v=videoRef.current;const c=canvasRef.current;if(!v||!c)return;c.width=v.videoWidth;c.height=v.videoHeight;c.getContext('2d').drawImage(v,0,0);setPhoto(c.toDataURL('image/jpeg',0.8));if(streamRef.current){streamRef.current.getTracks().forEach(t=>t.stop());streamRef.current=null;}setCameraOn(false);};
-  const save=async()=>{const updated={...safeUser,...form,fullName:`${form.firstName} ${form.lastName}`,facePhoto:photo};await api.call('updateProfile',updated);onSave(updated);showToast('Profile updated!','success');onClose();};
-  const dept=DEPARTMENTS.find(d=>d.id===safeUser.deptId);
-  const leaveUsed=safeUser.leavesUsed||0;const leaveBalance=safeUser.leaveBalance||10;
-  const isAdmin=safeUser.role==='ADMIN'||safeUser.role==='Super Admin'||safeUser.role==='Nexus Dev';
-  const lvlHrs=totalHours||0;const level=Math.floor(lvlHrs/20)+1;const nextLvlBase=level*20;const lvlPct=Math.min(100,Math.max(0,((lvlHrs-(level-1)*20)/20)*100));
-  return(
-    <ModalLayout title="My Profile" icon="fa-user" onClose={onClose}>
-      <div style={{display:'flex',flexDirection:'column',gap:24}}>
-        <div style={{display:'flex',alignItems:'center',gap:16}}>
-          <div style={{width:80,height:80,borderRadius:'50%',overflow:'hidden',border:'3px solid var(--p)',flexShrink:0}}>
-            {photo?<img src={photo} style={{width:'100%',height:'100%',objectFit:'cover'}} alt="face"/>:<div style={{width:'100%',height:'100%',background:`linear-gradient(135deg,var(--p),var(--pd))`,display:'flex',alignItems:'center',justifyContent:'center',fontSize:28,fontWeight:900,color:'#fff'}}>{getInitials(safeUser)}</div>}
-          </div>
-          <div style={{flex:1}}>
-            <p style={{fontSize:18,fontWeight:900,color:'var(--tx)',display:'flex',alignItems:'center',gap:6}}>
-              {safeUser.firstName} {safeUser.lastName}
-              {isAdmin&&<span style={{fontSize:10,background:'var(--p)',color:'#fff',padding:'2px 6px',borderRadius:6}}>Admin</span>}
-            </p>
-            <p style={{fontSize:11,fontWeight:800,color:'var(--p)',textTransform:'uppercase',letterSpacing:'.1em'}}>{safeUser.employeeId}</p>
-            <p style={{fontSize:12,color:'var(--tx3)',marginTop:2}}>{dept?.icon} {dept?.name} • {safeUser.role}</p>
-            {safeUser.birthday&&<p style={{fontSize:11,color:'var(--tx3)',marginTop:2}}>🎂 Birthday: {safeUser.birthday}</p>}
-          </div>
-          <div style={{textAlign:'center',background:'var(--p)',color:'#fff',padding:'10px 14px',borderRadius:16,boxShadow:'0 4px 12px var(--shadow)'}}>
-            <p style={{fontSize:9,fontWeight:800,textTransform:'uppercase',letterSpacing:'.1em',opacity:.8}}>Level</p>
-            <p style={{fontSize:26,fontWeight:900}}>{level}</p>
-          </div>
-        </div>
-        <div>
-          <div style={{display:'flex',justifyContent:'space-between',fontSize:11,fontWeight:800,marginBottom:8,color:'var(--tx3)',textTransform:'uppercase',letterSpacing:'.05em'}}><span>XP Progress</span><span>{lvlHrs.toFixed(1)} / {nextLvlBase} hrs</span></div>
-          <div className="progress-bar"><div className="progress-fill" style={{width:`${lvlPct}%`}}></div></div>
-        </div>
-        <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:12}}>
-          <div className="glass" style={{padding:'14px',borderRadius:16,textAlign:'center'}}><p style={{fontSize:20,fontWeight:900,color:'var(--p)'}}>{lvlHrs.toFixed(1)}h</p><p style={{fontSize:10,fontWeight:800,textTransform:'uppercase',letterSpacing:'.08em',color:'var(--tx3)',marginTop:2}}>Total Hours</p></div>
-          <div className="glass" style={{padding:'14px',borderRadius:16,textAlign:'center'}}><p style={{fontSize:20,fontWeight:900,color:'var(--p)'}}>{safeUser.status||'Active'}</p><p style={{fontSize:10,fontWeight:800,textTransform:'uppercase',letterSpacing:'.08em',color:'var(--tx3)',marginTop:2}}>Status</p></div>
-        </div>
-        <div className="glass" style={{borderRadius:16,padding:'16px 20px'}}>
-          <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:12}}>
-            <span style={{fontSize:13,fontWeight:800,color:'var(--tx)'}}>🏖️ Leave Balance</span>
-            <span style={{fontSize:13,fontWeight:900,color:'var(--p)'}}>{leaveBalance-leaveUsed} / {leaveBalance} days</span>
-          </div>
-          <div className="progress-bar"><div className="progress-fill" style={{width:`${((leaveBalance-leaveUsed)/leaveBalance)*100}%`,background:'linear-gradient(90deg,#4ade80,#22c55e)'}}></div></div>
-        </div>
-        {editing?(
-          <div style={{display:'flex',flexDirection:'column',gap:14}}>
-            <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:12}}>
-              <div><label className="input-label">First Name</label><input className="input" value={form.firstName} onChange={e=>setForm(p=>({...p,firstName:e.target.value}))}/></div>
-              <div><label className="input-label">Last Name</label><input className="input" value={form.lastName} onChange={e=>setForm(p=>({...p,lastName:e.target.value}))}/></div>
-            </div>
-            <div><label className="input-label">Email</label><input className="input" type="email" value={form.email} onChange={e=>setForm(p=>({...p,email:e.target.value}))}/></div>
-            <div style={{display:'flex',gap:12,marginTop:6}}>
-              <button className="btn btn-primary" onClick={save} style={{flex:1,justifyContent:'center'}}><i className="fa-solid fa-floppy-disk"></i> Save</button>
-              <button className="btn btn-ghost" onClick={()=>setEditing(false)}>Cancel</button>
-            </div>
-          </div>
-        ):(
-          <button className="btn btn-primary" onClick={()=>setEditing(true)} style={{justifyContent:'center'}}><i className="fa-solid fa-pen"></i> Edit Profile</button>
-        )}
-      </div>
-    </ModalLayout>
-  );
-};
-
-// ================================================================
-// SMART TIMER ENGINE
-// ================================================================
-const TimerEngine = ({user, tasks, onSaveTask, showToast, onFocusLock}) => {
-  const safeUser=user||{};
-  const [activeTimer,setActiveTimer]=useState(null);
-  const [queue,setQueue]=useState([]);
-  const [elapsed,setElapsed]=useState(0);
-  const [selectedTask,setSelectedTask]=useState('');
-  const [customInput,setCustomInput]=useState('');
-  const [isCustom,setIsCustom]=useState(false);
-  const [category,setCategory]=useState('Admin');
-  const intervalRef=useRef(null);
-
-  useEffect(()=>{
-    const saved=LS.load(`timer_${safeUser.id}`);
-    if(saved){
-      setActiveTimer(saved.activeTimer);
-      setQueue(saved.queue||[]);
-      if(saved.activeTimer&&saved.activeTimer.status==='running'){
-        const extra=Math.floor((Date.now()-new Date(saved.activeTimer.lastResumeTime||saved.activeTimer.startTime).getTime())/1000);
-        setElapsed((saved.activeTimer.elapsedSeconds||0)+extra);
-      } else if(saved.activeTimer){
-        setElapsed(saved.activeTimer.elapsedSeconds||0);
-      }
-    }
-  },[safeUser.id]);
-
-  useEffect(()=>{
-    if(activeTimer){
-      LS.save(`timer_${safeUser.id}`,{activeTimer,queue});
-    }
-  },[activeTimer,queue]);
-
-  useEffect(()=>{
-    if(activeTimer&&activeTimer.status==='running'){
-      intervalRef.current=setInterval(()=>setElapsed(e=>e+1),1000);
-    } else {
-      clearInterval(intervalRef.current);
-    }
-    return()=>clearInterval(intervalRef.current);
-  },[activeTimer?.status]);
-
-  const startNewTask=(name,cat)=>{
-    const now=new Date().toISOString();
-    const newTask={taskName:name,category:cat||category,startTime:now,lastResumeTime:now,elapsedSeconds:0,status:'running'};
-    if(activeTimer&&activeTimer.status==='running'){
-      const paused={...activeTimer,elapsedSeconds:elapsed,status:'paused'};
-      setQueue(q=>[...q,paused]);
-      showToast(`"${activeTimer.taskName.slice(0,20)}..." paused → queue`,'info');
-    }
-    setActiveTimer(newTask);
-    setElapsed(0);
-    setSelectedTask('');setCustomInput('');setIsCustom(false);
-    showToast(`Started: "${name.slice(0,30)}"`,'success');
-  };
-
-  const handleTaskSelect=(val)=>{
-    if(val==='__custom__'){setIsCustom(true);setSelectedTask('');return;}
-    if(val===''){setSelectedTask('');return;}
-    setSelectedTask(val);
-    setIsCustom(false);
-    // Auto-start: switch task immediately on select
-    if(val&&val!=='__custom__'){
-      startNewTask(val,category);
-    }
-  };
-
-  const pauseActive=()=>{
-    if(!activeTimer)return;
-    setActiveTimer(t=>({...t,elapsedSeconds:elapsed,status:'paused'}));
-    showToast('Timer paused','warn');
-  };
-
-  const resumeActive=()=>{
-    const now=new Date().toISOString();
-    setActiveTimer(t=>({...t,status:'running',lastResumeTime:now}));
-    showToast('Timer resumed','success');
-  };
-
-  const resumeFromQueue=(idx)=>{
-    const qTask=queue[idx];
-    if(activeTimer){
-      const paused={...activeTimer,elapsedSeconds:elapsed,status:'paused'};
-      setQueue(q=>{const nq=[...q];nq.splice(idx,1);return[...nq,paused];});
-    } else {
-      setQueue(q=>{const nq=[...q];nq.splice(idx,1);return nq;});
-    }
-    const now=new Date().toISOString();
-    setActiveTimer({...qTask,status:'running',lastResumeTime:now});
-    setElapsed(qTask.elapsedSeconds||0);
-    showToast(`Resumed: "${qTask.taskName.slice(0,25)}"`,'success');
-  };
-
-  const stopAndSave=async()=>{
-    if(!activeTimer)return;
-    const hrs=parseFloat((elapsed/3600).toFixed(2));
-    if(hrs<0.01){showToast('Task too short to save (<1 min)','warn');return;}
-    const now=new Date().toISOString();
-    const d=new Date(activeTimer.startTime);
-    const task={
-      id:Date.now(),empId:safeUser.id,
-      empName:`${safeUser.firstName||''} ${safeUser.lastName||''}`.trim(),
-      taskName:activeTimer.taskName,category:activeTimer.category,
-      date:d.toISOString().split('T')[0],
-      startTime:`${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}`,
-      endTime:`${String(new Date().getHours()).padStart(2,'0')}:${String(new Date().getMinutes()).padStart(2,'0')}`,
-      startTimestamp:activeTimer.startTime,
-      endTimestamp:now,
-      durationHours:hrs,
-      remarks:'',month:d.getMonth()+1,year:d.getFullYear(),source:'Timer Engine',
-    };
-    await api.call('logTask',task);
-    onSaveTask(task,false);
-    showToast(`Saved: "${activeTimer.taskName.slice(0,25)}" — ${hrs}h`,'success');
-    setActiveTimer(null);setElapsed(0);
-    LS.remove(`timer_${safeUser.id}`);
-  };
-
-  const discardQueue=(idx)=>setQueue(q=>{const nq=[...q];nq.splice(idx,1);return nq;});
-
-  const todayISO=new Date().toISOString().split('T')[0];
-  const todayTasks=(tasks||[]).filter(t=>t.empId===safeUser.id&&t.date===todayISO);
-  const sessionStart=activeTimer?.startTime||new Date().toISOString();
-  const sessionMinutes=Math.floor((Date.now()-new Date(sessionStart).getTime())/60000);
-  const loggedMinutes=Math.round((todayTasks.reduce((s,t)=>s+(t.durationHours||0),0)+elapsed/3600)*60);
-  const productivityPct=sessionMinutes>0?Math.min(100,(loggedMinutes/sessionMinutes)*100):0;
-
-  return(
-    <div style={{display:'flex',flexDirection:'column',gap:16}}>
-      <div className="glass" style={{borderRadius:24,padding:'28px 32px'}}>
-        <div style={{display:'flex',justifyContent:'space-between',alignItems:'flex-start',flexWrap:'wrap',gap:16,marginBottom:20}}>
-          <div>
-            <p style={{fontSize:12,fontWeight:800,textTransform:'uppercase',letterSpacing:'.1em',color:'var(--tx3)',marginBottom:6}}>⏱ Active Timer</p>
-            {activeTimer?(
-              <p style={{fontSize:16,fontWeight:900,color:'var(--tx)',marginBottom:4}}>{activeTimer.taskName}</p>
-            ):(
-              <p style={{fontSize:14,color:'var(--tx3)',fontWeight:600}}>No task running. Start one below.</p>
-            )}
-            {activeTimer&&<span className={`badge tag-${activeTimer.category}`} style={{fontSize:9}}>{activeTimer.category}</span>}
-            {activeTimer&&(
-              <p style={{fontSize:11,color:'var(--tx3)',marginTop:6,fontWeight:600}}>
-                Started: {fmtTimestamp(activeTimer.startTime)}
-              </p>
-            )}
-          </div>
-          <ProductivityRing percentage={productivityPct}/>
-        </div>
-        <div style={{textAlign:'center',margin:'8px 0 20px'}}>
-          <div className={`timer-display tab-nums ${activeTimer?.status==='running'?'timer-running':''}`}>
-            {fmtSeconds(elapsed)}
-          </div>
-        </div>
-        <div style={{display:'flex',gap:10,flexWrap:'wrap',justifyContent:'center'}}>
-          {activeTimer&&activeTimer.status==='running'&&(
-            <button className="btn btn-ghost" onClick={pauseActive} style={{padding:'12px 20px'}}>
-              <i className="fa-solid fa-pause"></i> Pause
-            </button>
-          )}
-          {activeTimer&&activeTimer.status==='paused'&&(
-            <button className="btn btn-ok" onClick={resumeActive} style={{padding:'12px 20px'}}>
-              <i className="fa-solid fa-play"></i> Resume
-            </button>
-          )}
-          {activeTimer&&activeTimer.status==='running'&&(
-            <button className="btn btn-ghost" onClick={()=>onFocusLock(activeTimer.taskName,elapsed)} style={{padding:'12px 20px',color:'var(--p)',borderColor:'var(--p)'}}>
-              <i className="fa-solid fa-lock"></i> Focus Lock
-            </button>
-          )}
-          {activeTimer&&(
-            <button className="btn btn-primary" onClick={stopAndSave} style={{padding:'12px 20px'}}>
-              <i className="fa-solid fa-floppy-disk"></i> Stop & Save
-            </button>
-          )}
-        </div>
-      </div>
-
-      <div className="glass" style={{borderRadius:24,padding:'24px 28px'}}>
-        <p style={{fontSize:13,fontWeight:900,color:'var(--tx)',marginBottom:16}}><i className="fa-solid fa-plus-circle mr-2" style={{color:'var(--p)'}}></i> Start New Task</p>
-        {activeTimer&&<div style={{background:'rgba(245,158,11,0.1)',border:'1px solid rgba(245,158,11,0.3)',borderRadius:12,padding:'10px 14px',marginBottom:16,fontSize:12,fontWeight:700,color:'#fbbf24'}}>
-          <i className="fa-solid fa-info-circle mr-2"></i>Selecting a new task will auto-pause the current one to the queue.
-        </div>}
-        <div style={{display:'flex',flexDirection:'column',gap:12}}>
-          <div>
-            <label className="input-label">Select or Enter Task Name</label>
-            <select className="input" value={isCustom?'__custom__':selectedTask} onChange={e=>handleTaskSelect(e.target.value)}>
-              <option value="">— Choose a task to start —</option>
-              {PRESET_TASKS.map((t,i)=><option key={i} value={t}>{t}</option>)}
-              <option value="__custom__">✏️ Enter custom task name...</option>
-            </select>
-          </div>
-          {isCustom&&(
-            <div>
-              <label className="input-label">Custom Task Name</label>
-              <div style={{display:'flex',gap:8}}>
-                <input className="input" value={customInput} onChange={e=>setCustomInput(e.target.value)} placeholder="Describe your task..." style={{flex:1}} onKeyDown={e=>{if(e.key==='Enter'&&customInput.trim())startNewTask(customInput.trim(),category);}}/>
-                <button className="btn btn-ghost" onClick={()=>{setIsCustom(false);setCustomInput('');}} style={{padding:'12px 14px',fontSize:12}}>Cancel</button>
-              </div>
-            </div>
-          )}
-          <div>
-            <label className="input-label">Category</label>
-            <select className="input" value={category} onChange={e=>setCategory(e.target.value)}>
-              {TASK_CATEGORIES.map(c=><option key={c}>{c}</option>)}
-            </select>
-          </div>
-          {isCustom&&(
-            <button className="btn btn-primary" style={{justifyContent:'center',padding:'14px'}}
-              onClick={()=>{if(!customInput.trim())return showToast('Please enter a task name','warn');startNewTask(customInput.trim(),category);}}>
-              <i className="fa-solid fa-play"></i> {activeTimer?'Switch Task':'Start Timer'}
-            </button>
-          )}
-        </div>
-      </div>
-
-      {queue.length>0&&(
-        <div className="glass" style={{borderRadius:24,padding:'24px 28px'}}>
-          <p style={{fontSize:13,fontWeight:900,color:'var(--tx)',marginBottom:16}}>
-            <i className="fa-solid fa-layer-group mr-2" style={{color:'var(--p)'}}></i> Task Queue ({queue.length})
-          </p>
-          {queue.map((qt,i)=>(
-            <div key={i} className="task-queue-item">
-              <div style={{flex:1,overflow:'hidden'}}>
-                <p style={{fontSize:13,fontWeight:800,color:'var(--tx)',overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap'}}>{qt.taskName}</p>
-                <p style={{fontSize:11,color:'var(--tx3)',marginTop:2}}>
-                  <span className={`badge tag-${qt.category}`} style={{fontSize:9,padding:'2px 8px'}}>{qt.category}</span>
-                  <span style={{marginLeft:8,fontFamily:'Space Mono'}}>{fmtSeconds(qt.elapsedSeconds||0)}</span>
-                </p>
-              </div>
-              <button className="btn btn-ok" style={{padding:'8px 14px',fontSize:12}} onClick={()=>resumeFromQueue(i)}>
-                <i className="fa-solid fa-play"></i> Resume
-              </button>
-              <button className="btn btn-ghost" style={{padding:'8px 12px',fontSize:12,color:'var(--danger)'}} onClick={()=>discardQueue(i)}>
-                <i className="fa-solid fa-trash"></i>
-              </button>
-            </div>
-          ))}
-        </div>
-      )}
-      <GeoWidget/>
-    </div>
-  );
-};
-  // ================================================================
 // MY TASKS VIEW
 // ================================================================
 const MyTasksView = ({user,tasks,showModal,showToast,onDeleteTask,onCloneTask}) => {
@@ -2459,7 +1934,7 @@ const LeaderboardView = ({employees,tasks}) => {
 const SettingsView = ({theme,setTheme,showToast,animations,setAnimations,isAdmin,employees,tasks,projects,onImport}) => {
   const [syncing,setSyncing]=useState(false);
   const handleSync=async()=>{setSyncing(true);showToast('Syncing...','info');const res=await api.call('sync',{});setSyncing(false);if(res.success)showToast('Synced!','success');else showToast('Sync failed','error');};
-  const handleDownloadBackup=()=>{const data={employees,tasks,projects,exportDate:new Date().toISOString()};const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL.createObjectURL(blob);
+  const handleDownloadBackup=()=>{const data={employees,tasks,projects,exportDate:new Date().toISOString()};const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);
   a.download='Gigahertz_Backup.json';
   a.click();
   showToast('Backup downloaded!','success');
@@ -2910,4 +2385,3 @@ ReactDOM.render(<App />, document.getElementById('root'));
 </script>
 </body>
 </html>
-<!-- I'm Pedro Basura Man --> 
