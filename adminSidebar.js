@@ -345,7 +345,7 @@ class AdminSidebar {
   }
 
   /**
-   * Show notification
+   * Show notification with 5.5 second auto-dismiss
    */
   showNotification(message, type = 'info') {
     const notification = document.createElement('div');
@@ -353,14 +353,19 @@ class AdminSidebar {
     notification.textContent = message;
     document.body.appendChild(notification);
 
+    // Animate in
     setTimeout(() => {
       notification.classList.add('show');
     }, 10);
 
+    // Auto-dismiss after 5.5 seconds with fade-out animation
     setTimeout(() => {
-      notification.classList.remove('show');
-      setTimeout(() => notification.remove(), 300);
-    }, 3000);
+      notification.classList.add('fade-out');
+      setTimeout(() => {
+        notification.classList.remove('show');
+        setTimeout(() => notification.remove(), 400);
+      }, 100);
+    }, 5500);
   }
 }
 
