@@ -43,6 +43,7 @@
 [data-theme="independence"]{--p:#0038a8;--pd:#002169;--pl:rgba(0,56,168,0.12);--bg:linear-gradient(135deg,#f8fafc 0%,#eff6ff 100%);--wh:#fff;--card:rgba(255,255,255,0.9);--tx:#0f172a;--tx2:#1e293b;--tx3:#475569;--bd:rgba(206,17,38,0.4);--danger:#ce1126;--ok:#22c55e;--warn:#fcd116;--glass:rgba(255,255,255,0.75);--gborder:rgba(255,255,255,0.9);--shadow:rgba(0,56,168,0.1);--sidebar:rgba(241,245,249,0.95);--header:rgba(241,245,249,0.92);--ibg:rgba(241,245,249,0.7);--btn:linear-gradient(160deg,#0038a8,#002169);--btnH:linear-gradient(160deg,#1a52c4,#0038a8);--glow:rgba(0,56,168,0.3);}
 [data-theme="summer"]{--p:#f97316;--pd:#ea580c;--pl:rgba(249,115,22,0.12);--bg:linear-gradient(135deg,#fef08a 0%,#fde68a 100%);--wh:#fff;--card:rgba(255,255,255,0.85);--tx:#431407;--tx2:#7c2d12;--tx3:#9a3412;--bd:rgba(249,115,22,0.3);--danger:#ef4444;--ok:#22c55e;--warn:#eab308;--glass:rgba(255,255,255,0.65);--gborder:rgba(255,255,255,0.9);--shadow:rgba(249,115,22,0.1);--sidebar:rgba(253,224,71,0.95);--header:rgba(253,224,71,0.92);--ibg:rgba(253,224,71,0.7);--btn:linear-gradient(160deg,#f97316,#ea580c);--btnH:linear-gradient(160deg,#fb923c,#f97316);--glow:rgba(249,115,22,0.3);}
 [data-theme="dididi"]{--p:#ff00ff;--pd:#8b008b;--pl:rgba(255,0,255,0.12);--bg:linear-gradient(135deg,#110011 0%,#1a001a 100%);--wh:#1a001a;--card:rgba(26,0,26,0.8);--tx:#00ff00;--tx2:#ff00ff;--tx3:#008800;--bd:rgba(0,255,0,0.4);--danger:#ff0000;--ok:#00ff00;--warn:#ffff00;--glass:rgba(10,0,10,0.65);--gborder:rgba(255,0,255,0.5);--shadow:rgba(255,0,255,0.3);--sidebar:rgba(17,0,17,0.98);--header:rgba(17,0,17,0.92);--ibg:rgba(17,0,17,0.7);--btn:linear-gradient(160deg,#ff00ff,#8b008b);--btnH:linear-gradient(160deg,#ff66ff,#ff00ff);--glow:rgba(255,0,255,0.4);}
+[data-theme="serenity"]{--p:#5b8ef3;--pd:#4a7ae8;--pl:rgba(91,142,243,0.13);--bg:linear-gradient(135deg,#dcedf9 0%,#c8e0f7 100%);--wh:#fff;--card:rgba(255,255,255,0.75);--tx:#1a3a6b;--tx2:#2d5a9e;--tx3:#5b7fa8;--bd:rgba(91,142,243,0.18);--danger:#e53e3e;--ok:#22c55e;--warn:#f59e0b;--glass:rgba(255,255,255,0.62);--gborder:rgba(255,255,255,0.88);--shadow:rgba(91,142,243,0.13);--sidebar:rgba(241,248,255,0.92);--header:rgba(241,248,255,0.88);--ibg:rgba(255,255,255,0.5);--btn:linear-gradient(160deg,#5b8ef3,#4a7ae8);--btnH:linear-gradient(160deg,#7ba3f8,#5b8ef3);--glow:rgba(91,142,243,0.3);}
 
 /* ═══════════════════════════════════════════════════
    BASE RESET & TYPOGRAPHY
@@ -407,6 +408,7 @@ const THEMES=[
   {id:'steampunk',label:'Steampunk ⚙️',color:'#8b7355'},{id:'dracula',label:'Dracula 🦇',color:'#ff79c6'},
   {id:'nordtheme',label:'Nord Theme ❄️',color:'#88c0d0'},{id:'gruvbox',label:'Gruvbox 🍂',color:'#d65c0b'},
   {id:'onedark',label:'One Dark 🌙',color:'#61afef'},
+  {id:'serenity',label:'Serenity Blue 🧘',color:'#5b8ef3'},
 ];
 
 const DEPTS=[
@@ -2246,7 +2248,7 @@ const MainApp=({user:initUser,onLogoutReq,theme,setTheme})=>{
           </span>
           <div style={{overflow:'hidden',textAlign:'left',flex:1}}>
             <p style={{fontSize:12,fontWeight:800,overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap'}}>{safe.firstName} {safe.lastName}</p>
-            <p style={{fontSize:9,color:'var(--tx3)',fontWeight:600'}}>{dept?.name||''} · LVL {lvl.level}</p>
+            <p style={{fontSize:9,color:'var(--tx3)',fontWeight:600}}>{dept?.name||''} · LVL {lvl.level}</p>
           </div>
         </button>
         <button className="nav-item" onClick={()=>onLogoutReq(tasks,safe,prodPct,sessionStart)} style={{color:'var(--danger)',background:'rgba(239,68,68,.07)',border:'1px solid rgba(239,68,68,.18)'}}>
