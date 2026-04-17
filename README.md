@@ -1,4 +1,4 @@
-# 🎀 Giga Hertz Activity Tracker v2.0 🎀
+# 🎀 Giga Hertz Activity Tracker v7.0 🎀
 > "Keep track of your cooking and your grind, girlie! ✨"
 
 ## 🌸 HULI KA! GUMAGAMIT KA NG AI! 🌸
