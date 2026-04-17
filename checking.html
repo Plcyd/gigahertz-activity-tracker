@@ -1,51 +1,777 @@
-<!-- BADBLOOD -->
+<!DOCTYPE html>
+<html lang="en" data-theme="frutiger">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Frutiger Aero Calculator</title>
+  <link href="https://fonts.googleapis.com/css2?family=Segoe+UI:wght@300;400;600;700&family=Rajdhani:wght@500;600;700&family=Exo+2:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
+  
+  <style>
+    /* ═══════════════════════════════════════════════════
+       FRUTIGER AERO THEME — CALCULATOR EDITION
+    ═══════════════════════════════════════════════════ */
+    
+    [data-theme="frutiger"] {
+      --aero-bg:         linear-gradient(135deg, #e0f7fa 0%, #b5f5ec 30%, #80deea 60%, #e0f7fa 100%);
+      --aero-glass:      rgba(224,247,250,0.45);
+      --aero-glass2:     rgba(181,245,236,0.3);
+      --aero-border:     rgba(0,200,180,0.5);
+      --aero-border2:    rgba(0,180,160,0.3);
+      --aero-card:       rgba(181,245,236,0.55);
+      --aero-btn:        linear-gradient(180deg, rgba(128,222,234,0.9) 0%, rgba(77,198,218,0.9) 48%, rgba(38,177,204,0.95) 52%, rgba(100,210,230,0.9) 100%);
+      --aero-btn-h:      linear-gradient(180deg, rgba(150,235,240,0.95) 0%, rgba(100,220,230,0.95) 48%, rgba(50,200,220,1) 52%, rgba(120,225,240,0.95) 100%);
+      --aero-glow:       rgba(0,200,180,0.3);
+      --aero-shadow:     rgba(0,150,180,0.2);
+      --p:               #00b8a9;
+      --pd:              #008b84;
+      --pl:              rgba(128,222,234,0.5);
+      --tx:              #004d47;
+      --tx2:             #0a6b64;
+      --tx3:             #1a9b8f;
+      --ok:              #00a884;
+      --warn:            #ff9800;
+      --danger:          #e74c3c;
+      --sh:              0 4px 24px rgba(0,150,180,0.15), 0 1px 3px rgba(0,150,180,0.1);
+      --shl:             0 12px 48px rgba(0,150,180,0.25), 0 2px 8px rgba(0,150,180,0.15);
+      --ibg:             rgba(220,248,247,0.6);
+      --stripe:          rgba(0,180,160,0.07);
+      --titlebar:        linear-gradient(180deg, rgba(181,245,236,0.95) 0%, rgba(128,222,234,0.9) 100%);
+    }
 
-<html>
-  <head>
-    <title>Basic Calculator</title>
-  </head>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
 
-  <body>
-    <h1>Basic Calculator</h1>
+    body {
+      font-family: 'Exo 2', 'Segoe UI', system-ui, sans-serif;
+      background: var(--aero-bg);
+      background-attachment: fixed;
+      color: var(--tx);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      transition: background 0.5s ease;
+      overflow: hidden;
+    }
 
-    <input type="number" id="num1" placeholder="Enter first number">
-    <br><br>
+    /* ── AERO TEXTURE OVERLAY ── */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image:
+        radial-gradient(ellipse at 20% 10%, rgba(181,245,236,0.3) 0%, transparent 50%),
+        radial-gradient(ellipse at 80% 90%, rgba(128,222,234,0.2) 0%, transparent 50%),
+        radial-gradient(ellipse at 60% 40%, rgba(224,247,250,0.15) 0%, transparent 40%);
+      pointer-events: none;
+      z-index: 0;
+    }
 
-    <input type="number" id="num2" placeholder="Enter second number">
-    <br><br>
+    .calculator-wrapper {
+      position: relative;
+      z-index: 1;
+    }
 
-    <button onclick="calculate('+')">Add (+)</button>
-    <button onclick="calculate('-')">Subtract (-)</button>
-    <button onclick="calculate('*')">Multiply (×)</button>
-    <button onclick="calculate('/')">Divide (÷)</button>
+    .calculator-card {
+      width: 100%;
+      max-width: 500px;
+      border-radius: 16px;
+      padding: 0;
+      overflow: hidden;
+      box-shadow: var(--shl), 0 0 0 1px rgba(255,255,255,0.5), inset 0 1px 0 rgba(255,255,255,0.7);
+      background: var(--aero-glass);
+      backdrop-filter: blur(24px) saturate(1.5);
+      -webkit-backdrop-filter: blur(24px) saturate(1.5);
+      border: 1px solid var(--aero-border);
+      animation: slideUp 0.4s cubic-bezier(0.34,1.56,0.64,1);
+    }
 
-    <h2 id="result">Result: </h2>
-
-    <script>
-      function calculate(operator) {
-        var n1 = Number(document.getElementById("num1").value);
-        var n2 = Number(document.getElementById("num2").value);
-        var result;
-
-        if (operator === '+') {
-          result = n1 + n2;
-        } 
-        else if (operator === '-') {
-          result = n1 - n2;
-        } 
-        else if (operator === '*') {
-          result = n1 * n2;
-        } 
-        else if (operator === '/') {
-          if (n2 === 0) {
-            result = "Cannot divide by zero";
-          } else {
-            result = n1 / n2;
-          }
-        }
-
-        document.getElementById("result").innerHTML = "Result: " + result;
+    @keyframes slideUp {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
       }
-    </script>
-  </body>
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .calc-titlebar {
+      background: var(--titlebar);
+      padding: 14px 20px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      border-bottom: 1px solid var(--aero-border);
+      position: relative;
+    }
+
+    .calc-titlebar-title {
+      font-size: 16px;
+      font-weight: 800;
+      color: var(--tx);
+      letter-spacing: 0.05em;
+      flex: 1;
+      font-family: 'Rajdhani', sans-serif;
+    }
+
+    .calc-body {
+      padding: 30px 28px;
+    }
+
+    .calc-title {
+      font-size: 28px;
+      font-weight: 800;
+      color: var(--tx);
+      margin-bottom: 8px;
+      text-align: center;
+      font-family: 'Rajdhani', sans-serif;
+      letter-spacing: 0.04em;
+    }
+
+    .calc-subtitle {
+      font-size: 12px;
+      color: var(--tx3);
+      text-align: center;
+      margin-bottom: 24px;
+      font-weight: 500;
+    }
+
+    .input-group {
+      margin-bottom: 18px;
+    }
+
+    .input-label {
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--tx2);
+      margin-bottom: 7px;
+      display: block;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+
+    input[type="number"] {
+      width: 100%;
+      padding: 12px 16px;
+      border: 1.5px solid var(--aero-border2);
+      border-radius: 10px;
+      font-size: 14px;
+      color: var(--tx);
+      background: var(--ibg);
+      outline: none;
+      transition: all 0.2s ease;
+      font-weight: 500;
+      font-family: 'Rajdhani', sans-serif;
+    }
+
+    input[type="number"]:focus {
+      border-color: var(--p);
+      box-shadow: 0 0 0 3px var(--aero-glow), inset 0 1px 3px rgba(0,0,0,0.08);
+    }
+
+    input[type="number"]::placeholder {
+      color: var(--tx3);
+      opacity: 0.7;
+    }
+
+    .button-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+
+    .btn-calc {
+      padding: 14px 20px;
+      border-radius: 10px;
+      border: none;
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: 700;
+      background: var(--aero-btn);
+      color: #fff;
+      text-shadow: 0 1px 2px rgba(0,0,0,0.2);
+      box-shadow: 0 4px 14px var(--aero-glow), inset 0 1px 0 rgba(255,255,255,0.4), inset 0 -1px 0 rgba(0,0,0,0.15);
+      transition: all 0.2s ease;
+      font-family: 'Exo 2', sans-serif;
+      letter-spacing: 0.03em;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+    }
+
+    .btn-calc:hover {
+      background: var(--aero-btn-h);
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px var(--aero-glow), inset 0 1px 0 rgba(255,255,255,0.5);
+    }
+
+    .btn-calc:active {
+      transform: translateY(0);
+      box-shadow: 0 2px 8px var(--aero-glow);
+    }
+
+    .btn-calc:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .result-box {
+      border-radius: 12px;
+      padding: 24px;
+      background: linear-gradient(135deg, var(--aero-glass), var(--aero-glass2));
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1.5px solid var(--p);
+      box-shadow: 0 0 0 1px var(--aero-glow), var(--shl);
+      position: relative;
+      overflow: hidden;
+      min-height: 100px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+
+    .result-box::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(ellipse at 70% 20%, var(--aero-glow), transparent 60%);
+      pointer-events: none;
+    }
+
+    .result-label {
+      font-size: 10px;
+      font-weight: 800;
+      color: var(--tx3);
+      text-transform: uppercase;
+      letter-spacing: 0.15em;
+      margin-bottom: 8px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .result-value {
+      font-size: 48px;
+      font-weight: 800;
+      color: var(--p);
+      line-height: 1;
+      letter-spacing: -1px;
+      font-family: 'Rajdhani', sans-serif;
+      position: relative;
+      z-index: 1;
+      word-break: break-word;
+    }
+
+    .error-box {
+      background: rgba(231,76,60,0.15);
+      color: var(--danger);
+      border: 1px solid rgba(231,76,60,0.3);
+      padding: 12px 16px;
+      border-radius: 8px;
+      font-size: 13px;
+      margin-bottom: 16px;
+      font-weight: 600;
+      position: relative;
+      z-index: 2;
+    }
+
+    @media (max-width: 480px) {
+      .calculator-card {
+        border-radius: 12px;
+      }
+
+      .calc-body {
+        padding: 20px 16px;
+      }
+
+      .calc-title {
+        font-size: 24px;
+      }
+
+      .button-grid {
+        grid-template-columns: 1fr 1fr;
+      }
+
+      .result-value {
+        font-size: 36px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="calculator-wrapper">
+    <div class="calculator-card">
+      <div class="calc-titlebar">
+        <span style="font-size: 16px;">🧮</span>
+        <span class="calc-titlebar-title">Frutiger Aero Calculator</span>
+      </div>
+
+      <div class="calc-body">
+        <h1 class="calc-title">Calculate</h1>
+        <p class="calc-subtitle">Fast & elegant number operations</p>
+
+        <div id="errorBox" class="error-box" style="display: none;"></div>
+
+        <div class="input-group">
+          <label class="input-label">First Number</label>
+          <input type="number" id="num1" placeholder="Enter first number">
+        </div>
+
+        <div class="input-group">
+          <label class="input-label">Second Number</label>
+          <input type="number" id="num2" placeholder="Enter second number">
+        </div>
+
+        <div class="button-grid">
+          <button class="btn-calc" onclick="calculate('+')">
+            <span>➕</span>
+            <span>Add</span>
+          </button>
+          <button class="btn-calc" onclick="calculate('-')">
+            <span>➖</span>
+            <span>Subtract</span>
+          </button>
+          <button class="btn-calc" onclick="calculate('*')">
+            <span>✖️</span>
+            <span>Multiply</span>
+          </button>
+          <button class="btn-calc" onclick="calculate('/')">
+            <span>➗</span>
+            <span>Divide</span>
+          </button>
+        </div>
+
+        <div class="result-box">
+          <div class="result-label">Result</div>
+          <div class="result-value" id="result">—</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function calculate(operator) {
+      var errorBox = document.getElementById("errorBox");
+      var n1 = Number(document.getElementById("num1").value);
+      var n2 = Number(document.getElementById("num2").value);
+      var result;
+
+      // Validation
+      if (isNaN(n1) || isNaN(n2)) {
+        errorBox.textContent = "⚠️ Please enter valid numbers";
+        errorBox.style.display = "block";
+        document.getElementById("result").textContent = "—";
+        return;
+      }
+
+      errorBox.style.display = "none";
+
+      if (operator === '+') {
+        result = n1 + n2;
+      } 
+      else if (operator === '-') {
+        result = n1 - n2;
+      } 
+      else if (operator === '*') {
+        result = n1 * n2;
+      } 
+      else if (operator === '/') {
+        if (n2 === 0) {
+          errorBox.textContent = "⚠️ Cannot divide by zero";
+          errorBox.style.display = "block";
+          document.getElementById("result").textContent = "∞";
+          return;
+        }
+        result = n1 / n2;
+      }
+
+      // Format result nicely
+      if (typeof result === 'number') {
+        result = result.toFixed(6).replace(/\.?0+$/, '');
+      }
+
+      document.getElementById("result").textContent = result;
+    }
+
+    // Allow Enter key to submit
+    document.getElementById("num2").addEventListener("keypress", function(event) {
+      if (event.key === "Enter") {
+        calculate('+');
+      }
+    });
+  </script>
+    background-attachment: fixed;
+      color: var(--tx);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      transition: background 0.5s ease;
+      overflow: hidden;
+    }
+
+    /* ── AERO TEXTURE OVERLAY ── */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image:
+        radial-gradient(ellipse at 20% 10%, rgba(181,245,236,0.3) 0%, transparent 50%),
+        radial-gradient(ellipse at 80% 90%, rgba(128,222,234,0.2) 0%, transparent 50%),
+        radial-gradient(ellipse at 60% 40%, rgba(224,247,250,0.15) 0%, transparent 40%);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .calculator-wrapper {
+      position: relative;
+      z-index: 1;
+    }
+
+    .calculator-card {
+      width: 100%;
+      max-width: 500px;
+      border-radius: 16px;
+      padding: 0;
+      overflow: hidden;
+      box-shadow: var(--shl), 0 0 0 1px rgba(255,255,255,0.5), inset 0 1px 0 rgba(255,255,255,0.7);
+      background: var(--aero-glass);
+      backdrop-filter: blur(24px) saturate(1.5);
+      -webkit-backdrop-filter: blur(24px) saturate(1.5);
+      border: 1px solid var(--aero-border);
+      animation: slideUp 0.4s cubic-bezier(0.34,1.56,0.64,1);
+    }
+
+    @keyframes slideUp {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .calc-titlebar {
+      background: var(--titlebar);
+      padding: 14px 20px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      border-bottom: 1px solid var(--aero-border);
+      position: relative;
+    }
+
+    .calc-titlebar-title {
+      font-size: 16px;
+      font-weight: 800;
+      color: var(--tx);
+      letter-spacing: 0.05em;
+      flex: 1;
+      font-family: 'Rajdhani', sans-serif;
+    }
+
+    .calc-body {
+      padding: 30px 28px;
+    }
+
+    .calc-title {
+      font-size: 28px;
+      font-weight: 800;
+      color: var(--tx);
+      margin-bottom: 8px;
+      text-align: center;
+      font-family: 'Rajdhani', sans-serif;
+      letter-spacing: 0.04em;
+    }
+
+    .calc-subtitle {
+      font-size: 12px;
+      color: var(--tx3);
+      text-align: center;
+      margin-bottom: 24px;
+      font-weight: 500;
+    }
+
+    .input-group {
+      margin-bottom: 18px;
+    }
+
+    .input-label {
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--tx2);
+      margin-bottom: 7px;
+      display: block;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+
+    input[type="number"] {
+      width: 100%;
+      padding: 12px 16px;
+      border: 1.5px solid var(--aero-border2);
+      border-radius: 10px;
+      font-size: 14px;
+      color: var(--tx);
+      background: var(--ibg);
+      outline: none;
+      transition: all 0.2s ease;
+      font-weight: 500;
+      font-family: 'Rajdhani', sans-serif;
+    }
+
+    input[type="number"]:focus {
+      border-color: var(--p);
+      box-shadow: 0 0 0 3px var(--aero-glow), inset 0 1px 3px rgba(0,0,0,0.08);
+    }
+
+    input[type="number"]::placeholder {
+      color: var(--tx3);
+      opacity: 0.7;
+    }
+
+    .button-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+
+    .btn-calc {
+      padding: 14px 20px;
+      border-radius: 10px;
+      border: none;
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: 700;
+      background: var(--aero-btn);
+      color: #fff;
+      text-shadow: 0 1px 2px rgba(0,0,0,0.2);
+      box-shadow: 0 4px 14px var(--aero-glow), inset 0 1px 0 rgba(255,255,255,0.4), inset 0 -1px 0 rgba(0,0,0,0.15);
+      transition: all 0.2s ease;
+      font-family: 'Exo 2', sans-serif;
+      letter-spacing: 0.03em;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+    }
+
+    .btn-calc:hover {
+      background: var(--aero-btn-h);
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px var(--aero-glow), inset 0 1px 0 rgba(255,255,255,0.5);
+    }
+
+    .btn-calc:active {
+      transform: translateY(0);
+      box-shadow: 0 2px 8px var(--aero-glow);
+    }
+
+    .btn-calc:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .result-box {
+      border-radius: 12px;
+      padding: 24px;
+      background: linear-gradient(135deg, var(--aero-glass), var(--aero-glass2));
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1.5px solid var(--p);
+      box-shadow: 0 0 0 1px var(--aero-glow), var(--shl);
+      position: relative;
+      overflow: hidden;
+      min-height: 100px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+
+    .result-box::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(ellipse at 70% 20%, var(--aero-glow), transparent 60%);
+      pointer-events: none;
+    }
+
+    .result-label {
+      font-size: 10px;
+      font-weight: 800;
+      color: var(--tx3);
+      text-transform: uppercase;
+      letter-spacing: 0.15em;
+      margin-bottom: 8px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .result-value {
+      font-size: 48px;
+      font-weight: 800;
+      color: var(--p);
+      line-height: 1;
+      letter-spacing: -1px;
+      font-family: 'Rajdhani', sans-serif;
+      position: relative;
+      z-index: 1;
+      word-break: break-word;
+    }
+
+    .error-box {
+      background: rgba(231,76,60,0.15);
+      color: var(--danger);
+      border: 1px solid rgba(231,76,60,0.3);
+      padding: 12px 16px;
+      border-radius: 8px;
+      font-size: 13px;
+      margin-bottom: 16px;
+      font-weight: 600;
+      position: relative;
+      z-index: 2;
+    }
+
+    @media (max-width: 480px) {
+      .calculator-card {
+        border-radius: 12px;
+      }
+
+      .calc-body {
+        padding: 20px 16px;
+      }
+
+      .calc-title {
+        font-size: 24px;
+      }
+
+      .button-grid {
+        grid-template-columns: 1fr 1fr;
+      }
+
+      .result-value {
+        font-size: 36px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="calculator-wrapper">
+    <div class="calculator-card">
+      <div class="calc-titlebar">
+        <span style="font-size: 16px;">🧮</span>
+        <span class="calc-titlebar-title">Frutiger Aero Calculator</span>
+      </div>
+
+      <div class="calc-body">
+        <h1 class="calc-title">Calculate</h1>
+        <p class="calc-subtitle">Fast & elegant number operations</p>
+
+        <div id="errorBox" class="error-box" style="display: none;"></div>
+
+        <div class="input-group">
+          <label class="input-label">First Number</label>
+          <input type="number" id="num1" placeholder="Enter first number">
+        </div>
+
+        <div class="input-group">
+          <label class="input-label">Second Number</label>
+          <input type="number" id="num2" placeholder="Enter second number">
+        </div>
+
+        <div class="button-grid">
+          <button class="btn-calc" onclick="calculate('+')">
+            <span>➕</span>
+            <span>Add</span>
+          </button>
+          <button class="btn-calc" onclick="calculate('-')">
+            <span>➖</span>
+            <span>Subtract</span>
+          </button>
+          <button class="btn-calc" onclick="calculate('*')">
+            <span>✖️</span>
+            <span>Multiply</span>
+          </button>
+          <button class="btn-calc" onclick="calculate('/')">
+            <span>➗</span>
+            <span>Divide</span>
+          </button>
+        </div>
+
+        <div class="result-box">
+          <div class="result-label">Result</div>
+          <div class="result-value" id="result">—</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function calculate(operator) {
+      var errorBox = document.getElementById("errorBox");
+      var n1 = Number(document.getElementById("num1").value);
+      var n2 = Number(document.getElementById("num2").value);
+      var result;
+
+      // Validation
+      if (isNaN(n1) || isNaN(n2)) {
+        errorBox.textContent = "⚠️ Please enter valid numbers";
+        errorBox.style.display = "block";
+        document.getElementById("result").textContent = "—";
+        return;
+      }
+
+      errorBox.style.display = "none";
+
+      if (operator === '+') {
+        result = n1 + n2;
+      } 
+      else if (operator === '-') {
+        result = n1 - n2;
+      } 
+      else if (operator === '*') {
+        result = n1 * n2;
+      } 
+      else if (operator === '/') {
+        if (n2 === 0) {
+          errorBox.textContent = "⚠️ Cannot divide by zero";
+          errorBox.style.display = "block";
+          document.getElementById("result").textContent = "∞";
+          return;
+        }
+        result = n1 / n2;
+      }
+
+      // Format result nicely
+      if (typeof result === 'number') {
+        result = result.toFixed(6).replace(/\.?0+$/, '');
+      }
+
+      document.getElementById("result").textContent = result;
+    }
+
+    // Allow Enter key to submit
+    document.getElementById("num2").addEventListener("keypress", function(event) {
+      if (event.key === "Enter") {
+        calculate('+');
+      }
+    });
+  </script>
+</body>
 </html>
