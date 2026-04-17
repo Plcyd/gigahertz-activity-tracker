@@ -1476,7 +1476,7 @@ const MyTasksView=({user,tasks,showModal,showToast,onDelete,onClone})=>{
                   <td>
                     <div style={{display:'flex',gap:4}}>
                       <button className="btn btn-ghost btn-xs" onClick={()=>onClone(t)} title="Clone"><i className="fa-solid fa-copy"/></button>
-                      {t.date===todayISO&&<button className="btn btn-ghost btn-xs" style={{color:'var(--danger)'}} onClick={()=>{if(window.confirm('Delete?')){onDelete(t.id);showToast('Deleted','info');}}}}><i className="fa-solid fa-trash"/></button>}
+                      {t.date===todayISO&&<button className="btn btn-ghost btn-xs" style={{color:'var(--danger)'}} onClick={()=>{if(window.confirm('Delete?')){onDelete(t.id);showToast('Deleted','info');}}}><i className="fa-solid fa-trash"/></button>}
                     </div>
                   </td>
                 </tr>
