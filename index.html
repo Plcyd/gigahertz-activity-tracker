@@ -5,14 +5,20 @@
     <meta name="viewport" content="width=device-width,initial-scale=1.0,viewport-fit=cover" />
     <title>Gigahertz Nexus v9.0 — PPOS</title>
     <link rel="icon" href="https://contents.smsupermalls.com/data/uploads/2020/07/GIGAHERTZ_COMPUTER_SYSTEM.jpg" />
+    
+    <!-- External Scripts -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.2/babel.min.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800;900&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
-    <style> 
+    
+    <!-- Custom Stylesheets -->
+    <link rel="stylesheet" href="navigation.css" />
+    <link rel="stylesheet" href="settingsUI.css" />
+    <style>
                 /* ═══════════════════════════════════════════════════
-           THEME ENGINE — 32 Themes HHA
+           THEME ENGINE — 32 Themes
         ═══════════════════════════════════════════════════ */
                 [data-theme="frutiger"] {
                     --p: #1a6fd4;
@@ -69,7 +75,7 @@
                     --pd: #7c3aed;
                     --pl: rgba(139,92,246,0.15);
                     --bg: linear-gradient(135deg,#020617 0%,#0f172a 100%);
-                    --wh: #0f172a;
+                    --wh: #767b86;
                     --card: rgba(15,23,42,0.7);
                     --tx: #f8fafc;
                     --tx2: #cbd5e1;
@@ -1360,7 +1366,14 @@
                     min-height: 100vh;
                     overflow-x: hidden;
                     transition: background .35s ease,color .35s ease;
-                    -webkit-font-smoothing: antialiased
+                    -webkit-font-smoothing: antialiased;
+                    margin-left: 280px;
+                }
+
+                @media (max-width: 768px) {
+                    body {
+                        margin-left: 0;
+                    }
                 }
 
                 input, select, button, textarea {
@@ -2812,9 +2825,19 @@
                     display: flex;
                     justify-content: space-between;
                     align-items: center;
-                    position: relative;
+                    position: fixed;
+                    top: 0;
+                    left: 280px;
+                    right: 0;
                     box-shadow: 0 8px 32px rgba(26, 111, 212, 0.15);
                     animation: slideDown 0.5s ease-out;
+                    z-index: 500;
+                }
+
+                @media (max-width: 768px) {
+                    .app-header {
+                        left: 0;
+                    }
                 }
 
                 @keyframes slideDown {
@@ -3057,9 +3080,13 @@
     <button class="theme-toggle" id="themeToggle" title="Switch Theme">⚙️</button>
     <div class="theme-menu" id="themeMenu"></div>
 
-    <div id="root"></div>
+    <div id="root" style="margin-top: 100px;"></div>
+    
+    <!-- Core Systems -->
     <script src="themeEngine.js"></script>
-    <script src="adminSidebar.js"></script>
+    <script src="navigation.js"></script>
+    <script src="settingsUI.js"></script>
+    
     <script type="text/babel">
 const {useState,useEffect,useRef,useCallback,useMemo}=React;
 
@@ -5149,15 +5176,24 @@ const MainApp=({user:initUser,onLogoutReq,theme,setTheme})=>{
 const Root=()=>{
   const [user,setUser]=useState(()=>LS.load('ghz_user_v9'));
   const [theme,setTheme]=useState(()=>LS.load('ghz_theme','frutiger'));
-  const handleLogin=u=>{setUser(u);LS.save('ghz_user_v9',u);};
+  const handleLogin=u=>{
+    setUser(u);
+    LS.save('ghz_user_v9',u);
+    // Make user available to navigation system
+    window.currentLoggedInUser = u;
+  };
   const handleLogout=(tasks,user,prodPct,sessionStart)=>{
     const endTime=new Date().toISOString();
     const d={user,sessionStart,endTime,tasksLogged:tasks.filter(t=>t.empId===user.id&&t.date===new Date().toISOString().split('T')[0]).length,producTime:prodPct.toFixed(1),msg:'Session ended via AFK timeout or manual logout'};
     GAS.call('endSession',d).catch(()=>{});
     LS.rm('ghz_user_v9');LS.rm(`timer_${user.id}`);
+    window.currentLoggedInUser = null;
     window.location.reload();
   };
-  useEffect(()=>{LS.save('ghz_theme',theme);},[theme]);
+  useEffect(()=>{
+    LS.save('ghz_theme',theme);
+    if(user) window.currentLoggedInUser = user;
+  },[theme, user]);
   return user?<MainApp user={user} onLogoutReq={handleLogout} theme={theme} setTheme={setTheme}/>:<AuthPortal onLogin={handleLogin} theme={theme} setTheme={setTheme}/>;
 };
 
