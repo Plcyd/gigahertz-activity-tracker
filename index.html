@@ -398,9 +398,15 @@ const {useState,useEffect,useRef,useCallback,useMemo}=React;
 /* ═══════════════════════════════════════════════════
    CONSTANTS
 ═══════════════════════════════════════════════════ */
-const GAS_URL="https://script.google.com/macros/s/AKfycbyXgU7wQD1KKUyHwoBFj52SdGeIuXJqOvOur2lqnDalNRBbjZQKX_K7a11lfKog1HHx/exec";
+const GAS_URL="https://script.google.com/macros/s/AKfycbw8bLplq_YA0oPbOuFTniFnhjMTOuFv9H-9GVd-Dp_r2zDMvfGlobqqQpc16tqoMesV/exec";
 const LOGO="https://contents.smsupermalls.com/data/uploads/2020/07/GIGAHERTZ_COMPUTER_SYSTEM.jpg";
-const HQ_LAT=14.6000, HQ_LNG=120.9845, GEO_RADIUS=500;
+// Gigahertz Main Office (Quezon City, Philippines) - Exact Coordinates
+const HQ_LAT=14.594898, HQ_LNG=120.988591, GEO_RADIUS=300;
+const GAS_CONFIG={
+  spreadsheetId:'1z75QwcAFGF5SkktCpiTygQAVIPh8cn9P1U5cxoEiW6w',
+  deploymentId:'AKfycbw8bLplq_YA0oPbOuFTniFnhjMTOuFv9H-9GVd-Dp_r2zDMvfGlobqqQpc16tqoMesV',
+  webAppUrl:'https://script.google.com/macros/s/AKfycbw8bLplq_YA0oPbOuFTniFnhjMTOuFv9H-9GVd-Dp_r2zDMvfGlobqqQpc16tqoMesV/exec'
+};
 const AFK_TIMEOUT=900;
 const TASK_CATS=['Admin','Support','Meeting','Dev','Operations'];
 const CAT_COLORS={Admin:'#3b82f6',Support:'#22c55e',Meeting:'#f97316',Dev:'#a855f7',Operations:'#ec4899'};
@@ -552,21 +558,30 @@ const GAS={
   status:'unknown', // 'online' | 'offline' | 'unknown' | 'checking'
   _queue:[],
   _listeners:[],
+  _lastSyncTime:0,
+  _syncInterval:5*60*1000, // Sync every 5 minutes if online
   onStatus(fn){this._listeners.push(fn);},
   _emit(){this._listeners.forEach(fn=>fn(this.status));},
   async _fetch(payload,retries=2){
+    // Ensure we're using the correct GAS URL
+    const url=GAS_CONFIG.webAppUrl||GAS_URL;
     for(let i=0;i<=retries;i++){
       try{
         const ctrl=new AbortController();
         const t=setTimeout(()=>ctrl.abort(),8000);
-        const r=await fetch(GAS_URL,{method:'POST',body:JSON.stringify(payload),headers:{'Content-Type':'text/plain;charset=utf-8'},signal:ctrl.signal});
+        console.log(`[GAS] Attempt ${i+1}/${retries+1} - Action: ${payload.action}`);
+        const r=await fetch(url,{method:'POST',body:JSON.stringify(payload),headers:{'Content-Type':'text/plain;charset=utf-8'},signal:ctrl.signal});
         clearTimeout(t);
         if(r.ok){
           const d=await r.json();
+          console.log(`[GAS] ✓ ${payload.action} succeeded`,d);
           if(this.status!=='online'){this.status='online';this._emit();}
           return d;
+        }else{
+          console.warn(`[GAS] ✗ ${payload.action} failed with status ${r.status}`);
         }
       }catch(e){
+        console.error(`[GAS] Network error on attempt ${i+1}:`,e.message);
         if(i<retries){await new Promise(r=>setTimeout(r,1200*(i+1)));}
       }
     }
@@ -581,25 +596,52 @@ const GAS={
   },
   async call(action,payload={}){
     if(action==='login')return this._localLogin(payload);
-    const r=await this._fetch({action,...payload});
+    
+    // Build full request with action
+    const req={action,...payload,_ts:Date.now(),_sync:true};
+    const r=await this._fetch(req);
+    
     if(!r){
-      // Queue for later sync
-      this._queue.push({action,...payload,_ts:Date.now()});
+      // Queue for later sync - only queue CRUD operations, not reads
+      if(['logTask','addLeave','postAnnouncement','addProject','clockIn','clockOut','updateLeave','updateProject','batchLogActivities','endSession'].includes(action)){
+        this._queue.push(req);
+        LS.save('ghz_sync_q',this._queue);
+        console.log(`[GAS] Queued offline: ${action}. Queue size: ${this._queue.length}`);
+      }
+    }else if(r.success||r.offline){
+      // Clear from queue if successful
+      this._queue=this._queue.filter(q=>q._ts!==req._ts);
       LS.save('ghz_sync_q',this._queue);
     }
-    return r||{success:true,offline:true};
+    
+    return r||{success:true,offline:true,message:`${action} queued for sync`};
   },
   async syncQueue(showToast){
-    if(this._queue.length===0)return;
+    if(this._queue.length===0){
+      if(showToast)showToast('No pending records to sync.','info');
+      return {synced:0,skipped:0};
+    }
+    
+    console.log(`[GAS] Starting sync of ${this._queue.length} offline records...`);
     const q=[...this._queue];this._queue=[];
-    let synced=0;
+    let synced=0,failed=0;
+    
     for(const item of q){
       const r=await this._fetch(item,1);
-      if(r)synced++;
-      else this._queue.push(item);
+      if(r&&(r.success||r.offline)){
+        synced++;
+        console.log(`[GAS] ✓ Synced: ${item.action}`);
+      }else{
+        failed++;
+        this._queue.push(item);
+        console.warn(`[GAS] ✗ Failed to sync: ${item.action}, requeueing...`);
+      }
     }
+    
     LS.save('ghz_sync_q',this._queue);
-    if(synced>0&&showToast)showToast(`Synced ${synced} offline record(s) to Google Sheets ✓`,'success');
+    const msg=`Synced ${synced} record(s)${failed>0?` · ${failed} pending retry`:''}`;
+    if(showToast)showToast(msg+(synced>0?' ✓':''),'success');
+    return {synced,failed,pending:this._queue.length};
   },
   _localLogin(p){
     const id=(p.identifier||'').trim().toLowerCase();
@@ -612,7 +654,7 @@ const GAS={
     if(emp&&emp.password===pw)return{success:true,user:{...emp,fullName:`${emp.firstName} ${emp.lastName}`}};
     return{success:false,error:'Invalid credentials. Check your Employee ID or email.'};
   },
-  loadQueue(){this._queue=LS.load('ghz_sync_q',[])||[];}
+  loadQueue(){this._queue=LS.load('ghz_sync_q',[])||[];console.log(`[GAS] Loaded queue with ${this._queue.length} pending records`);}
 };
 GAS.loadQueue();
 
@@ -2280,7 +2322,7 @@ const MainApp=({user:initUser,onLogoutReq,theme,setTheme})=>{
           <i className="fa-solid fa-location-dot" style={{color:'var(--p)',fontSize:12}}/>
           {geoStatus==='idle'&&<button onClick={checkGeo} style={{background:'none',border:'none',cursor:'pointer',color:'var(--tx3)',fontWeight:700,fontSize:11,padding:0}}>Verify Location</button>}
           {geoStatus==='checking'&&<span style={{color:'var(--warn)'}}>Locating...</span>}
-          {geoStatus==='inside'&&<span style={{color:'var(--ok)'}}>HQ ({geoDist}m) ✓</span>}
+          {geoStatus==='inside'&&<span style={{color:'var(--ok)'}}>In office ({geoDist}m) ✓</span>}
           {geoStatus==='outside'&&<span style={{color:'var(--danger)'}}>Remote ({geoDist}m)</span>}
           {geoStatus==='denied'&&<span style={{color:'var(--danger)'}}>Location denied</span>}
         </div>
