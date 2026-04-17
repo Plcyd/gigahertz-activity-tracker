@@ -881,10 +881,10 @@ const TimerEngine=({user,tasks,onSave,showToast})=>{
 
   const startNew=(name,c)=>{
     const now=new Date().toISOString();
-    const has&&=name.includes('&&');
-    const cn=has&&?name.split('&&')[0].trim():name.trim();
+    const hasAnd=name.includes('&&');
+    const cn=hasAnd?name.split('&&')[0].trim():name.trim();
     const pred=AI.predictTime(cn);
-    const subs=has&&?AI.breakdown(cn).map(s=>({name:s,done:false})):[];
+    const subs=hasAnd?AI.breakdown(cn).map(s=>({name:s,done:false})):[];
     if(active&&active.status==='running'){
       setPrevTask({...active,elapsedBase:elRef.current});
       setQueue(q=>[{...active,elapsedBase:elRef.current,status:'paused'},...q]);
@@ -2087,6 +2087,7 @@ const SettingsView=({theme,setTheme,animations,setAnimations,showToast,gasQueue}
           <p>Backend: <strong style={{color:'var(--tx)'}}>Google Apps Script (GAS) + Offline Queue</strong></p>
           <p>Themes: <strong style={{color:'var(--tx)'}}>{THEMES.length} unique environments</strong></p>
           <p>Employees: <strong style={{color:'var(--tx)'}}>{BASE_EMPLOYEES.length} registered</strong></p>
+          <p>Settings: <strong style={{color:'var(--tx)'}}>Display • Productivity • Data • Backend</strong></p>
           <p style={{marginTop:5,lineHeight:1.7,fontStyle:'italic',color:'var(--p)'}}>"Innovative Tech, Exceptional Service: To provide affordable, reliable, and quality technology to everyone."</p>
         </div>
       </div>
@@ -2791,3 +2792,5 @@ const ErrorRecovery={
 
 const root=ReactDOM.createRoot(document.getElementById('root'));
 root.render(<Root/>);
+</body>
+</html>
