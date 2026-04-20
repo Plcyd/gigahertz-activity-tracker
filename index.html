@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" data-theme="aurora">
+<html lang="en" data-theme="gigahertz">
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1.0,viewport-fit=cover"/>
@@ -1423,6 +1423,31 @@
                     --btn: linear-gradient(160deg,#d65c0b,#b57614);
                     --btnH: linear-gradient(160deg,#e78a3d,#c18a1c);
                     --glow: rgba(214,92,11,0.4);
+                }
+
+                [data-theme="lua"] {
+                    --p: #51a0cf;
+                    --pd: #003d7a;
+                    --pl: rgba(81,160,207,0.13);
+                    --bg: linear-gradient(135deg,#1a1a2e 0%,#16213e 100%);
+                    --wh: #0f3460;
+                    --card: rgba(15,52,96,0.72);
+                    --tx: #e8f4f8;
+                    --tx2: #a8c5d1;
+                    --tx3: #70919d;
+                    --bd: rgba(81,160,207,0.22);
+                    --danger: #ff6b6b;
+                    --ok: #51cf66;
+                    --warn: #ffd93d;
+                    --glass: rgba(15,52,96,0.65);
+                    --gborder: rgba(81,160,207,0.28);
+                    --shadow: rgba(3,25,47,0.5);
+                    --sidebar: rgba(10,25,42,0.96);
+                    --header: rgba(10,25,42,0.92);
+                    --ibg: rgba(10,25,42,0.75);
+                    --btn: linear-gradient(160deg,#51a0cf,#003d7a);
+                    --btnH: linear-gradient(160deg,#6fb8e0,#1a5aa8);
+                    --glow: rgba(81,160,207,0.35);
                 }
 
                 /* ═══════════════════════════════════════════════════
@@ -2878,6 +2903,96 @@
                 }
 
                 /* ═══════════════════════════════════════════════════
+           MOBILE UI ENHANCEMENTS
+        ═══════════════════════════════════════════════════ */
+                @media(max-width:768px) {
+                    .btn {
+                        padding: 12px 14px;
+                        font-size: 13px
+                    }
+
+                    .input {
+                        padding: 12px 13px;
+                        font-size: 14px
+                    }
+
+                    .glass {
+                        padding: 16px !important;
+                        border-radius: 14px !important
+                    }
+
+                    .timer-digits {
+                        font-size: 42px !important
+                    }
+
+                    .modal {
+                        width: 95vw;
+                        max-width: 100%;
+                        border-radius: 16px
+                    }
+
+                    .badge {
+                        padding: 4px 8px;
+                        font-size: 10px
+                    }
+
+                    .input-label {
+                        font-size: 11px
+                    }
+
+                    body {
+                        font-size: 14px
+                    }
+
+                    h1, h2, h3 {
+                        font-size: 18px
+                    }
+                }
+
+                @media(max-width:480px) {
+                    .timer-digits {
+                        font-size: 36px !important
+                    }
+
+                    .content {
+                        padding: 12px;
+                        gap: 12px;
+                        padding-bottom: 80px
+                    }
+
+                    .glass {
+                        padding: 14px !important;
+                        border-radius: 12px !important
+                    }
+
+                    .btn {
+                        padding: 10px 12px;
+                        font-size: 12px;
+                        flex: 1 1 auto;
+                        min-width: 0
+                    }
+
+                    .modal {
+                        width: 90vw;
+                        padding: 14px
+                    }
+
+                    .input {
+                        padding: 10px 12px;
+                        font-size: 13px
+                    }
+
+                    .navbar {
+                        gap: 8px
+                    }
+
+                    .nav-item {
+                        padding: 8px;
+                        font-size: 12px
+                    }
+                }
+
+                /* ═══════════════════════════════════════════════════
            SYNC QUEUE INDICATOR
         ═══════════════════════════════════════════════════ */
                 .sync-banner {
@@ -2913,8 +3028,8 @@ const {useState,useEffect,useRef,useCallback,useMemo}=React;
 ═══════════════════════════════════════════════════ */
 const GAS_URL="https://script.google.com/macros/s/AKfycbw8bLplq_YA0oPbOuFTniFnhjMTOuFv9H-9GVd-Dp_r2zDMvfGlobqqQpc16tqoMesV/exec";
 const LOGO="https://contents.smsupermalls.com/data/uploads/2020/07/GIGAHERTZ_COMPUTER_SYSTEM.jpg";
-// Gigahertz Main Office (Quezon City, Philippines) - Exact Coordinates
-const HQ_LAT=14.594898, HQ_LNG=120.988591, GEO_RADIUS=300;
+// Gigahertz Service Center (Manila, Metro Manila) - 14°35'43.0"N 120°59'20.2"E
+const HQ_LAT=14.59527, HQ_LNG=120.98894, GEO_RADIUS=300;
 const GAS_CONFIG={
   spreadsheetId:'1z75QwcAFGF5SkktCpiTygQAVIPh8cn9P1U5cxoEiW6w',
   deploymentId:'AKfycbw8bLplq_YA0oPbOuFTniFnhjMTOuFv9H-9GVd-Dp_r2zDMvfGlobqqQpc16tqoMesV',
@@ -2923,6 +3038,229 @@ const GAS_CONFIG={
 const AFK_TIMEOUT=900;
 const TASK_CATS=['Admin','Support','Meeting','Dev','Operations'];
 const CAT_COLORS={Admin:'#3b82f6',Support:'#22c55e',Meeting:'#f97316',Dev:'#a855f7',Operations:'#ec4899'};
+
+/* ═══════════════════════════════════════════════════
+   LAPIS FRAMEWORK — Lua Web Framework Integration
+═══════════════════════════════════════════════════ */
+const LAPIS={
+  // ════════════════════════════════════════════════
+  // LAPIS ROUTING ENGINE
+  // ════════════════════════════════════════════════
+  routes:{},
+  middleware:[],
+  errorHandlers:{},
+  
+  // Register a route with HTTP method
+  route:(method,path,handler)=>{
+    const key=`${method.toUpperCase()} ${path}`;
+    LAPIS.routes[key]=handler;
+    console.log(`[LAPIS] Route registered: ${key}`);
+  },
+  
+  // HTTP Verb shortcuts
+  get:(path,handler)=>LAPIS.route('GET',path,handler),
+  post:(path,handler)=>LAPIS.route('POST',path,handler),
+  put:(path,handler)=>LAPIS.route('PUT',path,handler),
+  delete:(path,handler)=>LAPIS.route('DELETE',path,handler),
+  patch:(path,handler)=>LAPIS.route('PATCH',path,handler),
+  
+  // Match route and execute handler
+  dispatch:(method,path,payload)=>{
+    const key=`${method.toUpperCase()} ${path}`;
+    if(LAPIS.routes[key]){
+      try{
+        return LAPIS.routes[key](payload);
+      }catch(e){
+        console.error(`[LAPIS] Route error on ${key}:`,e);
+        return{error:true,message:e.message};
+      }
+    }
+    return{error:true,message:`Route not found: ${key}`};
+  },
+  
+  // ════════════════════════════════════════════════
+  // LAPIS MIDDLEWARE ENGINE
+  // ════════════════════════════════════════════════
+  use:(middleware)=>{
+    LAPIS.middleware.push(middleware);
+    console.log(`[LAPIS] Middleware added: ${middleware.name||'anonymous'}`);
+  },
+  
+  executeMiddleware:async(ctx)=>{
+    for(const mw of LAPIS.middleware){
+      const result=await mw(ctx);
+      if(result===false)return false;
+    }
+    return true;
+  },
+  
+  // ════════════════════════════════════════════════
+  // LAPIS MODEL ENGINE
+  // ════════════════════════════════════════════════
+  models:{},
+  
+  model:(name,schema)=>{
+    LAPIS.models[name]={
+      schema,
+      data:[],
+      create:(obj)=>{
+        const entry={id:Date.now(),...obj};
+        LAPIS.models[name].data.push(entry);
+        return entry;
+      },
+      find:(query)=>LAPIS.models[name].data.filter(e=>Object.keys(query).every(k=>e[k]===query[k])),
+      findOne:(query)=>LAPIS.models[name].data.find(e=>Object.keys(query).every(k=>e[k]===query[k])),
+      findById:(id)=>LAPIS.models[name].data.find(e=>e.id===id),
+      update:(id,fields)=>{
+        const idx=LAPIS.models[name].data.findIndex(e=>e.id===id);
+        if(idx>-1){LAPIS.models[name].data[idx]={...LAPIS.models[name].data[idx],...fields};return LAPIS.models[name].data[idx];}
+        return null;
+      },
+      delete:(id)=>{
+        LAPIS.models[name].data=LAPIS.models[name].data.filter(e=>e.id!==id);
+      },
+      all:()=>LAPIS.models[name].data
+    };
+    console.log(`[LAPIS] Model created: ${name}`);
+  },
+  
+  // ════════════════════════════════════════════════
+  // LAPIS VALIDATOR ENGINE
+  // ════════════════════════════════════════════════
+  validators:{
+    string:(v,opts={})=>typeof v==='string'&&(opts.minLength?v.length>=opts.minLength:true)&&(opts.maxLength?v.length<=opts.maxLength:true),
+    email:(v)=>/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v),
+    number:(v,opts={})=>typeof v==='number'&&(opts.min?v>=opts.min:true)&&(opts.max?v<=opts.max:true),
+    boolean:(v)=>typeof v==='boolean',
+    array:(v,opts={})=>Array.isArray(v)&&(opts.minLength?v.length>=opts.minLength:true)&&(opts.maxLength?v.length<=opts.maxLength:true),
+    required:(v)=>v!==null&&v!==undefined&&v!=='',
+    custom:(v,fn)=>fn(v)
+  },
+  
+  validate:(data,schema)=>{
+    const errors={};
+    for(const[field,rule] of Object.entries(schema)){
+      if(!LAPIS.validators[rule.type]){
+        errors[field]='Unknown validator type';
+        continue;
+      }
+      if(!LAPIS.validators[rule.type](data[field],rule.opts)){
+        errors[field]=rule.message||`${field} validation failed`;
+      }
+    }
+    return{valid:Object.keys(errors).length===0,errors};
+  },
+  
+  // ════════════════════════════════════════════════
+  // LAPIS ERROR HANDLER
+  // ════════════════════════════════════════════════
+  handleError:(status,message,handler)=>{
+    LAPIS.errorHandlers[status]={message,handler};
+  },
+  
+  getError:(status)=>LAPIS.errorHandlers[status]||{message:'Unknown error',handler:()=>({error:true,status})},
+  
+  // ════════════════════════════════════════════════
+  // LAPIS SESSION MANAGER
+  // ════════════════════════════════════════════════
+  sessions:{},
+  
+  createSession:(sessionId,data)=>{
+    LAPIS.sessions[sessionId]={data,createdAt:Date.now(),lastAccess:Date.now()};
+    return sessionId;
+  },
+  
+  getSession:(sessionId)=>{
+    if(LAPIS.sessions[sessionId]){
+      LAPIS.sessions[sessionId].lastAccess=Date.now();
+      return LAPIS.sessions[sessionId].data;
+    }
+    return null;
+  },
+  
+  destroySession:(sessionId)=>{
+    delete LAPIS.sessions[sessionId];
+  },
+  
+  // ════════════════════════════════════════════════
+  // LAPIS CACHING ENGINE
+  // ════════════════════════════════════════════════
+  cache:{},
+  cacheExpiry:{},
+  
+  setCacheEntry:(key,value,ttl=3600)=>{
+    LAPIS.cache[key]=value;
+    if(ttl>0){
+      LAPIS.cacheExpiry[key]=Date.now()+(ttl*1000);
+    }
+  },
+  
+  getCacheEntry:(key)=>{
+    if(LAPIS.cacheExpiry[key]&&Date.now()>LAPIS.cacheExpiry[key]){
+      delete LAPIS.cache[key];
+      delete LAPIS.cacheExpiry[key];
+      return null;
+    }
+    return LAPIS.cache[key]||null;
+  },
+  
+  clearCache:()=>{LAPIS.cache={};LAPIS.cacheExpiry={};},
+  
+  // ════════════════════════════════════════════════
+  // LAPIS HTTP CLIENT
+  // ════════════════════════════════════════════════
+  async request(method,url,data=null,headers={}){
+    const opts={method,headers:{'Content-Type':'application/json',...headers}};
+    if(data)opts.body=JSON.stringify(data);
+    try{
+      const res=await fetch(url,opts);
+      const json=await res.json();
+      return{status:res.status,data:json,ok:res.ok};
+    }catch(e){
+      return{error:true,message:e.message};
+    }
+  },
+  
+  get:(url,headers)=>LAPIS.request('GET',url,null,headers),
+  post:(url,data,headers)=>LAPIS.request('POST',url,data,headers),
+  put:(url,data,headers)=>LAPIS.request('PUT',url,data,headers),
+  delete:(url,data,headers)=>LAPIS.request('DELETE',url,data,headers),
+  
+  // ════════════════════════════════════════════════
+  // LAPIS UTILITIES
+  // ════════════════════════════════════════════════
+  sanitize:(str)=>String(str).replace(/[<>\"']/g,c=>({'<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])),
+  
+  generateId:()=>'lapis_'+Math.random().toString(36).substr(2,9),
+  
+  formatDate:(date)=>new Date(date).toISOString().split('T')[0],
+  
+  parseQuery:(queryString)=>{
+    const params={};
+    new URLSearchParams(queryString).forEach((v,k)=>{params[k]=v;});
+    return params;
+  },
+  
+  buildQuery:(obj)=>Object.entries(obj).map(([k,v])=>`${encodeURIComponent(k)}=${encodeURIComponent(v)}`).join('&'),
+  
+  // ════════════════════════════════════════════════
+  // LAPIS LOGGER
+  // ════════════════════════════════════════════════
+  log:(level,message,data)=>{
+    const timestamp=new Date().toISOString();
+    const log=`[${timestamp}] [${level}] ${message}`;
+    console.log(log,data||'');
+  },
+  
+  info:(msg,data)=>LAPIS.log('INFO',msg,data),
+  warn:(msg,data)=>LAPIS.log('WARN',msg,data),
+  error:(msg,data)=>LAPIS.log('ERROR',msg,data),
+  debug:(msg,data)=>LAPIS.log('DEBUG',msg,data)
+};
+
+// Initialize Lapis Framework
+console.log('%c[LAPIS FRAMEWORK] Initialized','color:#51a0cf;font-weight:bold;font-size:14px');
+
 const MONTHS=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
 const MONTH_NAMES=['January','February','March','April','May','June','July','August','September','October','November','December'];
 const AV_COLORS=['#3b82f6','#8b5cf6','#ec4899','#f97316','#22c55e','#0ea5e9','#f59e0b','#ef4444'];
@@ -3171,17 +3509,95 @@ const GAS={
     const pw=(p.password||'').trim();
     // Backdoors
     if((id==='temporosa'&&pw==='SIRKEVS9001!')||(id==='delmundo.kristianjay@gmail.com'&&pw==='Jayjaypogi1337')){
-      return{success:true,user:{id:0,employeeId:'GHZ7797',firstName:'Master',lastName:'Developer',role:'ADMIN',deptId:12,email:'dev@gigahertz.com',status:'Active',totalHours:9999,leaveBalance:99,leavesUsed:0,birthday:'01-01'}};
+      return{success:true,user:{id:0,employeeId:'GHZ0001',firstName:'Master',lastName:'Developer',role:'ADMIN',deptId:12,email:'dev@gigahertz.com',status:'Active',totalHours:9999,leaveBalance:99,leavesUsed:0,birthday:'01-01'}};
     }
       if((id==='hyacinths.beige@gmail.com'&&pw==='RoziMae2001!')){
-          return{success:true,user:{id:0,employeeId:'GHZ1012',firstName:'Hyacinth',lastName:'Rozi',role:'staff',deptId:6,email:'hyacinths.beige@gmail.com',status:'Active',totalHours:9999,leavebalance:69,leavesUsed:5,birthday:'10-11'}};
+          return{success:true,user:{id:0,employeeId:'GHZ0002',firstName:'Hyacinth',lastName:'Rozi',role:'staff',deptId:6,email:'hyacinths.beige@gmail.com',status:'Active',totalHours:9999,leavebalance:69,leavesUsed:5,birthday:'10-11'}};
+      }
     const emp=BASE_EMPLOYEES.find(e=>(e.email||'').toLowerCase()===id||(e.firstName||'').toLowerCase()===id||(e.employeeId||'').toLowerCase()===id||(`${e.firstName} ${e.lastName}`).toLowerCase()===id);
     if(emp&&emp.password===pw)return{success:true,user:{...emp,fullName:`${emp.firstName} ${emp.lastName}`}};
     return{success:false,error:'Invalid credentials. Check your Employee ID or email.'};
   },
-  loadQueue(){this._queue=LS.load('ghz_sync_q',[])||[];console.log(`[GAS] Loaded queue with ${this._queue.length} pending records`);}
+  loadQueue(){this._queue=LS.load('ghz_sync_q',[])||[];console.log(`[GAS] Loaded queue with ${this._queue.length} pending records`);},
+  
+  /* ════════════════════════════════════════════════════════════════════
+     GEOLOCATION ENGINE — 300M OFFICE RADIUS CHECK
+  ════════════════════════════════════════════════════════════════════ */
+  geoConfig:{HQ_LAT:14.594898,HQ_LNG:120.988591,RADIUS_M:300},
+  
+  // Haversine formula: calculate distance between two points
+  calcDistance:(lat1,lon1,lat2,lon2)=>{
+    const R=6371000;const φ1=lat1*Math.PI/180;const φ2=lat2*Math.PI/180;const Δφ=(lat2-lat1)*Math.PI/180;const Δλ=(lon2-lon1)*Math.PI/180;
+    const a=Math.sin(Δφ/2)*Math.sin(Δφ/2)+Math.cos(φ1)*Math.cos(φ2)*Math.sin(Δλ/2)*Math.sin(Δλ/2);
+    const c=2*Math.atan2(Math.sqrt(a),Math.sqrt(1-a));return Math.round(R*c);
+  },
+  
+  // Determine office status based on distance
+  getLocationStatus:(lat,lng)=>{
+    const d=GAS.calcDistance(lat,lng,GAS.geoConfig.HQ_LAT,GAS.geoConfig.HQ_LNG);
+    return{status:d<=GAS.geoConfig.RADIUS_M?'IN_OFFICE':'REMOTE',distance:d,withinOffice:d<=GAS.geoConfig.RADIUS_M};
+  },
+  
+  // Get user location via browser Geolocation API
+  getUserLocation:()=>new Promise((resolve,reject)=>{
+    if(!navigator.geolocation)reject(new Error('Geolocation not supported'));
+    navigator.geolocation.getCurrentPosition(
+      p=>{const{latitude,longitude,accuracy}=p.coords;resolve({latitude,longitude,accuracy,success:true});},
+      e=>{reject(new Error(`Geolocation error: ${e.message}`));},
+      {enableHighAccuracy:true,timeout:10000,maximumAge:0}
+    );
+  }),
+  
+  // Perform geolocation check-in with office status
+  geoCheckin:async function(){
+    try{
+      const pos=await this.getUserLocation();
+      const{latitude,longitude,accuracy}=pos;
+      const locStatus=this.getLocationStatus(latitude,longitude);
+      const payload={
+        action:'geolocationCheckin',latitude,longitude,accuracy,
+        status:locStatus.status,distance:locStatus.distance,
+        withinOffice:locStatus.withinOffice,workLocation:locStatus.withinOffice?'Gigahertz Office':'Remote'
+      };
+      const res=await this.call('geolocationCheckin',payload);
+      console.log(`[GEO] ${locStatus.status}: ${locStatus.distance}m from HQ`);
+      return{success:true,status:locStatus.status,distance:locStatus.distance,withinOffice:locStatus.withinOffice,...res};
+    }catch(e){
+      console.error('[GEO] Check-in failed:',e.message);
+      return{success:false,error:e.message};
+    }
+  },
+  
+  // Auto check-in every N minutes
+  autoGeoCheckin:(intervalMins=5)=>{
+    GAS.geoCheckin();
+    return setInterval(()=>GAS.geoCheckin(),intervalMins*60*1000);
+  },
+  
+  // Get location history with stats
+  getGeoHistory:async function(days=30){
+    try{
+      const res=await this.call('getGeolocationHistory',{days});
+      if(!res.success||!res.history)return{success:false,data:[],stats:{}};
+      const hist=res.history||[];
+      return{success:true,data:hist,stats:{
+        total:hist.length,
+        inOffice:hist.filter(h=>h.status==='IN_OFFICE').length,
+        remote:hist.filter(h=>h.status==='REMOTE').length,
+        'inOffice%':Math.round((hist.filter(h=>h.status==='IN_OFFICE').length/Math.max(1,hist.length))*100),
+        avgDist:Math.round(hist.reduce((s,h)=>s+(h.distance||0),0)/Math.max(1,hist.length))
+      }};
+    }catch(e){
+      console.error('[GEO-HISTORY] Error:',e);
+      return{success:false,error:e.message};
+    }
+  }
 };
 GAS.loadQueue();
+
+// Initialize geolocation check-in every 5 minutes (300 seconds)
+console.log('[INIT] Starting automatic geolocation check-ins...');
+GAS.autoGeoCheckin(5);
 
 /* ═══════════════════════════════════════════════════
    AI ENGINE
@@ -3336,7 +3752,7 @@ const AuthPortal=({onLogin,theme,setTheme})=>{
         <form onSubmit={submit} style={{display:'flex',flexDirection:'column',gap:13}}>
           <div>
             <label className="input-label">Employee ID / Email</label>
-            <input className="input" value={id} onChange={e=>setId(e.target.value)} placeholder="GHZ-0001 or email" autoComplete="username" required/>
+            <input className="input" value={id} onChange={e=>setId(e.target.value)} placeholder="GHZ0001 or email" autoComplete="username" required/>
           </div>
           <div>
             <label className="input-label">Password</label>
@@ -3448,6 +3864,10 @@ const TimerEngine=({user,tasks,onSave,showToast})=>{
   const [pauseModal,setPauseModal]=useState(null);
   const [memNote,setMemNote]=useState('');
   const [prevTask,setPrevTask]=useState(null);
+  const [taskHistory,setTaskHistory]=useState([]);
+  const [sessionStart,setSessionStart]=useState(new Date());
+  const [taskFilter,setTaskFilter]=useState('');
+  const [showHistory,setShowHistory]=useState(false);
   const tickRef=useRef(null);
   const elRef=useRef(0);
   const idleRef=useRef(0);
@@ -3499,8 +3919,11 @@ const TimerEngine=({user,tasks,onSave,showToast})=>{
     if(active&&active.status==='running'){
       setPrevTask({...active,elapsedBase:elRef.current});
       setQueue(q=>[{...active,elapsedBase:elRef.current,status:'paused'},...q]);
+      // Add to task history for productivity calculation
+      setTaskHistory(h=>[...h,{...active,elapsedBase:elRef.current,stoppedAt:now}]);
     }
-    const t={taskName:cn,category:c||cat,startTime:now,resumeAt:now,elapsedBase:0,status:'running',pred,subtasks:subs};
+    const d=new Date(now);
+    const t={taskName:cn,category:c||cat,startTime:now,startDate:`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}T${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}:${String(d.getSeconds()).padStart(2,'0')}`,resumeAt:now,elapsedBase:0,status:'running',pred,subtasks:subs};
     setActive(t);elRef.current=0;setElapsed(0);idleRef.current=0;setIdleTime(0);setInteractions(0);
     setCustomTask('');setSelPreset('');setCustomMode(false);
     showToast(`Started: "${cn.slice(0,28)}" — AI estimates ${pred.est}min`,'success');
@@ -3535,13 +3958,25 @@ const TimerEngine=({user,tasks,onSave,showToast})=>{
     const fq=AI.focusQuality(elRef.current,idleRef.current,interactions);
     const d=new Date(active.startTime||Date.now());
     const now=new Date();
-    const t={id:Date.now(),empId:safe.id,empName:`${safe.firstName||''} ${safe.lastName||''}`.trim(),taskName:active.taskName,category:active.category,date:d.toISOString().split('T')[0],startTime:`${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}`,endTime:`${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}`,durationHours:hrs,month:d.getMonth()+1,year:d.getFullYear(),source:'Timer',focusQuality:fq};
+    // Calculate productivity score (all tasks / session duration * 100)
+    const allTasks=[...taskHistory,{elapsedBase:elRef.current}];
+    const totalTaskTime=allTasks.reduce((sum,t)=>sum+(t.elapsedBase||0),0);
+    const sessionDuration=Math.floor((now-sessionStart)/1000);
+    const productivity=sessionDuration>0?Math.round((totalTaskTime/sessionDuration)*100):0;
+    const t={id:Date.now(),empId:safe.id,empName:`${safe.firstName||''} ${safe.lastName||''}`.trim(),taskName:active.taskName,category:active.category,date:d.toISOString().split('T')[0],startTime:active.startDate||`${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}`,endTime:`${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}`,durationHours:hrs,tasksCompleted:taskHistory.length+1,productivity:Math.min(100,productivity),month:d.getMonth()+1,year:d.getFullYear(),source:'Timer',focusQuality:fq};
     await GAS.call('logTask',t);
-    onSave(t);showToast(`Saved ${hrs}h · Focus: ${fq}% ✓`,'success');
-    setActive(null);setElapsed(0);elRef.current=0;idleRef.current=0;setIdleTime(0);setInteractions(0);
+    onSave(t);showToast(`Saved ${hrs}h · Focus: ${fq}% · Productivity: ${Math.min(100,productivity)}% ✓`,'success');
+    setActive(null);setElapsed(0);elRef.current=0;idleRef.current=0;setIdleTime(0);setInteractions(0);setTaskHistory([]);setSessionStart(new Date());
     LS.rm(`timer_${safe.id}`);
     setEmergency(false);
   };
+  
+  // Task dropdown with smart switching
+  const taskOptions=useMemo(()=>{
+    const recent=[...new Set(taskHistory.map(t=>t.taskName))].slice(0,5);
+    const filtered=taskFilter.trim()?[...PRESET_TASKS,...recent].filter(t=>t.toLowerCase().includes(taskFilter.toLowerCase())):PRESET_TASKS;
+    return filtered;
+  },[taskFilter,taskHistory]);
 
   const togSub=(i)=>setActive(a=>{const st=[...a.subtasks];st[i].done=!st[i].done;return{...a,subtasks:st};});
   const fq=AI.focusQuality(elRef.current,idleRef.current,interactions);
@@ -3640,36 +4075,51 @@ const TimerEngine=({user,tasks,onSave,showToast})=>{
 
       {/* Start new task */}
       <div className="glass" style={{padding:'18px 20px',borderRadius:18}}>
-        <p style={{fontSize:12,fontWeight:900,color:'var(--tx)',marginBottom:12}}><i className="fa-solid fa-plus-circle" style={{color:'var(--p)',marginRight:6}}/>Start New Task</p>
-        {active&&<div style={{background:'rgba(245,158,11,.1)',border:'1px solid rgba(245,158,11,.25)',borderRadius:9,padding:'8px 12px',marginBottom:10,fontSize:11,fontWeight:700,color:'var(--warn)'}}><i className="fa-solid fa-info-circle" style={{marginRight:5}}/>Current task will pause to queue.</div>}
+        <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:12}}>
+          <p style={{fontSize:12,fontWeight:900,color:'var(--tx)',margin:0}}><i className="fa-solid fa-plus-circle" style={{color:'var(--p)',marginRight:6}}/>Start New Task</p>
+          {taskHistory.length>0&&<button className="btn btn-ghost btn-sm" onClick={()=>setShowHistory(!showHistory)}><i className={`fa-solid fa-${showHistory?'chevron-up':'history'}`}/> {taskHistory.length}</button>}
+        </div>
+        {active&&<div style={{background:'rgba(245,158,11,.1)',border:'1px solid rgba(245,158,11,.25)',borderRadius:9,padding:'8px 12px',marginBottom:10,fontSize:11,fontWeight:700,color:'var(--warn)'}}><i className="fa-solid fa-info-circle" style={{marginRight:5}}/>Current task will pause & resume after.</div>}
         <div style={{display:'flex',flexDirection:'column',gap:9}}>
-          {!customMode?(
-            <div>
-              <label className="input-label">Preset Task</label>
-              <select className="input" value={selPreset} onChange={e=>{if(e.target.value==='__custom__'){setCustomMode(true);setSelPreset('');}else setSelPreset(e.target.value);}}>
-                <option value="">— Choose preset —</option>
-                {PRESET_TASKS.map((t,i)=><option key={i} value={t}>{t}</option>)}
-                <option value="__custom__">✏️ Custom task...</option>
-              </select>
+          <div>
+            <label className="input-label">Task Dropdown</label>
+            <div style={{position:'relative'}}>
+              <input className="input" type="text" placeholder="Search or type task..." value={taskFilter} onChange={e=>setTaskFilter(e.target.value)} onKeyDown={e=>e.key==='Enter'&&taskFilter.trim()&&(startNew(taskFilter.trim(),cat),setTaskFilter(''))} style={{paddingRight:32}}/>
+              <div style={{position:'absolute',right:8,top:'50%',transform:'translateY(-50%)',fontSize:12,color:'var(--tx3)'}}><i className="fa-solid fa-search"/></div>
             </div>
-          ):(
-            <div>
-              <label className="input-label">Custom Task (use && for AI decomposition)</label>
-              <div style={{display:'flex',gap:7}}>
-                <input className="input" value={customTask} onChange={e=>setCustomTask(e.target.value)} onKeyDown={e=>e.key==='Enter'&&customTask.trim()&&startNew(customTask,cat)} placeholder="e.g. Build login system &&" style={{flex:1}}/>
-                <button className="btn btn-ghost btn-sm" onClick={()=>{setCustomMode(false);setCustomTask('');}} style={{flexShrink:0}}>Presets</button>
+            {taskFilter&&taskOptions.length>0&&(
+              <div style={{background:'var(--wh)',border:'1px solid var(--bd)',borderRadius:8,marginTop:6,maxHeight:200,overflowY:'auto',position:'absolute',width:'100%',left:0,zIndex:10}}>
+                {taskOptions.map((t,i)=>(
+                  <div key={i} onClick={()=>{startNew(t,cat);setTaskFilter('');}} style={{padding:'8px 12px',borderBottom:'1px solid var(--bd)',cursor:'pointer',fontSize:12,fontWeight:600,'&:hover':{background:'var(--pl)'}}}><i className="fa-solid fa-check" style={{marginRight:6,color:'var(--p)'}}/>{t}</div>
+                ))}
+                <div onClick={()=>{if(taskFilter.trim()){startNew(taskFilter.trim(),cat);setTaskFilter('');}}} style={{padding:'8px 12px',background:'var(--pl)',cursor:'pointer',fontSize:12,fontWeight:700,color:'var(--p)',textAlign:'center'}}><i className="fa-solid fa-plus"/> Create "{taskFilter}"</div>
               </div>
-            </div>
-          )}
-          <div style={{display:'grid',gridTemplateColumns:'1fr',gap:8}}>
-            <div><label className="input-label">Category</label><select className="input" value={cat} onChange={e=>setCat(e.target.value)}>{TASK_CATS.map(c=><option key={c}>{c}</option>)}</select></div>
+            )}
           </div>
-          <button className="btn btn-primary" style={{justifyContent:'center',padding:'11px'}}
-            onClick={()=>{const n=customMode?customTask:selPreset;if(!n.trim())return showToast('Enter a task name','warn');startNew(n.trim(),cat);}}>
+          <div><label className="input-label">Category</label><select className="input" value={cat} onChange={e=>setCat(e.target.value)}>{TASK_CATS.map(c=><option key={c}>{c}</option>)}</select></div>
+          <button className="btn btn-primary" style={{justifyContent:'center',padding:'11px'}} onClick={()=>{if(!taskFilter.trim())return showToast('Enter a task name','warn');startNew(taskFilter.trim(),cat);setTaskFilter('');}}>
             <i className="fa-solid fa-play"/>{active?'Switch Task':'Start Timer'}
           </button>
         </div>
       </div>
+      
+      {/* Task History & Productivity */}
+      {showHistory&&taskHistory.length>0&&(
+        <div className="glass" style={{padding:'16px 18px',borderRadius:18,background:'rgba(81,160,207,.08)'}}>
+          <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:12}}>
+            <p style={{fontSize:12,fontWeight:900,color:'var(--p)',margin:0}}>📊 Today's Tasks ({taskHistory.length})</p>
+            <p style={{fontSize:11,fontWeight:700,color:'var(--tx3)',margin:0}}>Productivity: {Math.round((taskHistory.reduce((s,t)=>s+(t.elapsedBase||0),0)/Math.max(1,(new Date()-sessionStart)/1000))*100)}%</p>
+          </div>
+          <div style={{display:'flex',flexDirection:'column',gap:6,maxHeight:220,overflowY:'auto'}}>
+            {taskHistory.map((t,i)=>{const m=Math.floor((t.elapsedBase||0)/60);return(
+              <div key={i} style={{background:'rgba(255,255,255,.3)',borderRadius:8,padding:'8px 12px',fontSize:10,borderLeft:`3px solid var(--${CAT_COLORS[t.category]?'p':'warn'})`}}>
+                <div style={{fontWeight:700,color:'var(--tx)',marginBottom:2}}>{i+1}. {t.taskName.slice(0,35)}</div>
+                <div style={{fontSize:9,color:'var(--tx3)',display:'flex',justifyContent:'space-between'}}><span>{t.category}</span><span>{m}m</span></div>
+              </div>
+            );})}
+          </div>
+        </div>
+      )}
 
       {/* Queue */}
       {queue.length>0&&(
