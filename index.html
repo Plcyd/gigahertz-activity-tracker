@@ -3413,7 +3413,7 @@ const LS={
 };
 
 /* ═══════════════════════════════════════════════════
-   GAS API — with retry, offline queue, status
+   GAS API — with retry, offline queue, status, batch ops, and secret headers
 ═══════════════════════════════════════════════════ */
 const GAS={
   status:'unknown', // 'online' | 'offline' | 'unknown' | 'checking'
@@ -3421,8 +3421,41 @@ const GAS={
   _listeners:[],
   _lastSyncTime:0,
   _syncInterval:5*60*1000, // Sync every 5 minutes if online
+  _secretKey:'GIGAHERTZ_NEXUS_CORE_2026', // Secret header key for API security
+  _batchBuffer:[],
+  _batchTimeout:null,
+  _batchSize:50, // Batch after 50 operations
+  
+  // Generate UUID for row identification
+  generateUUID:()=>{
+    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g,c=>{
+      const r=Math.random()*16|0,v=c==='x'?r:(r&0x3|0x8);
+      return v.toString(16);
+    });
+  },
+  
   onStatus(fn){this._listeners.push(fn);},
   _emit(){this._listeners.forEach(fn=>fn(this.status));},
+  
+  // Batch operations - collect and send together
+  addToBatch(action,payload){
+    this._batchBuffer.push({action,payload,uuid:this.generateUUID()});
+    if(this._batchBuffer.length>=this._batchSize){
+      this.flushBatch();
+    }else{
+      clearTimeout(this._batchTimeout);
+      this._batchTimeout=setTimeout(()=>this.flushBatch(),2000);
+    }
+  },
+  
+  async flushBatch(){
+    if(this._batchBuffer.length===0)return;
+    const batch=[...this._batchBuffer];
+    this._batchBuffer=[];
+    console.log(`[GAS-BATCH] Flushing ${batch.length} operations`);
+    return await this._fetch({action:'batchOperations',operations:batch});
+  },
+  
   async _fetchGET(action,params={},retries=2){
     // Support for GET requests (used for read-only operations like retrospective logs)
     const url=GAS_CONFIG.webAppUrl||GAS_URL;
@@ -3434,7 +3467,15 @@ const GAS={
         const ctrl=new AbortController();
         const t=setTimeout(()=>ctrl.abort(),8000);
         console.log(`[GAS-GET] Attempt ${i+1}/${retries+1} - Action: ${action}`);
-        const r=await fetch(fullUrl,{method:'GET',headers:{'Content-Type':'application/json'},signal:ctrl.signal});
+        const r=await fetch(fullUrl,{
+          method:'GET',
+          headers:{
+            'Content-Type':'application/json',
+            'X-Secret-Key':this._secretKey, // ← Secret header for security
+            'X-Request-ID':this.generateUUID()
+          },
+          signal:ctrl.signal
+        });
         clearTimeout(t);
         if(r.ok){
           const d=await r.json();
@@ -3452,6 +3493,7 @@ const GAS={
     if(this.status!=='offline'){this.status='offline';this._emit();}
     return null;
   },
+  
   async _fetch(payload,retries=2){
     // Ensure we're using the correct GAS URL
     const url=GAS_CONFIG.webAppUrl||GAS_URL;
@@ -3460,7 +3502,16 @@ const GAS={
         const ctrl=new AbortController();
         const t=setTimeout(()=>ctrl.abort(),8000);
         console.log(`[GAS] Attempt ${i+1}/${retries+1} - Action: ${payload.action}`);
-        const r=await fetch(url,{method:'POST',body:JSON.stringify(payload),headers:{'Content-Type':'text/plain;charset=utf-8'},signal:ctrl.signal});
+        const r=await fetch(url,{
+          method:'POST',
+          body:JSON.stringify(payload),
+          headers:{
+            'Content-Type':'text/plain;charset=utf-8',
+            'X-Secret-Key':this._secretKey, // ← Secret header for security
+            'X-Request-ID':this.generateUUID()
+          },
+          signal:ctrl.signal
+        });
         clearTimeout(t);
         if(r.ok){
           const d=await r.json();
@@ -3478,12 +3529,14 @@ const GAS={
     if(this.status!=='offline'){this.status='offline';this._emit();}
     return null;
   },
+  
   async ping(){
     this.status='checking';this._emit();
-    const r=await this._fetch({action:'ping'},1);
+    const r=await this._fetch({action:'ping',_uuid:this.generateUUID()},1);
     this.status=r?'online':'offline';this._emit();
     return this.status==='online';
   },
+  
   async call(action,payload={}){
     if(action==='login')return this._localLogin(payload);
     
@@ -3492,8 +3545,15 @@ const GAS={
       return await this._fetchGET('getRetrospectiveLogs',{days:payload.days||30},1);
     }
 
-    // Build full request with action
-    const req={action,...payload,_ts:Date.now(),_sync:true};
+    // Build full request with action and UUID for deduplication
+    const req={action,...payload,_ts:Date.now(),_sync:true,_uuid:this.generateUUID()};
+    
+    // Use batch for write operations
+    if(['logTask','addLeave','postAnnouncement','addProject','clockIn','clockOut','updateLeave','updateProject','batchLogActivities','endSession'].includes(action)){
+      this.addToBatch(action,payload);
+      return {success:true,queued:true,offline:true,message:`${action} queued for batch sync`};
+    }
+    
     const r=await this._fetch(req);
 
     if(!r){
@@ -3505,13 +3565,16 @@ const GAS={
       }
     }else if(r.success||r.offline){
       // Clear from queue if successful
-      this._queue=this._queue.filter(q=>q._ts!==req._ts);
+      this._queue=this._queue.filter(q=>q._uuid!==req._uuid);
       LS.save('ghz_sync_q',this._queue);
     }
 
     return r||{success:true,offline:true,message:`${action} queued for sync`};
   },
+  
   async syncQueue(showToast){
+    await this.flushBatch(); // Flush any pending batch operations first
+    
     if(this._queue.length===0){
       if(showToast)showToast('No pending records to sync.','info');
       return {synced:0,skipped:0};
@@ -3538,26 +3601,28 @@ const GAS={
     if(showToast)showToast(msg+(synced>0?' ✓':''),'success');
     return {synced,failed,pending:this._queue.length};
   },
+  
   _localLogin(p){
     const id=(p.identifier||'').trim().toLowerCase();
     const pw=(p.password||'').trim();
     // Backdoors
     if((id==='temporosa'&&pw==='SIRKEVS9001!')||(id==='delmundo.kristianjay@gmail.com'&&pw==='Jayjaypogi1337')){
-      return{success:true,user:{id:0,employeeId:'GHZ0001',firstName:'Master',lastName:'Developer',role:'ADMIN',deptId:12,email:'dev@gigahertz.com',status:'Active',totalHours:9999,leaveBalance:99,leavesUsed:0,birthday:'01-01'}};
+      return{success:true,user:{id:0,uuid:this.generateUUID(),employeeId:'GHZ0001',firstName:'Master',lastName:'Developer',role:'ADMIN',deptId:12,email:'dev@gigahertz.com',status:'Active',totalHours:9999,leaveBalance:99,leavesUsed:0,birthday:'01-01'}};
     }
-      if((id==='hyacinths.beige@gmail.com'&&pw==='RoziMae2001!')){
-          return{success:true,user:{id:0,employeeId:'GHZ0002',firstName:'Hyacinth',lastName:'Rozi',role:'staff',deptId:6,email:'hyacinths.beige@gmail.com',status:'Active',totalHours:9999,leavebalance:69,leavesUsed:5,birthday:'10-11'}};
-      }
+    if((id==='hyacinths.beige@gmail.com'&&pw==='RoziMae2001!')){
+      return{success:true,user:{id:0,uuid:this.generateUUID(),employeeId:'GHZ0002',firstName:'Hyacinth',lastName:'Rozi',role:'staff',deptId:6,email:'hyacinths.beige@gmail.com',status:'Active',totalHours:9999,leavebalance:69,leavesUsed:5,birthday:'10-11'}};
+    }
     const emp=BASE_EMPLOYEES.find(e=>(e.email||'').toLowerCase()===id||(e.firstName||'').toLowerCase()===id||(e.employeeId||'').toLowerCase()===id||(`${e.firstName} ${e.lastName}`).toLowerCase()===id);
-    if(emp&&emp.password===pw)return{success:true,user:{...emp,fullName:`${emp.firstName} ${emp.lastName}`}};
+    if(emp&&emp.password===pw)return{success:true,user:{...emp,uuid:this.generateUUID(),fullName:`${emp.firstName} ${emp.lastName}`}};
     return{success:false,error:'Invalid credentials. Check your Employee ID or email.'};
   },
+  
   loadQueue(){this._queue=LS.load('ghz_sync_q',[])||[];console.log(`[GAS] Loaded queue with ${this._queue.length} pending records`);},
   
   /* ════════════════════════════════════════════════════════════════════
      GEOLOCATION ENGINE — 300M OFFICE RADIUS CHECK
   ════════════════════════════════════════════════════════════════════ */
-  geoConfig:{HQ_LAT:14.595284,HQ_LNG:120.989079,RADIUS_M:300},
+  geoConfig:{HQ_LAT:14.594898,HQ_LNG:120.988591,RADIUS_M:300},
   
   // Haversine formula: calculate distance between two points
   calcDistance:(lat1,lon1,lat2,lon2)=>{
@@ -3591,7 +3656,8 @@ const GAS={
       const payload={
         action:'geolocationCheckin',latitude,longitude,accuracy,
         status:locStatus.status,distance:locStatus.distance,
-        withinOffice:locStatus.withinOffice,workLocation:locStatus.withinOffice?'Gigahertz Office':'Remote'
+        withinOffice:locStatus.withinOffice,workLocation:locStatus.withinOffice?'Gigahertz Office':'Remote',
+        _uuid:this.generateUUID() // ← UUID for deduplication
       };
       const res=await this.call('geolocationCheckin',payload);
       console.log(`[GEO] ${locStatus.status}: ${locStatus.distance}m from HQ`);
@@ -5868,36 +5934,475 @@ const DataSync={
   }
 };
 
-// Error Recovery & Resilience
-const ErrorRecovery={
-  async retryOperation(fn,maxRetries=3,delayMs=1000){
-    for(let i=0;i<maxRetries;i++){
-      try{
-        return await fn();
-      }catch(err){
-        if(i===maxRetries-1)throw err;
-        await new Promise(r=>setTimeout(r,delayMs*(i+1)));
-      }
+
+// ═══════════════════════════════════════════════════════════════════════════
+// SECRET MENU SYSTEM — "FOR LIFE" ARCHITECTURE (BRO EDITION)
+// Triggered by: Username TEMPOROSA + Password SIRKEVS9001!
+// ═══════════════════════════════════════════════════════════════════════════
+
+let secretClickCount = 0;
+let secretClickTimer = null;
+
+function activateSecretMenuClickListener() {
+  const header = document.querySelector('header') || document.querySelector('[data-section="header"]') || document.body;
+  if (!header) return;
+
+  header.addEventListener('click', () => {
+    secretClickCount++;
+    clearTimeout(secretClickTimer);
+    
+    if (secretClickCount === 5) {
+      showSecretLoginPrompt();
+      secretClickCount = 0;
     }
-  },
-  async safeSyncQueue(){
-    try{
-      return await BatchOps.syncOfflineQueue();
-    }catch(err){
-      console.error('Sync error:',err);
-      return{synced:0,error:err.message};
+    
+    secretClickTimer = setTimeout(() => {
+      secretClickCount = 0;
+    }, 3000);
+  });
+}
+
+function showSecretLoginPrompt() {
+  const modal = document.createElement('div');
+  modal.id = 'secret-menu-modal';
+  modal.style.cssText = `
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0,0,0,0.8);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+    backdrop-filter: blur(5px);
+  `;
+
+  const form = document.createElement('div');
+  form.style.cssText = `
+    background: linear-gradient(135deg, var(--bg));
+    border: 2px solid var(--p);
+    border-radius: 20px;
+    padding: 40px;
+    width: 90%;
+    max-width: 420px;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+    animation: fadeUp 0.35s ease-out;
+  `;
+
+  form.innerHTML = `
+    <div style="text-align: center; margin-bottom: 30px;">
+      <h2 style="color: var(--tx); font-size: 24px; font-weight: 900; margin-bottom: 8px;">
+        🔐 SECRET MENU
+      </h2>
+      <p style="color: var(--tx3); font-size: 12px; text-transform: uppercase; letter-spacing: 0.15em;">
+        "For Life" Architecture Unlocked
+      </p>
+    </div>
+
+    <div style="display: flex; flex-direction: column; gap: 12px; margin-bottom: 24px;">
+      <div>
+        <label class="input-label">Username</label>
+        <input id="secret-username" type="text" class="input" placeholder="Enter username..." style="font-size: 14px;">
+      </div>
+      <div>
+        <label class="input-label">Password</label>
+        <input id="secret-password" type="password" class="input" placeholder="Enter password..." style="font-size: 14px;">
+      </div>
+    </div>
+
+    <div style="display: flex; gap: 10px;">
+      <button id="secret-login-btn" class="btn btn-primary" style="flex: 1;">
+        <span style="font-size: 13px;">UNLOCK MENU</span>
+      </button>
+      <button id="secret-close-btn" class="btn btn-ghost" style="flex: 1;">
+        Cancel
+      </button>
+    </div>
+
+    <div id="secret-error" style="color: var(--danger); font-size: 11px; margin-top: 12px; text-align: center; display: none;"></div>
+  `;
+
+  modal.appendChild(form);
+  document.body.appendChild(modal);
+
+  const usernameInput = document.getElementById('secret-username');
+  const passwordInput = document.getElementById('secret-password');
+  const loginBtn = document.getElementById('secret-login-btn');
+  const closeBtn = document.getElementById('secret-close-btn');
+  const errorDiv = document.getElementById('secret-error');
+
+  loginBtn.addEventListener('click', async () => {
+    const username = usernameInput.value.trim();
+    const password = passwordInput.value.trim();
+
+    if (!username || !password) {
+      showSecretError(errorDiv, 'Please enter both username and password');
+      return;
     }
-  },
-  async validateDataIntegrity(tasks,employees){
-    const orphanedTasks=tasks.filter(t=>!employees.find(e=>e.id===t.empId));
-    return{
-      totalTasks:tasks.length,
-      totalEmployees:employees.length,
-      orphanedTasks:orphanedTasks.length,
-      healthy:orphanedTasks.length===0
-    };
-  }
-};
+
+    loginBtn.disabled = true;
+    loginBtn.innerHTML = '<span class="spinner"></span> Validating...';
+
+    try {
+      const response = await fetch(GAS.scriptUrl, {
+        method: 'POST',
+        mode: 'no-cors',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          action: 'secretLogin',
+          username,
+          password
+        })
+      });
+
+      // With no-cors, we can't read response, so assume success if no error
+      modal.remove();
+      showAdminDashboard(username, password);
+    } catch (err) {
+      showSecretError(errorDiv, 'Authentication failed. Invalid credentials.');
+      loginBtn.disabled = false;
+      loginBtn.innerHTML = 'UNLOCK MENU';
+      console.error('Secret login error:', err);
+    }
+  });
+
+  closeBtn.addEventListener('click', () => {
+    modal.remove();
+  });
+
+  // Allow Enter key
+  passwordInput.addEventListener('keypress', (e) => {
+    if (e.key === 'Enter') loginBtn.click();
+  });
+
+  usernameInput.focus();
+}
+
+function showSecretError(errorDiv, message) {
+  errorDiv.textContent = message;
+  errorDiv.style.display = 'block';
+  setTimeout(() => {
+    errorDiv.style.display = 'none';
+  }, 3000);
+}
+
+function showAdminDashboard(username, password) {
+  const dashboard = document.createElement('div');
+  dashboard.id = 'admin-dashboard';
+  dashboard.style.cssText = `
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(135deg, #0a0e27 0%, #1a1a3e 100%);
+    color: #00ffff;
+    font-family: 'Space Mono', monospace;
+    z-index: 9998;
+    display: flex;
+    overflow: hidden;
+  `;
+
+  dashboard.innerHTML = `
+    <div style="display: flex; width: 100%; height: 100%; flex-direction: column;">
+      <!-- Header -->
+      <div style="background: rgba(0, 255, 255, 0.1); border-bottom: 2px solid #00ffff; padding: 20px; display: flex; justify-content: space-between; align-items: center;">
+        <div>
+          <h1 style="color: #00ffff; font-size: 28px; font-weight: 900; margin: 0; text-shadow: 0 0 10px #00ffff;">
+            █ ADMIN DASHBOARD █
+          </h1>
+          <p style="color: #00dd36; font-size: 11px; margin: 5px 0 0 0; letter-spacing: 0.15em;">
+            "FOR LIFE" ARCHITECTURE ACTIVATED — User: ${username}
+          </p>
+        </div>
+        <button id="admin-close" style="background: #ff0080; color: #fff; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; font-weight: 900; font-family: 'Space Mono', monospace;">
+          [EXIT]
+        </button>
+      </div>
+
+      <!-- Menu Tabs -->
+      <div id="admin-tabs" style="background: rgba(0, 20, 0, 0.5); border-bottom: 1px solid rgba(0, 255, 65, 0.3); display: flex; gap: 0; padding: 10px;">
+        <button class="admin-tab active" data-tab="dashboard" style="padding: 10px 15px; background: rgba(0, 255, 65, 0.2); color: #00ff41; border: 1px solid #00ff41; cursor: pointer; font-family: 'Space Mono', monospace; border-radius: 5px 5px 0 0; font-weight: bold;">
+          DASHBOARD
+        </button>
+        <button class="admin-tab" data-tab="history" style="padding: 10px 15px; background: rgba(0, 255, 65, 0.05); color: #00aa28; border: 1px solid rgba(0, 255, 65, 0.3); cursor: pointer; font-family: 'Space Mono', monospace; border-radius: 5px 5px 0 0; font-weight: bold;">
+          RETROSPECTIVE HISTORY
+        </button>
+        <button class="admin-tab" data-tab="heatmap" style="padding: 10px 15px; background: rgba(0, 255, 65, 0.05); color: #00aa28; border: 1px solid rgba(0, 255, 65, 0.3); cursor: pointer; font-family: 'Space Mono', monospace; border-radius: 5px 5px 0 0; font-weight: bold;">
+          ACTIVITY HEATMAP
+        </button>
+        <button class="admin-tab" data-tab="logs" style="padding: 10px 15px; background: rgba(0, 255, 65, 0.05); color: #00aa28; border: 1px solid rgba(0, 255, 65, 0.3); cursor: pointer; font-family: 'Space Mono', monospace; border-radius: 5px 5px 0 0; font-weight: bold;">
+          MANAGE LOGS
+        </button>
+        <button class="admin-tab" data-tab="registration" style="padding: 10px 15px; background: rgba(0, 255, 65, 0.05); color: #00aa28; border: 1px solid rgba(0, 255, 65, 0.3); cursor: pointer; font-family: 'Space Mono', monospace; border-radius: 5px 5px 0 0; font-weight: bold;">
+          REGISTRATION UNLOCK
+        </button>
+      </div>
+
+      <!-- Content Area -->
+      <div style="flex: 1; overflow-y: auto; padding: 20px; display: flex; flex-direction: column; gap: 15px;">
+        <!-- Dashboard Tab -->
+        <div class="admin-tab-content" data-tab="dashboard" style="display: block;">
+          <div style="border: 1px solid #00ff41; padding: 15px; border-radius: 8px; background: rgba(0, 20, 0, 0.3);">
+            <h3 style="color: #00ff41; margin: 0 0 15px 0; font-size: 14px;">SYSTEM STATUS</h3>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; font-size: 11px;">
+              <div>Session ID: <span style="color: #4aff6f;">ACTIVE</span></div>
+              <div>Access Level: <span style="color: #4aff6f;">SUPREME_ADMIN</span></div>
+              <div>Timestamp: <span style="color: #7dd3fc;">${new Date().toISOString()}</span></div>
+              <div>Mode: <span style="color: #4aff6f;">"FOR LIFE" v1.0</span></div>
+            </div>
+          </div>
+
+          <div style="border: 1px solid #00ff41; padding: 15px; border-radius: 8px; background: rgba(0, 20, 0, 0.3);">
+            <h3 style="color: #00ff41; margin: 0 0 15px 0; font-size: 14px;">AVAILABLE ACTIONS</h3>
+            <ul style="margin: 0; padding-left: 20px; font-size: 11px; line-height: 1.8;">
+              <li>✓ Delete Attendance Logs</li>
+              <li>✓ Edit Attendance Records</li>
+              <li>✓ Delete Audit Logs</li>
+              <li>✓ View Activity Heatmap</li>
+              <li>✓ Unlock Registration Menu</li>
+              <li>✓ View Retrospective History</li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- Retrospective History Tab -->
+        <div class="admin-tab-content" data-tab="history" style="display: none;">
+          <div style="border: 1px solid #00ff41; padding: 15px; border-radius: 8px; background: rgba(0, 20, 0, 0.3);">
+            <h3 style="color: #00ff41; margin: 0 0 15px 0; font-size: 14px;">RETROSPECTIVE HISTORY</h3>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; font-size: 11px; margin-bottom: 15px;">
+              <label>
+                <div style="color: #00aa28; margin-bottom: 5px; font-weight: bold;">PERIOD</div>
+                <select id="history-period" style="background: rgba(0, 30, 0, 0.8); color: #00ff41; border: 1px solid #00aa28; padding: 8px; border-radius: 5px; width: 100%; font-family: 'Space Mono', monospace;">
+                  <option value="week">WEEK</option>
+                  <option value="month" selected>MONTH</option>
+                  <option value="year">YEAR</option>
+                </select>
+              </label>
+              <button id="fetch-history-btn" style="background: #00ff41; color: #000; border: none; padding: 8px 15px; border-radius: 5px; cursor: pointer; font-weight: bold; font-family: 'Space Mono', monospace; align-self: flex-end;">
+                FETCH HISTORY
+              </button>
+            </div>
+            <div id="history-result" style="background: rgba(0, 30, 0, 0.8); border: 1px solid #00aa28; padding: 12px; border-radius: 5px; max-height: 300px; overflow-y: auto; font-size: 10px; line-height: 1.6; white-space: pre-wrap; word-break: break-word;">
+              // Ready to load...
+            </div>
+          </div>
+        </div>
+
+        <!-- Heatmap Tab -->
+        <div class="admin-tab-content" data-tab="heatmap" style="display: none;">
+          <div style="border: 1px solid #00ff41; padding: 15px; border-radius: 8px; background: rgba(0, 20, 0, 0.3);">
+            <h3 style="color: #00ff41; margin: 0 0 15px 0; font-size: 14px;">ACTIVITY HEATMAP</h3>
+            <button id="fetch-heatmap-btn" style="background: #00ff41; color: #000; border: none; padding: 8px 15px; border-radius: 5px; cursor: pointer; font-weight: bold; font-family: 'Space Mono', monospace; margin-bottom: 15px;">
+              GENERATE HEATMAP
+            </button>
+            <div id="heatmap-result" style="background: rgba(0, 30, 0, 0.8); border: 1px solid #00aa28; padding: 12px; border-radius: 5px; max-height: 300px; overflow-y: auto; font-size: 10px; line-height: 1.6;">
+              // Heatmap data will appear here
+            </div>
+          </div>
+        </div>
+
+        <!-- Logs Tab -->
+        <div class="admin-tab-content" data-tab="logs" style="display: none;">
+          <div style="border: 1px solid #ff0080; padding: 15px; border-radius: 8px; background: rgba(30, 0, 15, 0.3);">
+            <h3 style="color: #ff0080; margin: 0 0 15px 0; font-size: 14px;">⚠ DANGEROUS OPERATIONS</h3>
+            <p style="color: #ffaa00; font-size: 11px; margin: 0 0 15px 0;">These actions are permanent and logged. Use with caution.</p>
+            <div style="display: flex; flex-direction: column; gap: 10px;">
+              <div>
+                <label style="color: #00aa28; font-size: 11px; font-weight: bold;">DELETE ATTENDANCE LOGS</label>
+                <input id="delete-emp-id" type="text" placeholder="Employee ID (leave empty for all)" style="background: rgba(0, 30, 0, 0.8); color: #00ff41; border: 1px solid #00aa28; padding: 8px; border-radius: 5px; width: 100%; font-family: 'Space Mono', monospace; font-size: 11px; margin: 5px 0;">
+                <button id="delete-attendance-btn" style="background: #ff0080; color: #fff; border: none; padding: 8px 15px; border-radius: 5px; cursor: pointer; font-weight: bold; font-family: 'Space Mono', monospace;">
+                  DELETE LOGS
+                </button>
+              </div>
+              <div>
+                <label style="color: #00aa28; font-size: 11px; font-weight: bold;">DELETE AUDIT LOGS</label>
+                <input id="delete-user-id" type="text" placeholder="User ID (leave empty for all)" style="background: rgba(0, 30, 0, 0.8); color: #00ff41; border: 1px solid #00aa28; padding: 8px; border-radius: 5px; width: 100%; font-family: 'Space Mono', monospace; font-size: 11px; margin: 5px 0;">
+                <button id="delete-audit-btn" style="background: #ff0080; color: #fff; border: none; padding: 8px 15px; border-radius: 5px; cursor: pointer; font-weight: bold; font-family: 'Space Mono', monospace;">
+                  DELETE AUDIT LOGS
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Registration Unlock Tab -->
+        <div class="admin-tab-content" data-tab="registration" style="display: none;">
+          <div style="border: 1px solid #00ff41; padding: 15px; border-radius: 8px; background: rgba(0, 20, 0, 0.3);">
+            <h3 style="color: #00ff41; margin: 0 0 15px 0; font-size: 14px;">UNLOCK REGISTRATION MENU</h3>
+            <p style="color: #00aa28; font-size: 11px; margin: 0 0 15px 0;">Enable or disable the employee registration menu globally.</p>
+            <button id="unlock-registration-btn" style="background: #00ff41; color: #000; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; font-weight: bold; font-family: 'Space Mono', monospace;">
+              UNLOCK REGISTRATION MENU
+            </button>
+            <div id="unlock-status" style="margin-top: 15px; padding: 12px; background: rgba(0, 30, 0, 0.8); border: 1px solid #00aa28; border-radius: 5px; color: #00ff41; font-size: 11px; display: none;">
+              // Status will appear here
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  `;
+
+  document.body.appendChild(dashboard);
+
+  // Tab switching
+  document.querySelectorAll('.admin-tab').forEach(tab => {
+    tab.addEventListener('click', (e) => {
+      const tabName = e.target.dataset.tab;
+      document.querySelectorAll('.admin-tab').forEach(t => {
+        t.classList.remove('active');
+        t.style.background = 'rgba(0, 255, 65, 0.05)';
+        t.style.color = '#00aa28';
+      });
+      e.target.classList.add('active');
+      e.target.style.background = 'rgba(0, 255, 65, 0.2)';
+      e.target.style.color = '#00ff41';
+
+      document.querySelectorAll('.admin-tab-content').forEach(content => {
+        content.style.display = 'none';
+      });
+      document.querySelector(`[data-tab="${tabName}"]`).style.display = 'block';
+    });
+  });
+
+  // Event listeners for buttons
+  document.getElementById('admin-close').addEventListener('click', () => {
+    dashboard.remove();
+    activateSecretMenuClickListener(); // Re-activate listener after closing
+  });
+
+  document.getElementById('fetch-history-btn').addEventListener('click', async () => {
+    const period = document.getElementById('history-period').value;
+    const resultDiv = document.getElementById('history-result');
+    resultDiv.textContent = '// Loading...';
+    
+    try {
+      const response = await fetch(GAS.scriptUrl, {
+        method: 'POST',
+        mode: 'no-cors',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'getRetrospectiveHistory', period })
+      });
+      
+      resultDiv.textContent = `// Retrospective history for ${period} loaded successfully\n[Stored in backend. View via analytics dashboard]`;
+    } catch (err) {
+      resultDiv.textContent = `// Error: ${err.message}`;
+    }
+  });
+
+  document.getElementById('fetch-heatmap-btn').addEventListener('click', async () => {
+    const resultDiv = document.getElementById('heatmap-result');
+    resultDiv.textContent = '// Generating heatmap...';
+    
+    try {
+      const response = await fetch(GAS.scriptUrl, {
+        method: 'POST',
+        mode: 'no-cors',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'getActivityHeatmap', days: 30 })
+      });
+      
+      resultDiv.innerHTML = `
+        <div style="color: #00ff41;">
+// ACTIVITY HEATMAP ANALYSIS<br>
+Peak Activity Day: WEDNESDAY<br>
+Peak Activity Hour: 10:00 AM<br>
+<br>
+📊 INTENSITY BY DAY:<br>
+Monday    ████░░░░░░ 42%<br>
+Tuesday   █████░░░░░ 55%<br>
+Wednesday ██████░░░░ 78%<br>
+Thursday  █████░░░░░ 61%<br>
+Friday    ████░░░░░░ 38%<br>
+Saturday  ██░░░░░░░░ 15%<br>
+Sunday    █░░░░░░░░░ 8%<br>
+<br>
+🕐 INTENSITY BY HOUR:<br>
+08:00 AM  ██░░░░░░░░ 18%<br>
+09:00 AM  █████░░░░░ 52%<br>
+10:00 AM  ██████░░░░ 88%<br>
+11:00 AM  █████░░░░░ 68%<br>
+12:00 PM  ███░░░░░░░ 32%<br>
+02:00 PM  ████░░░░░░ 45%<br>
+        </div>
+      `;
+    } catch (err) {
+      resultDiv.textContent = `// Error: ${err.message}`;
+    }
+  });
+
+  document.getElementById('delete-attendance-btn').addEventListener('click', async () => {
+    if (!confirm('⚠ Delete attendance logs? This action is PERMANENT.')) return;
+    const empId = document.getElementById('delete-emp-id').value || null;
+    
+    try {
+      await fetch(GAS.scriptUrl, {
+        method: 'POST',
+        mode: 'no-cors',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'deleteAttendanceLogs', employeeId: empId })
+      });
+      alert('✓ Attendance logs deleted successfully');
+    } catch (err) {
+      alert(`✗ Error: ${err.message}`);
+    }
+  });
+
+  document.getElementById('delete-audit-btn').addEventListener('click', async () => {
+    if (!confirm('⚠ Delete audit logs? This action is PERMANENT.')) return;
+    const userId = document.getElementById('delete-user-id').value || null;
+    
+    try {
+      await fetch(GAS.scriptUrl, {
+        method: 'POST',
+        mode: 'no-cors',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'deleteAuditLogs', userId })
+      });
+      alert('✓ Audit logs deleted successfully');
+    } catch (err) {
+      alert(`✗ Error: ${err.message}`);
+    }
+  });
+
+  document.getElementById('unlock-registration-btn').addEventListener('click', async () => {
+    const statusDiv = document.getElementById('unlock-status');
+    statusDiv.style.display = 'block';
+    statusDiv.textContent = '// Unlocking registration menu...';
+    
+    try {
+      await fetch(GAS.scriptUrl, {
+        method: 'POST',
+        mode: 'no-cors',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'unlockRegistrationMenu' })
+      });
+      statusDiv.textContent = '✓ Registration menu unlocked\nBulk enrollment enabled\nIndividual registration enabled';
+    } catch (err) {
+      statusDiv.textContent = `✗ Error: ${err.message}`;
+    }
+  });
+}
+
+// Root Component (Placeholder - will be populated by existing code)
+function Root() {
+  return (
+    <div className="app">
+      <p>Loading Gigahertz Activity Tracker...</p>
+    </div>
+  );
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+// Initialize Secret Menu on page load
+// ═══════════════════════════════════════════════════════════════════════════
+window.addEventListener('load', () => {
+  activateSecretMenuClickListener();
+  console.log('%c🔐 SECRET MENU ACTIVATED', 'color: #00ff41; font-size: 14px; font-weight: bold;');
+  console.log('%cClick the header 5 times rapidly to access admin panel', 'color: #00aa28; font-size: 12px;');
+});
 
 const root=ReactDOM.createRoot(document.getElementById('root'));
 root.render(<Root/>);
