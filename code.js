@@ -2009,6 +2009,20 @@ function enrollEmployeesFromRoster() {
 // 8. API ROUTER (doPost)
 // ═══════════════════════════════════════════════════════════════════════════
 
+// ═══════════════════════════════════════════════════════════════════════════
+// API RESPONSE WRAPPER (for CORS compatibility with GitHub Pages)
+// ═══════════════════════════════════════════════════════════════════════════
+function createCORSResponse(data) {
+  return ContentService
+    .createTextOutput(JSON.stringify(data))
+    .setMimeType(ContentService.MimeType.JSON)
+    .setHeader('Access-Control-Allow-Origin', '*')
+    .setHeader('Access-Control-Allow-Methods', 'POST, GET, OPTIONS')
+    .setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization')
+    .setHeader('Content-Type', 'application/json; charset=utf-8')
+    .setHeader('Cache-Control', 'no-store, no-cache, must-revalidate, max-age=0');
+}
+
 function doPost(e) {
   try {
     const data = JSON.parse(e.postData.contents);
@@ -2019,6 +2033,7 @@ function doPost(e) {
     if (action === 'login') result = loginUser(data);
     else if (action === 'register') result = registerEmployee(data);
     else if (action === 'enrollEmployees') result = enrollEmployeesFromRoster();
+    else if (action === 'ping') result = { success: true, message: 'Pong!', timestamp: new Date().toISOString() };
 
     // Attendance
     else if (action === 'timeIn') result = recordAttendance({ ...data, type: 'timeIn' });
@@ -2077,26 +2092,89 @@ function doPost(e) {
     // AI Assistant
     else if (action === 'aiQuery') result = processAIQuery(data);
 
+    // Retrospective Logs (can also be called via GET)
+    else if (action === 'getRetrospectiveLogs') result = getRetrospectiveLogs(data);
+
     else result = { success: false, message: 'Action not found' };
 
-    return ContentService.createTextOutput(JSON.stringify(result))
-      .setMimeType(ContentService.MimeType.JSON);
+    return createCORSResponse(result);
 
   } catch (error) {
-    return ContentService.createTextOutput(JSON.stringify({
+    return createCORSResponse({
       success: false,
       error: error.message,
       trace: error.stack
-    })).setMimeType(ContentService.MimeType.JSON);
+    });
   }
 }
 
 function doGet(e) {
-  return HtmlService.createHtmlOutput(`
-    <h1>Gigahertz Activity Tracker v10.0</h1>
-    <p>POST requests only. This is the backend API.</p>
-    <p>Deployed at: ${ScriptApp.getService().getUrl()}</p>
-  `);
+  try {
+    const action = e.parameter.action || 'help';
+    let result = {};
+
+    // GET endpoint support for specific read-only operations
+    if (action === 'help') {
+      result = {
+        success: true,
+        message: 'Gigahertz Activity Tracker v10.0 - Backend API',
+        endpoints: {
+          POST: 'Send JSON with "action" field',
+          GET: {
+            'getRetrospectiveLogs': 'Query params: days=30 (optional)',
+            'ping': 'Health check'
+          }
+        },
+        timestamp: new Date().toISOString()
+      };
+    }
+    else if (action === 'ping') {
+      result = { success: true, message: 'Pong!', timestamp: new Date().toISOString() };
+    }
+    else if (action === 'getRetrospectiveLogs') {
+      const days = parseInt(e.parameter.days) || 30;
+      result = getRetrospectiveLogs({ days: days });
+    }
+    else {
+      result = { success: false, message: 'Unknown GET action. Use ?action=help' };
+    }
+
+    return createCORSResponse(result);
+  } catch (error) {
+    return createCORSResponse({
+      success: false,
+      error: error.message,
+      trace: error.stack
+    });
+  }
+}
+
+function getRetrospectiveLogs(data) {
+  try {
+    const days = data.days || 30;
+    const cutoffDate = new Date();
+    cutoffDate.setDate(cutoffDate.getDate() - days);
+
+    const activities = getAllData(SHEETS.AUDIT_LOG);
+    const filtered = activities.filter(a => {
+      const actDate = new Date(a.timestamp);
+      return actDate >= cutoffDate;
+    });
+
+    return {
+      success: true,
+      data: filtered,
+      count: filtered.length,
+      daysRequested: days,
+      timestamp: new Date().toISOString()
+    };
+  } catch (error) {
+    return {
+      success: false,
+      error: error.message,
+      data: []
+    };
+  }
 }
 
 // ═══════════════════════════════════════════════════════════════════════════
@@ -2131,9 +2209,9 @@ function initializeDatabase() {
     SHEETS.EMPLOYEES.appendRow([
       Utilities.getUuid(),
       'admin@gigahertz.com',
-      'System',
-      'Admin',
-      'SYS-001',
+      'Eric',
+      'Chua',
+      'GHZ0001',
       'Administration',
       ROLES.ADMIN,
       'active',
