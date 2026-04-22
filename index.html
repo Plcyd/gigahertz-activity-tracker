@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1.0,viewport-fit=cover"/>
-<title>Gigahertz Nexus — Activity Tracker v5.67</title>
+<title>Gigahertz Nexus — Activity Tracker v9.01</title>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.development.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.development.js"></script>
@@ -3423,6 +3423,35 @@ const GAS={
   _syncInterval:5*60*1000, // Sync every 5 minutes if online
   onStatus(fn){this._listeners.push(fn);},
   _emit(){this._listeners.forEach(fn=>fn(this.status));},
+  async _fetchGET(action,params={},retries=2){
+    // Support for GET requests (used for read-only operations like retrospective logs)
+    const url=GAS_CONFIG.webAppUrl||GAS_URL;
+    const queryString=new URLSearchParams({action,...params}).toString();
+    const fullUrl=`${url}?${queryString}`;
+    
+    for(let i=0;i<=retries;i++){
+      try{
+        const ctrl=new AbortController();
+        const t=setTimeout(()=>ctrl.abort(),8000);
+        console.log(`[GAS-GET] Attempt ${i+1}/${retries+1} - Action: ${action}`);
+        const r=await fetch(fullUrl,{method:'GET',headers:{'Content-Type':'application/json'},signal:ctrl.signal});
+        clearTimeout(t);
+        if(r.ok){
+          const d=await r.json();
+          console.log(`[GAS-GET] ✓ ${action} succeeded`,d);
+          if(this.status!=='online'){this.status='online';this._emit();}
+          return d;
+        }else{
+          console.warn(`[GAS-GET] ✗ ${action} failed with status ${r.status}`);
+        }
+      }catch(e){
+        console.error(`[GAS-GET] Network error on attempt ${i+1}:`,e.message);
+        if(i<retries){await new Promise(r=>setTimeout(r,1200*(i+1)));}
+      }
+    }
+    if(this.status!=='offline'){this.status='offline';this._emit();}
+    return null;
+  },
   async _fetch(payload,retries=2){
     // Ensure we're using the correct GAS URL
     const url=GAS_CONFIG.webAppUrl||GAS_URL;
@@ -3457,6 +3486,11 @@ const GAS={
   },
   async call(action,payload={}){
     if(action==='login')return this._localLogin(payload);
+    
+    // Special handling for GET-based operations
+    if(action==='getRetrospectiveLogs'){
+      return await this._fetchGET('getRetrospectiveLogs',{days:payload.days||30},1);
+    }
 
     // Build full request with action
     const req={action,...payload,_ts:Date.now(),_sync:true};
