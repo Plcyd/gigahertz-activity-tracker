@@ -3,77 +3,25 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1.0,viewport-fit=cover"/>
-<title>Gigahertz Nexus — Activity Tracker v9.01 [NEXUS EDITION]</title>
+<title>Gigahertz Nexus — Activity Tracker v9.02 PROD</title>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.development.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.development.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.2/babel.min.js"></script>
+<script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+<script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+<script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
 <script src="https://cdn.tailwindcss.com"></script>
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800;900&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet"/>
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-<link rel="icon" type="image/png" href="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQCAvsa7qD3KFRHjwrdxGM-gzFogoTraQnVUw&s">
-    
-    <!-- External Scripts -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.2/babel.min.js"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800;900&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet" />
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⚡</text></svg>">
+
     
     <!-- Custom Stylesheets -->
-    <style>
-                /* ═══════════════════════════════════════════════════
-           THEME ENGINE — 32 Themes
-        ═══════════════════════════════════════════════════ */
-                [data-theme="frutiger"] {
-                    --p: #1a6fd4;
-                    --pd: #1458b0;
-                    --pl: rgba(26,111,212,0.13);
-                    --bg: linear-gradient(135deg,#dce9f7 0%,#c8daf5 100%);
-                    --wh: #fff;
-                    --card: rgba(255,255,255,0.72);
-                    --tx: #0a2540;
-                    --tx2: #1e3a5f;
-                    --tx3: #5a7fa8;
-                    --bd: rgba(26,111,212,0.18);
-                    --danger: #e53e3e;
-                    --ok: #22c55e;
-                    --warn: #f59e0b;
-                    --glass: rgba(255,255,255,0.62);
-                    --gborder: rgba(255,255,255,0.88);
-                    --shadow: rgba(26,111,212,0.13);
-                    --sidebar: rgba(240,248,255,0.92);
-                    --header: rgba(240,248,255,0.88);
-                    --ibg: rgba(255,255,255,0.5);
-                    --btn: linear-gradient(160deg,#1a6fd4,#1458b0);
-                    --btnH: linear-gradient(160deg,#2a7fe4,#1a68c0);
-                    --glow: rgba(26,111,212,0.3);
-                }
+<style>
+[data-theme="corporate"] { --p:#003d99;--pd:#002860;--bg:linear-gradient(135deg,#f0f5fb 0%,#e8f0f9 100%); --glass:rgba(255,255,255,0.85); --sidebar:rgba(240,245,251,0.95); }
+[data-theme="nomad"] { --p:#ff8c42;--pd:#ff6d1d;--bg:linear-gradient(135deg,#fff8f3 0%,#fff0e6 100%); --glass:rgba(255,255,255,0.85); --sidebar:rgba(255,248,243,0.95); }
+[data-theme="planner"] { --p:#c9a876;--pd:#a8865a;--bg:linear-gradient(135deg,#faf6f1 0%,#f5f0e8 100%); --glass:rgba(255,255,255,0.85); --sidebar:rgba(250,246,241,0.95); }
+[data-theme="coffeeshop"] { --p:#6f4e37;--pd:#5a3d2a;--bg:linear-gradient(135deg,#3e2723 0%,#5d4037 100%); --glass:rgba(93,64,55,0.8); --sidebar:rgba(62,39,35,0.98); }
+[data-theme="library"] { --p:#1b5e20;--pd:#0d3818;--bg:linear-gradient(135deg,#e8f5e9 0%,#dcedc8 100%); --glass:rgba(255,255,255,0.85); --sidebar:rgba(232,245,233,0.95); }
 
-                [data-theme="dark"] {
-                    --p: #3b82f6;
-                    --pd: #2563eb;
-                    --pl: rgba(59,130,246,0.15);
-                    --bg: linear-gradient(135deg,#0f172a 0%,#1e293b 100%);
-                    --wh: #1e293b;
-                    --card: rgba(30,41,59,0.7);
-                    --tx: #f8fafc;
-                    --tx2: #cbd5e1;
-                    --tx3: #94a3b8;
-                    --bd: rgba(255,255,255,0.1);
-                    --danger: #f87171;
-                    --ok: #4ade80;
-                    --warn: #fbbf24;
-                    --glass: rgba(30,41,59,0.6);
-                    --gborder: rgba(255,255,255,0.12);
-                    --shadow: rgba(0,0,0,0.4);
-                    --sidebar: rgba(15,23,42,0.96);
-                    --header: rgba(15,23,42,0.92);
-                    --ibg: rgba(15,23,42,0.6);
-                    --btn: linear-gradient(160deg,#3b82f6,#2563eb);
-                    --btnH: linear-gradient(160deg,#60a5fa,#3b82f6);
-                    --glow: rgba(59,130,246,0.3);
-                }
 
                 [data-theme="midnight"] {
                     --p: #8b5cf6;
@@ -1626,6 +1574,27 @@
                     transition: none !important
                 }
 
+                @media (max-width: 768px) {
+    body { margin-left: 0; }
+    .sidebar { transform: translateX(-100%); z-index: 5000; }
+    .sidebar.open { transform: translateX(0); }
+    .main { padding: 16px; width: 100vw; overflow-x: hidden; }
+    
+    /* Fix table overflow on mobile */
+    .table-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; width: 100%; border-radius: 12px; }
+    .nx-table { min-width: 600px; }
+    
+    /* Stack grid items on mobile */
+    .grid { grid-template-columns: 1fr !important; gap: 16px; }
+    
+    /* Fix modal sizing */
+    .glass-panel, .glass { padding: 16px; width: 100%; border-radius: 16px; }
+    
+    /* Make typography fit */
+    .text-4xl, .text-3xl { font-size: 24px !important; }
+    .timer-digits { font-size: 38px !important; }
+}
+
                 /* ═══════════════════════════════════════════════════
            GLASS UTILITY
         ═══════════════════════════════════════════════════ */
@@ -3021,7 +2990,17 @@
     <script src="themeEngine.js"></script>
     
     <script type="text/babel">
-const {useState,useEffect,useRef,useCallback,useMemo}=React;
+const {useState,useEffect,useRef,useCallback,useMemo,useContext,createContext}=React;
+
+// ═══════════════════════════════════════════════════
+// ADMIN CONTEXT — Role-based access control
+// ═══════════════════════════════════════════════════
+const AdminContext = createContext({isAdmin: false, isHR: false, userRole: 'employee'});
+
+const useAdmin = () => {
+  const ctx = useContext(AdminContext);
+  return ctx;
+};
 
 /* ═══════════════════════════════════════════════════
    CONSTANTS
@@ -3693,11 +3672,30 @@ const GAS={
     }
   }
 };
+// ADMIN ENDPOINTS — New HR Dashboard functionality
+GAS.adminEndpoints = {
+  getAdminEmployees: async (sessionId) => await GAS.call('getAdminEmployees', {sessionId}),
+  getFullAttendanceReport: async (sessionId, params) => await GAS.call('getFullAttendanceReport', {...params, sessionId}),
+  getHRDashboard: async (sessionId) => await GAS.call('getHRDashboard', {sessionId}),
+  bulkEmployeeUpdate: async (sessionId, payload) => await GAS.call('bulkEmployeeUpdate', {...payload, sessionId}),
+  getEmployeeTasks: async (sessionId) => await GAS.call('getEmployeeTasks', {sessionId})
+};
+
 GAS.loadQueue();
 
 // Initialize geolocation check-in every 5 minutes (300 seconds)
 console.log('[INIT] Starting automatic geolocation check-ins...');
 GAS.autoGeoCheckin(5);
+
+// ADMIN INIT — Check for admin capabilities on load
+GAS.checkAdminAccess = async (sessionId) => {
+  try {
+    const res = await GAS.getHRDashboard(sessionId);
+    return res && res.success ? {isAdmin: true, isHR: true, data: res} : {isAdmin: false, isHR: false};
+  } catch (e) {
+    return {isAdmin: false, isHR: false};
+  }
+};
 
 /* ═══════════════════════════════════════════════════
    AI ENGINE
