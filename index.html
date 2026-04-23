@@ -5951,8 +5951,7 @@ const DataSync={
       resultDiv.textContent = `// Retrospective history for ${period} loaded successfully\n[Stored in backend. View via analytics dashboard]`;
     } catch (err) {
       resultDiv.textContent = `// Error: ${err.message}`;
-    }
-  );
+    };
 
   document.getElementById('fetch-heatmap-btn').addEventListener('click', async () => {
     const resultDiv = document.getElementById('heatmap-result');
