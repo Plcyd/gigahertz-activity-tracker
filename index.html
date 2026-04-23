@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1.0,viewport-fit=cover"/>
-<title>Gigahertz Nexus — Activity Tracker v9.05</title>
+<title>Gigahertz Nexus — Activity Tracker v9.01 [NEXUS EDITION]</title>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.development.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.development.js"></script>
@@ -4677,7 +4677,7 @@ const TrackerView=({employees,tasks})=>{
       </div>
       <div style={{display:'flex',gap:5,overflowX:'auto',paddingBottom:3}}>
         <button style={{padding:'6px 12px',borderRadius:9,fontSize:11,fontWeight:800,cursor:'pointer',border:`1px solid ${selDept==='ALL'?'var(--p)':'var(--bd)'}`,background:selDept==='ALL'?'var(--pl)':'transparent',color:selDept==='ALL'?'var(--p)':'var(--tx3)',whiteSpace:'nowrap',flexShrink:0}} onClick={()=>{setSelDept('ALL');setSelEmp(null);}}>All</button>
-        {DEPTS.map(d=>(<button key={d.id} style={{padding:'6px 12px',borderRadius:9,fontSize:11,fontWeight:800,cursor:'pointer',border:`1px solid ${selDept===String(d.id)?'var(--p)':'var(--bd)'}`,background:selDept===String(d.id)?'var(--pl)':'transparent',color:selDept===String(d.id)?'var(--p)':'var(--tx3)',whiteSpace:'nowrap',flexShrink:0}} onClick={()=>{setSelDept(String(d.id));setSelEmp(null);}}>{d.icon} {d.name}</button>))}
+        {DEPTS.map(d=>(<button key={d.id} style={{padding:'6px 12px',borderRadius:9,fontSize:11,fontWeight:800,cursor:'pointer',border:`1px solid ${selDept===String(d.id)?'var(--p)':'var(--bd)'}`,background:selDept===String(d.id)?'var(--pl)':'transparent',color:selDept===String(d.id)?'var(--p)':'var(--tx3)',whiteSpace:'nowrap',flexShrink:0}} onClick={()=>{setSelDept(String(d.id));setSelEmp(null);}}><i className={`fa-solid ${d.icon}`}/> {d.name}</button>))}
       </div>
       <div style={{display:'grid',gridTemplateColumns:'min(260px,100%) 1fr',gap:13}}>
         <div className="glass" style={{borderRadius:16,overflow:'hidden',height:'58vh',display:'flex',flexDirection:'column'}}>
@@ -4767,7 +4767,7 @@ const DirectoryView=({employees,setEmployees,tasks,showToast})=>{
           <input className="input" style={{paddingLeft:33}} placeholder="Search..." value={search} onChange={e=>setSearch(e.target.value)}/>
         </div>
         <select className="input" value={deptF} onChange={e=>setDeptF(e.target.value)} style={{width:'auto',padding:'9px 11px',fontSize:12}}>
-          <option value="ALL">All Depts</option>{DEPTS.map(d=><option key={d.id} value={d.id}>{d.icon} {d.name}</option>)}
+          <option value="ALL">All Depts</option>{DEPTS.map(d=><option key={d.id} value={d.id}><i className={`fa-solid ${d.icon}`}/> {d.name}</option>)}
         </select>
         <select className="input" value={statusF} onChange={e=>setStatusF(e.target.value)} style={{width:'auto',padding:'9px 11px',fontSize:12}}>
           <option value="ALL">All Status</option><option>Active</option><option>Idle</option><option>Absent</option><option>Leave</option>
@@ -5087,7 +5087,7 @@ const ProjectModal=({onClose,onSave,showToast})=>{
       <form onSubmit={submit} style={{display:'flex',flexDirection:'column',gap:12}}>
         <div><label className="input-label">Project Name *</label><input className="input" value={form.name} onChange={e=>setForm(p=>({...p,name:e.target.value}))} required/></div>
         <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:9}}>
-          <div><label className="input-label">Department</label><select className="input" value={form.dept} onChange={e=>setForm(p=>({...p,dept:e.target.value}))}>{DEPTS.map(d=><option key={d.id}>{d.icon} {d.name}</option>)}</select></div>
+          <div><label className="input-label">Department</label><select className="input" value={form.dept} onChange={e=>setForm(p=>({...p,dept:e.target.value}))}>{DEPTS.map(d=><option key={d.id}><i className={`fa-solid ${d.icon}`}/> {d.name}</option>)}</select></div>
           <div><label className="input-label">Deadline</label><input className="input" type="date" value={form.deadline} onChange={e=>setForm(p=>({...p,deadline:e.target.value}))}/></div>
         </div>
         <div><label className="input-label">Lead</label><input className="input" value={form.lead} onChange={e=>setForm(p=>({...p,lead:e.target.value}))}/></div>
@@ -6390,7 +6390,7 @@ Sunday    █░░░░░░░░░ 8%<br>
 //function Root() {
 //  return (
 //    <div className="app">
-//      <p>Loading Gigahertz Activity Tracker...</p>
+/      <p>Loading Gigahertz Activity Tracker...</p>
 //    </div>
 //  );
 //}
