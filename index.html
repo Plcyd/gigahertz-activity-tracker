@@ -3026,7 +3026,7 @@ const {useState,useEffect,useRef,useCallback,useMemo}=React;
 /* ═══════════════════════════════════════════════════
    CONSTANTS
 ═══════════════════════════════════════════════════ */
-const GAS_URL="https://script.google.com/macros/s/AKfycbxO93ce-1hGMkJcZwrXjS5n9ZxUqWbqECvv5VrVRali1GzMC-Nv893DJJDVue7focg5/exec";
+const GAS_URL="https://script.google.com/macros/s/AKfycbxSFb35c4Y6-BJLsy4tQCszAzAhk2BFi2PTxwd18CibrXeX-LztxHKBRTW-3Sly56OeMQ/exec";
 const LOGO="https://contents.smsupermalls.com/data/uploads/2020/07/GIGAHERTZ_COMPUTER_SYSTEM.jpg";
 // Gigahertz Service Center (Manila, Metro Manila) - 14°35'43.0"N 120°59'20.2"E
 const HQ_LAT=14.59527, HQ_LNG=120.98894, GEO_RADIUS=300;
@@ -5952,7 +5952,7 @@ const DataSync={
     } catch (err) {
       resultDiv.textContent = `// Error: ${err.message}`;
     }
-  });
+  );
 
   document.getElementById('fetch-heatmap-btn').addEventListener('click', async () => {
     const resultDiv = document.getElementById('heatmap-result');
