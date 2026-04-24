@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1.0,viewport-fit=cover"/>
-<title>Gigahertz Nexus — Activity Tracker v9.04 PROD</title>
+<title>Gigahertz Nexus — Activity Tracker v9.05 PROD</title>
 
 <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
 <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
@@ -2989,10 +2989,80 @@
     <div id="root"></div>
     
     <!-- Core Systems -->
-    <script src="themeEngine.js"></script>
     
     <script type="text/babel">
 const {useState,useEffect,useRef,useCallback,useMemo,useContext,createContext}=React;
+
+/* ═══════════════════════════════════════════════════
+   THEME ENGINE
+═══════════════════════════════════════════════════ */
+const ThemeEngine = {
+  themes: ['gigahertz', 'midnight', 'forest', 'ocean', 'coffee', 'rosegold', 'sunset', 'sakura', 'corporate', 'nomad', 'planner', 'coffeeshop', 'library', 'frutiger', 'light', 'dark', 'rose', 'amber', 'matrix', 'candy', 'retro', 'aurora', 'neon', 'frost', 'lavender', 'red', 'cyberpunk', 'egypt', 'ddlc', 'synthwave', 'christmas', 'independence', 'summer', 'dididi', 'vaporwave', 'steampunk', 'dracula', 'nordtheme', 'gruvbox', 'onedark', 'serenity', 'monowork', 'pastel', 'industrial', 'scandinavian', 'retrooffice', 'neon-grid', 'zen', 'glass', 'grid', 'timeblock', 'goalboard', 'blueprint', 'whiteboard', 'calmblue', 'warm', 'etong'],
+  currentIndex: 0,
+  cycleInterval: null,
+  
+  setTheme: (name) => {
+    document.body.className = 'theme-' + name;
+    document.documentElement.setAttribute('data-theme', name);
+    localStorage.setItem('ghz_theme', name);
+  },
+  
+  init: () => {
+    const saved = localStorage.getItem('ghz_theme') || 'gigahertz';
+    ThemeEngine.setTheme(saved);
+  },
+  
+  startCycling: (interval = 60000, shuffle = false) => {
+    ThemeEngine.stopCycling();
+    ThemeEngine.cycleInterval = setInterval(() => {
+      if (shuffle) {
+        const next = Math.floor(Math.random() * ThemeEngine.themes.length);
+        ThemeEngine.setTheme(ThemeEngine.themes[next]);
+      } else {
+        const current = localStorage.getItem('ghz_theme') || 'gigahertz';
+        let idx = ThemeEngine.themes.indexOf(current);
+        idx = (idx + 1) % ThemeEngine.themes.length;
+        ThemeEngine.setTheme(ThemeEngine.themes[idx]);
+      }
+    }, interval);
+  },
+  
+  stopCycling: () => {
+    if (ThemeEngine.cycleInterval) {
+      clearInterval(ThemeEngine.cycleInterval);
+      ThemeEngine.cycleInterval = null;
+    }
+  }
+};
+ThemeEngine.init();
+
+/* ═══════════════════════════════════════════════════
+   TRACKER REQUEST SYSTEM
+═══════════════════════════════════════════════════ */
+const TrackerRequestSystem = {
+  createRequestForm: () => `
+    <div class="modal-body">
+      <div style="display:flex; flex-direction:column; gap:12px;">
+        <p style="font-size:11px; color:var(--tx3); font-weight:600; margin-bottom:4px;">Request administrative approval to access the Activity Tracker features.</p>
+        <div><label class="input-label">Employee ID</label><input class="input" id="tracker-emp-id" placeholder="GHZ-0000"/></div>
+        <div><label class="input-label">Full Name *</label><input class="input" id="tracker-name" placeholder="Juan Dela Cruz"/></div>
+        <div><label class="input-label">Department *</label><input class="input" id="tracker-dept" placeholder="Accounting"/></div>
+        <div><label class="input-label">Tasks / Purpose *</label><textarea class="input" id="tracker-tasks" rows="3" placeholder="Describe what tasks you need to track..."></textarea></div>
+        <div id="tracker-loading" style="display:none; text-align:center; padding:10px;"><span class="spinner"></span> Sending...</div>
+        <button class="btn btn-primary" id="tracker-submit-btn" style="width:100%; justify-content:center; padding:12px; font-weight:800;">Submit Request</button>
+      </div>
+    </div>
+  `,
+  submit: async (empId, name, dept, tasks) => {
+    return await GAS.call('submitTrackerRequest', { employeeId: empId, employeeName: name, department: dept, tasks: tasks });
+  },
+  getPendingRequests: async (sessionId) => {
+    return await GAS.call('getPendingTrackerRequests', { sessionId });
+  },
+  approveRequest: async (sessionId, requestId, notes) => {
+    return await GAS.call('approveTrackerRequest', { sessionId, requestId, notes });
+  }
+};
 
 // ═══════════════════════════════════════════════════
 // ADMIN CONTEXT — Role-based access control
@@ -3451,9 +3521,7 @@ const GAS={
         const r=await fetch(fullUrl,{
           method:'GET',
           headers:{
-            'Content-Type':'application/json',
-            'X-Secret-Key':this._secretKey, // ← Secret header for security
-            'X-Request-ID':this.generateUUID()
+            'Content-Type':'text/plain;charset=utf-8'
           },
           signal:ctrl.signal
         });
@@ -3485,11 +3553,13 @@ const GAS={
         console.log(`[GAS] Attempt ${i+1}/${retries+1} - Action: ${payload.action}`);
         const r=await fetch(url,{
           method:'POST',
-          body:JSON.stringify(payload),
+          body:JSON.stringify({
+            ...payload,
+            _secret: this._secretKey,
+            _requestId: this.generateUUID()
+          }),
           headers:{
-            'Content-Type':'text/plain;charset=utf-8',
-            'X-Secret-Key':this._secretKey, // ← Secret header for security
-            'X-Request-ID':this.generateUUID()
+            'Content-Type':'text/plain;charset=utf-8'
           },
           signal:ctrl.signal
         });
@@ -3519,6 +3589,24 @@ const GAS={
   },
   
   async call(action,payload={}){
+    if(typeof google!=='undefined'&&google.script&&google.script.run){
+      return new Promise((resolve)=>{
+        google.script.run.withSuccessHandler(res=>resolve(res)).withFailureHandler(err=>resolve({success:false,error:err.message}))[action](payload);
+      });
+    }
+    
+    // Attempt local API first if in development / local server environment
+    try {
+      const localRes = await fetch('/api/' + action, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+      if (localRes.ok) return await localRes.json();
+    } catch (e) {
+      // Local API failed, fall through to GAS fetch
+    }
+
     if(action==='login')return this._localLogin(payload);
     
     // Special handling for GET-based operations
@@ -5280,6 +5368,134 @@ const SettingsView=({theme,setTheme,animations,setAnimations,showToast,gasQueue}
 /* ═══════════════════════════════════════════════════
    MAIN APP SHELL
 ═══════════════════════════════════════════════════ */
+/* ═══════════════════════════════════════════════════
+   LOCATION TRACKER VIEW
+═══════════════════════════════════════════════════ */
+const LocationView = ({user, isAdmin}) => {
+  const [logs, setLogs] = React.useState([]);
+  const [loading, setLoading] = React.useState(false);
+  const [checking, setChecking] = React.useState(false);
+  const [employees, setEmployees] = React.useState([]);
+  const [filterEmp, setFilterEmp] = React.useState(isAdmin ? 'ALL' : user.empId);
+
+  const fetchLogs = React.useCallback(() => {
+    if (typeof google === 'undefined') return;
+    setLoading(true);
+    google.script.run.withSuccessHandler(res => {
+      if(res.success) setLogs(res.logs);
+      setLoading(false);
+    }).getLocations({empId: filterEmp === 'ALL' ? null : filterEmp});
+  }, [filterEmp]);
+
+  React.useEffect(() => {
+    fetchLogs();
+    if (isAdmin) {
+      google.script.run.withSuccessHandler(res => {
+        if(res.success) setEmployees(res.data || res.users || []);
+      }).getAllUsers();
+    }
+  }, [filterEmp, isAdmin, fetchLogs]);
+
+  const logCurrent = () => {
+    if (!navigator.geolocation) return alert("Geolocation not supported");
+    setChecking(true);
+    navigator.geolocation.getCurrentPosition(
+      pos => {
+        const {latitude, longitude} = pos.coords;
+        google.script.run.withSuccessHandler(() => {
+          setChecking(false);
+          fetchLogs();
+          alert("Location heartbeat registered.");
+        }).logLocation({
+          empId: user.empId,
+          name: `${user.firstName} ${user.lastName}`,
+          lat: latitude,
+          lng: longitude,
+          status: 'MANUAL_SYNC',
+          distance: 0
+        });
+      },
+      err => {
+        setChecking(false);
+        alert("Geolocation error: " + err.message);
+      },
+      { enableHighAccuracy: true, timeout: 15000 }
+    );
+  };
+
+  return (
+    <div className="anim-fade" style={{display:'flex',flexDirection:'column',gap:16}}>
+      <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',flexWrap:'wrap',gap:10}}>
+        <div>
+          <h2 style={{fontSize:22,fontWeight:900,color:'var(--p)'}}><i className="fa-solid fa-location-dot mr-2"/>Location Tracker</h2>
+          <p style={{fontSize:11,color:'var(--tx3)',marginTop:3,fontWeight:600}}>Nexus Geofencing & Operational Telemetry.</p>
+        </div>
+        {!isAdmin && (
+          <button className="btn btn-primary" onClick={logCurrent} disabled={checking}>
+            {checking ? <span className="spinner"/> : <><i className="fa-solid fa-satellite-dish mr-2"/> Pulse Scan</>}
+          </button>
+        )}
+      </div>
+
+      {isAdmin && (
+        <div className="glass" style={{padding:'10px 14px', borderRadius:12, border:'1px solid var(--bd)', display:'flex', alignItems:'center', gap:10, marginBottom:10}}>
+           <i className="fa-solid fa-users text-[var(--p)]"/>
+           <select className="input" style={{flex:1, border:'none', background:'transparent', fontWeight:800, fontSize:12, cursor:'pointer'}} value={filterEmp} onChange={e=>setFilterEmp(e.target.value)}>
+             <option value="ALL">All Active Personnel</option>
+             {employees.map(e => <option key={e.empId} value={e.empId}>{e.firstName} {e.lastName} ({e.empId})</option>)}
+           </select>
+        </div>
+      )}
+
+      <div className="glass" style={{borderRadius:16, border:'1px solid var(--bd)', overflow:'hidden'}}>
+        <div style={{maxHeight:'550px', overflowY:'auto'}}>
+          <table className="nx-table">
+            <thead>
+              <tr style={{background:'var(--pl)', color:'var(--p)', fontSize:10, textTransform:'uppercase', letterSpacing:'0.05em'}}>
+                <th style={{padding:'12px 15px'}}>Telemetry Time</th>
+                {isAdmin && <th>Personnel</th>}
+                <th>Coordinates</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              {logs.map((l, i) => (
+                <tr key={i} style={{borderBottom:'1px solid var(--bd)'}} className="hover:bg-[rgba(128,128,128,.03)]">
+                  <td style={{fontSize:11, fontWeight:700, padding:'12px 15px'}}>{new Date(l.timestamp).toLocaleString()}</td>
+                  {isAdmin && (
+                    <td>
+                      <div style={{display:'flex', alignItems:'center', gap:8}}>
+                        <Avatar emp={employees.find(e => e.empId === l.empId) || {firstName: l.name?.split(' ')[0] || l.empId, lastName: l.name?.split(' ')[1] || '', id: l.empId}} size="sm" />
+                        <span style={{fontSize:11, fontWeight:900}}>{l.name || l.empId}</span>
+                      </div>
+                    </td>
+                  )}
+                  <td>
+                    <a href={`https://www.google.com/maps?q=${l.lat},${l.lng}`} target="_blank" style={{color:'var(--p)', textDecoration:'none', fontWeight:700, fontSize:10}} className="hover:underline">
+                      <i className="fa-solid fa-map-pin mr-1"/>{l.lat.toFixed(5)}, {l.lng.toFixed(5)}
+                    </a>
+                  </td>
+                  <td>
+                    <span className="badge" style={{background:'var(--pl)', color:'var(--p)', fontWeight:900, fontSize:9, padding:'4px 8px'}}>{l.status}</span>
+                  </td>
+                </tr>
+              ))}
+              {logs.length === 0 && (
+                <tr>
+                  <td colSpan={isAdmin ? 4 : 3} style={{textAlign:'center', padding:'60px 20px'}}>
+                    <i className="fa-solid fa-satellite-dish" style={{fontSize:32, color:'var(--p)', opacity:0.3, marginBottom:10, display:'block'}}/>
+                    <p style={{fontSize:11, fontWeight:800, color:'var(--tx3)'}}>No orbital data available.</p>
+                  </td>
+                </tr>
+              )}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  );
+};
+
 const MainApp=({user:initUser,onLogoutReq,theme,setTheme})=>{
   const [user,setUser]=useState(initUser);
   const [view,setView]=useState('dashboard');
@@ -5374,6 +5590,7 @@ const MainApp=({user:initUser,onLogoutReq,theme,setTheme})=>{
   const adminNav=[
     {id:'dashboard',icon:'fa-chart-pie',label:'Dashboard'},
     {id:'tracker',icon:'fa-satellite-dish',label:'Tracker'},
+    {id:'location',icon:'fa-location-dot',label:'Location Tracking'},
     {id:'directory',icon:'fa-address-book',label:'Directory'},
     {id:'leaves',icon:'fa-umbrella-beach',label:'Leaves',badge:pendingLeaves>0?pendingLeaves:null},
     {id:'announcements',icon:'fa-bullhorn',label:'Bulletin'},
@@ -5383,6 +5600,7 @@ const MainApp=({user:initUser,onLogoutReq,theme,setTheme})=>{
   ];
   const staffNav=[
     {id:'dashboard',icon:'fa-gauge-high',label:'Home'},
+    {id:'location',icon:'fa-location-dot',label:'Location Tracking'},
     {id:'mytasks',icon:'fa-list-check',label:'Tasks'},
     {id:'leaves',icon:'fa-umbrella-beach',label:'Leaves'},
     {id:'announcements',icon:'fa-bullhorn',label:'Bulletin'},
@@ -5505,6 +5723,7 @@ const MainApp=({user:initUser,onLogoutReq,theme,setTheme})=>{
           {view==='dashboard'&&isAdmin&&<AdminDashView employees={employees} tasks={tasks} leaveRequests={leaveRequests} announcements={announcements} showToast={showToast}/>}
           {view==='dashboard'&&!isAdmin&&<DashboardView user={safe} tasks={tasks} onSaveTask={t=>handleSaveTask(t,false)} showToast={showToast} announcements={announcements} kudos={kudos} setKudos={setKudos} showModal={showModal} isAdmin={isAdmin}/>}
           {view==='tracker'&&isAdmin&&<TrackerView employees={employees} tasks={tasks}/>}
+          {view==='location'&&<LocationView user={safe} isAdmin={isAdmin}/>}
           {view==='directory'&&isAdmin&&<DirectoryView employees={employees} setEmployees={setEmployees} tasks={tasks} showToast={showToast}/>}
           {view==='mytasks'&&!isAdmin&&<MyTasksView user={safe} tasks={tasks} showModal={showModal} showToast={showToast} onDelete={id=>setTasks(p=>p.filter(t=>t.id!==id))} onClone={t=>showModal('logTask',{...t,id:null,date:new Date().toISOString().split('T')[0]})}/>}
           {view==='leaves'&&<LeavesView user={safe} isAdmin={isAdmin} leaveRequests={leaveRequests} setLeaveRequests={setLeaveRequests} showModal={showModal} showToast={showToast}/>}
@@ -6077,14 +6296,13 @@ const DataSync={
       <div class="modal">
         <div class="modal-head">
           <h3 style="font-size:16px; font-weight:900; margin:0;">📝 Activity Tracker Request Form</h3>
-          <button class="btn btn-ghost btn-icon" onclick="this.closest('.modal-bg').remove()"><i class="fa-solid fa-xmark"/></button>
+          <button class="btn btn-ghost btn-icon" onclick="this.closest('.modal-bg').remove()"><i class="fa-solid fa-xmark"/> Close</button>
         </div>
-        ` + TrackerRequestSystem.createRequestForm() + `
+        ` + (typeof TrackerRequestSystem !== 'undefined' ? TrackerRequestSystem.createRequestForm() : '<div class="modal-body">System Error: TrackerRequestSystem not found</div>') + `
       </div>
     `;
     
     document.body.appendChild(modal);
-  };
     
     const submitBtn = modal.querySelector('#tracker-submit-btn');
     const loadingDiv = modal.querySelector('#tracker-loading');
@@ -6093,39 +6311,41 @@ const DataSync={
     const deptInput = modal.querySelector('#tracker-dept');
     const tasksInput = modal.querySelector('#tracker-tasks');
     
-    // Pre-fill if user info provided
-    if (user) {
-      empIdInput.value = user.id || '';
-      nameInput.value = user.name || '';
-      deptInput.value = user.dept || '';
+    if (submitBtn) {
+      if (user) {
+        if (empIdInput) empIdInput.value = user.id || user.employeeId || '';
+        if (nameInput) nameInput.value = (user.firstName + ' ' + user.lastName).trim() || user.name || '';
+        if (deptInput) deptInput.value = user.dept || '';
+      }
+      
+      submitBtn.onclick = async () => {
+        if (!nameInput.value || !deptInput.value || !tasksInput.value) {
+          alert('Please fill in all required fields');
+          return;
+        }
+        
+        submitBtn.style.display = 'none';
+        loadingDiv.style.display = 'block';
+        
+        const result = await TrackerRequestSystem.submit(
+          empIdInput.value || 'GHZ' + String(Math.floor(Math.random() * 10000)).padStart(4, '0'),
+          nameInput.value,
+          deptInput.value,
+          tasksInput.value
+        );
+        
+        loadingDiv.style.display = 'none';
+        
+        if (result && result.success) {
+          alert(`✓ Request submitted! ID: ${result.ghzId || 'Pending'}`);
+          modal.remove();
+        } else {
+          alert(`✗ Error: ${result?.error || 'Connection failed'}`);
+          submitBtn.style.display = 'block';
+        }
+      };
     }
-    
-    submitBtn.onclick = async () => {
-      if (!nameInput.value || !deptInput.value || !tasksInput.value) {
-        alert('Please fill in all required fields');
-        return;
-      }
-      
-      submitBtn.style.display = 'none';
-      loadingDiv.style.display = 'block';
-      
-      const result = await TrackerRequestSystem.submit(
-        empIdInput.value || 'GHZ' + String(Math.floor(Math.random() * 10000)).padStart(4, '0'),
-        nameInput.value,
-        deptInput.value,
-        tasksInput.value
-      );
-      
-      loadingDiv.style.display = 'none';
-      
-      if (result.success) {
-        alert(`✓ Request submitted! ID: ${result.ghzId}`);
-        modal.remove();
-      } else {
-        alert(`✗ Error: ${result.error}`);
-        submitBtn.style.display = 'block';
-      }
-    };
+  };
  
   
   window.showAdminTrackerDashboard = async (sessionId) => {
@@ -6231,16 +6451,11 @@ const DataSync={
     statusDiv.style.display = 'block';
     statusDiv.textContent = '// Unlocking registration menu...';
     
-    try {
-      await fetch(GAS.scriptUrl, {
-        method: 'POST',
-        mode: 'no-cors',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ action: 'unlockRegistrationMenu' })
-      });
+    const res = await GAS.call('unlockRegistrationMenu', {});
+    if (res && (res.success || res.offline)) {
       statusDiv.textContent = '✓ Registration menu unlocked\nBulk enrollment enabled\nIndividual registration enabled';
-    } catch (err) {
-      statusDiv.textContent = `✗ Error: ${err.message}`;
+    } else {
+      statusDiv.textContent = `✗ Error: ${res?.error || 'Connection failed'}`;
     }
   });
 
@@ -6256,333 +6471,6 @@ window.addEventListener('load', () => {
 
 const root=ReactDOM.createRoot(document.getElementById('root'));
 root.render(<Root/>);
-
-// ═══════════════════════════════════════════════════════════════════════════
-// THEME CYCLING ENGINE
-// ═══════════════════════════════════════════════════════════════════════════
-const ThemeEngine = {
-  themes: ['gigahertz', 'midnight', 'forest', 'ocean', 'coffee', 'rosegold', 'sunset', 'sakura', 'corporate', 'nomad', 'planner', 'coffeeshop', 'library'],
-  currentIndex: 0,
-  cycleInterval: null,
-  
-  setTheme(name) {
-    document.documentElement.setAttribute('data-theme', name);
-    localStorage.setItem('activeTheme', name);
-    this.currentIndex = this.themes.indexOf(name);
-  },
-  
-  getNextTheme() {
-    this.currentIndex = (this.currentIndex + 1) % this.themes.length;
-    return this.themes[this.currentIndex];
-  },
-  
-  getRandomTheme() {
-    this.currentIndex = Math.floor(Math.random() * this.themes.length);
-    return this.themes[this.currentIndex];
-  },
-  
-  startCycling(intervalMs = 60000, shuffle = false) {
-    if (this.cycleInterval) clearInterval(this.cycleInterval);
-    this.cycleInterval = setInterval(() => {
-      const nextTheme = shuffle ? this.getRandomTheme() : this.getNextTheme();
-      this.setTheme(nextTheme);
-      console.log(`%c🎨 Theme switched to: ${nextTheme}`, 'color: #8b5cf6; font-weight: bold;');
-    }, intervalMs);
-  },
-  
-  stopCycling() {
-    if (this.cycleInterval) {
-      clearInterval(this.cycleInterval);
-      this.cycleInterval = null;
-    }
-  },
-  
-  init() {
-    const saved = localStorage.getItem('activeTheme') || 'gigahertz';
-    this.setTheme(saved);
-    
-    const cycleEnabled = localStorage.getItem('themeCycleEnabled') === 'true';
-    const cycleInterval = parseInt(localStorage.getItem('themeCycleInterval') || '60000');
-    const cycleMode = localStorage.getItem('themeCycleMode') || 'sequential';
-    
-    if (cycleEnabled) {
-      this.startCycling(cycleInterval, cycleMode === 'shuffle');
-    }
-  }
-};
-
-ThemeEngine.init();
-
-// ═══════════════════════════════════════════════════════════════════════════
-// PROFILE PHOTO UPLOAD
-// ═══════════════════════════════════════════════════════════════════════════
-const PhotoUpload = {
-  async uploadPhoto(employeeId, file) {
-    const reader = new FileReader();
-    return new Promise((resolve) => {
-      reader.onload = async (e) => {
-        try {
-          const base64 = e.target.result.split(',')[1];
-          const result = await GAS.call('uploadProfilePhoto', { employeeId, base64Data: base64 });
-          resolve(result);
-        } catch (error) {
-          resolve({ success: false, error: error.message });
-        }
-      };
-      reader.readAsDataURL(file);
-    });
-  },
-  
-  createUploadUI(employeeId) {
-    const container = document.createElement('div');
-    container.style.cssText = 'position: relative; cursor: pointer; overflow: hidden; border-radius: 50%; width: 60px; height: 60px; background: var(--pl); display: flex; align-items: center; justify-content: center;';
-    
-    const input = document.createElement('input');
-    input.type = 'file';
-    input.accept = 'image/*';
-    input.style.display = 'none';
-    
-    input.onchange = async (e) => {
-      const file = e.target.files[0];
-      if (file) {
-        container.style.opacity = '0.5';
-        const result = await this.uploadPhoto(employeeId, file);
-        container.style.opacity = '1';
-        if (result.success) {
-          showToast(`Profile photo updated! File: ${result.fileName}`, 'success');
-        } else {
-          showToast(`Upload failed: ${result.error}`, 'error');
-        }
-      }
-    };
-    
-    container.appendChild(input);
-    container.onclick = () => input.click();
-    container.title = 'Click to upload profile photo';
-    
-    return container;
-  }
-};
-
-// ═══════════════════════════════════════════════════
-  // TRACKER REQUEST ADMIN PANEL
-  // ═══════════════════════════════════════════════════
-  
-  window.showTrackerRequestForm = function(user) {
-    var u = user || null;
-    var modal = document.createElement('div');
-    modal.className = 'modal-bg';
-    modal.innerHTML = `
-      <div class="modal">
-        <div class="modal-head">
-          <h3 style="font-size:16px; font-weight:900; margin:0;">📝 Activity Tracker Request Form</h3>
-          <button class="btn btn-ghost btn-icon" onclick="this.closest('.modal-bg').remove()"><i class="fa-solid fa-xmark"/></button>
-        </div>
-        ` + TrackerRequestSystem.createRequestForm() + `
-      </div>
-    `;
-    
-    document.body.appendChild(modal);
-    
-    var submitBtn = modal.querySelector('#tracker-submit-btn');
-    var loadingDiv = modal.querySelector('#tracker-loading');
-    var empIdInput = modal.querySelector('#tracker-emp-id');
-    var nameInput = modal.querySelector('#tracker-name');
-    var deptInput = modal.querySelector('#tracker-dept');
-    var tasksInput = modal.querySelector('#tracker-tasks');
-    
-    if (u) {
-      empIdInput.value = u.employeeId || '';
-      nameInput.value = (u.firstName + ' ' + u.lastName) || '';
-      deptInput.value = u.department || '';
-    }
-    
-    submitBtn.onclick = async function() {
-      if (!nameInput.value || !deptInput.value || !tasksInput.value) {
-        alert('Please fill in all required fields');
-        return;
-      }
-      
-      submitBtn.style.display = 'none';
-      loadingDiv.style.display = 'block';
-      
-      var result = await TrackerRequestSystem.submit(
-        empIdInput.value || 'GHZ' + String(Math.floor(Math.random() * 10000)).padStart(4, '0'),
-        nameInput.value,
-        deptInput.value,
-        tasksInput.value
-      );
-      
-      loadingDiv.style.display = 'none';
-      
-      if (result.success) {
-        alert('✓ Request submitted! ID: ' + result.ghzId);
-        modal.remove();
-      } else {
-        alert('✗ Error: ' + result.error);
-        submitBtn.style.display = 'block';
-      }
-    };
-  };
-
-  window.showStaffTrackerRequests = async function(employeeId, employeeName) {
-    LoadingIndicator.show('Loading your requests...');
-    var result = await GAS.call('getEmployeeTrackerRequests', { employeeId: employeeId });
-    LoadingIndicator.hide();
-    
-    if (!result.success) {
-      alert('Error: ' + result.error);
-      return;
-    }
-    
-    var modal = document.createElement('div');
-    modal.className = 'modal-bg';
-    modal.innerHTML = `
-      <div class="modal" style="max-width: 600px;">
-        <div class="modal-head">
-          <h3 style="font-size:16px; font-weight:900; margin:0;">📋 My Tracker Requests (` + (result.count || 0) + `)</h3>
-          <button class="btn btn-ghost btn-icon" onclick="this.closest('.modal-bg').remove()"><i class="fa-solid fa-xmark"/></button>
-        </div>
-        <div class="modal-body">
-          ` + (result.requests.length === 0 ? '<p style="text-align: center; color: var(--tx3);">No requests submitted yet.</p>' : '') + `
-          ` + result.requests.map(function(req) {
-            return `
-            <div style="padding: 12px; background: var(--ibg); border: 1px solid var(--bd); border-radius: 8px; margin-bottom: 8px;">
-              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
-                <span style="font-weight: 600; font-size: 12px;">${req.employeeId}</span>
-                <span style="font-size: 11px; padding: 4px 8px; border-radius: 4px; background: ${req.status === 'approved' ? 'rgba(34,197,94,0.2); color: var(--ok)' : req.status === 'pending' ? 'rgba(245,158,11,0.2); color: var(--warn)' : 'rgba(100,100,100,0.2); color: var(--tx3)'};">${req.status || 'pending'}</span>
-              </div>
-              <p style="margin: 0; font-size: 12px; color: var(--tx3); padding: 8px; background: rgba(0,0,0,0.1); border-radius: 4px; white-space: pre-wrap; word-break: break-word;">${req.tasks}</p>
-            </div>
-            `;
-          }).join('') + `
-        </div>
-      </div>
-    `;
-    
-    document.body.appendChild(modal);
-  };
-
-// ═══════════════════════════════════════════════════════════════════════════
-// ANALYTICS DASHBOARD
-// ═══════════════════════════════════════════════════════════════════════════
-const AnalyticsDashboard = {
-  async getEmployeeStats(sessionId, employeeId) {
-    try {
-      const result = await GAS.call('getEmployeeAnalytics', { secretSessionId: sessionId, employeeId });
-      return result;
-    } catch (error) {
-      return { success: false, error: error.message };
-    }
-  },
-  
-  async get7DayStats(sessionId, employeeId) {
-    try {
-      const result = await GAS.call('get7DayAnalytics', { secretSessionId: sessionId, employeeId });
-      return result;
-    } catch (error) {
-      return { success: false, error: error.message };
-    }
-  },
-  
-  async getTaskQueue(sessionId, department) {
-    try {
-      const result = await GAS.call('getTaskQueueByDepartment', { secretSessionId: sessionId, department });
-      return result;
-    } catch (error) {
-      return { success: false, error: error.message };
-    }
-  }
-};
-
-// ═══════════════════════════════════════════════════════════════════════════
-// LOADING INDICATOR
-// ═══════════════════════════════════════════════════════════════════════════
-const LoadingIndicator = {
-  show(message = 'Loading...', target = document.body) {
-    const loader = document.createElement('div');
-    loader.id = 'global-loader';
-    loader.style.cssText = `
-      position: fixed; top: 0; left: 0; right: 0; bottom: 0; 
-      background: rgba(0,0,0,0.6); backdrop-filter: blur(4px);
-      display: flex; align-items: center; justify-content: center; z-index: 9999;
-      animation: fadeIn 0.3s ease;
-    `;
-    loader.innerHTML = `
-      <div style="text-align: center; color: white;">
-        <div style="font-size: 40px; margin-bottom: 12px; animation: spin 1s linear infinite;">⚙️</div>
-        <p style="font-size: 14px; margin: 0; font-weight: 600;">${message}</p>
-      </div>
-    `;
-    document.body.appendChild(loader);
-    return loader;
-  },
-  
-  hide() {
-    const loader = document.getElementById('global-loader');
-    if (loader) loader.remove();
-  }
-};
-
-// ═══════════════════════════════════════════════════════════════════════════
-// MOBILE OPTIMIZATIONS
-// ═══════════════════════════════════════════════════════════════════════════
-if (window.innerWidth < 768) {
-  const style = document.createElement('style');
-  style.textContent = `
-    @media (max-width: 600px) {
-      .modal-body { padding: 16px 12px; }
-      .btn { font-size: 14px; padding: 10px 12px; }
-      input, select, textarea { font-size: 16px !important; }
-      label { font-size: 11px !important; }
-    }
-  `;
-  document.head.appendChild(style);
-}
-
-// ═══════════════════════════════════════════════════════════════════════════
-// SEASONAL THEME AUTO-SWITCH
-// ═══════════════════════════════════════════════════════════════════════════
-function checkSeasonalTheme() {
-  const month = new Date().getMonth();
-  let suggestedTheme = 'gigahertz';
-  
-  if (month >= 11 || month === 0) {
-    suggestedTheme = 'rosegold'; // Winter
-  } else if (month >= 2 && month <= 4) {
-    suggestedTheme = 'sakura'; // Spring
-  } else if (month >= 5 && month <= 7) {
-    suggestedTheme = 'ocean'; // Summer
-  } else if (month >= 8 && month <= 10) {
-    suggestedTheme = 'sunset'; // Fall
-  }
-  
-  const lastChecked = localStorage.getItem('lastSeasonalCheck');
-  const today = new Date().toDateString();
-  
-  if (lastChecked !== today) {
-    localStorage.setItem('lastSeasonalCheck', today);
-    console.log(`%c🍂 Seasonal theme updated: ${suggestedTheme}`, 'color: #f97316; font-weight: bold;');
-  }
-  
-  return suggestedTheme;
-}
-
-checkSeasonalTheme();
-
-// Initialize animations
-const style = document.createElement('style');
-style.textContent = `
-  @keyframes spin {
-    from { transform: rotate(0deg); }
-    to { transform: rotate(360deg); }
-  }
-  @keyframes fadeIn {
-    from { opacity: 0; }
-    to { opacity: 1; }
-  }
-`;
-document.head.appendChild(style);
 </script>
 </body>
 </html>
