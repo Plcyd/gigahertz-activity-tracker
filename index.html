@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1.0,viewport-fit=cover"/>
-<title>Gigahertz Nexus — Activity Tracker v9.02 PROD</title>
+<title>Gigahertz Nexus — Activity Tracker v9.03 PROD</title>
 
 <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
 <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
@@ -520,7 +520,7 @@
                     --ibg: rgba(239,246,255,0.7);
                     --btn: linear-gradient(160deg,#1e40af,#1e3a8a);
                     --btnH: linear-gradient(160deg,#2563eb,#1e40af);
-                    --glow: rgba(30,64,175,0.4);
+                    --glow: rgba(30,64,175,0.3);
                 }
 
                 [data-theme="egypt"] {
@@ -536,7 +536,7 @@
                     --bd: rgba(212,175,55,0.3);
                     --danger: #cd5c5c;
                     --ok: #556b2f;
-                    --warn: #daa521;
+                    --warn: #daa520;
                     --glass: rgba(30,36,40,0.65);
                     --gborder: rgba(212,175,55,0.4);
                     --shadow: rgba(0,0,0,0.5);
@@ -5204,6 +5204,27 @@ const SettingsView=({theme,setTheme,animations,setAnimations,showToast,gasQueue}
             </button>
           ))}
         </div>
+        <div style={{borderTop:'1px solid var(--bd)',paddingTop:14,marginTop:14}}>
+          <p style={{fontSize:12,fontWeight:800,marginBottom:8}}>🎨 Theme Cycling</p>
+          <div style={{display:'flex',gap:8,flexWrap:'wrap'}}>
+            <label className="toggle-wrap" title="Enable automatic theme switching">
+              <input type="checkbox" defaultChecked={localStorage.getItem('themeCycleEnabled')==='true'} onChange={e=>{localStorage.setItem('themeCycleEnabled',e.target.checked?'true':'false');if(e.target.checked)ThemeEngine.startCycling(parseInt(localStorage.getItem('themeCycleInterval')||'60000'),localStorage.getItem('themeCycleMode')==='shuffle');else ThemeEngine.stopCycling();showToast(e.target.checked?'Theme cycling enabled':'Theme cycling disabled','info');}}/>
+              <span className="toggle-sl"/>
+            </label>
+            <select className="input" style={{fontSize:11,padding:'6px 8px',borderRadius:8}} onChange={e=>{localStorage.setItem('themeCycleInterval',e.target.value);if(localStorage.getItem('themeCycleEnabled')==='true'){ThemeEngine.stopCycling();ThemeEngine.startCycling(parseInt(e.target.value),localStorage.getItem('themeCycleMode')==='shuffle');}showToast(`Cycle interval: ${e.target.value/1000}s`,'info');}}>
+              <option value="60000">Every 1 min</option>
+              <option value="180000">Every 3 mins</option>
+              <option value="300000">Every 5 mins</option>
+              <option value="900000">Every 15 mins</option>
+              <option value="1800000">Every 30 mins</option>
+              <option value="3600000">Every 1 hour</option>
+            </select>
+            <select className="input" style={{fontSize:11,padding:'6px 8px',borderRadius:8}} onChange={e=>{localStorage.setItem('themeCycleMode',e.target.value);showToast(`Mode: ${e.target.value==='shuffle'?'Shuffle':'Sequential'}`,'info');}}>
+              <option value="sequential">Sequential</option>
+              <option value="shuffle">Shuffle</option>
+            </select>
+          </div>
+        </div>
       </div>
       <div className="glass" style={{padding:'20px 22px',borderRadius:16}}>
         <h3 style={{fontSize:14,fontWeight:900,marginBottom:14}}><i className="fa-solid fa-database" style={{color:'var(--p)',marginRight:6}}/>Data Management</h3>
@@ -6026,6 +6047,99 @@ Sunday    █░░░░░░░░░ 8%<br>
     }
   });
 
+  // ═══════════════════════════════════════════════════
+  // TRACKER REQUEST ADMIN PANEL
+  // ═══════════════════════════════════════════════════
+  
+  window.showTrackerRequestForm = () => {
+    const modal = document.createElement('div');
+    modal.className = 'modal-bg';
+    modal.innerHTML = `
+      <div class="modal">
+        <div class="modal-head">
+          <h3 style="font-size:16px; font-weight:900; margin:0;">📝 Activity Tracker Request Form</h3>
+          <button class="btn btn-ghost btn-icon" onclick="this.closest('.modal-bg').remove()"><i class="fa-solid fa-xmark"/></button>
+        </div>
+        ${TrackerRequestSystem.createRequestForm()}
+      </div>
+    `;
+    
+    document.body.appendChild(modal);
+    
+    const submitBtn = modal.querySelector('#tracker-submit-btn');
+    const loadingDiv = modal.querySelector('#tracker-loading');
+    const empIdInput = modal.querySelector('#tracker-emp-id');
+    const nameInput = modal.querySelector('#tracker-name');
+    const deptInput = modal.querySelector('#tracker-dept');
+    const tasksInput = modal.querySelector('#tracker-tasks');
+    
+    submitBtn.onclick = async () => {
+      if (!nameInput.value || !deptInput.value || !tasksInput.value) {
+        alert('Please fill in all required fields');
+        return;
+      }
+      
+      submitBtn.style.display = 'none';
+      loadingDiv.style.display = 'block';
+      
+      const result = await TrackerRequestSystem.submit(
+        empIdInput.value || 'GHZ' + String(Math.floor(Math.random() * 10000)).padStart(4, '0'),
+        nameInput.value,
+        deptInput.value,
+        tasksInput.value
+      );
+      
+      loadingDiv.style.display = 'none';
+      
+      if (result.success) {
+        alert(`✓ Request submitted! ID: ${result.ghzId}`);
+        modal.remove();
+      } else {
+        alert(`✗ Error: ${result.error}`);
+        submitBtn.style.display = 'block';
+      }
+    };
+  };
+  
+  window.showAdminTrackerDashboard = async (sessionId) => {
+    LoadingIndicator.show('Loading tracker requests...');
+    const result = await TrackerRequestSystem.getPendingRequests(sessionId);
+    LoadingIndicator.hide();
+    
+    if (!result.success) {
+      alert(`Error: ${result.error}`);
+      return;
+    }
+    
+    const modal = document.createElement('div');
+    modal.className = 'modal-bg';
+    modal.innerHTML = `
+      <div class="modal" style="max-width: 600px;">
+        <div class="modal-head">
+          <h3 style="font-size:16px; font-weight:900; margin:0;">📊 Pending Tracker Requests</h3>
+          <button class="btn btn-ghost btn-icon" onclick="this.closest('.modal-bg').remove()"><i class="fa-solid fa-xmark"/></button>
+        </div>
+        <div class="modal-body">
+          ${result.requests.length === 0 ? '<p style="text-align: center; color: var(--tx3);">No pending requests</p>' : ''}
+          ${result.requests.map(req => `
+            <div style="padding: 12px; background: var(--ibg); border: 1px solid var(--bd); border-radius: 8px; margin-bottom: 8px;">
+              <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 8px;">
+                <div>
+                  <p style="margin: 0; font-weight: 600; font-size: 13px;">${req.employeeName}</p>
+                  <p style="margin: 4px 0 0 0; font-size: 11px; color: var(--tx3);">${req.employeeId} • ${req.department}</p>
+                </div>
+                <button class="btn btn-primary btn-sm" onclick="TrackerRequestSystem.approveRequest('${sessionId}', '${req.requestId}', 'Approved').then(() => { alert('✓ Approved'); this.closest('.modal-bg').remove(); });" style="white-space: nowrap;">Approve</button>
+              </div>
+              <p style="margin: 0; font-size: 12px; color: var(--tx3); padding: 8px; background: rgba(0,0,0,0.1); border-radius: 4px; white-space: pre-wrap; word-break: break-word;">${req.tasks}</p>
+            </div>
+          `).join('')}
+        </div>
+      </div>
+    `;
+    
+    document.body.appendChild(modal);
+  };
+
   document.getElementById('unlock-registration-btn').addEventListener('click', async () => {
     const statusDiv = document.getElementById('unlock-status');
     statusDiv.style.display = 'block';
@@ -6041,7 +6155,8 @@ Sunday    █░░░░░░░░░ 8%<br>
       statusDiv.textContent = '✓ Registration menu unlocked\nBulk enrollment enabled\nIndividual registration enabled';
     } catch (err) {
       statusDiv.textContent = `✗ Error: ${err.message}`;
-    };
+    }
+  });
 
 
 // ═══════════════════════════════════════════════════════════════════════════
@@ -6055,6 +6170,319 @@ window.addEventListener('load', () => {
 
 const root=ReactDOM.createRoot(document.getElementById('root'));
 root.render(<Root/>);
+
+// ═══════════════════════════════════════════════════════════════════════════
+// THEME CYCLING ENGINE
+// ═══════════════════════════════════════════════════════════════════════════
+const ThemeEngine = {
+  themes: ['gigahertz', 'midnight', 'forest', 'ocean', 'coffee', 'rosegold', 'sunset', 'sakura', 'corporate', 'nomad', 'planner', 'coffeeshop', 'library'],
+  currentIndex: 0,
+  cycleInterval: null,
+  
+  setTheme(name) {
+    document.documentElement.setAttribute('data-theme', name);
+    localStorage.setItem('activeTheme', name);
+    this.currentIndex = this.themes.indexOf(name);
+  },
+  
+  getNextTheme() {
+    this.currentIndex = (this.currentIndex + 1) % this.themes.length;
+    return this.themes[this.currentIndex];
+  },
+  
+  getRandomTheme() {
+    this.currentIndex = Math.floor(Math.random() * this.themes.length);
+    return this.themes[this.currentIndex];
+  },
+  
+  startCycling(intervalMs = 60000, shuffle = false) {
+    if (this.cycleInterval) clearInterval(this.cycleInterval);
+    this.cycleInterval = setInterval(() => {
+      const nextTheme = shuffle ? this.getRandomTheme() : this.getNextTheme();
+      this.setTheme(nextTheme);
+      console.log(`%c🎨 Theme switched to: ${nextTheme}`, 'color: #8b5cf6; font-weight: bold;');
+    }, intervalMs);
+  },
+  
+  stopCycling() {
+    if (this.cycleInterval) {
+      clearInterval(this.cycleInterval);
+      this.cycleInterval = null;
+    }
+  },
+  
+  init() {
+    const saved = localStorage.getItem('activeTheme') || 'gigahertz';
+    this.setTheme(saved);
+    
+    const cycleEnabled = localStorage.getItem('themeCycleEnabled') === 'true';
+    const cycleInterval = parseInt(localStorage.getItem('themeCycleInterval') || '60000');
+    const cycleMode = localStorage.getItem('themeCycleMode') || 'sequential';
+    
+    if (cycleEnabled) {
+      this.startCycling(cycleInterval, cycleMode === 'shuffle');
+    }
+  }
+};
+
+ThemeEngine.init();
+
+// ═══════════════════════════════════════════════════════════════════════════
+// PROFILE PHOTO UPLOAD
+// ═══════════════════════════════════════════════════════════════════════════
+const PhotoUpload = {
+  async uploadPhoto(employeeId, file) {
+    const reader = new FileReader();
+    return new Promise((resolve) => {
+      reader.onload = async (e) => {
+        try {
+          const base64 = e.target.result.split(',')[1];
+          const result = await GAS.call('uploadProfilePhoto', { employeeId, base64Data: base64 });
+          resolve(result);
+        } catch (error) {
+          resolve({ success: false, error: error.message });
+        }
+      };
+      reader.readAsDataURL(file);
+    });
+  },
+  
+  createUploadUI(employeeId) {
+    const container = document.createElement('div');
+    container.style.cssText = 'position: relative; cursor: pointer; overflow: hidden; border-radius: 50%; width: 60px; height: 60px; background: var(--pl); display: flex; align-items: center; justify-content: center;';
+    
+    const input = document.createElement('input');
+    input.type = 'file';
+    input.accept = 'image/*';
+    input.style.display = 'none';
+    
+    input.onchange = async (e) => {
+      const file = e.target.files[0];
+      if (file) {
+        container.style.opacity = '0.5';
+        const result = await this.uploadPhoto(employeeId, file);
+        container.style.opacity = '1';
+        if (result.success) {
+          showToast(`Profile photo updated! File: ${result.fileName}`, 'success');
+        } else {
+          showToast(`Upload failed: ${result.error}`, 'error');
+        }
+      }
+    };
+    
+    container.appendChild(input);
+    container.onclick = () => input.click();
+    container.title = 'Click to upload profile photo';
+    
+    return container;
+  }
+};
+
+// ═══════════════════════════════════════════════════════════════════════════
+// TRACKER REQUEST SYSTEM
+// ═══════════════════════════════════════════════════════════════════════════
+const TrackerRequestSystem = {
+  async submit(employeeId, employeeName, department, tasks) {
+    try {
+      const result = await GAS.call('submitTrackerRequest', {
+        employeeId,
+        employeeName,
+        department,
+        tasks
+      });
+      return result;
+    } catch (error) {
+      return { success: false, error: error.message };
+    }
+  },
+  
+  async getPendingRequests(sessionId) {
+    try {
+      const result = await GAS.call('getPendingTrackerRequests', { secretSessionId: sessionId });
+      return result;
+    } catch (error) {
+      return { success: false, error: error.message };
+    }
+  },
+  
+  async approveRequest(sessionId, requestId, adminNotes = '') {
+    try {
+      const result = await GAS.call('approveTrackerRequest', { secretSessionId: sessionId, requestId, adminNotes });
+      return result;
+    } catch (error) {
+      return { success: false, error: error.message };
+    }
+  },
+  
+  createRequestForm() {
+    return `
+      <div class="modal-body" style="gap: 16px;">
+        <h3 style="margin: 0; font-size: 18px; font-weight: 900;">📝 Activity Tracker Request</h3>
+        <p style="margin: 0; font-size: 12px; color: var(--tx3);">Submit your task tracking information for admin review</p>
+        
+        <label style="display: flex; flex-direction: column; gap: 6px; margin-top: 8px;">
+          <span style="font-weight: 600; font-size: 12px;">Employee ID (Auto: GHZ####)</span>
+          <input id="tracker-emp-id" type="text" placeholder="Your Employee ID" style="padding: 10px; border-radius: 8px; border: 1px solid var(--bd); background: var(--ibg); color: var(--tx); font-family: monospace;">
+        </label>
+        
+        <label style="display: flex; flex-direction: column; gap: 6px;">
+          <span style="font-weight: 600; font-size: 12px;">Full Name</span>
+          <input id="tracker-name" type="text" placeholder="Your full name" style="padding: 10px; border-radius: 8px; border: 1px solid var(--bd); background: var(--ibg); color: var(--tx);">
+        </label>
+        
+        <label style="display: flex; flex-direction: column; gap: 6px;">
+          <span style="font-weight: 600; font-size: 12px;">Department</span>
+          <select id="tracker-dept" style="padding: 10px; border-radius: 8px; border: 1px solid var(--bd); background: var(--ibg); color: var(--tx);">
+            <option value="">Select Department</option>
+            <option value="PID">Process Improvement Development</option>
+            <option value="Marketing">Marketing</option>
+            <option value="Sales">Sales</option>
+            <option value="HR">Human Resources</option>
+            <option value="IT">IT/Nexus Core</option>
+            <option value="Warehouse">Warehouse</option>
+            <option value="Accounting">Accounting</option>
+            <option value="Audit">Internal Audit & Security</option>
+          </select>
+        </label>
+        
+        <label style="display: flex; flex-direction: column; gap: 6px;">
+          <span style="font-weight: 600; font-size: 12px;">Tasks / Activities</span>
+          <textarea id="tracker-tasks" placeholder="Describe your tasks, activities, or projects..." style="padding: 10px; border-radius: 8px; border: 1px solid var(--bd); background: var(--ibg); color: var(--tx); min-height: 100px; font-family: monospace; resize: vertical;"></textarea>
+        </label>
+        
+        <button id="tracker-submit-btn" class="btn" style="width: 100%; background: var(--btn); color: white; padding: 12px; border-radius: 8px; font-weight: 600; margin-top: 12px; border: none; cursor: pointer; transition: all 0.2s;">
+          <i class="fa-solid fa-paper-plane"/> Submit Request
+        </button>
+        
+        <div id="tracker-loading" style="display: none; text-align: center; padding: 12px;">
+          <div style="animation: spin 1s linear infinite; font-size: 20px; margin-bottom: 8px;">⏳</div>
+          <p style="margin: 0; font-size: 12px; color: var(--tx3);">Submitting request...</p>
+        </div>
+      </div>
+    `;
+  }
+};
+
+// ═══════════════════════════════════════════════════════════════════════════
+// ANALYTICS DASHBOARD
+// ═══════════════════════════════════════════════════════════════════════════
+const AnalyticsDashboard = {
+  async getEmployeeStats(sessionId, employeeId) {
+    try {
+      const result = await GAS.call('getEmployeeAnalytics', { secretSessionId: sessionId, employeeId });
+      return result;
+    } catch (error) {
+      return { success: false, error: error.message };
+    }
+  },
+  
+  async get7DayStats(sessionId, employeeId) {
+    try {
+      const result = await GAS.call('get7DayAnalytics', { secretSessionId: sessionId, employeeId });
+      return result;
+    } catch (error) {
+      return { success: false, error: error.message };
+    }
+  },
+  
+  async getTaskQueue(sessionId, department) {
+    try {
+      const result = await GAS.call('getTaskQueueByDepartment', { secretSessionId: sessionId, department });
+      return result;
+    } catch (error) {
+      return { success: false, error: error.message };
+    }
+  }
+};
+
+// ═══════════════════════════════════════════════════════════════════════════
+// LOADING INDICATOR
+// ═══════════════════════════════════════════════════════════════════════════
+const LoadingIndicator = {
+  show(message = 'Loading...', target = document.body) {
+    const loader = document.createElement('div');
+    loader.id = 'global-loader';
+    loader.style.cssText = `
+      position: fixed; top: 0; left: 0; right: 0; bottom: 0; 
+      background: rgba(0,0,0,0.6); backdrop-filter: blur(4px);
+      display: flex; align-items: center; justify-content: center; z-index: 9999;
+      animation: fadeIn 0.3s ease;
+    `;
+    loader.innerHTML = `
+      <div style="text-align: center; color: white;">
+        <div style="font-size: 40px; margin-bottom: 12px; animation: spin 1s linear infinite;">⚙️</div>
+        <p style="font-size: 14px; margin: 0; font-weight: 600;">${message}</p>
+      </div>
+    `;
+    document.body.appendChild(loader);
+    return loader;
+  },
+  
+  hide() {
+    const loader = document.getElementById('global-loader');
+    if (loader) loader.remove();
+  }
+};
+
+// ═══════════════════════════════════════════════════════════════════════════
+// MOBILE OPTIMIZATIONS
+// ═══════════════════════════════════════════════════════════════════════════
+if (window.innerWidth < 768) {
+  const style = document.createElement('style');
+  style.textContent = `
+    @media (max-width: 600px) {
+      .modal-body { padding: 16px 12px; }
+      .btn { font-size: 14px; padding: 10px 12px; }
+      input, select, textarea { font-size: 16px !important; }
+      label { font-size: 11px !important; }
+    }
+  `;
+  document.head.appendChild(style);
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+// SEASONAL THEME AUTO-SWITCH
+// ═══════════════════════════════════════════════════════════════════════════
+function checkSeasonalTheme() {
+  const month = new Date().getMonth();
+  let suggestedTheme = 'gigahertz';
+  
+  if (month >= 11 || month === 0) {
+    suggestedTheme = 'rosegold'; // Winter
+  } else if (month >= 2 && month <= 4) {
+    suggestedTheme = 'sakura'; // Spring
+  } else if (month >= 5 && month <= 7) {
+    suggestedTheme = 'ocean'; // Summer
+  } else if (month >= 8 && month <= 10) {
+    suggestedTheme = 'sunset'; // Fall
+  }
+  
+  const lastChecked = localStorage.getItem('lastSeasonalCheck');
+  const today = new Date().toDateString();
+  
+  if (lastChecked !== today) {
+    localStorage.setItem('lastSeasonalCheck', today);
+    console.log(`%c🍂 Seasonal theme updated: ${suggestedTheme}`, 'color: #f97316; font-weight: bold;');
+  }
+  
+  return suggestedTheme;
+}
+
+checkSeasonalTheme();
+
+// Initialize animations
+const style = document.createElement('style');
+style.textContent = `
+  @keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+  }
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+`;
+document.head.appendChild(style);
 </script>
 </body>
 </html>
