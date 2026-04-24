@@ -5961,100 +5961,117 @@ const DataSync={
 // Triggered by: Username TEMPOROSA + Password SIRKEVS9001!
 // ═══════════════════════════════════════════════════════════════════════════
 
+  window.fetchRetrospective = async function(period) {
+    var resultDiv = document.getElementById('retrospective-result');
+    if (!resultDiv) return;
+    
     try {
-      const response = await fetch(GAS.scriptUrl, {
+      var response = await fetch(GAS_CONFIG.webAppUrl || GAS_URL, {
         method: 'POST',
-        mode: 'no-cors',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ action: 'getRetrospectiveHistory', period })
+        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+        body: JSON.stringify({ action: 'getRetrospectiveHistory', period: period })
       });
       
-      resultDiv.textContent = `// Retrospective history for ${period} loaded successfully\n[Stored in backend. View via analytics dashboard]`;
+      resultDiv.textContent = "// Retrospective history for " + period + " loaded successfully\n[Stored in backend. View via analytics dashboard]";
     } catch (err) {
-      resultDiv.textContent = `// Error: ${err.message}`;
-    };
-
-  document.getElementById('fetch-heatmap-btn').addEventListener('click', async () => {
-    const resultDiv = document.getElementById('heatmap-result');
-    resultDiv.textContent = '// Generating heatmap...';
-    
-    try {
-      const response = await fetch(GAS.scriptUrl, {
-        method: 'POST',
-        mode: 'no-cors',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ action: 'getActivityHeatmap', days: 30 })
-      });
-      
-      resultDiv.innerHTML = `
-        <div style="color: #00ff41;">
-// ACTIVITY HEATMAP ANALYSIS<br>
-Peak Activity Day: WEDNESDAY<br>
-Peak Activity Hour: 10:00 AM<br>
-<br>
-📊 INTENSITY BY DAY:<br>
-Monday    ████░░░░░░ 42%<br>
-Tuesday   █████░░░░░ 55%<br>
-Wednesday ██████░░░░ 78%<br>
-Thursday  █████░░░░░ 61%<br>
-Friday    ████░░░░░░ 38%<br>
-Saturday  ██░░░░░░░░ 15%<br>
-Sunday    █░░░░░░░░░ 8%<br>
-<br>
-🕐 INTENSITY BY HOUR:<br>
-08:00 AM  ██░░░░░░░░ 18%<br>
-09:00 AM  █████░░░░░ 52%<br>
-10:00 AM  ██████░░░░ 88%<br>
-11:00 AM  █████░░░░░ 68%<br>
-12:00 PM  ███░░░░░░░ 32%<br>
-02:00 PM  ████░░░░░░ 45%<br>
-        </div>
-      `;
-    } catch (err) {
-      resultDiv.textContent = `// Error: ${err.message}`;
+      resultDiv.textContent = "// Error: " + err.message;
     }
-  });
+  };
 
-  document.getElementById('delete-attendance-btn').addEventListener('click', async () => {
-    if (!confirm('⚠ Delete attendance logs? This action is PERMANENT.')) return;
-    const empId = document.getElementById('delete-emp-id').value || null;
-    
-    try {
-      await fetch(GAS.scriptUrl, {
-        method: 'POST',
-        mode: 'no-cors',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ action: 'deleteAttendanceLogs', employeeId: empId })
+  window.initSecretMenuListeners = function() {
+    var heatmapBtn = document.getElementById('fetch-heatmap-btn');
+    if (heatmapBtn) {
+      heatmapBtn.addEventListener('click', async function() {
+        var resultDiv = document.getElementById('heatmap-result');
+        if (resultDiv) resultDiv.textContent = '// Generating heatmap...';
+        
+        try {
+          var response = await fetch(GAS_CONFIG.webAppUrl || GAS_URL, {
+            method: 'POST',
+            headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+            body: JSON.stringify({ action: 'getActivityHeatmap', days: 30 })
+          });
+          
+          if (resultDiv) {
+            resultDiv.innerHTML = `
+              <div style="color: #00ff41;">
+              // ACTIVITY HEATMAP ANALYSIS<br>
+              Peak Activity Day: WEDNESDAY<br>
+              Peak Activity Hour: 10:00 AM<br>
+              <br>
+              📊 INTENSITY BY DAY:<br>
+              Monday    ████░░░░░░ 42%<br>
+              Tuesday   █████░░░░░ 55%<br>
+              Wednesday ██████░░░░ 78%<br>
+              Thursday  █████░░░░░ 61%<br>
+              Friday    ████░░░░░░ 38%<br>
+              Saturday  ██░░░░░░░░ 15%<br>
+              Sunday    █░░░░░░░░░ 8%<br>
+              <br>
+              🕐 INTENSITY BY HOUR:<br>
+              08:00 AM  ██░░░░░░░░ 18%<br>
+              09:00 AM  █████░░░░░ 52%<br>
+              10:00 AM  ██████░░░░ 88%<br>
+              11:00 AM  █████░░░░░ 68%<br>
+              12:00 PM  ███░░░░░░░ 32%<br>
+              02:00 PM  ████░░░░░░ 45%<br>
+              </div>
+            `;
+          }
+        } catch (err) {
+          if (resultDiv) resultDiv.textContent = "// Error: " + err.message;
+        }
       });
-      alert('✓ Attendance logs deleted successfully');
-    } catch (err) {
-      alert(`✗ Error: ${err.message}`);
     }
-  });
 
-  document.getElementById('delete-audit-btn').addEventListener('click', async () => {
-    if (!confirm('⚠ Delete audit logs? This action is PERMANENT.')) return;
-    const userId = document.getElementById('delete-user-id').value || null;
-    
-    try {
-      await fetch(GAS.scriptUrl, {
-        method: 'POST',
-        mode: 'no-cors',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ action: 'deleteAuditLogs', userId })
+    var deleteAttendanceBtn = document.getElementById('delete-attendance-btn');
+    if (deleteAttendanceBtn) {
+      deleteAttendanceBtn.addEventListener('click', async function() {
+        if (!confirm('⚠ Delete attendance logs? This action is PERMANENT.')) return;
+        var empIdInput = document.getElementById('delete-emp-id');
+        var empId = empIdInput ? empIdInput.value : null;
+        
+        try {
+          await fetch(GAS_CONFIG.webAppUrl || GAS_URL, {
+            method: 'POST',
+            headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+            body: JSON.stringify({ action: 'deleteAttendanceLogs', employeeId: empId })
+          });
+          alert('✓ Attendance logs deleted successfully');
+        } catch (err) {
+          alert("✗ Error: " + err.message);
+        }
       });
-      alert('✓ Audit logs deleted successfully');
-    } catch (err) {
-      alert(`✗ Error: ${err.message}`);
     }
-  });
+
+    var deleteAuditBtn = document.getElementById('delete-audit-btn');
+    if (deleteAuditBtn) {
+      deleteAuditBtn.addEventListener('click', async function() {
+        if (!confirm('⚠ Delete audit logs? This action is PERMANENT.')) return;
+        var userIdInput = document.getElementById('delete-user-id');
+        var userId = userIdInput ? userIdInput.value : null;
+        
+        try {
+          await fetch(GAS_CONFIG.webAppUrl || GAS_URL, {
+            method: 'POST',
+            headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+            body: JSON.stringify({ action: 'deleteAuditLogs', userId: userId })
+          });
+          alert('✓ Audit logs deleted successfully');
+        } catch (err) {
+          alert("✗ Error: " + err.message);
+        }
+      });
+    }
+  };
 
   // ═══════════════════════════════════════════════════
   // TRACKER REQUEST ADMIN PANEL
   // ═══════════════════════════════════════════════════
   
-  window.showTrackerRequestForm = (user = null) => {
-    const modal = document.createElement('div');
+  window.showTrackerRequestForm = function(user) {
+    var u = user || null;
+    var modal = document.createElement('div');
     modal.className = 'modal-bg';
     modal.innerHTML = `
       <div class="modal">
@@ -6062,11 +6079,12 @@ Sunday    █░░░░░░░░░ 8%<br>
           <h3 style="font-size:16px; font-weight:900; margin:0;">📝 Activity Tracker Request Form</h3>
           <button class="btn btn-ghost btn-icon" onclick="this.closest('.modal-bg').remove()"><i class="fa-solid fa-xmark"/></button>
         </div>
-        ${TrackerRequestSystem.createRequestForm()}
+        ` + TrackerRequestSystem.createRequestForm() + `
       </div>
     `;
     
     document.body.appendChild(modal);
+  };
     
     const submitBtn = modal.querySelector('#tracker-submit-btn');
     const loadingDiv = modal.querySelector('#tracker-loading');
