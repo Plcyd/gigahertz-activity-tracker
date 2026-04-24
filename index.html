@@ -3,16 +3,18 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1.0,viewport-fit=cover"/>
-<title>Gigahertz Nexus — Activity Tracker v9.03 PROD</title>
+<title>Gigahertz Nexus — Activity Tracker v9.04 PROD</title>
 
 <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
 <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
 <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+<!-- Note: For production, use: npx tailwindcss -i ./src/styles.css -o ./dist/output.css -->
 <script src="https://cdn.tailwindcss.com"></script>
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800;900&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet"/>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
-<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⚡</text></svg>">
-
+<!-- Favicon (multiple formats for compatibility) -->
+<link rel="icon" href="https://cdn.shopify.com/s/files/1/0564/4694/3414/files/Gigahertz_Logo_868265dd-6ac7-4363-bfa7-638c2a6cdece.png?v=1746761661" type="image/png">
+<link rel="shortcut icon" href="https://cdn.shopify.com/s/files/1/0564/4694/3414/files/Gigahertz_Logo_868265dd-6ac7-4363-bfa7-638c2a6cdece.png?v=1746761661">
     
     <!-- Custom Stylesheets -->
 <style>
@@ -6051,7 +6053,7 @@ Sunday    █░░░░░░░░░ 8%<br>
   // TRACKER REQUEST ADMIN PANEL
   // ═══════════════════════════════════════════════════
   
-  window.showTrackerRequestForm = () => {
+  window.showTrackerRequestForm = (user = null) => {
     const modal = document.createElement('div');
     modal.className = 'modal-bg';
     modal.innerHTML = `
@@ -6072,6 +6074,13 @@ Sunday    █░░░░░░░░░ 8%<br>
     const nameInput = modal.querySelector('#tracker-name');
     const deptInput = modal.querySelector('#tracker-dept');
     const tasksInput = modal.querySelector('#tracker-tasks');
+    
+    // Pre-fill if user info provided
+    if (user) {
+      empIdInput.value = user.id || '';
+      nameInput.value = user.name || '';
+      deptInput.value = user.dept || '';
+    }
     
     submitBtn.onclick = async () => {
       if (!nameInput.value || !deptInput.value || !tasksInput.value) {
@@ -6116,21 +6125,80 @@ Sunday    █░░░░░░░░░ 8%<br>
     modal.innerHTML = `
       <div class="modal" style="max-width: 600px;">
         <div class="modal-head">
-          <h3 style="font-size:16px; font-weight:900; margin:0;">📊 Pending Tracker Requests</h3>
+          <h3 style="font-size:16px; font-weight:900; margin:0;">📊 Pending Tracker Requests (${result.count || 0})</h3>
           <button class="btn btn-ghost btn-icon" onclick="this.closest('.modal-bg').remove()"><i class="fa-solid fa-xmark"/></button>
         </div>
-        <div class="modal-body">
+        <div class="modal-body" id="tracker-requests-list">
           ${result.requests.length === 0 ? '<p style="text-align: center; color: var(--tx3);">No pending requests</p>' : ''}
-          ${result.requests.map(req => `
-            <div style="padding: 12px; background: var(--ibg); border: 1px solid var(--bd); border-radius: 8px; margin-bottom: 8px;">
+          ${result.requests.map((req, idx) => `
+            <div class="tracker-req-item" data-id="${req.requestId}" data-idx="${idx}" style="padding: 12px; background: var(--ibg); border: 1px solid var(--bd); border-radius: 8px; margin-bottom: 8px;">
               <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 8px;">
-                <div>
+                <div style="flex: 1;">
                   <p style="margin: 0; font-weight: 600; font-size: 13px;">${req.employeeName}</p>
                   <p style="margin: 4px 0 0 0; font-size: 11px; color: var(--tx3);">${req.employeeId} • ${req.department}</p>
                 </div>
-                <button class="btn btn-primary btn-sm" onclick="TrackerRequestSystem.approveRequest('${sessionId}', '${req.requestId}', 'Approved').then(() => { alert('✓ Approved'); this.closest('.modal-bg').remove(); });" style="white-space: nowrap;">Approve</button>
+                <button class="approve-tracker-btn btn btn-primary btn-sm" data-id="${req.requestId}" data-session="${sessionId}" style="white-space: nowrap;">Approve</button>
               </div>
               <p style="margin: 0; font-size: 12px; color: var(--tx3); padding: 8px; background: rgba(0,0,0,0.1); border-radius: 4px; white-space: pre-wrap; word-break: break-word;">${req.tasks}</p>
+            </div>
+          `).join('')}
+        </div>
+      </div>
+    `;
+    
+    document.body.appendChild(modal);
+    
+    // Attach approve button handlers
+    modal.querySelectorAll('.approve-tracker-btn').forEach(btn => {
+      btn.addEventListener('click', async (e) => {
+        e.preventDefault();
+        const reqId = btn.dataset.id;
+        const sessId = btn.dataset.session;
+        btn.disabled = true;
+        btn.textContent = 'Approving...';
+        
+        const res = await TrackerRequestSystem.approveRequest(sessId, reqId, 'Approved by Admin');
+        if (res.success) {
+          alert('✓ Request approved');
+          const item = modal.querySelector(`[data-id="${reqId}"]`);
+          if (item) item.remove();
+        } else {
+          alert(`Error: ${res.error}`);
+          btn.disabled = false;
+          btn.textContent = 'Approve';
+        }
+      });
+    });
+  };
+
+  window.showStaffTrackerRequests = async (employeeId, employeeName) => {
+    LoadingIndicator.show('Loading your requests...');
+    const result = await GAS.call('getEmployeeTrackerRequests', { employeeId });
+    LoadingIndicator.hide();
+    
+    if (!result.success) {
+      alert(`Error: ${result.error}`);
+      return;
+    }
+    
+    const modal = document.createElement('div');
+    modal.className = 'modal-bg';
+    modal.innerHTML = `
+      <div class="modal" style="max-width: 600px;">
+        <div class="modal-head">
+          <h3 style="font-size:16px; font-weight:900; margin:0;">📋 My Tracker Requests (${result.count || 0})</h3>
+          <button class="btn btn-ghost btn-icon" onclick="this.closest('.modal-bg').remove()"><i class="fa-solid fa-xmark"/></button>
+        </div>
+        <div class="modal-body">
+          ${result.requests.length === 0 ? '<p style="text-align: center; color: var(--tx3);">No requests submitted yet. <a href="#" onclick="showTrackerRequestForm({id: \'' + employeeId + '\', name: \'' + employeeName + '\'})" style="color: var(--p); text-decoration: underline;">Submit one now</a></p>' : ''}
+          ${result.requests.map(req => `
+            <div style="padding: 12px; background: var(--ibg); border: 1px solid var(--bd); border-radius: 8px; margin-bottom: 8px;">
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                <span style="font-weight: 600; font-size: 12px;">${req.employeeId}</span>
+                <span style="font-size: 11px; padding: 4px 8px; border-radius: 4px; background: ${req.status === 'approved' ? 'rgba(34,197,94,0.2); color: var(--ok)' : req.status === 'pending' ? 'rgba(245,158,11,0.2); color: var(--warn)' : 'rgba(100,100,100,0.2); color: var(--tx3)'};">${req.status || 'pending'}</span>
+              </div>
+              <p style="margin: 0; font-size: 12px; color: var(--tx3); padding: 8px; background: rgba(0,0,0,0.1); border-radius: 4px; white-space: pre-wrap; word-break: break-word;">${req.tasks}</p>
+              ${req.adminNotes ? '<p style="margin: 8px 0 0 0; font-size: 11px; color: var(--tx3); padding: 6px; background: rgba(100,100,100,0.1); border-radius: 4px; border-left: 2px solid var(--p);">Admin: ' + req.adminNotes + '</p>' : ''}
             </div>
           `).join('')}
         </div>
