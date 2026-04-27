@@ -71,26 +71,16 @@ select.input option{background-color:var(--wh);color:var(--tx)}
 @keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
 @keyframes fadeIn{from{opacity:0}to{opacity:1}}
 @keyframes slideLeft{from{opacity:0;transform:translateX(30px)}to{opacity:1;transform:translateX(0)}}
-@keyframes slideRight{from{opacity:0;transform:translateX(-30px)}to{opacity:1;transform:translateX(0)}}
-@keyframes spin{to{transform:rotate(360deg)}}
-@keyframes pulseGlow{0%,100%{box-shadow:0 0 10px var(--p)}50%{box-shadow:0 0 30px var(--p)}}
-@keyframes bounceIn{0%{transform:scale(0.85);opacity:0}60%{transform:scale(1.02)}100%{transform:scale(1);opacity:1}}
 @keyframes timerPulse{0%,100%{opacity:1}50%{opacity:0.6}}
-@keyframes landingFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-12px)}}
-@keyframes landingFadeIn{from{opacity:0;transform:translateY(30px)}to{opacity:1;transform:translateY(0)}}
 .anim-fade{animation:fadeUp 0.6s cubic-bezier(0.16,1,0.3,1) both}
 .anim-slide{animation:slideLeft 0.5s cubic-bezier(0.16,1,0.3,1) both}
-.anim-slide-right{animation:slideRight 0.5s cubic-bezier(0.16,1,0.3,1) both}
-.anim-bounce{animation:bounceIn 0.5s cubic-bezier(0.16,1,0.3,1) both}
 .spinner{width:20px;height:20px;border:3px solid rgba(255,255,255,0.25);border-top-color:#fff;border-radius:50%;animation:spin .75s linear infinite;display:inline-block}
+@keyframes spin{to{transform:rotate(360deg)}}
 .tab-nums{font-variant-numeric:tabular-nums}
-.progress-bar{height:6px;background:rgba(0,0,0,0.15);border-radius:99px;overflow:hidden;box-shadow:inset 0 1px 2px rgba(0,0,0,0.2)}
-.progress-fill{height:100%;background:linear-gradient(90deg,var(--p),var(--pd));border-radius:99px;transition:width 1.2s cubic-bezier(0.16,1,0.3,1)}
 .badge{display:inline-flex;align-items:center;gap:6px;padding:4px 12px;border-radius:99px;font-size:10px;font-weight:900;text-transform:uppercase;letter-spacing:.08em}
 .badge-active{background:rgba(34,197,94,0.2);color:#10b981;border:1px solid rgba(34,197,94,0.4)}
 .badge-idle{background:rgba(245,158,11,0.2);color:#f59e0b;border:1px solid rgba(245,158,11,0.4)}
 .badge-absent{background:rgba(239,68,68,0.2);color:#ef4444;border:1px solid rgba(239,68,68,0.4)}
-.badge-leave{background:rgba(147,51,234,0.2);color:#c084fc;border:1px solid rgba(147,51,234,0.4)}
 .tag-Admin{background:rgba(59,130,246,0.15);color:#3b82f6;}
 .tag-Support{background:rgba(34,197,94,0.15);color:#22c55e;}
 .tag-Dev{background:rgba(168,85,247,0.15);color:#a855f7;}
@@ -98,7 +88,6 @@ select.input option{background-color:var(--wh);color:var(--tx)}
 .tag-Operations{background:rgba(236,72,153,0.15);color:#ec4899;}
 .modal-overlay{position:fixed;inset:0;z-index:999;background:rgba(0,0,0,0.6);backdrop-filter:blur(8px);display:flex;align-items:center;justify-content:center;padding:16px;animation:fadeIn 0.3s ease}
 .modal-box{background:var(--wh);border:1px solid var(--bd);border-radius:24px;width:100%;max-width:540px;max-height:90vh;overflow-y:auto;box-shadow:0 32px 80px rgba(0,0,0,0.4)}
-@media(max-width:640px){.modal-box{max-width:100%;border-radius:24px 24px 0 0;margin-top:auto;max-height:92vh}.modal-overlay{align-items:flex-end;padding:0}}
 .sidebar{width:280px;min-height:100vh;background:var(--wh);border-right:1px solid var(--bd);display:flex;flex-direction:column;position:fixed;top:0;left:0;z-index:100;transition:transform 0.4s cubic-bezier(0.16,1,0.3,1);box-shadow:4px 0 24px var(--shadow)}
 .sidebar.hidden{transform:translateX(-100%)}
 .nav-item{display:flex;align-items:center;gap:14px;padding:12px 20px;border-radius:12px;font-size:14px;font-weight:700;cursor:pointer;transition:all 0.3s ease;color:var(--tx2);border:none;background:transparent;width:100%;text-align:left;margin-bottom:4px;}
@@ -163,6 +152,8 @@ select.input option{background-color:var(--wh);color:var(--tx)}
 .geo-checking{background:rgba(245,158,11,0.15);color:#fbbf24;border:1px solid rgba(245,158,11,0.4)}
 .landing-page{position:fixed;inset:0;z-index:5000;display:flex;align-items:center;justify-content:center;background:var(--bg);overflow:hidden}
 .landing-orb{position:absolute;border-radius:50%;filter:blur(80px);opacity:0.4;pointer-events:none}
+@keyframes landingFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-12px)}}
+@keyframes landingFadeIn{from{opacity:0;transform:translateY(30px)}to{opacity:1;transform:translateY(0)}}
 .prod-ring-container{position:relative;width:140px;height:140px;display:flex;align-items:center;justify-content:center}
 .prod-ring-svg{position:absolute;top:0;left:0;transform:rotate(-90deg)}
 .prod-ring-inner{text-align:center;z-index:2}
@@ -189,7 +180,6 @@ input:checked+.toggle-slider:before{transform:translateX(22px);background-color:
 <script type="text/babel">
 const { useState, useMemo, useEffect, useRef, useCallback } = React;
 
-// IMPORTANT: Keep this GAS URL exactly as is (for fallback / Web App fetching)
 const GAS_URL = "https://script.google.com/macros/s/AKfycbyXgU7wQD1KKUyHwoBFj52SdGeIuXJqOvOur2lqnDalNRBbjZQKX_K7a11lfKog1HHx/exec";
 
 const QUOTES = [
@@ -1103,6 +1093,8 @@ const MyProfileView = ({ user, tasks }) => {
       </div>
 
       <div style={{display:'grid',gridTemplateColumns:'360px 1fr',gap:24}}>
+        
+        {/* Left Profile Card */}
         <div className="dash-card" style={{overflow:'hidden',display:'flex',flexDirection:'column',paddingBottom:32,paddingTop:0,paddingLeft:0,paddingRight:0,background:'var(--wh)'}}>
           <div className="profile-cover" style={{backgroundImage:`url('https://i.pinimg.com/736x/5f/42/ee/5f42ee598a3eec0a7019622df1e51b14.jpg')`,backgroundSize:'cover',backgroundPosition:'center',borderRadius:0,marginBottom:80,height:220}}>
             <button className="btn btn-ghost" style={{position:'absolute',bottom:12,right:12,background:'rgba(0,0,0,0.5)',color:'#fff',border:'none',fontSize:11,padding:'6px 12px'}}><i className="fa-solid fa-pen"></i> Edit Cover</button>
@@ -1131,6 +1123,7 @@ const MyProfileView = ({ user, tasks }) => {
           </div>
         </div>
 
+        {/* Right Feed */}
         <div style={{display:'flex',flexDirection:'column',gap:16}}>
           <div className="dash-card" style={{padding:20,display:'flex',flexDirection:'column',gap:16}}>
             <div style={{display:'flex',gap:16}}>
@@ -1191,7 +1184,6 @@ const MyTasksView = ({user,tasks,showModal,showToast,onDeleteTask,onCloneTask}) 
         <div><h2 style={{fontSize:28,fontWeight:900,color:'var(--tx)'}}>My Tasks</h2><p style={{fontSize:13,color:'var(--tx3)',marginTop:4,fontWeight:600}}>{filtered.length} tasks • {totalHrs.toFixed(1)} hours</p></div>
         <div style={{display:'flex',gap:10,flexWrap:'wrap'}}>
           <select className="input" value={selYear} onChange={e=>setSelYear(parseInt(e.target.value))} style={{width:'auto',padding:'10px 14px'}}>{years.map(y=><option key={y} value={y}>{y}</option>)}</select>
-          <button className="btn btn-primary" onClick={()=>showModal('logTask')}><i className="fa-solid fa-plus"></i> Log Task</button>
           {filtered.length>0&&<button className="btn btn-ghost" onClick={()=>exportToCSV(filtered,safeUser)}><i className="fa-solid fa-download"></i> CSV</button>}
         </div>
       </div>
@@ -1238,6 +1230,12 @@ const MyTasksView = ({user,tasks,showModal,showToast,onDeleteTask,onCloneTask}) 
             </table>
           )}
         </div>
+        {filtered.length>0&&(
+          <div style={{padding:'16px 24px',borderTop:'1px solid var(--bd)',display:'flex',justifyContent:'space-between',alignItems:'center',flexWrap:'wrap',gap:8,background:'rgba(0,0,0,0.03)'}}>
+            <span style={{fontSize:13,color:'var(--tx3)',fontWeight:700}}>{filtered.length} tasks in {MONTH_NAMES[selMonth-1]}</span>
+            <span style={{fontSize:16,fontWeight:900,color:'var(--p)'}}>{totalHrs.toFixed(2)} total hours</span>
+          </div>
+        )}
       </div>
     </div>
   );
@@ -1318,7 +1316,7 @@ const AnnouncementsView = ({announcements,setAnnouncements,isAdmin,user,showModa
     <div className="anim-fade" style={{display:'flex',flexDirection:'column',gap:20}}>
       <div style={{display:'flex',justifyContent:'space-between',alignItems:'flex-end',flexWrap:'wrap',gap:12}}>
         <div><h2 style={{fontSize:28,fontWeight:900,color:'var(--tx)'}}>📢 Announcements</h2><p style={{fontSize:13,color:'var(--tx3)',marginTop:4,fontWeight:600}}>{safeAnn.length} total</p></div>
-        {isAdmin&&<button className="btn btn-primary" onClick={()=>showModal('announcement')}><i className="fa-solid fa-bullhorn"></i> Post New</button>}
+        {isAdmin&&<button className="btn btn-primary" onClick={()=>showToast('Post new announcement coming soon', 'info')}><i className="fa-solid fa-bullhorn"></i> Post New</button>}
       </div>
       {sorted.length===0&&<div style={{textAlign:'center',padding:'80px',opacity:.4}}><i className="fa-solid fa-bullhorn" style={{fontSize:48,display:'block',marginBottom:16}}></i><p style={{fontWeight:800,fontSize:14}}>No announcements yet.</p></div>}
       <div style={{display:'flex',flexDirection:'column',gap:16}}>
@@ -1340,7 +1338,7 @@ const AnnouncementsView = ({announcements,setAnnouncements,isAdmin,user,showModa
   );
 };
 
-const ProjectsView = ({projects,setProjects,showModal,showToast,isAdmin}) => {
+const ProjectsView = ({projects,setProjects,showToast,isAdmin}) => {
   const [search,setSearch]=useState('');const [filter,setFilter]=useState('All');
   const safeProj=projects||[];
   const filtered=safeProj.filter(p=>{if(filter!=='All'&&p.status!==filter)return false;if(search&&!(p.name||'').toLowerCase().includes(search.toLowerCase())&&!(p.dept||'').toLowerCase().includes(search.toLowerCase()))return false;return true;});
@@ -1350,7 +1348,7 @@ const ProjectsView = ({projects,setProjects,showModal,showToast,isAdmin}) => {
     <div className="anim-fade" style={{display:'flex',flexDirection:'column',gap:20}}>
       <div style={{display:'flex',justifyContent:'space-between',alignItems:'flex-end',flexWrap:'wrap',gap:12}}>
         <div><h2 style={{fontSize:28,fontWeight:900,color:'var(--tx)'}}>Projects</h2><p style={{fontSize:13,color:'var(--tx3)',marginTop:4,fontWeight:600}}>{safeProj.length} total initiatives</p></div>
-        <div style={{display:'flex',gap:10}}>{isAdmin&&safeProj.length>0&&<button className="btn btn-ghost" onClick={()=>exportProjectsToCSV(safeProj)}><i className="fa-solid fa-file-csv"></i> Export</button>}{isAdmin&&<button className="btn btn-primary" onClick={()=>showModal('addProject')}><i className="fa-solid fa-folder-plus"></i> New Project</button>}</div>
+        <div style={{display:'flex',gap:10}}>{isAdmin&&safeProj.length>0&&<button className="btn btn-ghost" onClick={()=>exportProjectsToCSV(safeProj)}><i className="fa-solid fa-file-csv"></i> Export</button>}{isAdmin&&<button className="btn btn-primary" onClick={()=>showToast('New project feature coming soon', 'info')}><i className="fa-solid fa-folder-plus"></i> New Project</button>}</div>
       </div>
       <div style={{display:'flex',gap:10,flexWrap:'wrap'}}>
         <div style={{position:'relative',flex:1,minWidth:200}}><i className="fa-solid fa-magnifying-glass" style={{position:'absolute',left:14,top:'50%',transform:'translateY(-50%)',color:'var(--tx3)',fontSize:13}}></i><input className="input" style={{paddingLeft:40}} placeholder="Search projects..." value={search} onChange={e=>setSearch(e.target.value)}/></div>
@@ -1380,7 +1378,7 @@ const ProjectsView = ({projects,setProjects,showModal,showToast,isAdmin}) => {
   );
 };
 
-const AdminDirectoryView = ({employees,setEmployees,tasks,showToast,onLogTaskForEmp}) => {
+const AdminDirectoryView = ({employees,setEmployees,tasks,showToast}) => {
   const [search,setSearch]=useState('');const [deptFilter,setDeptFilter]=useState('ALL');const [statusFilter,setStatusFilter]=useState('ALL');
   const safeEmp=employees||[];const safeTasks=tasks||[];
   const filtered=useMemo(()=>{let list=safeEmp;if(deptFilter!=='ALL')list=list.filter(e=>e.deptId===parseInt(deptFilter));if(statusFilter!=='ALL')list=list.filter(e=>e.status===statusFilter);if(search.trim()){const q=search.toLowerCase();list=list.filter(e=>(e.fullName||'').toLowerCase().includes(q)||(e.email||'').toLowerCase().includes(q)||(e.employeeId||'').toLowerCase().includes(q));}return list;},[safeEmp,deptFilter,statusFilter,search]);
@@ -1419,7 +1417,7 @@ const AdminDirectoryView = ({employees,setEmployees,tasks,showToast,onLogTaskFor
                         <select value={emp.status||'Active'} onChange={e=>updateStatus(emp.id,e.target.value)} style={{background:'rgba(0,0,0,0.05)',border:'1px solid var(--bd)',borderRadius:10,padding:'4px 8px',fontSize:11,fontWeight:700,color:'var(--tx)',cursor:'pointer'}}><option>Active</option><option>Idle</option><option>Absent</option><option>Leave</option></select>
                       </div>
                     </td>
-                    <td><button className="btn btn-ghost" style={{padding:'8px 14px',fontSize:12}} onClick={()=>onLogTaskForEmp(emp)}><i className="fa-solid fa-clock mr-2" style={{color:'var(--p)'}}></i> Log Task</button></td>
+                    <td><button className="btn btn-ghost" style={{padding:'8px 14px',fontSize:12}} onClick={()=>showToast('Action available soon', 'info')}><i className="fa-solid fa-clock mr-2" style={{color:'var(--p)'}}></i> Log Task</button></td>
                   </tr>
                 );
               })}
@@ -1466,7 +1464,7 @@ const AdminLeavesView = ({leaveRequests,setLeaveRequests,employees,showToast}) =
   );
 };
 
-const LeavesView = ({user,leaveRequests,showModal}) => {
+const LeavesView = ({user,leaveRequests}) => {
   const safeUser=user||{};const safeLeaves=leaveRequests||[];
   const myLeaves=safeLeaves.filter(l=>l.empId===safeUser.id);
   const leaveBalance=safeUser.leaveBalance||10;const leavesUsed=safeUser.leavesUsed||0;
@@ -1474,11 +1472,11 @@ const LeavesView = ({user,leaveRequests,showModal}) => {
     <div className="anim-fade" style={{display:'flex',flexDirection:'column',gap:20}}>
       <div style={{display:'flex',justifyContent:'space-between',alignItems:'flex-end',flexWrap:'wrap',gap:12}}>
         <div><h2 style={{fontSize:28,fontWeight:900,color:'var(--tx)'}}>🏖️ Leave Management</h2></div>
-        <button className="btn btn-primary" onClick={()=>showModal('leaveRequest')}><i className="fa-solid fa-paper-plane"></i> File Request</button>
+        <button className="btn btn-primary" onClick={()=>alert('File Request clicked')}><i className="fa-solid fa-paper-plane"></i> File Request</button>
       </div>
       <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fit,minmax(160px,1fr))',gap:16}}>
         {[{label:'Total Balance',val:leaveBalance,icon:'📅'},{label:'Used',val:leavesUsed,icon:'✅'},{label:'Remaining',val:leaveBalance-leavesUsed,icon:'🏖️'},{label:'Pending',val:myLeaves.filter(l=>l.status==='Pending').length,icon:'⏳'}].map(s=>(
-          <div key={s.label} className="glass p-6 rounded-[24px]"><div style={{fontSize:28,marginBottom:12}}>{s.icon}</div><h3 style={{fontSize:32,fontWeight:900,color:'var(--p)'}}>{s.val}</h3><p style={{fontSize:11,fontWeight:800,textTransform:'uppercase',letterSpacing:'.1em',color:'var(--tx3)',marginTop:4}}>{s.label}</p></div>
+          <div key={s.label} className="dash-card"><div style={{fontSize:28,marginBottom:12}}>{s.icon}</div><h3 style={{fontSize:32,fontWeight:900,color:'var(--p)'}}>{s.val}</h3><p style={{fontSize:11,fontWeight:800,textTransform:'uppercase',letterSpacing:'.1em',color:'var(--tx3)',marginTop:4}}>{s.label}</p></div>
         ))}
       </div>
       <div className="glass" style={{borderRadius:24,overflow:'hidden'}}>
@@ -1637,7 +1635,6 @@ const App = () => {
   const [user, setUser] = useState(null);
   const [showLanding, setShowLanding] = useState(true);
   
-  // App State
   const [activeTab, setActiveTab] = useState('dashboard');
   const [tasks, setTasks] = useState(() => LS.load('ghz_tasks', TASKS_INIT));
   const [employees, setEmployees] = useState(() => LS.load('ghz_emps', EMPLOYEES_INIT));
@@ -1645,12 +1642,9 @@ const App = () => {
   const [announcements, setAnnouncements] = useState(() => LS.load('ghz_ann', ANNOUNCEMENTS_INIT));
   const [leaveRequests, setLeaveRequests] = useState(() => LS.load('ghz_leaves', LEAVE_REQUESTS_INIT));
   
-  // UI State
   const [toasts, setToasts] = useState([]);
   const [navOpen, setNavOpen] = useState(false);
-  const [activeModal, setActiveModal] = useState(null); 
   
-  // AFK & Focus State
   const [lastActivity, setLastActivity] = useState(Date.now());
   const [isAFK, setIsAFK] = useState(false);
   const [afkCountdown, setAfkCountdown] = useState(60); 
@@ -1798,7 +1792,6 @@ const App = () => {
         />
       )}
 
-      {/* NEW SIDEBAR MATCHING IMAGE 1 & 2 */}
       <div className={`sidebar ${!navOpen ? 'desktop-only' : ''}`}>
         <div style={{padding: '24px', display: 'flex', alignItems: 'center', justifyContent:'center', borderBottom: '1px solid var(--bd)', marginBottom:12}}>
           <div style={{background:'var(--wh)',padding:'8px 16px',borderRadius:12,boxShadow:'0 2px 10px rgba(0,0,0,0.05)',border:'1px solid var(--bd)'}}>
@@ -1813,7 +1806,14 @@ const App = () => {
           <button className={`nav-item ${activeTab === 'mytasks' ? 'active' : ''}`} onClick={() => {setActiveTab('mytasks'); setNavOpen(false);}}>
             <div className="nav-icon"><i className="fa-solid fa-list-check"></i></div> Task Management
           </button>
-          <button className={`nav-item ${activeTab === 'leaves' ? 'active' : ''}`} onClick={() => {setActiveTab('leaves'); setNavOpen(false);}}>
+          <button className={`nav-item`} onClick={() => {showToast('Analytics coming soon','warn');}}>
+            <div className="nav-icon"><i className="fa-solid fa-chart-line"></i></div> Analytics
+          </button>
+          <button className={`nav-item ${activeTab === 'profile' ? 'active' : ''}`} onClick={() => {setActiveTab('profile'); setNavOpen(false);}}>
+            <div className="nav-icon"><i className="fa-regular fa-user"></i></div> My Profile
+          </button>
+
+          <button className={`nav-item ${activeTab === 'leaves' ? 'active' : ''}`} style={{marginTop:16}} onClick={() => {setActiveTab('leaves'); setNavOpen(false);}}>
             <div className="nav-icon"><i className="fa-solid fa-umbrella-beach"></i></div> Leaves
           </button>
           <button className={`nav-item ${activeTab === 'leaderboard' ? 'active' : ''}`} onClick={() => {setActiveTab('leaderboard'); setNavOpen(false);}}>
@@ -1822,13 +1822,10 @@ const App = () => {
           <button className={`nav-item ${activeTab === 'announcements' ? 'active' : ''}`} onClick={() => {setActiveTab('announcements'); setNavOpen(false);}}>
             <div className="nav-icon"><i className="fa-solid fa-bullhorn"></i></div> Alerts
           </button>
-          <button className={`nav-item ${activeTab === 'profile' ? 'active' : ''}`} onClick={() => {setActiveTab('profile'); setNavOpen(false);}}>
-            <div className="nav-icon"><i className="fa-regular fa-user"></i></div> My Profile
-          </button>
 
           {isAdmin && (
             <>
-              <p style={{fontSize: 10, fontWeight: 800, textTransform: 'uppercase', letterSpacing: '.1em', color: 'var(--tx3)', marginLeft: 14, marginTop: 16, marginBottom: 4}}>Admin</p>
+              <p style={{fontSize: 10, fontWeight: 800, textTransform: 'uppercase', letterSpacing: '.1em', color: 'var(--tx3)', marginLeft: 14, marginTop: 16, marginBottom: 4}}>Admin Controls</p>
               <button className={`nav-item ${activeTab === 'adminTracker' ? 'active' : ''}`} onClick={() => {setActiveTab('adminTracker'); setNavOpen(false);}}>
                 <div className="nav-icon"><i className="fa-solid fa-satellite-dish"></i></div> Live Tracker
               </button>
@@ -1858,15 +1855,17 @@ const App = () => {
              <div style={{overflow:'hidden'}}>
                <p style={{fontSize:13,fontWeight:800,color:'var(--tx)',whiteSpace:'nowrap',textOverflow:'ellipsis',overflow:'hidden'}}>{user.firstName} {user.lastName}</p>
                <p style={{fontSize:10,color:'var(--p)',fontWeight:700}}>{user.employeeId}</p>
+               <p style={{fontSize:9,fontWeight:800,color:'var(--tx3)',textTransform:'uppercase',marginTop:2}}>{DEPARTMENTS.find(d=>d.id===user.deptId)?.name}</p>
              </div>
           </div>
-
-          <button className={`nav-item ${activeTab === 'settings' ? 'active' : ''}`} style={{marginTop: 16}} onClick={() => {setActiveTab('settings'); setNavOpen(false);}}>
-            <div className="nav-icon"><i className="fa-solid fa-gear"></i></div> Settings
+          <button className={`nav-item`} style={{marginTop:16}} onClick={()=>{showToast('No new notifications','info')}}>
+            <div className="nav-icon"><i className="fa-regular fa-bell"></i></div> Notifications <span style={{marginLeft:'auto',background:'var(--danger)',color:'#fff',fontSize:10,fontWeight:800,padding:'2px 6px',borderRadius:8}}>2</span>
           </button>
-          
-          <button className={`nav-item`} onClick={()=>{setTheme(theme==='dark'||theme==='titan'?'gigahertz':'titan');LS.save('ghz_theme',theme==='dark'||theme==='titan'?'gigahertz':'titan')}}>
+          <button className={`nav-item`} onClick={()=>{setTheme(theme==='dark'||theme==='titan'||theme==='midnight'||theme==='neon'||theme==='cyberpunk'||theme==='matrix'?'gigahertz':'titan');LS.save('ghz_theme',theme==='dark'||theme==='titan'||theme==='midnight'||theme==='neon'||theme==='cyberpunk'||theme==='matrix'?'gigahertz':'titan')}}>
             <div className="nav-icon"><i className="fa-regular fa-moon"></i></div> Dark Mode
+          </button>
+          <button className={`nav-item ${activeTab === 'settings' ? 'active' : ''}`} onClick={() => {setActiveTab('settings'); setNavOpen(false);}}>
+            <div className="nav-icon"><i className="fa-solid fa-gear"></i></div> Settings
           </button>
         </div>
 
