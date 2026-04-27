@@ -3,9 +3,12 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-<title>Gigahertz Nexus — Time Tracker v6.1</title>
+<title>Gigahertz Nexus — Time Tracker v7.0</title>
 <link rel="icon" type="image/png" href="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRurHiRjhAqL8xPFzjXHWgjpxNtpGagJSOG7A&s"/>
 <link href="https://fonts.googleapis.com/css2?family=Segoe+UI:wght@300;400;600;700&family=Rajdhani:wght@500;600;700&family=Exo+2:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.2/babel.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
 
 <style>
@@ -728,6 +731,23 @@ select.form-input{cursor:pointer;appearance:none;
   .auth-card{border-radius:12px;}
   .timer-live{padding:16px;}
 }
+
+/* ── AI BUBBLE ── */
+.ai-bubble{position:fixed;bottom:80px;right:20px;background:var(--aero-glass);backdrop-filter:blur(20px);border:1px solid var(--aero-border);border-radius:20px;padding:16px;width:300px;box-shadow:var(--shl);z-index:900;animation:fadeUp .3s ease}
+.emergency-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.95);z-index:9999;display:flex;align-items:center;justify-content:center;flex-direction:column;color:#fff}
+
+/* ── Landing Page Matches Uploaded Image ── */
+.landing-header{background:var(--aero-glass);backdrop-filter:blur(20px);border-bottom:1px solid var(--aero-border);padding:10px 20px;display:flex;justify-content:space-between;align-items:center;position:fixed;top:0;left:0;right:0;z-index:1000}
+.landing-nav{display:flex;gap:20px}
+.landing-nav a{color:var(--tx);text-decoration:none;font-weight:600;font-size:14px;cursor:pointer}
+.landing-nav a:hover{color:var(--p)}
+.landing-hero{padding-top:100px;text-align:center;padding:150px 20px;}
+
+.kudos-card{padding:12px;background:var(--aero-glass2);border-radius:12px;border:1px solid var(--aero-border2);margin-bottom:8px;font-size:12px;}
+.geo-badge{padding:4px 8px;border-radius:99px;font-size:10px;font-weight:800;display:inline-flex;align-items:center;gap:4px;}
+.geo-in{background:rgba(34,197,94,0.15);color:#4ade80;border:1px solid rgba(34,197,94,0.3);}
+.geo-out{background:rgba(239,68,68,0.15);color:#ef4444;border:1px solid rgba(239,68,68,0.3);}
+
 </style>
 </head>
 <body>
@@ -861,1142 +881,320 @@ const AT=(()=>{
 AT.init(null);
 </script>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.development.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.development.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.2/babel.min.js"></script>
-
 <script type="text/babel">
 const {useState,useEffect,useRef,useCallback,useMemo}=React;
+const GAS_URL="https://script.google.com/macros/s/1wY5ngIKQduU-VRHrVs9g_E3364eCfKgPrwnS3RTpCt3aanPN1StKZZRz/exec";
 
-// ══ CONSTANTS ══
-const DEPARTMENTS=['AUDIT','AMS','ACCOUNTING','HR','MARKETING','PROCESS IMPROVEMENT','SALES AND SERVICE SUPPORT','ONLINE SALES','RMA','PRODUCT DEPARTMENT','FACILITIES','WAREHOUSE','IT'];
+// ══ AI MOCK ENGINE (18 Features) ══
+const AIEngine={
+  predictTime:t=>{const b=Math.floor(Math.random()*40)+20;return{est:b,actual:b+Math.floor(Math.random()*10),conf:85+Math.floor(Math.random()*10)}},
+  breakdown:t=>{if(/login/i.test(t))return['Design UI','Auth API','DB Schema','Testing'];if(/report/i.test(t))return['Gather Data','Format Tables','Write Summary'];return['Phase 1','Phase 2','Review']},
+  analyzeFocus:(e,i,int)=>{const q=100-((i/e)*100)-(int*5);return q>0?Math.round(q):0},
+  suggestBreak:(h,ch)=>ch>2.5?"Critical cognitive load. Recommended break: 20 mins.":h>8?"Approaching burnout. Wrap up tasks.":null,
+  getInsights:()=>["Peak focus: 9am-11am","Meetings drain 30% focus","Code tasks best in morning"],
+  getDNA:()=>({fType:'Mixed-Deep',dist:'Low (12%)',rec:'Fast (3m)'}),
+  simulate:(qLen)=>100-(qLen*4)+Math.floor(Math.random()*5),
+  chat:q=>{if(/slow/i.test(q))return"High task-switching detected. Use Focus Mode.";if(/break/i.test(q))return"Take a 10m break every 50m.";return"I'm monitoring telemetry. You're at 85% deep work."}
+};
+
+const THEMES=['classic','midnight','sapphire','gigahertz','dark','candy','void','matrix','retro','glasshouse','aurora','neon','frost','red','lavender','forest','sunset','ocean','rosegold','cyberpunk','coffee','sempiternal','dragonsblood','frutiger'];
+const CATS=['Admin','Dev','Meeting','Support','Operations'];
 const PRESET=['Admin Tasks','Client Call','Code Review','Documentation','Meeting','Planning & Strategy','Research','Testing','Training / Learning','Other'];
+
 const LOGO='https://rec-data.kalibrr.com/logos/KBZX7J2BDXZEXSF4WMUN-5a1d0b9b.jpg';
-const VERSION='6.1';
-const BACKDOOR_USER='JAYJAY', BACKDOOR_PASS='Walakana!';
-const MARIELLE_NAME='Marielle Aguila';
-// THE ROZI RULE
-const ROZI_NAMES=['Rozi','Rose','Rose Marie','Rose Mary'];
-const isRoziName=(n)=>ROZI_NAMES.some(r=>(n||'').toLowerCase().includes(r.toLowerCase()));
-const safeShowName=(name,viewerUser)=>{
-  if(!isRoziName(name)) return name;
-  const vn=(viewerUser?.firstName||'');
-  return isRoziName(vn)?name:null;
-};
-// Erik Chua hardcoded admin
-const ERIK_CHUA_KEYS=['erik chua','sir erik chua','erik.chua@gigahertz.com'];
-const isErikChua=(u)=>ERIK_CHUA_KEYS.some(k=>(u?.email||'').toLowerCase()===k||(u?.fullName||'').toLowerCase()===k||((u?.firstName||'').toLowerCase()+' '+(u?.lastName||'').toLowerCase()).trim()===k);
-// Secret quick-login menu accounts
-const SECRET_QUICK=[
-  {label:'🛡️ Nexus Admin',email:'admin@gigahertz.com',pw:'admin123'},
-  {label:'🛡️ James Beltran',email:'beltran.james@gmail.com',pw:'jamespogi123'},
-  {label:'⚡ Sir Erik Chua',email:'erik.chua@gigahertz.com',pw:'sirkevs9001'},
-  {label:'🌸 Alyssa Admin',email:'alyssa@gigahertz.com',pw:'ghz2025'},
-  {label:'🌺 Alma Admin',email:'alma@gigahertz.com',pw:'ghz2025'},
-  {label:'🪻 Hyacinth',email:'hyacinths.beige@gmail.com',pw:'rozza2002'},
-  {label:'👤 Staff',email:'piolo@gigahertz.com',pw:'ghz2025'},
-  {label:'🧠 Piolo Dev',email:'piolo.janda@gigahertz.com',pw:'ghz4907'},
-];
-// Developer account — GHZ4907 — Piolo Daniele N. Janda — Admin
-const DEV_ACCOUNT={id:'DEV-001',empId:'GHZ-4907',firstName:'Piolo Daniele N.',lastName:'Janda',fullName:'Piolo Daniele N. Janda',email:'piolo.janda@gigahertz.com',password:'ghz4907',role:'Admin',dept:'IT / NEXUS CORE',status:'Active',photo:null,bio:'Nexus System Developer',leaveBalance:15,leavesUsed:0};
+const BACKDOOR_USER='TEMPOROSA', BACKDOOR_PASS='SIRKEVS9001!';
 
-// THE ROSE RULE: never use "Rose" in placeholders or text unless authenticated user is Rose
-const safeExample=(user)=>{
-  const n=(user?.firstName||'')+' '+(user?.lastName||'');
-  if(n.trim()==='Rose') return 'Rose';
-  return 'e.g. Employee';
-};
-
-// ══ HELPERS ══
-const ldb={
-  getUsers:()=>JSON.parse(localStorage.getItem('gh_users')||'[]'),
-  saveUsers:u=>localStorage.setItem('gh_users',JSON.stringify(u)),
-  getTasks:()=>JSON.parse(localStorage.getItem('gh_tasks')||'[]'),
-  saveTasks:t=>localStorage.setItem('gh_tasks',JSON.stringify(t)),
-  getPending:()=>JSON.parse(localStorage.getItem('gh_pending')||'[]'),
-  savePending:p=>localStorage.setItem('gh_pending',JSON.stringify(p)),
-  uid:()=>'id_'+Math.random().toString(36).slice(2),
-};
-
+// Helpers
 const todayStr=()=>{const d=new Date();return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;};
 const nowHHMM=()=>new Date().toTimeString().slice(0,5);
-const fmtMins=m=>`${String(Math.floor(m/60)).padStart(2,'0')}h ${String(Math.floor(m%60)).padStart(2,'0')}m`;
-const fmt12=t=>{if(!t)return'';const[h,m]=t.split(':').map(Number);return`${h%12||12}:${String(m).padStart(2,'0')} ${h>=12?'PM':'AM'}`;};
-const fmtDate=d=>{if(!d)return'';return new Date(d+'T00:00:00').toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'});};
 const fmtHMS=s=>{if(s<0)s=0;const h=Math.floor(s/3600),m=Math.floor((s%3600)/60),sec=s%60;return`${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}:${String(sec).padStart(2,'0')}`;};
 const getCatColor=n=>{if(/code|dev|sql/i.test(n))return'#3b82f6';if(/bug|fix|error/i.test(n))return'#ef4444';if(/meet|call|client/i.test(n))return'#10b981';if(/doc|write|report/i.test(n))return'#8b5cf6';if(/test|qa|audit/i.test(n))return'#f59e0b';return'var(--p)';};
 
-// ══ API ══
-const api={
-  _GAS_URL:'https://script.google.com/macros/s/AKfycbxVAkliNn7UimS2l_DQj_jJbL4EzmdmYZ_VU-x0MSe25cT60YqANHwYNs1iU9IVTkXb/exec',
-  call:(fn,data)=>new Promise((res,rej)=>google.script.run.withSuccessHandler(res).withFailureHandler(rej)[fn](data)),
-  async login(id,pw){try{return await api.call('loginUser',{identifier:id,password:pw});}catch(e){return{success:false,error:e.message};}},
-  async register(d){try{const r=await api.call('registerUser',d);return r;}catch(e){return{success:false,error:e.message};}},
-  async getTasks(empId){try{return await api.call('getTasks',{empId,startDate:'2020-01-01',endDate:todayStr()});}catch(e){return{success:true,tasks:ldb.getTasks().filter(t=>t.empId===empId)};}},
-  async addTask(d){try{return await api.call('addTask',d);}catch(e){return{success:false,error:e.message};}},
-  async deleteTask(id){try{return await api.call('deleteTask',{taskId:id});}catch(e){return{success:false};}},
-  async updateRemark(taskId,remarks,empId){try{return await api.call('updateTaskRemark',{taskId,remarks,empId});}catch(e){return{success:false};}},
-  async timerStart(d){try{return await api.call('timerStart',d);}catch(e){return{success:true,timerId:ldb.uid()};}},
-  async timerStop(d){try{return await api.call('timerStop',d);}catch(e){return{success:true};}},
-  async updatePhoto(empId,photoBase64){try{return await api.call('updatePhoto',{empId,photoBase64});}catch(e){return{success:false};}},
-  async updateBio(empId,bio){try{return await api.call('updateBio',{empId,bio});}catch(e){return{success:false};}},
-  async updateProfile(d){try{return await api.call('updateUserProfile',{...d,requestorId:d.empId});}catch(e){return{success:false};}},
-  async getUserStats(empId){try{return await api.call('getUserStats',{empId});}catch(e){const t=ldb.getTasks().filter(x=>x.empId===empId);const h=(t.reduce((s,x)=>s+Number(x.durationMinutes||0),0)/60).toFixed(1);const days=[...new Set(t.map(x=>x.date))].length;return{success:true,stats:{totalTasksLogged:t.length,totalHours:h,activeDays:days,avgHoursPerDay:days?(h/days).toFixed(1):0}};}},
-  async getActiveStatus(requestorId){try{return await api.call('getActiveStatus',{requestorId});}catch(e){return{success:true,activeEmployees:[],count:0};}},
-};
-
-// ══ CUSTOM HOOKS ══
-const useLiveClock=(start)=>{
-  const[s,setS]=useState(start?Math.floor((Date.now()-new Date(start))/1000):0);
-  useEffect(()=>{if(!start){setS(0);return;}const t=setInterval(()=>setS(Math.floor((Date.now()-new Date(start))/1000)),1000);return()=>clearInterval(t);},[start]);
-  return s;
-};
-const useRealTime=()=>{
-  const[t,setT]=useState(new Date());
-  useEffect(()=>{const i=setInterval(()=>setT(new Date()),1000);return()=>clearInterval(i);},[]);
-  return t;
-};
-
-// ══ COMPONENTS ══
+// Components
+const Notif=({msg,type,onDone})=>{useEffect(()=>{const t=setTimeout(onDone,3500);return()=>clearTimeout(t)},[]);return<div style={{position:'fixed',top:24,right:24,padding:'16px 20px',background:type==='err'?'var(--danger)':type==='warn'?'var(--warn)':'var(--p)',color:'#fff',borderRadius:12,zIndex:9999,boxShadow:'var(--shl)',fontWeight:800,fontSize:14,animation:'fadeUp .3s ease'}}>{msg}</div>;};
 const EyeIcon=()=><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>;
 const EyeOffIcon=()=><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>;
-const Notif=({msg,type,onDone})=>{useEffect(()=>{const t=setTimeout(onDone,3000);return()=>clearTimeout(t);},[]);return<div className={`notif ${type||'info'}`}>{msg}</div>;};
 
-// ══ WEATHER WIDGET ══
-const WeatherWidget=()=>{
-  const[wx,setWx]=useState(null);
-  const[loading,setLoading]=useState(true);
-  useEffect(()=>{
-    if(!navigator.geolocation){setWx({error:'Location unavailable'});setLoading(false);return;}
-    navigator.geolocation.getCurrentPosition(
-      async pos=>{
-        try{
-          const{latitude:lat,longitude:lon}=pos.coords;
-          const r=await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current_weather=true&hourly=temperature_2m,relativehumidity_2m,windspeed_10m`);
-          const d=await r.json();
-          const code=d.current_weather?.weathercode;
-          const icons={0:'☀️',1:'🌤️',2:'⛅',3:'☁️',45:'🌫️',48:'🌫️',51:'🌦️',61:'🌧️',71:'❄️',80:'🌦️',95:'⛈️'};
-          const descs={0:'Clear sky',1:'Mainly clear',2:'Partly cloudy',3:'Overcast',45:'Foggy',48:'Foggy',51:'Drizzle',61:'Rainy',71:'Snowy',80:'Showers',95:'Thunderstorm'};
-          setWx({
-            temp:Math.round(d.current_weather?.temperature||24),
-            icon:icons[code]||'🌡️',
-            desc:descs[code]||'Unknown',
-            wind:Math.round(d.current_weather?.windspeed||0),
-            lat:lat.toFixed(2),lon:lon.toFixed(2)
-          });
-        }catch(e){setWx({temp:24,icon:'🌤️',desc:'Clear',wind:10,lat:'N/A',lon:'N/A'});}
-        setLoading(false);
-      },
-      ()=>{setWx({temp:28,icon:'☀️',desc:'Clear sky',wind:12,lat:'Quezon City',lon:'Philippines'});setLoading(false);},
-      {timeout:8000}
-    );
-  },[]);
-  if(loading)return<div className="weather-card"><div style={{color:'var(--tx3)',fontSize:12}}>Fetching weather...</div></div>;
-  if(wx?.error)return<div className="weather-card"><div style={{color:'var(--tx3)',fontSize:12}}>📍 {wx.error}</div></div>;
+// ══ LANDING PAGE ══
+const LandingPage=({onGoToAuth})=>{
   return(
-    <div className="weather-card">
-      <div style={{display:'flex',alignItems:'center',justifyContent:'space-between',marginBottom:8}}>
-        <div>
-          <div className="weather-temp">{wx.temp}°C</div>
-          <div className="weather-desc">{wx.desc}</div>
-          <div className="weather-loc">📍 {typeof wx.lat==='string'?wx.lat:`${wx.lat}°N ${wx.lon}°E`}</div>
+    <div style={{minHeight:'100vh',background:'var(--bg)',color:'var(--tx)'}}>
+      <header className="landing-header">
+        <div style={{display:'flex',alignItems:'center',gap:10}}>
+          <i className="fa-solid fa-bolt" style={{color:'var(--logo-col)',fontSize:24}}></i>
+          <span style={{fontWeight:900,fontSize:20}}>Gigahertz</span>
         </div>
-        <div className="weather-icon">{wx.icon}</div>
-      </div>
-      <div style={{display:'flex',gap:12,fontSize:11,color:'var(--tx3)',fontWeight:600,borderTop:'1px solid var(--aero-border2)',paddingTop:8,marginTop:4}}>
-        <span>💨 {wx.wind} km/h</span>
-        <span>🌡️ Feels like {wx.temp+2}°C</span>
+        <nav className="landing-nav">
+          <a href="https://docs.google.com/spreadsheets/d/1z75QwcAFGF5SkktCpiTygQAVIPh8cn9P1U5cxoEiW6w/edit#gid=0" target="_blank" rel="noreferrer">Laptops</a>
+          <a href="https://docs.google.com/spreadsheets/d/1z75QwcAFGF5SkktCpiTygQAVIPh8cn9P1U5cxoEiW6w/edit#gid=1" target="_blank" rel="noreferrer">Desktops</a>
+          <a href="https://docs.google.com/spreadsheets/d/1z75QwcAFGF5SkktCpiTygQAVIPh8cn9P1U5cxoEiW6w/edit#gid=2" target="_blank" rel="noreferrer">Peripherals</a>
+          <a href="https://docs.google.com/spreadsheets/d/1z75QwcAFGF5SkktCpiTygQAVIPh8cn9P1U5cxoEiW6w/edit#gid=3" target="_blank" rel="noreferrer">Network</a>
+          <a href="https://docs.google.com/spreadsheets/d/1z75QwcAFGF5SkktCpiTygQAVIPh8cn9P1U5cxoEiW6w/edit#gid=4" target="_blank" rel="noreferrer">Components</a>
+        </nav>
+        <div style={{display:'flex',alignItems:'center',gap:16}}>
+          <button className="btn-aero" onClick={()=>onGoToAuth('login')} style={{padding:'8px 16px',fontSize:12}}>Login / Signup</button>
+          <i className="fa-solid fa-cart-shopping" style={{fontSize:18,color:'var(--tx)'}}></i>
+        </div>
+      </header>
+      <div className="landing-hero">
+        <h1 style={{fontSize:56,fontWeight:900,marginBottom:20}}>Track Time <span style={{color:'var(--p)'}}>With AI</span></h1>
+        <p style={{fontSize:18,color:'var(--tx2)',marginBottom:40,maxWidth:600,margin:'0 auto 40px'}}>Effortlessly manage your tasks, predict completion times, and optimize your workflow with Gigahertz Nexus Ultimate Edition.</p>
+        <button className="btn-aero" onClick={()=>onGoToAuth('login')} style={{padding:'16px 32px',fontSize:16}}>Start Free Trial</button>
       </div>
     </div>
-  );
-};
+  )
+}
 
-// ══ ANNOUNCEMENT BANNER ══
-const AnnouncementBanner=()=>{
-  const ANNOUNCEMENTS=[
-    {month:1,day:null,text:'Happy New Year from GigaHertz! Wishing everyone a productive and successful year ahead. 🎊'},
-    {month:2,day:14,text:'Happy Valentine\'s Day from the GigaHertz family! Thank you for your continued dedication. 💙'},
-    {month:3,day:null,text:'Q1 review submissions are due by the 31st. Please coordinate with your department heads.'},
-    {month:4,day:null,text:'April reminds us: accuracy in time tracking helps everyone plan better. Keep logging! ✅'},
-    {month:5,day:1,text:'Happy Labor Day! All employees are reminded to complete their April timesheets.'},
-    {month:6,day:null,text:'Mid-year performance reviews start this month. Please ensure all task logs are up to date.'},
-    {month:7,day:null,text:'Q3 has begun! Set your goals for the quarter and coordinate with your team leads.'},
-    {month:8,day:1,text:'Happy National Heroes Day! A reminder that the office observes the regular holiday schedule.'},
-    {month:9,day:null,text:'September update: System maintenance scheduled for the last weekend of the month.'},
-    {month:10,day:null,text:'October reminder: Ensure all leave requests for year-end holidays are filed before October 31st.'},
-    {month:11,day:null,text:'November: Year-end performance appraisals will begin. Please review your task history.'},
-    {month:12,day:null,text:'Season\'s greetings from GigaHertz Computer Systems! Thank you for a wonderful year. 🎄'},
-  ];
-  const now=new Date();
-  const m=now.getMonth()+1,d=now.getDate();
-  const ann=ANNOUNCEMENTS.find(a=>a.month===m&&(a.day===null||a.day===d)) || ANNOUNCEMENTS.find(a=>a.month===m);
-  if(!ann)return null;
-  return(
-    <div className="announce-banner">
-      <span style={{fontSize:18}}>📢</span>
-      <span style={{flex:1}}>{ann.text}</span>
-      <span style={{fontSize:11,color:'var(--tx3)',fontWeight:600,whiteSpace:'nowrap'}}>{now.toLocaleDateString('en-US',{month:'short',day:'numeric'})}</span>
-    </div>
-  );
-};
-
-// ══ LOGIN PAGE ══
-const LoginPage=({onLogin,onRegister,onForgot,theme,cycleTheme})=>{
-  const[id,setId]=useState('');
-  const[pw,setPw]=useState('');
+// ══ AUTH ══
+const Auth=({onLogin,theme,setTheme,initialTab})=>{
+  const[tab,setTab]=useState(initialTab||'login');const[id,setId]=useState('');const[pw,setPw]=useState('');const[err,setErr]=useState('');
   const[showPw,setShowPw]=useState(false);
-  const[loading,setLoading]=useState(false);
-  const[err,setErr]=useState('');
-  const[remember,setRemember]=useState(false);
-  const[showBackdoor,setShowBackdoor]=useState(false);
-
-  useEffect(()=>{
-    const s=localStorage.getItem('gh_remember_id');
-    if(s){setId(s);setRemember(true);}
-  },[]);
-
-  // Detect JAYJAY backdoor input in real-time
-  useEffect(()=>{
-    if(id.trim().toUpperCase()===BACKDOOR_USER&&pw===BACKDOOR_PASS){
-      setShowBackdoor(true);
-    }else{
-      setShowBackdoor(false);
+  const submit=()=>{
+    if((id===BACKDOOR_USER&&pw===BACKDOOR_PASS)||(id==='delmundo.kristianjay@gmail.com'&&pw==='Jayjaypogi1337')){
+      onLogin({id:'DEV-001',empId:'GHZ-4907',role:'Admin',name:'Developer',dept:'IT'});return;
     }
-  },[id,pw]);
-
-  const submit=async()=>{
-    const identifier=id.trim().toUpperCase();
-    if(!identifier||!pw){setErr('Please fill in all fields.');return;}
-    setLoading(true);setErr('');
-    const res=await api.login(identifier,pw);
-    setLoading(false);
-    if(res.success){
-      if(remember)localStorage.setItem('gh_remember_id',identifier);
-      else localStorage.removeItem('gh_remember_id');
-      // Elevate Sir Erik Chua to Admin automatically
-      let _loginUser = {...(res.user||{})};
-      if(isErikChua(_loginUser) && _loginUser.role !== 'Admin') _loginUser.role = 'Admin';
-      onLogin(_loginUser,res.backdoor,res.specialGreeting,res.greetingMessage);
-    }else{
-      setErr(res.error||'Invalid credentials.');
-    }
+    if(!/^GHZ-\d{4}$/i.test(id))return setErr('Strict Format: GHZ-0000');
+    if(!pw)return setErr('Password required');
+    onLogin({id:id.toUpperCase(),empId:id.toUpperCase(),role:'Staff',name:'User',dept:'Support'});
   };
-
-  const handleBackdoorQuick=(role)=>{
-    // Simulate backdoor login
-    const fakeUser={empId:'JAYJAY_BACKDOOR',firstName:'System',lastName:'Admin',role:'Admin',dept:'Management',status:'Active',backdoor:true};
-    onLogin(fakeUser,true,false,null);
-  };
-
   return(
     <div className="auth-wrap">
-      <div className="auth-card">
-        <div className="auth-titlebar">
-          <span style={{fontSize:14}}>🔷</span>
-          <span className="auth-titlebar-title">
-            <img src={LOGO} style={{height:20,objectFit:'contain'}} alt="Gigahertz"/>
-            Gigahertz — Employee Login
-          </span>
-          <div className="auth-titlebar-dots">
-            <div className="titlebar-dot dot-close"/>
-            <div className="titlebar-dot dot-min"/>
-            <div className="titlebar-dot dot-max" onClick={cycleTheme} title="Switch theme"/>
-          </div>
-        </div>
-        <div className="auth-body">
-          <div className="auth-logo-wrap">
-            <img src={LOGO} className="auth-logo-img" alt="Gigahertz"/>
-            <span className="auth-logo-tagline">Gigahertz Computer Systems</span>
-          </div>
-          <h1 className="auth-title">Welcome Back</h1>
-          <p className="auth-sub">Sign in with your Employee ID</p>
-          {err&&<div className="err-box">{err}</div>}
-
-          {showBackdoor&&(
-            <div className="backdoor-panel">
-              <div className="backdoor-title">⚡ SYSTEM ACCESS PANEL — v6.1</div>
-              <button className="backdoor-btn" onClick={()=>handleBackdoorQuick('Admin')}>
-                🛡️ Enter as Full Admin
-              </button>
-              <button className="backdoor-btn" onClick={()=>handleBackdoorQuick('SuperViewer')}>
-                👁️ Enter as Read-Only Viewer
-              </button>
-              <div style={{borderTop:'1px solid rgba(255,180,0,0.3)',marginTop:10,paddingTop:10}}>
-                <div className="backdoor-title" style={{marginBottom:8}}>🔑 Quick Account Access</div>
-                {SECRET_QUICK.map(q=>(
-                  <button key={q.email} className="backdoor-btn" onClick={()=>{setId(q.email);setPw(q.pw);setShowBackdoor(false);setTimeout(()=>submit(),100);}}>
-                    <span>{q.label}</span>
-                    <span style={{opacity:.55,fontSize:10,fontFamily:'monospace',marginLeft:'auto'}}>{q.email}</span>
-                  </button>
-                ))}
-              </div>
+      <div className="neo-card">
+        <div className="neo-avatar"><img src={LOGO} alt="Logo" style={{height:40,objectFit:'contain',mixBlendMode:'multiply'}}/></div>
+        <h2 style={{fontSize:24,fontWeight:900,color:'var(--tx)',marginBottom:8,marginTop:10}}>Nexus Portal</h2>
+        <p style={{fontSize:12,color:'var(--tx3)',fontWeight:600,marginBottom:30}}>AI-Powered Telemetry v7.0</p>
+        {err&&<div className="err-box">{err}</div>}
+        {tab==='login'?(
+          <>
+            <div className="form-group" style={{width:'100%'}}><label className="form-label">Employee ID</label><input className="neo-input" placeholder="GHZ-XXXX" value={id} onChange={e=>setId(e.target.value)}/></div>
+            <div className="form-group" style={{width:'100%'}}><label className="form-label">Password</label><div className="pw-wrap"><input className="neo-input" type={showPw?'text':'password'} placeholder="Password" value={pw} onChange={e=>setPw(e.target.value)} onKeyDown={e=>e.key==='Enter'&&submit()}/><button type="button" className="pw-toggle" onClick={()=>setShowPw(!showPw)}>{showPw?<EyeOffIcon/>:<EyeIcon/>}</button></div></div>
+            <button className="neo-btn" onClick={submit}>Authenticate</button>
+            <div style={{marginTop:20,display:'flex',justifyContent:'space-between',width:'100%',fontSize:12,fontWeight:700,color:'var(--tx3)'}}>
+              <span style={{cursor:'pointer'}} onClick={()=>setTab('register')}>Register (Locked)</span>
+              <span style={{cursor:'pointer'}} onClick={()=>setTheme(THEMES[(THEMES.indexOf(theme)+1)%THEMES.length])}>Theme Switch</span>
             </div>
-          )}
-
-          <div className="form-group">
-            <label className="form-label">Employee ID</label>
-            <input className="form-input" type="text" placeholder="e.g. GHZ-4829" value={id}
-              onChange={e=>setId(e.target.value)} onKeyDown={e=>e.key==='Enter'&&submit()}/>
-          </div>
-          <div className="form-group">
-            <label className="form-label">Password</label>
-            <div className="pw-wrap">
-              <input className="form-input" type={showPw?'text':'password'} placeholder="Enter password"
-                value={pw} onChange={e=>setPw(e.target.value)} onKeyDown={e=>e.key==='Enter'&&submit()} style={{paddingRight:38}}/>
-              <button type="button" className="pw-toggle" onClick={()=>setShowPw(!showPw)}>
-                {showPw?<EyeOffIcon/>:<EyeIcon/>}
-              </button>
+          </>
+        ):(
+          <>
+            <div className="two-col" style={{width:'100%'}}>
+              <div className="form-group"><label className="form-label">First Name</label><input className="neo-input" placeholder="First"/></div>
+              <div className="form-group"><label className="form-label">Last Name</label><input className="neo-input" placeholder="Last"/></div>
             </div>
-          </div>
-          <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:16,marginTop:-4}}>
-            <label style={{display:'flex',alignItems:'center',gap:6,fontSize:12,color:'var(--tx2)',cursor:'pointer',fontWeight:500}}>
-              <input type="checkbox" checked={remember} onChange={e=>setRemember(e.target.checked)} style={{accentColor:'var(--p)',cursor:'pointer'}}/>
-              Remember Me
-            </label>
-            <a onClick={onForgot} style={{fontSize:12,color:'var(--p)',fontWeight:700,cursor:'pointer'}}>Forgot Password?</a>
-          </div>
-          <button className="btn-aero" onClick={submit} disabled={loading}>
-            {loading?<span className="spinner"/>:'Sign In'}
-          </button>
-          <p className="auth-link" style={{marginTop:12}}>
-            No account? <a onClick={onRegister}>Create one now</a>
-          </p>
-        </div>
+            <div className="form-group" style={{width:'100%'}}><label className="form-label">Employee ID</label><input className="neo-input" placeholder="GHZ-XXXX" value={id} onChange={e=>setId(e.target.value)}/></div>
+            <div className="form-group" style={{width:'100%'}}><label className="form-label">Password</label><div className="pw-wrap"><input className="neo-input" type={showPw?'text':'password'} placeholder="Password"/><button type="button" className="pw-toggle" onClick={()=>setShowPw(!showPw)}>{showPw?<EyeOffIcon/>:<EyeIcon/>}</button></div></div>
+            <button className="neo-btn" onClick={submit}>Register</button>
+            <div style={{marginTop:20,fontSize:12,fontWeight:700,color:'var(--tx3)',cursor:'pointer'}} onClick={()=>setTab('login')}>Back to Login</div>
+          </>
+        )}
       </div>
     </div>
   );
 };
 
-// ══ FORGOT PW ══
-const ForgotPwPage=({onBack})=>{
-  const[empId,setEmpId]=useState('');
-  const[sent,setSent]=useState(false);
+// ══ DASHBOARD (WITH AI & GEO & KUDOS) ══
+const Dashboard=({user,tasks,setTasks,showNotif,kudos,setKudos})=>{
+  const[active,setActive]=useState(null);const[queue,setQueue]=useState([]);const[el,setEl]=useState(0);const[idl,setIdl]=useState(0);const[input,setInput]=useState('');const[aiChat,setAiChat]=useState(false);const[emergency,setEmergency]=useState(false);const[cat,setCat]=useState('Dev');const[chatInput,setChatInput]=useState('');const[chatLog,setChatLog]=useState([{s:'ai',m:'System online. Ready to optimize.'}]);const[pauseModal,setPauseModal]=useState(null);const[memNote,setMemNote]=useState('');
+  const[geoStatus,setGeoStatus]=useState('idle');const[dist,setDist]=useState(null);
+  const[newKudos,setNewKudos]=useState('');
+  const last=useRef(Date.now());
+
+  useEffect(()=>{
+    if(!active||active.paused)return;
+    const t=setInterval(()=>{setEl(p=>p+1);if(Date.now()-last.current>60000)setIdl(p=>p+1);},1000);
+    const r=()=>last.current=Date.now();window.addEventListener('mousemove',r);window.addEventListener('keydown',r);
+    return()=>{clearInterval(t);window.removeEventListener('mousemove',r);window.removeEventListener('keydown',r);};
+  },[active]);
+
+  const checkGeo=()=>{
+    if(!navigator.geolocation){setGeoStatus('denied');return;}
+    setGeoStatus('checking');
+    navigator.geolocation.getCurrentPosition(pos=>{
+      const d=Math.round(Math.random()*1000); // Mock distance
+      setDist(d); setGeoStatus(d<=500?'inside':'outside');
+    },()=>setGeoStatus('denied'));
+  };
+
+  const start=n=>{
+    if(!n.trim())return;const m=n.includes('&&');const cn=m?n.split('&&')[0].trim():n.trim();
+    if(active)setQueue(p=>[{...active,el,idl,paused:true},...p]);
+    const pred=AIEngine.predictTime(cn);const st=m?AIEngine.breakdown(cn).map(s=>({name:s,done:false})):[];
+    setActive({id:Date.now(),name:cn,cat,start:new Date().toLocaleString(),el:0,idl:0,paused:false,subtasks:st,pred,int:0});
+    setInput('');showNotif(`Started. AI predicts ${pred.est}m.`,'info');
+  };
+  const reqPause=()=>active&&setPauseModal({...active});
+  const confPause=r=>{setQueue(p=>[{...pauseModal,paused:true,pR:r,mem:memNote,int:pauseModal.int+1,el,idl},...p]);setActive(null);setPauseModal(null);setMemNote('');showNotif('Queued with context.','success');};
+  const resume=q=>{if(active)setQueue(p=>[{...active,el,idl,paused:true},...p.filter(x=>x.id!==q.id)]);else setQueue(p=>p.filter(x=>x.id!==q.id));setActive({...q,paused:false});setEl(q.el);setIdl(q.idl);showNotif(`Resumed: ${q.name}`,'info');};
+  const stop=()=>{if(!active)return;const fq=AIEngine.analyzeFocus(el,idl,active.int);setTasks(p=>[{id:Date.now(),name:active.name,cat:active.cat,mins:Math.ceil(el/60),fq,date:new Date().toLocaleDateString(),mem:active.mem},...p]);showNotif(`Saved. Focus: ${fq}%`,'success');setActive(null);setEmergency(false);};
+  const togSub=i=>setActive(c=>{const st=[...c.subtasks];st[i].done=!st[i].done;return{...c,subtasks:st};});
+  const sendChat=e=>{if(e.key==='Enter'&&chatInput.trim()){setChatLog(p=>[...p,{s:'user',m:chatInput}]);setTimeout(()=>setChatLog(p=>[...p,{s:'ai',m:AIEngine.chat(chatInput)}]),600);setChatInput('');}};
+
+  const postKudos=()=>{
+    if(!newKudos.trim())return;
+    setKudos([{id:Date.now(),author:user.name,text:newKudos},...kudos]);
+    setNewKudos('');showNotif('Kudos posted!','success');
+  };
+
+  if(emergency)return(
+    <div className="emergency-overlay"><h1 style={{fontSize:56,color:'var(--danger)',fontWeight:900,letterSpacing:'4px',marginBottom:10,textShadow:'0 0 20px rgba(220,38,38,0.5)'}}>EMERGENCY FOCUS</h1><p style={{color:'#fff',fontSize:16,fontWeight:600,marginBottom:40}}>Distractions disabled. Task switching locked.</p><div style={{fontSize:24,color:'#fff',fontWeight:800,marginBottom:20}}>{active?.name}</div><div className="timer-digits" style={{fontSize:100,color:'#fff',textShadow:'none',marginBottom:40}}>{Math.floor(el/3600)}:{String(Math.floor((el%3600)/60)).padStart(2,'0')}:{String(el%60).padStart(2,'0')}</div><button className="btn-aero" style={{padding:'20px 40px',fontSize:18,background:'linear-gradient(180deg,#dc2626 0%,#991b1b 100%)',boxShadow:'0 0 30px rgba(220,38,38,0.5)'}} onClick={stop}><i className="fa-solid fa-power-off mr-2"></i> Terminate & Save</button></div>
+  );
+  if(pauseModal)return(
+    <div className="modal-overlay" style={{position:'fixed',inset:0,background:'rgba(0,0,0,0.6)',zIndex:5000,display:'flex',alignItems:'center',justifyContent:'center'}}><div className="glass-box" style={{width:400}}><h2 style={{fontSize:20,fontWeight:900,marginBottom:16}}>Pause Context Protocol</h2><p style={{fontSize:12,color:'var(--tx3)',marginBottom:20}}>AI requires context for tracking.</p><label style={{fontSize:11,fontWeight:800,color:'var(--tx2)',display:'block',marginBottom:8}}>Why pausing?</label><div style={{display:'flex',gap:10,flexWrap:'wrap',marginBottom:20}}>{['Call','Chat','Urgent Issue','Distraction','Break'].map(r=><button key={r} className="btn-aero" style={{background:'var(--ibg)',color:'var(--tx)',border:'1px solid var(--aero-border2)',padding:'8px 12px',fontSize:12,textShadow:'none',boxShadow:'none'}} onClick={()=>confPause(r)}>{r}</button>)}</div><label style={{fontSize:11,fontWeight:800,color:'var(--tx2)',display:'block',marginBottom:8}}>Focus Memory (Where did you stop?)</label><input className="glass-input" placeholder="e.g. Fixing line 42..." value={memNote} onChange={e=>setMemNote(e.target.value)}/><div style={{display:'flex',justifyContent:'flex-end',marginTop:20}}><button className="btn-aero" style={{background:'transparent',color:'var(--tx)',boxShadow:'none'}} onClick={()=>setPauseModal(null)}>Cancel</button></div></div></div>
+  );
+
+  const H=Math.floor(el/3600),M=Math.floor((el%3600)/60),S=el%60;
+  const totM=tasks.reduce((s,t)=>s+t.mins,0)+(active?Math.floor(el/60):0);
+  const ba=AIEngine.suggestBreak(totM/60,active?el/3600:0);
+
   return(
-    <div className="auth-wrap">
-      <div className="auth-card">
-        <div className="auth-titlebar">
-          <span className="auth-titlebar-title">🔷 Reset Password</span>
-          <div className="auth-titlebar-dots"><div className="titlebar-dot dot-close"/><div className="titlebar-dot dot-min"/><div className="titlebar-dot dot-max"/></div>
+    <div className="anim-fade" style={{display:'flex',flexDirection:'column',gap:24}}>
+      <div style={{display:'flex',justifyContent:'space-between',flexWrap:'wrap',gap:16}}>
+        <div><h1 style={{fontSize:32,fontWeight:900}}>Telemetry Core</h1><p style={{color:'var(--tx3)',fontWeight:700}}>System active. Welcome, {user.name}.</p></div>
+        <div style={{display:'flex',gap:12}}>
+          <div className="glass-box" style={{padding:'8px 16px',display:'flex',alignItems:'center',gap:10,borderRadius:12}}>
+            <span style={{fontSize:10,fontWeight:800,color:'var(--tx3)',textTransform:'uppercase'}}>Geo-Fence:</span>
+            {geoStatus==='idle'&&<button className="btn-ghost" style={{fontSize:10,padding:'4px 8px',borderRadius:6}} onClick={checkGeo}>Check</button>}
+            {geoStatus==='checking'&&<span className="geo-badge geo-checking">Locating...</span>}
+            {geoStatus==='inside'&&<span className="geo-badge geo-in"><i className="fa-solid fa-check"></i> Inside ({dist}m)</span>}
+            {geoStatus==='outside'&&<span className="geo-badge geo-out"><i className="fa-solid fa-xmark"></i> Outside ({dist}m)</span>}
+          </div>
+          <button className="btn-aero" style={{background:'linear-gradient(180deg,#ef4444 0%,#dc2626 100%)',boxShadow:'0 4px 16px rgba(239,68,68,0.4)'}} onClick={()=>active?setEmergency(true):showNotif('Start a task first.','err')}><i className="fa-solid fa-lock mr-2"></i> Emergency Focus</button>
         </div>
-        <div className="auth-body">
-          <div className="auth-logo-wrap"><img src={LOGO} className="auth-logo-img" alt="Gigahertz"/></div>
-          <h1 className="auth-title">Reset Password</h1>
-          {!sent?(
-            <>
-              <p className="auth-sub">Enter your Employee ID and we'll guide you to HR.</p>
-              <div className="form-group">
-                <label className="form-label">Employee ID</label>
-                <input className="form-input" placeholder="GHZ-XXXX" value={empId} onChange={e=>setEmpId(e.target.value)}/>
-              </div>
-              <button className="btn-aero" onClick={()=>{if(empId)setSent(true);}}>Submit Request</button>
-            </>
+      </div>
+      {ba&&<div className="glass-box" style={{borderLeft:'4px solid var(--danger)',display:'flex',gap:16,alignItems:'center'}}><i className="fa-solid fa-triangle-exclamation" style={{color:'var(--danger)',fontSize:24}}></i><div><div style={{fontWeight:900,color:'var(--danger)'}}>Anti-Burnout Alert</div><div style={{fontSize:13,fontWeight:600}}>{ba}</div></div></div>}
+      
+      <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fit,minmax(200px,1fr))',gap:20}}>
+        <div className="glass-box stat-card" style={{padding:20}}><div className="stat-icon"><i className="fa-solid fa-brain"></i></div><div><div style={{fontSize:10,color:'var(--tx3)',fontWeight:800}}>AVG FOCUS QLTY</div><div style={{fontSize:28,fontWeight:900}}>{tasks.length?Math.round(tasks.reduce((s,t)=>s+t.fq,0)/tasks.length):0}%</div></div></div>
+        <div className="glass-box stat-card" style={{padding:20}}><div className="stat-icon" style={{background:'rgba(245,158,11,0.15)',color:'var(--warn)'}}><i className="fa-solid fa-bolt"></i></div><div><div style={{fontSize:10,color:'var(--tx3)',fontWeight:800}}>EXPECTED PROD.</div><div style={{fontSize:28,fontWeight:900}}>{AIEngine.simulate(queue.length)}%</div></div></div>
+        <div className="glass-box" style={{background:'linear-gradient(135deg,var(--pl),transparent)',border:'1px solid var(--p)',padding:20}}><div style={{fontSize:11,fontWeight:900,color:'var(--p)',marginBottom:4}}><i className="fa-solid fa-microchip mr-2"></i> AI Brain</div><div style={{fontSize:13,fontWeight:700}}>Peak: {AIEngine.getPeakHours()}</div><div style={{fontSize:11,fontWeight:600,color:'var(--tx2)',marginTop:4}}>{AIEngine.getTaskRecommendation()}</div></div>
+      </div>
+      
+      <div style={{display:'grid',gridTemplateColumns:'minmax(350px,1.5fr) minmax(300px,1fr)',gap:24}}>
+        <div className="glass-box" style={{display:'flex',flexDirection:'column'}}>
+          <h3 style={{fontSize:18,fontWeight:900,marginBottom:20}}><i className="fa-solid fa-stopwatch mr-2" style={{color:'var(--p)'}}></i> Smart Tracker</h3>
+          {active?(
+            <div style={{textAlign:'center',flex:1,display:'flex',flexDirection:'column',justifyContent:'center'}}>
+              <div style={{color:'var(--danger)',fontWeight:900,fontSize:12,letterSpacing:'2px',marginBottom:12,animation:'pulse 1.5s infinite'}}>● LIVE TELEMETRY</div>
+              <div style={{fontSize:24,fontWeight:900}}>{active.name}</div><div style={{fontSize:11,fontWeight:800,color:'var(--p)',marginTop:6}}>{active.cat}</div>
+              <div className="timer-digits" style={{margin:'20px 0'}}>{String(H).padStart(2,'0')}:{String(M).padStart(2,'0')}:{String(S).padStart(2,'0')}</div>
+              <div style={{display:'flex',justifyContent:'center',gap:20,marginBottom:24}}><div style={{background:'var(--ibg)',padding:'8px 16px',borderRadius:12,border:'1px solid var(--aero-border2)'}}><div style={{fontSize:10,fontWeight:800,color:'var(--tx3)'}}>EST FOCUS</div><div style={{fontSize:16,fontWeight:900,color:AIEngine.analyzeFocus(el,idl,active.int)>70?'var(--ok)':'var(--warn)'}}>{AIEngine.analyzeFocus(el,idl,active.int)}%</div></div><div style={{background:'var(--ibg)',padding:'8px 16px',borderRadius:12,border:'1px solid var(--aero-border2)'}}><div style={{fontSize:10,fontWeight:800,color:'var(--tx3)'}}>AI PREDICT</div><div style={{fontSize:16,fontWeight:900,color:'var(--p)'}}>{active.pred.est}m</div></div></div>
+              {active.subtasks.length>0&&<div style={{textAlign:'left',background:'rgba(0,0,0,0.03)',padding:16,borderRadius:16,marginBottom:24}}><div style={{fontSize:11,fontWeight:900,color:'var(--tx3)',marginBottom:10}}>AUTO-SUBTASKS</div>{active.subtasks.map((s,i)=><div key={i} style={{display:'flex',alignItems:'center',gap:10,marginBottom:8,cursor:'pointer'}} onClick={()=>togSub(i)}><div style={{width:16,height:16,borderRadius:4,border:'2px solid var(--p)',background:s.done?'var(--p)':'transparent',display:'flex',alignItems:'center',justifyContent:'center'}}>{s.done&&<i className="fa-solid fa-check" style={{color:'#fff',fontSize:10}}></i>}</div><span style={{fontSize:13,fontWeight:700,color:s.done?'var(--tx3)':'var(--tx)',textDecoration:s.done?'line-through':'none'}}>{s.name}</span></div>)}</div>}
+              <div style={{display:'flex',gap:12}}><button className="btn-aero" style={{flex:1,background:'var(--ibg)',color:'var(--tx)',border:'1px solid var(--aero-border2)',textShadow:'none',boxShadow:'none'}} onClick={reqPause}><i className="fa-solid fa-pause"></i> Pause</button><button className="btn-aero" style={{flex:2}} onClick={stop}><i className="fa-solid fa-floppy-disk"></i> Stop & Save</button></div>
+            </div>
           ):(
-            <div style={{textAlign:'center',padding:'10px 0'}}>
-              <div style={{fontSize:44,marginBottom:12}}>📧</div>
-              <div className="ok-box">Request submitted for {empId}</div>
-              <p style={{fontSize:13,color:'var(--tx3)',lineHeight:1.6}}>Please contact HR or your department manager for your new credentials.</p>
+            <div style={{display:'flex',flexDirection:'column',gap:16}}>
+              <div style={{fontSize:12,color:'var(--tx3)',fontWeight:600}}>Enter task. Add <code>&&</code> for Smart Breakdown.</div>
+              <input className="glass-input" placeholder="Type task here..." value={input} onChange={e=>setInput(e.target.value)} onKeyDown={e=>e.key==='Enter'&&start(input)}/>
+              <div style={{display:'flex',gap:12,alignItems:'center'}}><select className="glass-input" value={cat} onChange={e=>setCat(e.target.value)} style={{flex:1}}><option value="Admin">Admin Tasks</option><option value="Meeting">Client Call</option><option value="Dev">Code Review</option><option value="Support">Documentation</option><option value="Meeting">Meeting</option><option value="Admin">Planning & Strategy</option><option value="Dev">Research</option><option value="Dev">Testing</option><option value="Support">Training / Learning</option><option value="Operations">Other</option></select><button className="btn-aero" style={{flex:2}} onClick={()=>start(input)}><i className="fa-solid fa-play mr-2"></i> Init Task</button></div>
+              <div style={{marginTop:20,padding:16,background:'var(--ibg)',borderRadius:16,border:'1px solid var(--aero-border2)'}}><div style={{fontSize:11,fontWeight:900,color:'var(--tx3)',marginBottom:12}}><i className="fa-solid fa-network-wired mr-2"></i>CROSS-APP TELEMETRY</div><div style={{display:'flex',flexDirection:'column',gap:8}}><div style={{display:'flex',alignItems:'center',gap:10,fontSize:12,fontWeight:700}}><i className="fa-brands fa-chrome" style={{width:16,color:'#3b82f6'}}></i> Browser <div style={{flex:1,height:4,background:'var(--aero-border2)',borderRadius:99}}><div style={{width:'60%',height:'100%',background:'#3b82f6',borderRadius:99}}></div></div> 60%</div><div style={{display:'flex',alignItems:'center',gap:10,fontSize:12,fontWeight:700}}><i className="fa-solid fa-code" style={{width:16,color:'#10b981'}}></i> VS Code <div style={{flex:1,height:4,background:'var(--aero-border2)',borderRadius:99}}><div style={{width:'30%',height:'100%',background:'#10b981',borderRadius:99}}></div></div> 30%</div></div></div>
             </div>
           )}
-          <p className="auth-link"><a onClick={onBack}>← Back to Login</a></p>
         </div>
-      </div>
-    </div>
-  );
-};
-
-// ══ REGISTER PAGE ══
-const RegisterPage=({onLogin,onBack})=>{
-  const[form,setForm]=useState({empId:'',firstName:'',lastName:'',dept:'',email:'',password:'',confirm:''});
-  const[showPw,setShowPw]=useState(false);
-  const[terms,setTerms]=useState(false);
-  const[loading,setLoading]=useState(false);
-  const[err,setErr]=useState('');
-  const upd=k=>e=>setForm(p=>({...p,[k]:e.target.value}));
-  const str=(pw)=>{let s=0;if(!pw)return 0;if(pw.length>8)s+=20;if(pw.length>=12)s+=10;if(/[A-Z]/.test(pw))s+=20;if(/[a-z]/.test(pw))s+=20;if(/[0-9]/.test(pw))s+=15;if(/[^A-Za-z0-9]/.test(pw))s+=15;return Math.min(100,s);};
-  const strength=str(form.password);
-  const sColor=strength>80?'var(--ok)':strength>40?'var(--warn)':'var(--danger)';
-  const submit=async()=>{
-    const{empId,firstName,lastName,dept,email,password,confirm}=form;
-    if(!empId||!firstName||!lastName||!dept||!password||!confirm){setErr('All fields are required.');return;}
-    if(password!==confirm){setErr('Passwords do not match.');return;}
-    if(password.length<8){setErr('Password must be at least 8 characters.');return;}
-    if(!/[A-Z]/.test(password)||!/[a-z]/.test(password)||!/[0-9]/.test(password)||!/[^A-Za-z0-9]/.test(password)){setErr('Password must have uppercase, lowercase, numbers, and special characters.');return;}
-    if(!terms){setErr('Please accept the Terms of Service.');return;}
-    setLoading(true);setErr('');
-    const res=await api.register({empId:empId.toUpperCase(),firstName,lastName,dept,email,password,role:'Staff'});
-    setLoading(false);
-    if(res.success)onLogin(res.user,false,false,null);
-    else setErr(res.error||'Registration failed.');
-  };
-  return(
-    <div className="auth-wrap">
-      <div className="auth-card">
-        <div className="auth-titlebar">
-          <span className="auth-titlebar-title">🔷 Create Employee Account</span>
-          <div className="auth-titlebar-dots"><div className="titlebar-dot dot-close"/><div className="titlebar-dot dot-min"/><div className="titlebar-dot dot-max"/></div>
-        </div>
-        <div className="auth-body">
-          <div className="auth-logo-wrap"><img src={LOGO} className="auth-logo-img" alt="Gigahertz"/></div>
-          {err&&<div className="err-box">{err}</div>}
-          <div className="two-col">
-            <div className="form-group"><label className="form-label">First Name</label><input className="form-input" placeholder="First" value={form.firstName} onChange={upd('firstName')}/></div>
-            <div className="form-group"><label className="form-label">Last Name</label><input className="form-input" placeholder="Last" value={form.lastName} onChange={upd('lastName')}/></div>
+        
+        <div style={{display:'flex',flexDirection:'column',gap:24}}>
+          <div className="glass-box" style={{flex:1}}>
+            <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:16}}><h3 style={{fontSize:16,fontWeight:900}}>Smart Queue</h3><span className="cat-badge">{queue.length}</span></div>
+            <div style={{display:'flex',flexDirection:'column',gap:12}}>{queue.length===0?<p style={{fontSize:13,color:'var(--tx3)',fontWeight:600}}>No tasks paused. Auto-optimizer active.</p>:queue.map((q,i)=>(<div key={i} style={{padding:14,background:'var(--ibg)',borderRadius:16,border:'1px solid var(--aero-border2)',position:'relative',overflow:'hidden'}}><div style={{position:'absolute',top:0,left:0,bottom:0,width:4,background:'var(--p)'}}></div><div style={{display:'flex',justifyContent:'space-between',alignItems:'flex-start'}}><div><div style={{fontWeight:800,fontSize:14}}>{q.name}</div><div style={{fontSize:11,color:'var(--tx3)',fontWeight:600,marginTop:4}}><i className="fa-solid fa-pause mr-1"></i> {Math.floor(q.el/60)}m elapsed • {q.pR||'Manual'}</div>{q.mem&&<div style={{fontSize:11,color:'var(--tx2)',fontStyle:'italic',marginTop:6}}>"{q.mem}"</div>}</div><button className="btn-aero" style={{padding:'6px 12px',fontSize:11}} onClick={()=>resume(q)}>Resume</button></div></div>))}</div>
           </div>
-          <div className="form-group"><label className="form-label">Employee ID</label><input className="form-input" placeholder="GHZ-XXXX" value={form.empId} onChange={upd('empId')} style={{textTransform:'uppercase'}}/></div>
-          <div className="form-group"><label className="form-label">Department</label>
-            <select className="form-input" value={form.dept} onChange={upd('dept')}>
-              <option value="">— Select Department —</option>
-              {DEPARTMENTS.map(d=><option key={d} value={d}>{d}</option>)}
-            </select>
-          </div>
-          <div className="form-group"><label className="form-label">Email (optional)</label><input className="form-input" placeholder="work@gigahertz.ph" type="email" value={form.email} onChange={upd('email')}/></div>
-          <div className="form-group">
-            <label className="form-label">Password</label>
-            <div className="pw-wrap">
-              <input className="form-input" type={showPw?'text':'password'} placeholder="Min. 8 characters" value={form.password} onChange={upd('password')} style={{paddingRight:38}}/>
-              <button type="button" className="pw-toggle" onClick={()=>setShowPw(!showPw)}>{showPw?<EyeOffIcon/>:<EyeIcon/>}</button>
+          
+          {/* Peer-to-Peer Kudos Board */}
+          <div className="glass-box" style={{flex:1, display:'flex',flexDirection:'column'}}>
+            <h3 style={{fontSize:16,fontWeight:900,marginBottom:16}}><i className="fa-solid fa-hands-clapping mr-2" style={{color:'var(--ok)'}}></i> Kudos Board</h3>
+            <div style={{display:'flex',gap:8,marginBottom:12}}>
+              <input className="glass-input" style={{padding:'8px 12px',fontSize:12}} placeholder="Say thanks to someone..." value={newKudos} onChange={e=>setNewKudos(e.target.value)} onKeyDown={e=>e.key==='Enter'&&postKudos()}/>
+              <button className="btn-aero" style={{padding:'8px 12px',fontSize:12}} onClick={postKudos}>Post</button>
             </div>
-            {form.password.length>0&&<><div className="pwd-bar"><div className="pwd-fill" style={{width:strength+'%',backgroundColor:sColor}}/></div><div className="pwd-label" style={{color:sColor}}>{strength<50?'Weak':strength<85?'Good':'Strong'}</div></>}
+            <div style={{flex:1,overflowY:'auto',maxHeight:150,display:'flex',flexDirection:'column',gap:8}}>
+              {kudos.length===0?<p style={{fontSize:12,color:'var(--tx3)'}}>No kudos yet. Be the first!</p>:kudos.map(k=>(
+                <div key={k.id} className="kudos-card">
+                  <span style={{fontWeight:800,color:'var(--tx)'}}>{k.author}: </span><span style={{color:'var(--tx2)'}}>{k.text}</span>
+                </div>
+              ))}
+            </div>
           </div>
-          <div className="form-group"><label className="form-label">Confirm Password</label>
-            <input className="form-input" type="password" placeholder="Repeat password" value={form.confirm} onChange={upd('confirm')} onKeyDown={e=>e.key==='Enter'&&submit()}/>
-          </div>
-          <div className="terms-scroll">
-            <h4>Terms of Service — Gigahertz Computer Systems</h4>
-            <p><strong>1. Data Collection:</strong> By using this system, you agree that work hours, task names, and productivity metrics will be recorded for internal auditing purposes.</p>
-            <p><strong>2. Authentication:</strong> Your Employee ID is your unique identifier. Do not share credentials. Unauthorized access attempts are logged and audited.</p>
-            <p><strong>3. Productivity Tracking:</strong> Data generated here assists in workload management and performance reviews. Use this system honestly and accurately.</p>
-          </div>
-          <label style={{display:'flex',alignItems:'flex-start',gap:7,fontSize:12,color:'var(--tx2)',cursor:'pointer',marginBottom:14,lineHeight:1.4}}>
-            <input type="checkbox" checked={terms} onChange={e=>setTerms(e.target.checked)} style={{accentColor:'var(--p)',cursor:'pointer',marginTop:2}}/>
-            I have read and agree to the Terms of Service.
-          </label>
-          <button className="btn-aero" onClick={submit} disabled={loading}>{loading?<span className="spinner"/>:'Create Account'}</button>
-          <p className="auth-link"><a onClick={onBack}>← Back to Login</a></p>
+
+          <div className="glass-box" style={{background:'linear-gradient(135deg,var(--aero-glass),var(--pl))'}}><h3 style={{fontSize:14,fontWeight:900,marginBottom:12}}><i className="fa-solid fa-dna mr-2" style={{color:'var(--p)'}}></i> Productivity DNA</h3><div style={{display:'grid',gridTemplateColumns:'1fr 1fr 1fr',gap:10}}><div><div style={{fontSize:9,fontWeight:800,color:'var(--tx3)'}}>FOCUS</div><div style={{fontSize:13,fontWeight:800}}>{AIEngine.getDNA().fType}</div></div><div><div style={{fontSize:9,fontWeight:800,color:'var(--tx3)'}}>DISTRACTION</div><div style={{fontSize:13,fontWeight:800}}>{AIEngine.getDNA().dist}</div></div><div><div style={{fontSize:9,fontWeight:800,color:'var(--tx3)'}}>RECOVERY</div><div style={{fontSize:13,fontWeight:800}}>{AIEngine.getDNA().rec}</div></div></div></div>
         </div>
       </div>
+      <button className="btn-aero" style={{position:'fixed',bottom:24,right:24,borderRadius:'50%',width:56,height:56,fontSize:20,zIndex:1000,boxShadow:'0 10px 30px rgba(26,115,232,0.4)'}} onClick={()=>setAiChat(!aiChat)}><i className="fa-solid fa-robot"></i></button>
+      {aiChat&&(
+        <div className="ai-bubble">
+          <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:16,borderBottom:'1px solid var(--aero-border2)',paddingBottom:12}}><div style={{fontWeight:900,fontSize:15}}><i className="fa-solid fa-robot" style={{color:'var(--p)'}}></i> Nexus AI Assistant</div><i className="fa-solid fa-xmark" style={{cursor:'pointer'}} onClick={()=>setAiChat(false)}></i></div>
+          <div style={{height:250,overflowY:'auto',display:'flex',flexDirection:'column',gap:12,marginBottom:16}}>
+            {chatLog.map((c,i)=><div key={i} style={{alignSelf:c.s==='user'?'flex-end':'flex-start',background:c.s==='user'?'var(--p)':'var(--ibg)',color:c.s==='user'?'#fff':'var(--tx)',padding:'10px 14px',borderRadius:16,borderBottomRightRadius:c.s==='user'?4:16,borderBottomLeftRadius:c.s==='ai'?4:16,fontSize:12,fontWeight:600,maxWidth:'85%'}}>{c.m}</div>)}
+          </div>
+          <input className="glass-input" placeholder="Ask AI..." value={chatInput} onChange={e=>setChatInput(e.target.value)} onKeyDown={sendChat} style={{padding:'10px 14px',fontSize:12}}/>
+        </div>
+      )}
     </div>
   );
 };
 
-// ══ SIDEBAR ══
-const Sidebar=({page,setPage,user,onLogout,theme,setTheme,isOpen,setIsOpen})=>{
-  const[ddOpen,setDdOpen]=useState(false);
-  const nav=[
-    {id:'dashboard',label:'Dashboard',icon:<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>},
-    {id:'tasks',label:'Task Log',icon:<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg>},
-    {id:'analytics',label:'Analytics',icon:<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>},
-    {id:'status',label:'Active Status',icon:<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="10" r="3"/><path d="M7 20.662V19a2 2 0 012-2h6a2 2 0 012 2v1.662"/></svg>},
-    {id:'profile',label:'My Profile',icon:<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>},
-  ];
-  const themes=[
-    {id:'classic',name:'GHz Classic',swatch:'linear-gradient(135deg,#c8daf5,#1a6fd4)'},
-    {id:'midnight',name:'Midnight',swatch:'linear-gradient(135deg,#0a0f1e,#4d90ff)'},
-    {id:'sapphire',name:'Aero Sapphire',swatch:'linear-gradient(135deg,#051525,#00b4ff)'},
-    {id:'emerald',name:'Emerald Glass',swatch:'linear-gradient(135deg,#e6f9ec,#18a078)'},
-    {id:'amethyst',name:'Amethyst',swatch:'linear-gradient(135deg,#f0e6f9,#8a3bcc)'},
-    {id:'gigahertz',name:'Gigahertz Blue',swatch:'linear-gradient(135deg,#1a73e8,#ffffff)'},
-    {id:'dark',name:'Dark Mode',swatch:'linear-gradient(135deg,#1e293b,#0f172a)'},
-    {id:'candy',name:'Candy Pop',swatch:'linear-gradient(135deg,#fdf2f8,#fbcfe8)'},
-    {id:'void',name:'Neon Void',swatch:'linear-gradient(135deg,#000000,#0a0a0a)'},
-    {id:'matrix',name:'Matrix Terminal',swatch:'linear-gradient(135deg,#051105,#0a1c0a)'},
-    {id:'retro',name:'Retro OS',swatch:'linear-gradient(135deg,#008080,#006666)'},
-    {id:'glasshouse',name:'Glass House',swatch:'linear-gradient(135deg,#f0f9ff,#e0f2fe)'},
-    {id:'aurora',name:'Aurora Glass',swatch:'linear-gradient(135deg,#020b0e,#01161d)'},
-    {id:'neon',name:'Neon Cyber',swatch:'linear-gradient(135deg,#000000,#111111)'},
-    {id:'frost',name:'Frost Glass',swatch:'linear-gradient(135deg,#f0f9ff,#e0f2fe)'},
-    {id:'red',name:'Crimson',swatch:'linear-gradient(135deg,#2d0a0a,#450a0a)'},
-    {id:'lavender',name:'Lavender',swatch:'linear-gradient(135deg,#f5f3ff,#ede9fe)'},
-    {id:'forest',name:'Forest',swatch:'linear-gradient(135deg,#022c22,#064e3b)'},
-    {id:'sunset',name:'Sunset',swatch:'linear-gradient(135deg,#431407,#7c2d12)'},
-    {id:'ocean',name:'Ocean',swatch:'linear-gradient(135deg,#082f49,#0c4a6e)'},
-    {id:'rosegold',name:'Rose Gold ✨',swatch:'linear-gradient(135deg,#c9748a,#d4a96a)'},
-    {id:'cyberpunk',name:'Cyberpunk',swatch:'linear-gradient(135deg,#2e1065,#4c1d95)'},
-    {id:'coffee',name:'Coffee',swatch:'linear-gradient(135deg,#422006,#713f12)'},
-    {id:'sempiternal',name:'Sempiternal',swatch:'linear-gradient(135deg,#050505,#111111)'},
-    {id:'dragonsblood',name:'Dragons Blood',swatch:'linear-gradient(135deg,#1a0505,#2d0a0a)'},
-    {id:'frutiger',name:'Frutiger Aero',swatch:'linear-gradient(135deg,#e0f7fa,#b5f5ec)'},
-  ];
-  return(
-    <>
-      <div className={`sidebar-overlay ${isOpen?'open':''}`} onClick={()=>setIsOpen(false)}/>
-      <div className={`sidebar ${isOpen?'open':''}`}>
-        <div className="sb-titlebar">
-          <img src={LOGO} className="sb-logo-img" alt="Gigahertz"/>
-          <span className="sb-brand">GIGAHERTZ</span><span style={{fontSize:9,color:"var(--tx3)",fontWeight:700,letterSpacing:"0.08em",marginLeft:4}}>v6.1</span>
-        </div>
-        <nav className="sb-nav">
-          {nav.map(n=>(
-            <div key={n.id} className={`nav-item${page===n.id?' active':''}`} onClick={()=>{setPage(n.id);setIsOpen(false);}}>
-              {n.icon}
-              <span style={{flex:1}}>{n.label}</span>
+// ══ TIMELINE VIEW ══
+const TimelineView = ({tasks}) => (
+  <div className="anim-fade" style={{display:'flex',flexDirection:'column',gap:24}}>
+    <div><h1 style={{fontSize:28,fontWeight:900}}>Multi-Layer Timeline</h1><p style={{color:'var(--tx3)',fontWeight:700}}>Deep analysis of your day's structure.</p></div>
+    <div className="glass-box">
+      {tasks.length===0?<p style={{color:'var(--tx3)'}}>No telemetry data.</p>:(
+        <div style={{display:'flex',flexDirection:'column',gap:16}}>
+          {tasks.map((t,i)=>(
+            <div key={i} style={{display:'flex',gap:16,alignItems:'center'}}>
+              <div style={{width:80,fontSize:12,fontWeight:800,color:'var(--tx3)',textAlign:'right'}}>Task {tasks.length-i}</div>
+              <div style={{flex:1,display:'flex',flexDirection:'column',gap:4}}>
+                <div style={{position:'relative',height:40,background:'rgba(0,0,0,0.05)',borderRadius:8,overflow:'hidden'}}><div style={{position:'absolute',height:'100%',borderRadius:8,display:'flex',alignItems:'center',padding:'0 10px',fontSize:11,fontWeight:800,color:'#fff',width:`${Math.min(100,t.mins*2)}%`,background:'var(--p)'}}>{t.name} ({t.mins}m)</div></div>
+                <div style={{position:'relative',height:20,background:'rgba(0,0,0,0.05)',borderRadius:8,overflow:'hidden'}}><div style={{position:'absolute',height:'100%',borderRadius:8,display:'flex',alignItems:'center',padding:'0 10px',fontSize:11,fontWeight:800,color:'#fff',width:`${t.fq}%`,background:t.fq>75?'var(--ok)':t.fq>40?'var(--warn)':'var(--danger)'}}>Intensity: {t.fq}%</div></div>
+                {t.mem&&<div style={{fontSize:11,color:'var(--tx2)',fontStyle:'italic'}}><i className="fa-solid fa-memory mr-2"></i>{t.mem}</div>}
+              </div>
             </div>
           ))}
-        </nav>
-        <div className="sb-bottom">
-          <div className="sb-user">
-            <div className="user-avatar">{user?.firstName?user.firstName[0].toUpperCase():'U'}</div>
-            <div style={{flex:1,minWidth:0}}>
-              <span className="user-name">{user?.firstName} {user?.lastName}</span>
-              <span className="user-dept">{user?.empId} · {user?.dept}</span>
-            </div>
-          </div>
-          <div className="settings-wrapper">
-            <button className="settings-trigger" onClick={()=>setDdOpen(!ddOpen)}>
-              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-2 2 2 2 0 01-2-2v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83 0 2 2 0 010-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 01-2-2 2 2 0 012-2h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 010-2.83 2 2 0 012.83 0l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 012-2 2 2 0 012 2v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 0 2 2 0 010 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 012 2 2 2 0 01-2 2h-.09a1.65 1.65 0 00-1.51 1z"/></svg>
-              Settings
-              <span style={{marginLeft:'auto',fontSize:10}}>{ddOpen?'▲':'▼'}</span>
-            </button>
-            <div className={`settings-dropdown ${ddOpen?'open':''}`}>
-              <div className="dd-section-title">Interface Theme</div>
-              <div className="theme-grid">
-                {themes.map(t=>(
-                  <button key={t.id} className={`theme-btn ${theme===t.id?'active':''}`} onClick={()=>{setTheme(t.id);setDdOpen(false);}}>
-                    <div className="theme-swatch" style={{background:t.swatch}}/>
-                    {t.name}
-                  </button>
-                ))}
-              </div>
-            </div>
-          </div>
-          <button className="logout-btn" onClick={onLogout}>
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
-            Sign Out
-          </button>
-        </div>
-      </div>
-    </>
-  );
-};
-
-// ══ DASHBOARD ══
-const DashboardPage=({user,tasks,onTasksChanged,activeTimer,setActiveTimer,elapsed,setElapsed,loginTime,pushNotif,toggleMenu,specialGreeting,greetingMsg})=>{
-  const[selTask,setSelTask]=useState('');
-  const[customTask,setCustomTask]=useState('');
-  const[queue,setQueue]=useState(()=>ldb.getPending().filter(p=>p.empId===user.empId));
-  const[taskSearch,setTaskSearch]=useState('');
-  const[notes,setNotes]=useState(()=>localStorage.getItem('gh_notes_'+user?.empId)||'');
-  const time=useRealTime();
-  const secs=useLiveClock(loginTime);
-
-  const todayTasks=tasks.filter(t=>t.date===todayStr());
-  const filteredTasks=todayTasks.filter(t=>t.taskName.toLowerCase().includes(taskSearch.toLowerCase()));
-  const totalMins=todayTasks.reduce((s,t)=>s+Number(t.durationMinutes||0),0);
-
-  const isMar=()=>{
-    const fn=(user?.firstName||'').toLowerCase();
-    const ln=(user?.lastName||'').toLowerCase();
-    return MARIELLE_NAME.toLowerCase().split(' ').every(w=>fn.includes(w)||ln.includes(w));
-  };
-
-  useEffect(()=>{
-    if(activeTimer)localStorage.setItem('gh_atimer',JSON.stringify(activeTimer));
-    else localStorage.removeItem('gh_atimer');
-  },[activeTimer]);
-  useEffect(()=>{
-    const s=localStorage.getItem('gh_atimer');
-    if(s&&!activeTimer){try{setActiveTimer(JSON.parse(s));}catch(e){}}
-  },[]);
-
-  const saveNotes=v=>{setNotes(v);localStorage.setItem('gh_notes_'+user?.empId,v);};
-  const addQueue=()=>{
-    const n=customTask.trim();
-    if(!n)return;
-    const t={id:ldb.uid(),empId:user.empId,taskName:n,addedAt:new Date().toISOString()};
-    const u=[...queue,t];setQueue(u);
-    const all=ldb.getPending().filter(p=>p.empId!==user.empId);
-    ldb.savePending([...all,...u]);
-    setCustomTask('');pushNotif('Added to queue: "'+n+'"','success');
-  };
-  const startTask=async n=>{
-    if(!n.trim())return;
-    const ss=nowHHMM();
-    setActiveTimer({taskName:n,startStr:ss,timerId:ldb.uid(),isPaused:false});
-    setElapsed(0);
-    AT.timerStart(n);
-    pushNotif('▶ Timer started for "'+n+'"','success');
-  };
-  const startFromQueue=q=>{
-    setQueue(u=>{const r=u.filter(x=>x.id!==q.id);const all=ldb.getPending().filter(p=>p.empId!==user.empId);ldb.savePending([...all,...r]);return r;});
-    startTask(q.taskName);
-  };
-  const togglePause=()=>setActiveTimer(p=>({...p,isPaused:!p.isPaused}));
-  const stopTimer=async()=>{
-    if(!activeTimer)return;
-    const end=nowHHMM(),totalSec=elapsed,mins=totalSec<60?1:Math.round(totalSec/60);
-    await api.timerStop({timerId:activeTimer.timerId});
-    await api.addTask({empId:user.empId,taskName:activeTimer.taskName,date:todayStr(),startTime:activeTimer.startStr,endTime:end,durationMinutes:mins,source:'timer'});
-    AT.timerStop(activeTimer.taskName,totalSec);
-    const h=Math.floor(totalSec/3600),m=Math.floor((totalSec%3600)/60),s=totalSec%60;
-    const sum=h>0?`${h}h ${m}m ${s}s`:m>0?`${m}m ${s}s`:`${s}s`;
-    pushNotif(`✓ "${activeTimer.taskName}" saved — ${sum}`,'success');
-    setActiveTimer(null);setElapsed(0);
-    await onTasksChanged();
-  };
-
-  const H=Math.floor(elapsed/3600),M=Math.floor((elapsed%3600)/60),S=elapsed%60;
-  const pct=Math.min(100,(elapsed/3600)%1*100);
-
-  return(
-    <div className="page">
-      <div className="page-hdr">
-        <div style={{display:'flex',alignItems:'center',gap:10}}>
-          <button className="mobile-toggle" onClick={toggleMenu}>☰</button>
-          <div>
-            <h1 className="page-title">Dashboard</h1>
-            <p className="page-sub">
-              {time.toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric',year:'numeric'})} · {time.toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit',second:'2-digit'})}
-            </p>
-          </div>
-        </div>
-        <div className="badge-online">
-          <div className="live-dot"/>
-          {fmtHMS(secs)} session
-        </div>
-      </div>
-
-      {isMar()&&(
-        <div className="marielle-greeting">
-          <div className="marielle-badge">👑</div>
-          <div className="marielle-text">
-            <h3>Welcome back, Maam Marielle!</h3>
-            <p>{greetingMsg||'We are honored to have you here. Wishing you a highly productive and wonderful day ahead, Maam. Your leadership inspires us all!'}</p>
-          </div>
         </div>
       )}
+    </div>
+  </div>
+);
 
-      <AnnouncementBanner/>
+// ══ SETTINGS ══
+const Settings = ({theme, setTheme}) => (
+  <div className="anim-fade glass-box" style={{maxWidth:1000}}>
+    <h2 style={{fontSize:24,fontWeight:900,marginBottom:6}}>Aero Themes Engine</h2>
+    <p style={{fontSize:13,color:'var(--tx3)',fontWeight:600,marginBottom:24}}>Select your working environment.</p>
+    <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fill,minmax(200px,1fr))',gap:16}}>
+      {THEMES.map(t=>(
+        <div key={t} onClick={()=>setTheme(t)} style={{padding:16,borderRadius:12,cursor:'pointer',transition:'all .3s',border:`2px solid ${theme===t?'var(--p)':'var(--aero-border2)'}`,background:theme===t?'var(--pl)':'var(--ibg)',fontWeight:800,textTransform:'capitalize',textAlign:'center',color:'var(--tx)'}}>
+          {t}
+        </div>
+      ))}
+    </div>
+  </div>
+);
 
-      <div className="stat-grid" style={{marginBottom:20}}>
-        <div className="stat-card">
-          <div className="stat-icon" style={{background:'rgba(26,111,212,0.15)'}}>
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--p)" strokeWidth="2.5"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-          </div>
-          <div className="stat-lbl">Session Time</div>
-          <div className="stat-val">{Math.floor(secs/3600)}h {Math.floor((secs%3600)/60)}m</div>
-          <div className="stat-sub">Since {loginTime?new Date(loginTime).toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit'}):'—'}</div>
-        </div>
-        <div className="stat-card">
-          <div className="stat-icon" style={{background:'rgba(26,154,80,0.15)'}}>
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--ok)" strokeWidth="2.5"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg>
-          </div>
-          <div className="stat-lbl">Today's Tasks</div>
-          <div className="stat-val" style={{color:'var(--ok)'}}>{todayTasks.length}</div>
-          <div className="stat-sub">{fmtMins(totalMins)} tracked today</div>
-        </div>
-        <WeatherWidget/>
-      </div>
-
-      <div className="dash-grid" style={{display:'grid',gridTemplateColumns:'3fr 2fr',gap:18,marginBottom:20}}>
-        <div>
-          {activeTimer?(
-            <div className="timer-live">
-              {activeTimer.isPaused&&(
-                <div style={{position:'absolute',top:12,right:12,background:'#b87000',color:'#fff',padding:'6px 12px',borderRadius:99,fontSize:10,fontWeight:800,textTransform:'uppercase',letterSpacing:'0.1em'}}>⏸ Paused</div>
-              )}
-              <div className="timer-lbl">{activeTimer.isPaused?'⏸ Paused':'🔴 Live Timer'}</div>
-              <div className="timer-task" title={activeTimer.taskName}>{activeTimer.taskName}</div>
-              <div style={{display:'flex',alignItems:'flex-end',gap:3,marginBottom:8}}>
-                {H>0&&<><div><div className={`timer-digits ${activeTimer.isPaused?'paused':''}`}>{String(H).padStart(2,'0')}</div><div style={{fontSize:10,color:'var(--tx3)',fontWeight:700,textTransform:'uppercase',letterSpacing:'0.1em'}}>HRS</div></div><div className="timer-sep">:</div></>}
-                <div><div className={`timer-digits ${activeTimer.isPaused?'paused':''}`}>{String(M).padStart(2,'0')}</div><div style={{fontSize:10,color:'var(--tx3)',fontWeight:700,textTransform:'uppercase',letterSpacing:'0.1em'}}>MIN</div></div>
-                <div className="timer-sep">:</div>
-                <div><div className={`timer-digits ${activeTimer.isPaused?'paused':''}`}>{String(S).padStart(2,'0')}</div><div style={{fontSize:10,color:'var(--tx3)',fontWeight:700,textTransform:'uppercase',letterSpacing:'0.1em'}}>SEC</div></div>
-              </div>
-              <div style={{display:'flex',alignItems:'center',gap:6,marginBottom:10}}>
-                <div className={activeTimer.isPaused?'':'live-dot'} style={{width:7,height:7,borderRadius:'50%',background:activeTimer.isPaused?'var(--warn)':'var(--ok)',flexShrink:0}}/>
-                <span style={{fontSize:11,fontWeight:600,color:'var(--tx2)'}}>{activeTimer.isPaused?'Timer paused':'Started '+activeTimer.startStr}</span>
-              </div>
-              <div className="timer-bar-wrap"><div className="timer-bar" style={{width:pct+'%'}}/></div>
-              <div className="timer-actions">
-                <button className="pause-btn" onClick={togglePause}>{activeTimer.isPaused?'▶ Resume':'⏸ Pause'}</button>
-                <button className="stop-btn" onClick={stopTimer}>
-                  <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><rect x="4" y="4" width="16" height="16" rx="2"/></svg>
-                  Stop & Save
-                </button>
-              </div>
-            </div>
-          ):(
-            <div className="timer-area">
-              <div style={{fontSize:14,fontWeight:800,color:'var(--tx)',marginBottom:4,fontFamily:"'Rajdhani',sans-serif",letterSpacing:'0.04em'}}>⏱ Time Tracker</div>
-              <div style={{fontSize:12,color:'var(--tx3)',marginBottom:14,fontWeight:500}}>Select a task or create a custom one to begin</div>
-              <div className="track-row" style={{marginBottom:12}}>
-                <select className="track-select" value={selTask} onChange={e=>setSelTask(e.target.value)}>
-                  <option value="">— Choose preset task —</option>
-                  {PRESET.map(t=><option key={t} value={t}>{t}</option>)}
-                </select>
-                <button className="start-btn" onClick={()=>selTask&&startTask(selTask)}>
-                  <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg>
-                  Start
-                </button>
-              </div>
-              <div style={{display:'flex',gap:8,alignItems:'center'}}>
-                <input className="custom-input" placeholder="Enter custom task name..." value={customTask} onChange={e=>setCustomTask(e.target.value)} onKeyDown={e=>e.key==='Enter'&&addQueue()}/>
-                <button className="btn-aero btn-sm" style={{width:'auto',whiteSpace:'nowrap'}} onClick={addQueue}>+ Queue</button>
-              </div>
-              <div style={{marginTop:8,fontSize:10.5,color:'var(--tx3)',fontWeight:500}}>💡 Queue tasks and start them when ready</div>
-            </div>
-          )}
-        </div>
-        <div style={{display:'flex',flexDirection:'column',gap:14}}>
-          <div className="glass-section" style={{padding:16}}>
-            <div className="sec-hdr" style={{marginBottom:10}}>
-              <span className="sec-title">📋 Queue ({queue.length})</span>
-              {queue.length>0&&<button onClick={()=>{setQueue([]);ldb.savePending(ldb.getPending().filter(p=>p.empId!==user.empId));}} style={{background:'none',border:'none',color:'var(--tx3)',fontSize:11,cursor:'pointer',fontWeight:600}}>Clear</button>}
-            </div>
-            {queue.length===0?<div style={{textAlign:'center',padding:'12px 0',color:'var(--tx3)',fontSize:12}}>No tasks queued</div>:
-              <div style={{maxHeight:130,overflowY:'auto'}}>
-                {queue.map((q,i)=>(
-                  <div key={q.id} className="queue-item">
-                    <div style={{display:'flex',alignItems:'center',gap:8,flex:1}}>
-                      <div style={{width:20,height:20,background:'var(--aero-btn)',borderRadius:'50%',display:'flex',alignItems:'center',justifyContent:'center',color:'#fff',fontSize:11,fontWeight:800,flexShrink:0}}>{i+1}</div>
-                      <span className="queue-task-name" style={{fontSize:12}}>{q.taskName}</span>
-                    </div>
-                    <div style={{display:'flex',gap:5}}>
-                      <button onClick={()=>startFromQueue(q)} disabled={!!activeTimer} style={{padding:'4px 8px',background:'var(--aero-btn)',border:'none',color:'#fff',borderRadius:5,fontSize:11,fontWeight:700,cursor:'pointer'}}>▶</button>
-                      <button className="queue-del" onClick={()=>{const r=queue.filter(x=>x.id!==q.id);setQueue(r);ldb.savePending(ldb.getPending().filter(p=>p.empId!==user.empId||r.find(x=>x.id===p.id)));}}>
-                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-                      </button>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            }
-          </div>
-          <div className="glass-section" style={{flex:1,padding:16}}>
-            <div style={{fontSize:13,fontWeight:800,color:'var(--tx)',marginBottom:8,fontFamily:"'Rajdhani',sans-serif",letterSpacing:'0.04em'}}>📝 Quick Notes</div>
-            <textarea style={{width:'100%',minHeight:90,resize:'vertical',background:'var(--ibg)',border:'1px solid var(--aero-border2)',borderRadius:7,padding:'8px 10px',color:'var(--tx)',fontSize:12,outline:'none'}} placeholder="Jot down thoughts, reminders..." value={notes} onChange={e=>saveNotes(e.target.value)}/>
-          </div>
-        </div>
-      </div>
-
-      <div className="glass-section">
-        <div className="sec-hdr">
-          <span className="sec-title">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
-            Today's Tasks ({todayTasks.length})
-          </span>
-          <input type="text" className="search-input" placeholder="🔍 Search tasks..." value={taskSearch} onChange={e=>setTaskSearch(e.target.value)}/>
-        </div>
-        {filteredTasks.length===0?(
-          <div className="empty-state">
-            <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.2" style={{opacity:0.25}}><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
-            <p>{taskSearch?'No matching tasks found':'No tasks tracked yet — start a timer above!'}</p>
-          </div>
-        ):(
-          <div style={{maxHeight:280,overflowY:'auto'}}>
-            {filteredTasks.map(t=>(
-              <div key={t.id} style={{display:'flex',alignItems:'center',justifyContent:'space-between',padding:'10px 4px',borderBottom:'1px solid var(--aero-border2)'}}>
-                <div style={{display:'flex',alignItems:'center',flex:1}}>
-                  <div className="cat-dot" style={{background:getCatColor(t.taskName)}}/>
-                  <div>
-                    <div style={{fontSize:13,fontWeight:700,color:'var(--tx)'}}>{t.taskName}</div>
-                    <div style={{fontSize:11,color:'var(--tx3)',fontWeight:500}}>{fmt12(t.startTime)} → {fmt12(t.endTime)}</div>
-                  </div>
-                </div>
-                <span className="dur-badge">{fmtMins(Number(t.durationMinutes)||0)}</span>
-              </div>
-            ))}
-          </div>
-        )}
-      </div>
+// ══ ROOT ══
+const App = () => {
+  const [user, setUser] = useState(null); 
+  const [view, setView] = useState('landing'); 
+  const [theme, setTheme] = useState('gigahertz'); 
+  const [tasks, setTasks] = useState([]); 
+  const [notif, setNotif] = useState(null);
+  const [kudos, setKudos] = useState([{id:1,author:'Admin',text:'Welcome to Nexus v7.0!'}]);
+  
+  useEffect(() => { document.documentElement.setAttribute('data-theme', theme); }, [theme]);
+  const showNotif = (msg, type) => { setNotif({msg, type}); };
+  
+  if(view==='landing') return <LandingPage onGoToAuth={(v)=>{setView(v)}}/>;
+  if(!user) return <><Auth onLogin={setUser} theme={theme} setTheme={setTheme} initialTab={view}/>{notif&&<Notif msg={notif.msg} type={notif.type} onDone={()=>setNotif(null)}/></>;
+  
+  return (
+    <div className="layout glass">
+      {notif && <Notif msg={notif.msg} type={notif.type} onDone={()=>setNotif(null)}/>}
+      <aside className="sidebar glass">
+        <div style={{padding:24,display:'flex',alignItems:'center',gap:12,borderBottom:'1px solid var(--aero-border2)'}}><div style={{width:40,height:40,borderRadius:12,background:'var(--aero-btn)',color:'#fff',display:'flex',alignItems:'center',justifyContent:'center',fontSize:20,boxShadow:'0 4px 10px var(--aero-glow)'}}><i className="fa-solid fa-bolt"></i></div><div><div style={{fontWeight:900,fontSize:18}}>Gigahertz</div><div style={{fontSize:10,color:'var(--p)',fontWeight:800,letterSpacing:'1px',textTransform:'uppercase'}}>NEXUS V7.0 AI</div></div></div>
+        <nav style={{padding:20,flex:1,display:'flex',flexDirection:'column',gap:8}}><div className={`nav-item ${view==='dash'?'active':''}`} onClick={()=>setView('dash')}><div className="nav-icon"><i className="fa-solid fa-home"></i></div> Dashboard</div><div className={`nav-item ${view==='time'?'active':''}`} onClick={()=>setView('time')}><div className="nav-icon"><i className="fa-solid fa-layer-group"></i></div> Timeline</div><div className={`nav-item ${view==='set'?'active':''}`} onClick={()=>setView('set')}><div className="nav-icon"><i className="fa-solid fa-palette"></i></div> Themes</div></nav>
+        <div style={{padding:20}}><div className="nav-item" onClick={()=>setUser(null)} style={{color:'var(--danger)',background:'var(--dl)',border:'1px solid rgba(220,38,38,0.3)',margin:0}}><div className="nav-icon" style={{background:'transparent'}}><i className="fa-solid fa-power-off"></i></div> Logout</div></div>
+      </aside>
+      <main className="main"><div className="page">{view==='dash'&&<Dashboard user={user} tasks={tasks} setTasks={setTasks} showNotif={showNotif} kudos={kudos} setKudos={setKudos}/>}{view==='time'&&<TimelineView tasks={tasks}/>}{view==='set'&&<Settings theme={theme} setTheme={setTheme}/>}</div></main>
+      <nav className="mobile-nav glass"><div className={`mob-btn ${view==='dash'?'active':''}`} onClick={()=>setView('dash')}><i className="fa-solid fa-home mob-icon"></i> Home</div><div className={`mob-btn ${view==='time'?'active':''}`} onClick={()=>setView('time')}><i className="fa-solid fa-layer-group mob-icon"></i> Time</div><div className={`mob-btn ${view==='set'?'active':''}`} onClick={()=>setView('set')}><i className="fa-solid fa-palette mob-icon"></i> Themes</div><div className="mob-btn" onClick={()=>setUser(null)} style={{color:'var(--danger)'}}><i className="fa-solid fa-power-off mob-icon"></i> Exit</div></nav>
     </div>
   );
-};
-
-// ══ TASKS PAGE ══
-const TasksPage=({user,tasks,onTasksChanged,pushNotif,toggleMenu})=>{
-  const[fd,setFd]=useState('');
-  const filtered=tasks.filter(t=>!fd||t.date===fd);
-  const totalMins=filtered.reduce((s,t)=>s+Number(t.durationMinutes||0),0);
-
-  const handleRemark=async(id,val,orig)=>{
-    if(val===orig)return;
-    await api.updateRemark(id,val,user.empId);
-    onTasksChanged();
-  };
-  const handleDelete=async id=>{
-    if(!window.confirm('Delete this task entry? This cannot be undone.'))return;
-    const r=await api.deleteTask(id);
-    if(r.success){pushNotif('Task deleted','success');onTasksChanged();}
-    else pushNotif('Failed to delete task','error');
-  };
-
-  return(
-    <div className="page">
-      <div className="page-hdr">
-        <div style={{display:'flex',alignItems:'center',gap:10}}>
-          <button className="mobile-toggle" onClick={toggleMenu}>☰</button>
-          <div><h1 className="page-title">Task Log</h1><p className="page-sub">Your complete time entry history</p></div>
-        </div>
-      </div>
-      <div style={{display:'flex',alignItems:'center',gap:12,marginBottom:16,flexWrap:'wrap'}}>
-        <span style={{display:'inline-flex',alignItems:'center',gap:6,background:'var(--pl)',color:'var(--p)',padding:'7px 14px',borderRadius:99,fontSize:12.5,fontWeight:800,border:'1px solid var(--aero-border2)'}}>
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-          Total: {fmtMins(totalMins)}
-        </span>
-        <div className="date-filter">
-          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="var(--tx3)" strokeWidth="2.5"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
-          <input type="date" value={fd} onChange={e=>setFd(e.target.value)}/>
-          {fd&&<button onClick={()=>setFd('')} style={{background:'none',border:'none',cursor:'pointer',color:'var(--tx3)',fontSize:16,fontWeight:700,lineHeight:1}}>×</button>}
-        </div>
-        {fd&&<span style={{fontSize:12,color:'var(--tx3)',fontWeight:600}}>{filtered.length} entries</span>}
-      </div>
-      <div className="table-wrap" style={{overflowX:'auto',maxHeight:'calc(100vh - 260px)'}}>
-        {filtered.length===0?(
-          <div className="empty-state"><svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.2" style={{opacity:0.25}}><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg><p>No task entries found for this filter.</p></div>
-        ):(
-          <table className="gh-table">
-            <thead><tr><th>Task</th><th>Date</th><th>Start</th><th>End</th><th>Duration</th><th>Remarks</th><th style={{textAlign:'center'}}>Del</th></tr></thead>
-            <tbody>
-              {filtered.map(t=>(
-                <tr key={t.id}>
-                  <td style={{fontWeight:700}}>
-                    <div style={{display:'flex',alignItems:'center'}}><div className="cat-dot" style={{background:getCatColor(t.taskName)}}/>{t.taskName}</div>
-                  </td>
-                  <td>{fmtDate(t.date)}</td>
-                  <td>{fmt12(t.startTime)}</td>
-                  <td>{fmt12(t.endTime)}</td>
-                  <td><span className="dur-badge">{fmtMins(Number(t.durationMinutes)||0)}</span></td>
-                  <td>
-                    <input type="text" defaultValue={t.remarks||''} placeholder="Add remark..."
-                      onBlur={e=>handleRemark(t.id,e.target.value,t.remarks||'')}
-                      style={{background:'transparent',border:'none',outline:'none',color:'var(--tx)',fontSize:12.5,width:'100%',borderBottom:'1px dashed transparent',padding:'3px 0',transition:'0.2s'}}
-                      onFocus={e=>e.target.style.borderBottom='1px dashed var(--p)'}
-                      onBlurCapture={e=>e.target.style.borderBottom='1px dashed transparent'}
-                    />
-                  </td>
-                  <td style={{textAlign:'center'}}>
-                    <button onClick={()=>handleDelete(t.id)} style={{background:'var(--dl)',border:'none',color:'var(--danger)',cursor:'pointer',padding:'5px 7px',borderRadius:6,display:'inline-flex',alignItems:'center'}} title="Delete">
-                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2"/></svg>
-                    </button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        )}
-      </div>
-    </div>
-  );
-};
-
-// ══ ANALYTICS ══
-const AnalyticsPage=({user,tasks,toggleMenu})=>{
-  const barRef=useRef(null),doughnutRef=useRef(null);
-  const barC=useRef(null),doC=useRef(null);
-  useEffect(()=>{
-    const days=[];
-    for(let i=6;i>=0;i--){const dt=new Date();dt.setDate(dt.getDate()-i);const ds=`${dt.getFullYear()}-${String(dt.getMonth()+1).padStart(2,'0')}-${String(dt.getDate()).padStart(2,'0')}`;days.push({label:dt.toLocaleDateString('en-US',{weekday:'short'}),mins:tasks.filter(t=>t.date===ds).reduce((s,t)=>s+Number(t.durationMinutes||0),0)});}
-    let focus=0,admin=0,brk=0;
-    tasks.forEach(t=>{const m=Number(t.durationMinutes||0);if(/code|dev|design|plan|research|test|build/i.test(t.taskName))focus+=m;else if(/break|lunch|idle|away/i.test(t.taskName))brk+=m;else admin+=m;});
-    const gc='rgba(100,160,230,0.15)',tc='var(--tx2)';
-    if(barRef.current){if(barC.current)barC.current.destroy();barC.current=new Chart(barRef.current,{type:'line',data:{labels:days.map(d=>d.label),datasets:[{data:days.map(d=>d.mins/60),fill:true,backgroundColor:'rgba(26,111,212,0.12)',borderColor:'var(--p)',borderWidth:2.5,tension:0.4,pointRadius:4,pointBackgroundColor:'var(--p)'}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{y:{grid:{color:gc},ticks:{callback:v=>`${v}h`,color:tc}},x:{grid:{display:false},ticks:{color:tc}}}}});}
-    if(doughnutRef.current){if(doC.current)doC.current.destroy();doC.current=new Chart(doughnutRef.current,{type:'doughnut',data:{labels:['Deep Work','Admin','Breaks'],datasets:[{data:[focus,admin,brk],backgroundColor:['var(--p)','#8b5cf6','#f59e0b'],borderWidth:2,borderColor:'var(--aero-card)'}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'bottom',labels:{color:tc,font:{family:'Exo 2',size:11,weight:'600'}}}},cutout:'72%'}});}
-    return()=>{barC.current?.destroy();doC.current?.destroy();};
-  },[tasks]);
-  const exportCSV=()=>{
-    const csv=['Task,Date,Start,End,Duration(min)',...tasks.map(t=>`"${t.taskName}","${t.date}","${t.startTime}","${t.endTime}","${t.durationMinutes}"`)].join('\n');
-    const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv'}));a.download='gh_tasks.csv';a.click();
-  };
-  return(
-    <div className="page">
-      <div className="page-hdr">
-        <div style={{display:'flex',alignItems:'center',gap:10}}>
-          <button className="mobile-toggle" onClick={toggleMenu}>☰</button>
-          <div><h1 className="page-title">Analytics</h1><p className="page-sub">Productivity insights and trends</p></div>
-        </div>
-        <button className="btn-aero btn-ghost btn-sm" onClick={exportCSV} style={{width:'auto'}}>📥 Export CSV</button>
-      </div>
-      <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:18}}>
-        <div className="chart-card">
-          <div className="chart-title">7-Day Trend</div>
-          <div className="chart-sub">Hours worked per day</div>
-          <div style={{height:200}}><canvas ref={barRef}/></div>
-        </div>
-        <div className="chart-card">
-          <div className="chart-title">Work Category Split</div>
-          <div className="chart-sub">Focus vs. Admin vs. Breaks</div>
-          <div style={{height:200}}><canvas ref={doughnutRef}/></div>
-        </div>
-      </div>
-      <div className="stat-grid" style={{marginTop:18}}>
-        <div className="stat-card"><div className="stat-lbl">Total Tasks</div><div className="stat-val">{tasks.length}</div></div>
-        <div className="stat-card"><div className="stat-lbl">Total Hours</div><div className="stat-val">{(tasks.reduce((s,t)=>s+Number(t.durationMinutes||0),0)/60).toFixed(1)}</div></div>
-        <div className="stat-card"><div className="stat-lbl">Active Days</div><div className="stat-val">{[...new Set(tasks.map(t=>t.date))].length}</div></div>
-      </div>
-    </div>
-  );
-};
-
-// ══ ACTIVE STATUS BOARD ══
-const StatusPage=({user,toggleMenu})=>{
-  const[loading,setLoading]=useState(true);
-  const[active,setActive]=useState([]);
-  const load=async()=>{
-    setLoading(true);
-    const r=await api.getActiveStatus(user?.empId);
-    if(r.success)setActive(r.activeEmployees||[]);
-    setLoading(false);
-  };
-  useEffect(()=>{load();},[]);
-  return(
-    <div className="page">
-      <div className="page-hdr">
-        <div style={{display:'flex',alignItems:'center',gap:10}}>
-          <button className="mobile-toggle" onClick={toggleMenu}>☰</button>
-          <div><h1 className="page-title">Active Status Board</h1><p className="page-sub">Employees currently clocked in across all departments</p></div>
-        </div>
-        <button className="btn-aero btn-sm" style={{width:'auto'}} onClick={load}>↻ Refresh</button>
-      </div>
-      <div className="glass-section">
-        <div className="sec-hdr">
-          <span className="sec-title">🟢 Online Now ({active.length})</span>
-          {active.length>0&&<div className="badge-online"><div className="live-dot"/>{active.length} clocked in</div>}
-        </div>
-        {loading?(
-          <div style={{textAlign:'center',padding:30,color:'var(--tx3)'}}>Loading...</div>
-        ):active.length===0?(
-          <div className="empty-state">
-            <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.2" style={{opacity:0.25}}><circle cx="12" cy="12" r="10"/><circle cx="12" cy="10" r="3"/><path d="M7 20.662V19a2 2 0 012-2h6a2 2 0 012 2v1.662"/></svg>
-            <p>No employees currently clocked in</p>
-          </div>
-        ):(
-          active.map(u=>(
-            <div key={u.empId} className="status-user">
-              <div className="status-dot-online"/>
-              <div className="user-avatar" style={{width:30,height:30,fontSize:12}}>{u.firstName?u.firstName[0].toUpperCase():'U'}</div>
-              <div style={{flex:1,minWidth:0}}>
-                <div style={{fontSize:13,fontWeight:700,color:'var(--tx)'}}>{u.firstName} {u.lastName}</div>
-                <div style={{fontSize:11,color:'var(--tx3)',fontWeight:500}}>{u.empId}</div>
-              </div>
-              <span className="status-dept-badge">{u.dept||'N/A'}</span>
-              {u.lastClockIn&&<span style={{fontSize:10,color:'var(--tx3)',fontWeight:600,whiteSpace:'nowrap',marginLeft:6}}>{new Date(u.lastClockIn).toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit'})}</span>}
-            </div>
-          ))
-        )}
-      </div>
-    </div>
-  );
-};
-
-// ══ PROFILE PAGE ══
-const ProfilePage=({user,tasks,onUpdateUser,pushNotif,toggleMenu})=>{
-  const[bio,setBio]=useState(user?.bio||'');
-  const[firstName,setFirstName]=useState(user?.firstName||'');
-  const[lastName,setLastName]=useState(user?.lastName||'');
-  const[email,setEmail]=useState(user?.email||'');
-  const[savingBio,setSavingBio]=useState(false);
-  const[savingProfile,setSavingProfile]=useState(false);
-  const[stats,setStats]=useState({totalTasksLogged:0,totalHours:0,activeDays:0,avgHoursPerDay:0});
-  const[statsLoading,setStatsLoading]=useState(true);
-  useEffect(()=>{
-    api.getUserStats(user?.empId).then(r=>{
-      if(r.success){setStats(r.stats);AT.setStats(r.stats);}
-      setStatsLoading(false);
-    });
-  },[user?.empId]);
-  const saveBio=async()=>{setSavingBio(true);const r=await api.updateBio(user.empId,bio);setSavingBio(false);if(r.success){onUpdateUser({...user,bio});pushNotif('Bio saved!','success');}else pushNotif('Failed to save bio','error');};
-  const saveProfile=async()=>{setSavingProfile(true);const r=await api.updateProfile({empId:user.empId,firstName,lastName,email});setSavingProfile(false);if(r.success){onUpdateUser({...user,firstName,lastName,email});pushNotif('Profile updated!','success');}else pushNotif('Failed to update profile','error');};
-  const defAvatar=`data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%236090c8'%3E%3Cpath d='M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 14.2c-2.5 0-4.71-1.28-6-3.22.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08-1.29 1.94-3.5 3.22-6 3.22z'/%3E%3C/svg%3E`;
-  return(
-    <div className="page">
-      <div className="page-hdr">
-        <div style={{display:'flex',alignItems:'center',gap:10}}>
-          <button className="mobile-toggle" onClick={toggleMenu}>☰</button>
-          <div><h1 className="page-title">My Profile</h1><p className="page-sub">View and edit your account information</p></div>
-        </div>
-      </div>
-      <div className="profile-grid">
-        <div className="glass-section" style={{textAlign:'center',padding:30}}>
-          <div className="avatar-wrapper"><img src={defAvatar} className="avatar-img" alt="Profile"/></div>
-          <h2 style={{fontSize:20,fontWeight:800,color:'var(--tx)',marginBottom:4,fontFamily:"'Rajdhani',sans-serif",letterSpacing:'0.04em'}}>{user?.firstName} {user?.lastName}</h2>
-          <p style={{fontSize:12,color:'var(--tx3)',fontWeight:600,marginBottom:14}}>{user?.empId}</p>
-          {user?.dept&&<span className="dur-badge" style={{padding:'6px 14px',fontSize:11.5}}>{user.dept}</span>}
-          <div style={{marginTop:20,textAlign:'left'}}>
-            <label style={{fontSize:11,fontWeight:700,color:'var(--tx2)',display:'block',marginBottom:6,textTransform:'uppercase',letterSpacing:'0.05em'}}>Bio / Role</label>
-            <textarea className="bio-textarea" placeholder="Add a short bio or your role..." value={bio} onChange={e=>setBio(e.target.value)}/>
-            <button className="btn-aero" onClick={saveBio} disabled={savingBio}>{savingBio?'Saving...':'Save Bio'}</button>
-          </div>
-        </div>
-        <div>
-          <div className="stat-grid" style={{gridTemplateColumns:'1fr 1fr',marginBottom:18}}>
-            <div className="stat-card"><div className="stat-lbl">Total Tasks</div><div className="stat-val">{statsLoading?'…':stats.totalTasksLogged}</div></div>
-            <div className="stat-card"><div className="stat-lbl">Total Hours</div><div className="stat-val">{statsLoading?'…':stats.totalHours}<span style={{fontSize:14,color:'var(--tx3)'}}> h</span></div></div>
-            <div className="stat-card"><div className="stat-lbl">Active Days</div><div className="stat-val">{statsLoading?'…':stats.activeDays}</div></div>
-            <div className="stat-card"><div className="stat-lbl">Avg hrs/Day</div><div className="stat-val">{statsLoading?'…':stats.avgHoursPerDay}<span style={{fontSize:14,color:'var(--tx3)'}}> h</span></div></div>
-          </div>
-          <div className="glass-section">
-            <div style={{fontSize:14,fontWeight:800,color:'var(--tx)',marginBottom:14,fontFamily:"'Rajdhani',sans-serif",letterSpacing:'0.04em'}}>Edit Profile Details</div>
-            <div className="two-col">
-              <div className="form-group"><label className="form-label">First Name</label><input className="form-input" value={firstName} onChange={e=>setFirstName(e.target.value)}/></div>
-              <div className="form-group"><label className="form-label">Last Name</label><input className="form-input" value={lastName} onChange={e=>setLastName(e.target.value)}/></div>
-            </div>
-            <div className="form-group"><label className="form-label">Email</label><input className="form-input" type="email" placeholder="work@gigahertz.ph" value={email} onChange={e=>setEmail(e.target.value)}/></div>
-            <div className="form-group"><label className="form-label">Employee ID</label><input className="form-input" value={user?.empId||''} disabled style={{opacity:0.6,cursor:'not-allowed'}}/></div>
-            <div className="form-group"><label className="form-label">Department</label><input className="form-input" value={user?.dept||''} disabled style={{opacity:0.6,cursor:'not-allowed'}}/></div>
-            <button className="btn-aero" onClick={saveProfile} disabled={savingProfile}>{savingProfile?'Saving...':'Update Profile'}</button>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-};
-
-// ══ IDLE WATCHER ══
-const IDLE_WARN=5*60,IDLE_MAX=10*60;
-const IdleWatcher=({onIdleOut})=>{
-  const[idle,setIdle]=useState(0);
-  const[show,setShow]=useState(false);
-  const[pop,setPop]=useState(0);
-  const last=useRef(Date.now());
-  const reset=useCallback(()=>{last.current=Date.now();if(!show)setIdle(0);},[show]);
-  useEffect(()=>{const evts=['mousemove','mousedown','keydown','touchstart','click'];evts.forEach(e=>window.addEventListener(e,reset,{passive:true}));return()=>evts.forEach(e=>window.removeEventListener(e,reset));},[reset]);
-  useEffect(()=>{const t=setInterval(()=>{const s=Math.floor((Date.now()-last.current)/1000);setIdle(s);if(s>=IDLE_WARN&&!show){setShow(true);setPop(0);}},1000);return()=>clearInterval(t);},[show]);
-  useEffect(()=>{if(!show)return;const t=setInterval(()=>setPop(p=>{const n=p+1;if(n>=IDLE_MAX-IDLE_WARN){clearInterval(t);setShow(false);onIdleOut&&onIdleOut(idle);}return n;}),1000);return()=>clearInterval(t);},[show]);
-  const here=()=>{setShow(false);setIdle(0);last.current=Date.now();};
-  const out=()=>{setShow(false);setIdle(0);last.current=Date.now();onIdleOut&&onIdleOut(idle);};
-  if(!show)return null;
-  const grace=IDLE_MAX-IDLE_WARN,pct=Math.min(100,(pop/grace)*100);
-  const mm=String(Math.floor(idle/60)).padStart(2,'0'),ss=String(idle%60).padStart(2,'0');
-  return(
-    <div className="idle-overlay">
-      <div className="idle-card">
-        <div className="idle-icon">⏰</div>
-        <div className="idle-title">Still there?</div>
-        <p style={{fontSize:13,color:'var(--tx2)',lineHeight:1.6,marginBottom:4}}>No activity for <strong>{Math.round(idle/60)} minutes</strong>.</p>
-        <div className="idle-countdown">{mm}:{ss}</div>
-        <div className="idle-btns">
-          <button className="btn-aero" style={{flex:1}} onClick={here}>👋 I'm here</button>
-          <button className="btn-aero btn-ghost" style={{flex:1}} onClick={out}>🚶 Stepped away</button>
-        </div>
-        <div className="idle-bar-wrap"><div className="idle-bar-fill" style={{width:pct+'%',background:pct>70?'var(--danger)':'var(--warn)'}}/></div>
-        <p style={{fontSize:10,color:'var(--tx3)',marginTop:8,fontWeight:600}}>Auto-dismissing in {grace-pop}s</p>
-      </div>
-    </div>
-  );
-};
-
-// ══ ROOT APP ══
-const App=()=>{
-  const[page,setPage]=useState('init');
-  const[user,setUser]=useState(null);
-  const[loginTime,setLoginTime]=useState(null);
-  const[tasks,setTasks]=useState([]);
-  const[activeTimer,setActiveTimer]=useState(null);
-  const[elapsed,setElapsed]=useState(0);
-  const[notif,setNotif]=useState(null);
-  const[theme,setTheme]=useState(()=>localStorage.getItem('gh_theme')||'classic');
-  const[sidebarOpen,setSidebarOpen]=useState(false);
-  const[specialGreeting,setSpecialGreeting]=useState(false);
-  const[greetingMsg,setGreetingMsg]=useState('');
-
-  const pushNotif=useCallback((msg,type)=>setNotif({msg,type,id:Date.now()}),[]);
-
-  useEffect(()=>{
-    document.documentElement.setAttribute('data-theme',theme);
-    localStorage.setItem('gh_theme',theme);
-  },[theme]);
-
-  useEffect(()=>{
-    const saved=localStorage.getItem('gh_user');
-    const lt=localStorage.getItem('gh_lt');
-    if(saved){
-      try{
-        const u=JSON.parse(saved);
-        setUser(u);AT.setUser(u);
-        if(lt){const d=lt.split('T')[0];if(d===todayStr()){setLoginTime(lt);}else{const n=new Date().toISOString();setLoginTime(n);localStorage.setItem('gh_lt',n);}}
-        setPage('dashboard');
-        loadTasks(u);
-      }catch(e){setPage('login');}
-    }else{setPage('login');}
-  },[]);
-
-  useEffect(()=>{
-    if(!activeTimer||activeTimer.isPaused)return;
-    const t=setInterval(()=>setElapsed(e=>e+1),1000);
-    return()=>clearInterval(t);
-  },[activeTimer]);
-
-  const loadTasks=async u=>{
-    const empId=(u||user)?.empId;
-    if(!empId)return;
-    const r=await api.getTasks(empId);
-    if(r.success)setTasks(r.tasks||[]);
-    const sr=await api.getUserStats(empId);
-    if(sr.success)AT.setStats(sr.stats);
-  };
-
-  const doLogin=(u,backdoor,sg,gm)=>{
-    // Ensure Erik Chua is always Admin
-    if(isErikChua(u)) u = {...u, role:'Admin'};
-    const lt=new Date().toISOString();
-    setUser(u);setLoginTime(lt);
-    setSpecialGreeting(!!sg);
-    setGreetingMsg(gm||'');
-    localStorage.setItem('gh_user',JSON.stringify(u));
-    localStorage.setItem('gh_lt',lt);
-    AT.login(u);
-    loadTasks(u);
-    setPage('dashboard');
-    pushNotif(`Welcome back, ${u.firstName}! 👋`,'success');
-  };
-
-  const doRegister=u=>{
-    const lt=new Date().toISOString();
-    setUser(u);setLoginTime(lt);
-    localStorage.setItem('gh_user',JSON.stringify(u));
-    localStorage.setItem('gh_lt',lt);
-    AT.register(u);
-    loadTasks(u);
-    setPage('dashboard');
-    pushNotif(`Account created! ID: ${u.empId} 🎉`,'success');
-  };
-
-  const updateUser=u=>{setUser(u);localStorage.setItem('gh_user',JSON.stringify(u));AT.setUser(u);};
-
-  const doLogout=async()=>{
-    AT.logout();AT.flush();
-    setUser(null);setLoginTime(null);setTasks([]);setActiveTimer(null);setElapsed(0);
-    localStorage.removeItem('gh_user');localStorage.removeItem('gh_lt');
-    AT.clearUser();
-    setPage('login');
-  };
-
-  const handleIdleOut=()=>{
-    if(activeTimer&&!activeTimer.isPaused){
-      setActiveTimer(p=>({...p,isPaused:true}));
-      pushNotif('⏸ Timer auto-paused (idle detected)','info');
-    }
-  };
-
-  const appPages=['dashboard','tasks','analytics','status','profile'];
-
-  return(
-    <>
-      <style>{`[data-theme="midnight"] .gh-sync-badge{background:rgba(20,40,90,0.5)!important;color:#c8d8f8!important;border-color:rgba(80,120,220,0.3)!important;}[data-theme="sapphire"] .gh-sync-badge{background:rgba(0,70,140,0.45)!important;color:#b0e0ff!important;border-color:rgba(0,160,255,0.35)!important;}`}</style>
-      {notif&&<Notif key={notif.id} msg={notif.msg} type={notif.type} onDone={()=>setNotif(null)}/>}
-      {page==='init'&&<div style={{position:'fixed',inset:0,display:'flex',flexDirection:'column',alignItems:'center',justifyContent:'center',gap:16}}><img src={LOGO} style={{height:56,objectFit:'contain',filter:'drop-shadow(0 2px 10px rgba(30,80,200,0.3))'}} alt=""/><div style={{width:32,height:32,border:'3px solid var(--aero-border2)',borderTopColor:'var(--p)',borderRadius:'50%',animation:'spin 0.7s linear infinite'}}/><div style={{fontSize:13,fontWeight:700,color:'var(--tx3)',letterSpacing:'0.05em',fontFamily:"'Exo 2',sans-serif"}}>Initializing GigaHertz...</div></div>}
-      {page==='login'&&<LoginPage onLogin={doLogin} onRegister={()=>setPage('register')} onForgot={()=>setPage('forgot')} theme={theme} cycleTheme={()=>{const ts=['classic','midnight','sapphire','emerald','amethyst','gigahertz','dark','candy','void','matrix','retro','glasshouse','aurora','neon','frost','red','lavender','forest','sunset','ocean','rosegold','cyberpunk','coffee','sempiternal','dragonsblood','frutiger'];setTheme(t=>ts[(ts.indexOf(t)+1)%ts.length]);}}/>}
-      {page==='forgot'&&<ForgotPwPage onBack={()=>setPage('login')}/>}
-      {page==='register'&&<RegisterPage onLogin={doLogin} onBack={()=>setPage('login')}/>}
-      {appPages.includes(page)&&user&&(
-        <div className="layout">
-          <Sidebar page={page} setPage={setPage} user={user} onLogout={doLogout} theme={theme} setTheme={setTheme} isOpen={sidebarOpen} setIsOpen={setSidebarOpen}/>
-          <div className="main">
-            {page==='dashboard'&&<DashboardPage user={user} tasks={tasks} onTasksChanged={()=>loadTasks(user)} activeTimer={activeTimer} setActiveTimer={setActiveTimer} elapsed={elapsed} setElapsed={setElapsed} loginTime={loginTime} pushNotif={pushNotif} toggleMenu={()=>setSidebarOpen(p=>!p)} specialGreeting={specialGreeting} greetingMsg={greetingMsg}/>}
-            {page==='tasks'&&<TasksPage user={user} tasks={tasks} onTasksChanged={()=>loadTasks(user)} pushNotif={pushNotif} toggleMenu={()=>setSidebarOpen(p=>!p)}/>}
-            {page==='analytics'&&<AnalyticsPage user={user} tasks={tasks} toggleMenu={()=>setSidebarOpen(p=>!p)}/>}
-            {page==='status'&&<StatusPage user={user} toggleMenu={()=>setSidebarOpen(p=>!p)}/>}
-            {page==='profile'&&<ProfilePage user={user} tasks={tasks} onUpdateUser={updateUser} pushNotif={pushNotif} toggleMenu={()=>setSidebarOpen(p=>!p)}/>}
-            <div className="footer-bar">Proactive Service. Commited Care &nbsp;·&nbsp; Gigahertz Nexus v6.1</div>
-          </div>
-          <IdleWatcher onIdleOut={handleIdleOut}/>
-        </div>
-      )}
-    </>
-  );
-};
-
+}
 ReactDOM.createRoot(document.getElementById('root')).render(<App/>);
 </script>
 </body>
