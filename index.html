@@ -928,7 +928,7 @@ const getCatColor=n=>{if(/code|dev|sql/i.test(n))return'#3b82f6';if(/bug|fix|err
 
 // ══ API ══
 const api={
-  _GAS_URL:'https://script.google.com/macros/s/AKfycbxVAkliNn7UimS2l_DQj_jJbL4EzmdmYZ_VU-x0MSe25cT60YqANHwYNs1iU9IVTkXb/exec',
+  _GAS_URL:'https://script.google.com/macros/s/AKfycbzFRuFjpKwCtnblP4mKxxRhLjTPcJUwk0LwbMICesT9BqeGpGc69cTljjHKv6s9uQ/exec',
   call:(fn,data)=>new Promise((res,rej)=>google.script.run.withSuccessHandler(res).withFailureHandler(rej)[fn](data)),
   async login(id,pw){try{return await api.call('loginUser',{identifier:id,password:pw});}catch(e){return{success:false,error:e.message};}},
   async register(d){try{const r=await api.call('registerUser',d);return r;}catch(e){return{success:false,error:e.message};}},
