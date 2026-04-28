@@ -5846,13 +5846,13 @@ const PersonnelAnalyticsView = ({ employees, tasks }) => {
         <div className="view-fade">
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 }}>
                 <div>
-                    <h2 style={{ fontSize: 22, fontWeight: 900, color: 'var(--p)' }}><i className="fa-solid fa-chart-line mr-2" />Personnel Analytics</h2>
-                    <p style={{ fontSize: 11, color: 'var(--tx3)', marginTop: 3, fontWeight: 600 }}>Deep-dive telemetry per employee.</p>
+                    <h2 style={{ fontSize: 22, fontWeight: 900, color: 'var(--p)' }}><i className="fa-solid fa-chart-line mr-2" />Trends & History</h2>
+                    <p style={{ fontSize: 11, color: 'var(--tx3)', marginTop: 3, fontWeight: 600 }}>TREND IN HISTORY OF EFFICIENCY</p>
                 </div>
             </div>
             <div style={{ display: 'grid', gridTemplateColumns: window.innerWidth > 900 ? '280px 1fr' : '1fr', gap: 20 }}>
                 <div className="glass p-4" style={{ maxHeight: '75vh', overflowY: 'auto' }}>
-                    <p style={{ fontSize: 10, fontWeight: 900, color: 'var(--tx3)', textTransform: 'uppercase', marginBottom: 12, letterSpacing: '.05em' }}>Directory</p>
+                    <p style={{ fontSize: 10, fontWeight: 900, color: 'var(--tx3)', textTransform: 'uppercase', marginBottom: 12, letterSpacing: '.05em' }}>Personnel Directory</p>
                     {empList.map(e => (
                         <div key={e.id} onClick={() => setSelectedEmp(e)} className="glass mb-2 p-3 cursor-pointer" style={{ border: selectedEmp?.id === e.id ? '1px solid var(--p)' : '1px solid var(--bd)', background: selectedEmp?.id === e.id ? 'var(--pl)' : 'transparent', transition: '0.2s' }}>
                             <div style={{ fontSize: 12, fontWeight: 900, color: selectedEmp?.id === e.id ? 'var(--p)' : 'var(--tx)' }}>{e.firstName} {e.lastName}</div>
@@ -5880,19 +5880,12 @@ const PersonnelAnalyticsView = ({ employees, tasks }) => {
                             </div>
                             <div style={{ display: 'grid', gridTemplateColumns: window.innerWidth > 768 ? '1fr 1fr' : '1fr', gap: 20 }}>
                                 <div className="glass p-5">
-                                    <h4 style={{ fontSize: 11, fontWeight: 900, marginBottom: 15, textTransform: 'uppercase', color: 'var(--tx3)', letterSpacing: '.05em' }}>Top 3 Longest Tasks</h4>
-                                    {stats.top3.length === 0 ? <p style={{ fontSize: 11, color: 'var(--tx3)' }}>No data available</p> : stats.top3.map((t, i) => (
-                                        <div key={i} className="mb-4 last:mb-0">
-                                            <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 13, fontWeight: 800 }}>
-                                                <span>{t.taskName}</span>
-                                                <span style={{ color: 'var(--p)' }}>{t.durationMinutes}m</span>
-                                            </div>
-                                            <div style={{ fontSize: 10, color: 'var(--tx3)', marginTop: 2 }}>Logged on {t.date}</div>
-                                        </div>
-                                    ))}
+                                    <h4 style={{ fontSize: 11, fontWeight: 900, marginBottom: 15, textTransform: 'uppercase', color: 'var(--tx3)', letterSpacing: '.05em' }}>Efficiency 0%</h4>
+                                    <div style={{ fontSize: 24, fontWeight: 900, color: 'var(--p)', marginBottom: 5 }}>00h 00m</div>
+                                    <p style={{ fontSize: 11, color: 'var(--tx3)' }}>Current efficiency metrics for selected personnel.</p>
                                 </div>
                                 <div className="glass p-5">
-                                    <h4 style={{ fontSize: 11, fontWeight: 900, marginBottom: 15, textTransform: 'uppercase', color: 'var(--tx3)', letterSpacing: '.05em' }}>7-Day Productivity Trend</h4>
+                                    <h4 style={{ fontSize: 11, fontWeight: 900, marginBottom: 15, textTransform: 'uppercase', color: 'var(--tx3)', letterSpacing: '.05em' }}>TREND IN HISTORY OF EFFICIENCY</h4>
                                     <div style={{ display: 'flex', alignItems: 'flex-end', gap: 6, height: 120 }}>
                                         {stats.last7Days.map((d, i) => {
                                             const max = Math.max(...stats.last7Days.map(x => x.mins), 1);
@@ -6257,7 +6250,7 @@ const MainApp=({user:initUser,onLogoutReq,theme,setTheme})=>{
     {id:'announcements',icon:'fa-bullhorn',label:'Bulletin'},
     {id:'leaderboard',icon:'fa-trophy',label:'Rankings'},
     {id:'projects',icon:'fa-folder-open',label:'Projects'},
-    {id:'analytics',label:'Personnel Analytics',icon:'fa-chart-column'},
+    {id:'analytics',label:'Trends & History',icon:'fa-chart-column'},
     {id:'dtr',label:'HR DTR Portal',icon:'fa-calendar-check'},
     {id:'queue',label:'Operations Queue',icon:'fa-list-check'},
     {id:'tools',label:'Admin Tools',icon:'fa-screwdriver-wrench'},
@@ -6466,6 +6459,15 @@ const MainApp=({user:initUser,onLogoutReq,theme,setTheme})=>{
                   <p style={{fontSize:9,fontWeight:800,textTransform:'uppercase',color:'var(--tx3)',marginTop:3,letterSpacing:'.07em'}}>{s.l}</p>
                 </div>
               ))}
+            </div>
+            <div className="glass" style={{padding:'12px 16px'}}>
+              <div style={{fontSize:11,fontWeight:900,color:'var(--p)',textTransform:'uppercase',letterSpacing:'.1em',marginBottom:8}}>Time & Attendance Today</div>
+              <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:8}}>
+                <div style={{fontSize:10,color:'var(--tx2)',fontWeight:700}}>1h Break: <span style={{color:'var(--p)'}}>01:00</span></div>
+                <div style={{fontSize:10,color:'var(--tx2)',fontWeight:700}}>Coffee: <span style={{color:'var(--p)'}}>00:15</span></div>
+                <div style={{fontSize:10,color:'var(--tx2)',fontWeight:700}}>Yosi: <span style={{color:'var(--p)'}}>00:15</span></div>
+                <div style={{fontSize:10,color:'var(--tx2)',fontWeight:700}}>Efficiency: <span style={{color:'var(--p)'}}>0%</span></div>
+              </div>
             </div>
             <p style={{fontSize:11,color:'var(--tx3)',textAlign:'center',fontWeight:600}}>{safe.email}</p>
           </div>
