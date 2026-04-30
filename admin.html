@@ -3,7 +3,22 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1.0,viewport-fit=cover"/>
-<title>Gigahertz Nexus — Activity Tracker v9.04 PROD</title>
+<title>Gigahertz Nexus — Activity Tracker v9.07 PROD</title>
+<script>
+  // Suppress HMR WebSocket errors in AI Studio preview
+  (function() {
+    const originalError = console.error;
+    console.error = (...args) => {
+      if (args[0] && typeof args[0] === 'string' && (args[0].includes('WebSocket') || args[0].includes('vite'))) return;
+      originalError.apply(console, args);
+    };
+    const originalWarn = console.warn;
+    console.warn = (...args) => {
+      if (args[0] && typeof args[0] === 'string' && (args[0].includes('WebSocket') || args[0].includes('vite'))) return;
+      originalWarn.apply(console, args);
+    };
+  })();
+</script>
 
 <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
 <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
@@ -19,6 +34,37 @@
     
     <!-- Custom Stylesheets -->
 <style>
+                :root {
+                  --wp-url: none;
+                  --wp-blur: 10px;
+                  --wp-dark: 0.4;
+                }
+
+                /* 🖼️ Wallpaper System Layers */
+                .wp-background {
+                  position: fixed;
+                  inset: 0;
+                  z-index: -2;
+                  background-image: var(--wp-url);
+                  background-size: cover;
+                  background-position: center;
+                  background-repeat: no-repeat;
+                  background-attachment: fixed;
+                  transition: background-image 0.8s ease;
+                }
+
+                .wp-glass-overlay {
+                  position: fixed;
+                  inset: 0;
+                  z-index: -1;
+                  backdrop-filter: blur(var(--wp-blur));
+                  -webkit-backdrop-filter: blur(var(--wp-blur));
+                  background: rgba(0, 0, 0, var(--wp-dark));
+                  transition: backdrop-filter 0.3s ease, background 0.3s ease;
+                }
+
+                #root { position: relative; z-index: 1; }
+
                 [data-theme="corporate"] { --p:#003d99;--pd:#002860;--bg:linear-gradient(135deg,#f0f5fb 0%,#e8f0f9 100%); --glass:rgba(255,255,255,0.85); --sidebar:rgba(240,245,251,0.95); }
                 [data-theme="nomad"] { --p:#ff8c42;--pd:#ff6d1d;--bg:linear-gradient(135deg,#fff8f3 0%,#fff0e6 100%); --glass:rgba(255,255,255,0.85); --sidebar:rgba(255,248,243,0.95); }
                 [data-theme="planner"] { --p:#c9a876;--pd:#a8865a;--bg:linear-gradient(135deg,#faf6f1 0%,#f5f0e8 100%); --glass:rgba(255,255,255,0.85); --sidebar:rgba(250,246,241,0.95); }
@@ -552,31 +598,157 @@
                 }
 
                 [data-theme="ddlc"] {
-                    --p: #ff9ed2;
-                    --pd: #ff66b2;
-                    --pl: rgba(255,102,178,0.12);
-                    --bg: linear-gradient(135deg,#ffe6f2 0%,#fff0f5 100%);
-                    --wh: #fff;
-                    --card: rgba(255,255,255,0.85);
-                    --tx: #4a4a4a;
-                    --tx2: #ff66b2;
-                    --tx3: #8a8a8a;
-                    --bd: rgba(255,102,178,0.4);
-                    --danger: #cc0000;
-                    --ok: #00cc66;
-                    --warn: #ffcc00;
-                    --glass: rgba(255,250,252,0.75);
-                    --gborder: rgba(255,158,210,0.8);
-                    --shadow: rgba(255,102,178,0.2);
-                    --sidebar: rgba(255,240,245,0.95);
-                    --header: rgba(255,240,245,0.92);
-                    --ibg: rgba(255,240,245,0.7);
-                    --btn: linear-gradient(160deg,#ff9ed2,#ff66b2);
-                    --btnH: linear-gradient(160deg,#ffb6e6,#ff9ed2);
-                    --glow: rgba(255,102,178,0.3);
-                }
+    --p: #ff9ed2;
+    --pd: #ff66b2;
+    --pl: rgba(255,102,178,0.12);
+    --bg: #ffe6f2; 
+    --wh: #fff;
+    --card: rgba(255,255,255,0.85);
+    --tx: #4a4a4a;
+    --tx2: #ff66b2;
+    --tx3: #8a8a8a;
+    --bd: rgba(255,102,178,0.4);
+    --danger: #cc0000;
+    --ok: #00cc66;
+    --warn: #ffcc00;
+    --glass: rgba(255,250,252,0.75);
+    --gborder: rgba(255,158,210,0.8);
+    --shadow: rgba(255,102,178,0.2);
+    --sidebar: rgba(255,240,245,0.95);
+    --header: rgba(255,240,245,0.92);
+    --ibg: rgba(255,240,245,0.7);
+    --btn: linear-gradient(160deg,#ff9ed2,#ff66b2);
+    --btnH: linear-gradient(160deg,#ffb6e6,#ff9ed2);
+    --glow: rgba(255,102,178,0.3);
+    background-image: 
+        linear-gradient(135deg, #ffe6f2 0%, #fff0f5 100%),
+        radial-gradient(#ffcad4 25%, transparent 26%), 
+        radial-gradient(#ffcad4 25%, transparent 26%) !important;
+    background-position: 0 0, 0 0, 60px 60px !important;
+    background-size: 100% 100%, 120px 120px, 120px 120px !important;
+    animation: ddlc-dots 60s linear infinite !important;
+    background-attachment: fixed !important;
+}
 
-                [data-theme="synthwave"] {
+[data-theme="ddlc"] .sidebar-logo, [data-theme="ddlc"] .sidebar, [data-theme="ddlc"] .header, [data-theme="ddlc"] .auth-card {
+    background: transparent !important;
+    position: relative;
+    overflow: hidden;
+}
+
+[data-theme="ddlc"] .sidebar-logo::before, [data-theme="ddlc"] .sidebar::before, [data-theme="ddlc"] .header::before, [data-theme="ddlc"] .auth-card::before {
+    content: "";
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background-color: #ffe6f2;
+    background-image: 
+        radial-gradient(#ffcad4 25%, transparent 26%), 
+        radial-gradient(#ffcad4 25%, transparent 26%);
+    background-position: 0 0, 60px 60px;
+    background-size: 120px 120px;
+    animation: ddlc-dots 60s linear infinite;
+    filter: blur(4px);
+    opacity: 0.8;
+    z-index: -1;
+}
+
+/* Add a clear overlay for the logo text if needed, but blur on sidebar is okay if it's just the bg */
+
+[data-theme="ddlc"] .nav-icon i, [data-theme="ddlc"] .fa-sliders, [data-theme="ddlc"] .fa-gear {
+    color: #ff66b2 !important;
+    filter: drop-shadow(0 0 5px rgba(255, 102, 178, 0.4));
+}
+
+[data-theme="void"] {
+    --p: #111111;
+    --pd: #000000;
+    --pl: rgba(255,255,255,0.05);
+    --bg: #000000;
+    --wh: #000;
+    --card: rgba(10,10,10,0.9);
+    --tx: #ffffff;
+    --tx2: #999999;
+    --tx3: #666666;
+    --bd: rgba(255,255,255,0.1);
+    --danger: #ef4444;
+    --ok: #22c55e;
+    --warn: #f59e0b;
+    --glass: rgba(10,10,10,0.95);
+    --gborder: rgba(255,255,255,0.15);
+    --shadow: rgba(0,0,0,0.9);
+    --sidebar: #000;
+    --header: #000;
+    --ibg: #050505;
+    --btn: linear-gradient(160deg,#222,#111);
+    --btnH: linear-gradient(160deg,#333,#222);
+    --glow: rgba(255,255,255,0.01);
+}
+
+[data-theme="spurs"] {
+    --p: #c0c0c0;
+    --pd: #808080;
+    --pl: rgba(192,192,192,0.1);
+    --bg: #000000;
+    --wh: #1a1a1a;
+    --card: rgba(20,20,20,0.85);
+    --tx: #e0e0e0;
+    --tx2: #a0a0a0;
+    --tx3: #606060;
+    --bd: rgba(192,192,192,0.2);
+    --danger: #ff4d4d;
+    --ok: #4dff4d;
+    --warn: #ffd700;
+    --glass: rgba(15,15,15,0.8);
+    --gborder: rgba(192,192,192,0.3);
+    --shadow: rgba(0,0,0,0.8);
+    --sidebar: rgba(0,0,0,0.98);
+    --header: rgba(0,0,0,0.95);
+    --ibg: rgba(5,5,5,0.8);
+    --btn: linear-gradient(160deg,#444,#111);
+    --btnH: linear-gradient(160deg,#666,#222);
+    --glow: rgba(192,192,192,0.2);
+    position: relative;
+    overflow-x: hidden;
+}
+
+[data-theme="spurs"]::before {
+    content: "SPURS PRIDE";
+    position: absolute;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%) rotate(-15deg);
+    font-size: 15vw;
+    font-weight: 900;
+    color: rgba(255, 255, 255, 0.03);
+    white-space: nowrap;
+    pointer-events: none;
+    z-index: 0;
+    animation: spursPride 10s ease-in-out infinite;
+}
+
+[data-theme="spurs"]::after {
+    content: "";
+    position: absolute;
+    top: -50%; left: -50%; right: -50%; bottom: -50%;
+    background: linear-gradient(165deg, 
+        transparent 42%, 
+        #00B2A9 42%, #00B2A9 44%, 
+        #EF3340 44%, #EF3340 46%, 
+        #FF8200 46%, #FF8200 48%, 
+        transparent 48%
+    );
+    opacity: 0.15;
+    filter: blur(40px);
+    z-index: 0;
+    pointer-events: none;
+    animation: glow-sash 8s ease-in-out infinite;
+}
+
+@keyframes glow-sash {
+    0%, 100% { opacity: 0.1; filter: blur(30px); }
+    50% { opacity: 0.2; filter: blur(50px); }
+}
+
+[data-theme="synthwave"] {
                     --p: #00ffff;
                     --pd: #00b3b3;
                     --pl: rgba(0,255,255,0.12);
@@ -1497,7 +1669,19 @@
                 }
 
                 @keyframes spin {
-                    to {
+                    to { transform: rotate(360deg); }
+                }
+
+                @keyframes ddlc-dots {
+                  from { background-position: 0 0, 0 0, 60px 60px; }
+                  to { background-position: 0 0, -120px -120px, -60px -60px; }
+                }
+
+                @keyframes spursPride {
+                  0% { transform: scaleX(1); opacity: 0.8; }
+                  50% { transform: scaleX(1.1); opacity: 1; text-shadow: 0 0 20px #fff; }
+                  100% { transform: scaleX(1); opacity: 0.8; }
+                }
                         transform: rotate(360deg)
                     }
                 }
@@ -2458,6 +2642,16 @@
                     border-radius: 50%;
                     flex-shrink: 0
                 }
+                
+                @keyframes sync-pulse {
+                    0% { transform: scale(1); opacity: 1; box-shadow: 0 0 0 0 var(--p); }
+                    50% { transform: scale(1.3); opacity: 0.7; box-shadow: 0 0 10px 3px var(--p); }
+                    100% { transform: scale(1); opacity: 1; box-shadow: 0 0 0 0 var(--p); }
+                }
+                .syncing {
+                    animation: sync-pulse 1.8s infinite ease-in-out;
+                }
+                .tracker-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--ok); flex-shrink: 0; }
 
                 .gas-dot-ok {
                     background: var(--ok);
@@ -3078,6 +3272,83 @@ console.warn = (function(oldWarn) {
 })(console.warn);
 
 /* ═══════════════════════════════════════════════════
+   ACTIVITY TRACKER SYSTEM (Nexus v9.0)
+═══════════════════════════════════════════════════ */
+window.ActivityTracker=(()=>{
+  let _user=null,_page='admin_dashboard',_sessionId='sess_'+Math.random().toString(36).slice(2,10),
+      _queue=[],_flushTimer=null,_badgeEl=null,_badgeTimer=null,_flushing=false;
+  const FLUSH_INTERVAL=5000,MAX_QUEUE=20;
+  function showBadge(state,text){if(!_badgeEl)return;_badgeEl.className='tracker-badge '+state;_badgeEl.querySelector('.tracker-label').textContent=text;_badgeEl.style.opacity='1';clearTimeout(_badgeTimer);_badgeTimer=setTimeout(()=>{if(_badgeEl)_badgeEl.style.opacity='0';},3500);}
+  function createBadge(){
+    _badgeEl=document.createElement('div');
+    _badgeEl.className='tracker-badge';
+    _badgeEl.style.cssText='position:fixed;bottom:20px;right:20px;z-index:9999;background:var(--card);border:1px solid var(--bd);border-radius:99px;padding:6px 14px;font-size:10px;font-weight:700;color:var(--tx3);display:flex;align-items:center;gap:6px;box-shadow:var(--sh);transition:opacity .3s;pointer-events:none;backdrop-filter:blur(10px);opacity:0;';
+    _badgeEl.innerHTML='<div style="width:6px;height:6px;border-radius:50%;background:var(--tx3);" class="tracker-dot"></div><span class="tracker-label">Tracker ready</span>';
+    document.body.appendChild(_badgeEl);
+  }
+  function push(action,details,extra){
+    extra=extra||{};
+    const event={
+      timestamp:new Date().toISOString(),
+      userId:_user&&(_user.id||_user.empId)?(_user.id||_user.empId):'',
+      empId:_user&&_user.empId?_user.empId:'',
+      dept:_user&&_user.dept?_user.dept:'',
+      action:action,
+      details:String(details||'').slice(0,250),
+      page:_page,
+      element:extra.element||'',
+      duration:extra.duration!=null?String(extra.duration):'',
+      userAgent:navigator.userAgent.slice(0,120),
+      sessionId:_sessionId,
+      status:'SUCCESS'
+    };
+    _queue.push(event);
+    if(_queue.length>=MAX_QUEUE)flush();
+  }
+  async function flush(){
+    if(_flushing||_queue.length===0)return;
+    const batch=_queue.splice(0);
+    _flushing=true;
+    showBadge('syncing','Syncing '+batch.length+' log(s)...');
+    try{
+      await GAS.call('batchLogActivities',{events:batch});
+      showBadge('success','✓ '+batch.length+' records synced');
+      _flushing=false;
+    }catch(err){
+      _queue.unshift.apply(_queue,batch);
+      showBadge('error','Sync failed (Admin View)');
+      _flushing=false;
+    }
+  }
+  function startAutoFlush(){clearInterval(_flushTimer);_flushTimer=setInterval(flush,FLUSH_INTERVAL);}
+  function attachDOMListeners(){
+    document.addEventListener('click',function(e){
+      var el=e.target.closest('button,a[href],[role="button"],.nav-item');
+      if(!el)return;
+      var raw=(el.innerText||el.getAttribute('title')||el.getAttribute('aria-label')||el.className||'icon').replace(/\s+/g,' ').trim().slice(0,80);
+      push('ADMIN_CLICK','Action: '+raw,{element:el.tagName.toLowerCase()});
+    },true);
+  }
+  return{
+    init:function(user){_user=user||null;createBadge();startAutoFlush();attachDOMListeners();push('ADMIN_SESSION_START','Nexus Admin Portal specialized session initialized');},
+    setUser:function(u){_user=u;},
+    setPage:function(p){_page=p;push('ADMIN_NAV','Viewing: '+p);},
+    custom:function(a,d,e){push(a,d,e);},flush:flush
+  };
+})();
+
+const THEMES=[
+  {id:'light',label:'Sky Blue'},{id:'gigahertz',label:'Gigahertz Classic'},{id:'retro',label:'Retro OS'},
+  {id:'glasshouse',label:'Glass House'},{id:'matrix',label:'The Matrix'},{id:'candy',label:'Candy Pop'},
+  {id:'solar',label:'Solar Flare'},{id:'void',label:'Void Black'},{id:'dark',label:'Dark Mode'},
+  {id:'midnight',label:'Midnight'},{id:'neon',label:'Neon Cyber'},{id:'frost',label:'Frost Glass'},
+  {id:'lavender',label:'Lavender'},{id:'forest',label:'Forest'},{id:'sunset',label:'Sunset'},
+  {id:'ocean',label:'Ocean'},{id:'red',label:'Crimson'},{id:'spurs',label:'Spurs Silver'},
+  {id:'coffee',label:'Coffee'},{id:'rosegold',label:'Rose Gold ✨'},{id:'sempiternal',label:'Sempiternal'},
+  {id:'dragonsblood',label:'Dragons Blood'},{id:'frutiger',label:'Frutiger Aero'}
+];
+
+/* ═══════════════════════════════════════════════════
    THEME ENGINE
 ═══════════════════════════════════════════════════ */
 const ThemeEngine = {
@@ -3417,47 +3688,16 @@ const THEMES=[
   {id:'frost',label:'Frost Glass ❄️',color:'#0284c7'},
   {id:'lavender',label:'Lavender 💜',color:'#7c3aed'},
   {id:'red',label:'Crimson 🔴',color:'#ef4444'},
-  {id:'cyberpunk',label:'Cyberpunk 👾',color:'#d946ef'},
+  {id:'spurs',label:'Spurs Silver 💎',color:'#c0c0c0'},
+  {id:'void',label:'Void Black 🌑',color:'#111111'},
   {id:'coffee',label:'Coffee ☕',color:'#d97706'},
   {id:'rosegold',label:'Rose Gold ✨',color:'#fb7185'},
   {id:'sunset',label:'Sunset 🌅',color:'#f97316'},
   {id:'sakura',label:'Sakura 🌸',color:'#f472b6'},
   {id:'gigahertz',label:'Gigahertz Classic 🖥️',color:'#1e40af'},
   {id:'egypt',label:'Egyptian Cats 🐈',color:'#d4af37'},
-  {id:'ddlc',label:'Just Monika 🎀',color:'#ff9ed2'},
+  {id:'ddlc',label:'DDLC Era 🎀',color:'#ff9ed2'},
   {id:'synthwave',label:'Synthwave 🌃',color:'#00ffff'},
-  {id:'christmas',label:'Paskong Pinoy 🎄',color:'#d42426'},
-  {id:'independence',label:'Araw ng Kalayaan 🇵🇭',color:'#0038a8'},
-  {id:'summer',label:'PH Summer ☀️',color:'#f97316'},
-  {id:'dididi',label:'Penalty 💀',color:'#ff00ff'},
-  {id:'vaporwave',label:'Vaporwave 🌈',color:'#ff1493'},
-  {id:'steampunk',label:'Steampunk ⚙️',color:'#8b7355'},
-  {id:'dracula',label:'Dracula 🦇',color:'#ff79c6'},
-  {id:'nordtheme',label:'Nord Theme ❄️',color:'#88c0d0'},
-  {id:'gruvbox',label:'Gruvbox 🍂',color:'#d65c0b'},
-  {id:'onedark',label:'One Dark 🌙',color:'#61afef'},
-  {id:'serenity',label:'Serenity Blue 🧘',color:'#5b8ef3'},
-  {id:'monowork',label:'Monochrome Productivity ⚫⚪',color:'#404040'},
-  {id:'pastel',label:'Pastel Focus 🎨',color:'#d4a5d4'},
-  {id:'industrial',label:'Industrial Workspace 🏭',color:'#535353'},
-  {id:'scandinavian',label:'Scandinavian Clean 🇸🇪',color:'#a8a8a8'},
-  {id:'retrooffice',label:'Retro Office 📠',color:'#d4731e'},
-  {id:'neon-grid',label:'Futuristic Neon Grid ⚡',color:'#00ff41'},
-  {id:'zen',label:'Zen Workspace 🌾',color:'#8b7355'},
-  {id:'corporate',label:'Corporate Professional 💼',color:'#003d99'},
-  {id:'nomad',label:'Digital Nomad Setup 🌍',color:'#ff8c42'},
-  {id:'planner',label:'Analog Planner Style 📓',color:'#c9a876'},
-  {id:'coffeeshop',label:'Coffee Shop Vibe ☕',color:'#6f4e37'},
-  {id:'library',label:'Library Quiet Mode 📚',color:'#1b5e20'},
-  {id:'glass',label:'Glassmorphism UI 💎',color:'#b0e0e6'},
-  {id:'grid',label:'Grid-Based Layout 📐',color:'#4a90e2'},
-  {id:'timeblock',label:'Time-Block Visual Theme 📊',color:'#e24a4a'},
-  {id:'goalboard',label:'Goal-Oriented Dashboard 🎯',color:'#ff6b6b'},
-  {id:'blueprint',label:'Blueprint / Architect Style 🏗️',color:'#0066cc'},
-  {id:'whiteboard',label:'Whiteboard Brainstorm 💡',color:'#f0f0f0'},
-  {id:'calmblue',label:'Calm Blue Focus 💙',color:'#1a5490'},
-  {id:'warm',label:'Warm Lighting Workspace 🔥',color:'#e8a76b'},
-  {id:'etong',label:'Etong Vibes 🇵🇭✨',color:'#ff6b9d'},
 ];
 
 const DEPTS=[
@@ -3575,6 +3815,8 @@ const SEED_PROJECTS=[
    UTILS
 ═══════════════════════════════════════════════════ */
 const fmtSec=s=>{if(s<0)s=0;const h=Math.floor(s/3600),m=Math.floor((s%3600)/60),sc=s%60;return`${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}:${String(sc).padStart(2,'0')}`};
+const fmt12=t=>{if(!t||t==='--:--')return'--:--';const spl=t.split(':');if(spl.length<2)return t;const h=parseInt(spl[0]),m=spl[1],ampm=h>=12?'PM':'AM',h12=h%12||12;return`${h12}:${m} ${ampm}`};
+const todayStr=()=>new Date().toISOString().split('T')[0];
 const fmtDate=iso=>{if(!iso)return'';return new Date(iso+'T00:00:00').toLocaleDateString('en-PH',{year:'numeric',month:'short',day:'2-digit'})};
 const fmtTS=iso=>{if(!iso)return'';const d=new Date(iso);return d.toLocaleString('en-PH',{month:'short',day:'2-digit',hour:'2-digit',minute:'2-digit',hour12:true})};
 const calcDur=(s,e)=>{if(!s||!e)return 0;const[sh,sm]=s.split(':').map(Number);const[eh,em]=e.split(':').map(Number);return Math.max(0,parseFloat(((eh*60+em-sh*60-sm)/60).toFixed(2)))};
@@ -4053,7 +4295,12 @@ const AuthPortal=({onLogin,theme,setTheme})=>{
     // Async attempt GAS login
     GAS.call('login',{identifier:id.trim(),password:pw.trim()}).catch(()=>{});
     setLoading(false);
-    if(res.success)onLogin(res.user);
+    if(res.success){
+      const fn = (res.user.firstName || '').toLowerCase();
+      if(fn.includes('piolo')) setTheme('spurs');
+      else setTheme('gigahertz');
+      onLogin(res.user);
+    }
     else setErr(res.error||'Invalid credentials.');
   };
 
@@ -4063,7 +4310,7 @@ const AuthPortal=({onLogin,theme,setTheme})=>{
     setTheme(next);
   };
 
-  const isDark=['dark','midnight','forest','ocean','matrix','retro', 'aurora','neon','red','cyberpunk','coffee','rosegold','sunset','egypt','ddlc','synthwave','christmas','dididi', 'vaporwave', 'steampunk', 'dracula', 'nordtheme', 'gruvbox', 'onedark', 'industrial', 'blueprint', 'plumber-dudes', 'lua'].includes(theme);
+  const isDark=['void','dark','midnight','forest','ocean','matrix','retro', 'aurora','neon','red','coffee','rosegold','sunset','egypt','synthwave','christmas','dididi', 'vaporwave', 'steampunk', 'dracula', 'nordtheme', 'gruvbox', 'onedark', 'industrial', 'blueprint', 'plumber-dudes', 'lua', 'spurs'].includes(theme);
 
   return(
     <div className="auth-bg">
@@ -4071,7 +4318,7 @@ const AuthPortal=({onLogin,theme,setTheme})=>{
         <div className="auth-titlebar">
           <span style={{fontSize:14}}>🔷</span>
           <span className="auth-titlebar-title" style={{ color: isDark ? '#fff' : 'var(--p)' }}>
-            <img src={LOGO} style={{height:20,width:20,borderRadius:5,objectFit:'contain',background:'#fff',padding:2}} alt="Logo"/>
+            <img src={LOGO} style={{height:20,width:20,borderRadius:5,objectFit:'contain',padding:2}} alt="Logo"/>
             Gigahertz — Employee Login
           </span>
           <div className="auth-titlebar-dots">
@@ -4082,7 +4329,7 @@ const AuthPortal=({onLogin,theme,setTheme})=>{
         </div>
         <div className="auth-body">
           <div className="auth-logo-wrap">
-            <img src="https://rec-data.kalibrr.com/logos/KBZX7J2BDXZEXSF4WMUN-5a1d0b9b.jpg" className="auth-logo-img" alt="G" />
+            <img src="https://rec-data.kalibrr.com/logos/KBZX7J2BDXZEXSF4WMUN-5a1d0b9b.jpg" className="auth-logo-img" alt="G" style={{mixBlendMode:isDark?'screen':'multiply', borderRadius:12}} />
           </div>
           <h1 className="auth-title" style={{ color: isDark ? 'white' : 'var(--p)' }}>Gigahertz Nexus</h1>
           
@@ -4095,6 +4342,13 @@ const AuthPortal=({onLogin,theme,setTheme})=>{
               <i className="fa-solid fa-triangle-exclamation"></i>{err}
             </div>
           )}
+
+          <div style={{textAlign:'center', marginBottom:20}}>
+            <p style={{color:'#ef4444', fontSize:12, fontWeight:900, textTransform:'uppercase', letterSpacing:'2px', textShadow: '0 0 10px rgba(239, 68, 68, 0.3)', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 10}}>
+              <i className="fa-solid fa-shield-halved"></i>
+              Authorized Personnel Only
+            </p>
+          </div>
 
           <div className="form-group">
             <label className="form-label">Employee ID</label>
@@ -4164,6 +4418,276 @@ const AFKOverlay=({countdown,onResume})=>(
 );
 
 /* ═══════════════════════════════════════════════════
+   SUPPORT DASHBOARD (Forgot Passwords, Service Requests)
+ ═══════════════════════════════════════════════════ */
+const SupportDashboardView = ({ showToast }) => {
+  const [requests, setRequests] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchRequests = async () => {
+      const res = await GAS.call('getSupportRequests');
+      if (res.success) setRequests(res.requests || []);
+      setLoading(false);
+    };
+    fetchRequests();
+  }, []);
+
+  const updateStatus = async (id, status) => {
+    const res = await GAS.call('updateSupportStatus', { id, status });
+    if (res.success) {
+      setRequests(p => p.map(r => r.id === id ? { ...r, status } : r));
+      showToast(`Request ${status}`, "success");
+    }
+  };
+
+  return (
+    <div className="view-fade">
+      <div className="view-header">
+         <h2 style={{fontSize:22,fontWeight:900}}><i className="fa-solid fa-headset mr-2" style={{color:'var(--p)'}}/>Support & Nexus Recovery</h2>
+         <p style={{fontSize:11,color:'var(--tx3)',marginTop:3,fontWeight:600}}>Manage employee access requests and system trouble tickets.</p>
+      </div>
+
+      <div className="glass" style={{padding:0, borderRadius:16, marginTop:20}}>
+        <table className="gh-table">
+          <thead>
+            <tr>
+              <th>REF ID</th>
+              <th>EMPLOYEE</th>
+              <th>TYPE</th>
+              <th>MESSAGE</th>
+              <th>STATUS</th>
+              <th>ACTION</th>
+            </tr>
+          </thead>
+          <tbody>
+            {loading ? (
+              <tr><td colSpan="6" style={{textAlign:'center', padding:40}}><span className="spinner"/> Analysing telemetry...</td></tr>
+            ) : requests.length === 0 ? (
+              <tr><td colSpan="6" style={{textAlign:'center', padding:40, color:'var(--tx3)'}}>No active support signals.</td></tr>
+            ) : requests.map(r => (
+              <tr key={r.id}>
+                <td style={{fontSize:10, color:'var(--tx3)'}}>{r.id}</td>
+                <td style={{fontWeight:800}}>{r.empId}</td>
+                <td><span className={`badge badge-${r.type==='FORGOT_PASSWORD'?'danger':'info'}`} style={{fontSize:9}}>{r.type}</span></td>
+                <td style={{fontSize:11, maxWidth:300, whiteSpace:'normal'}}>{r.message}</td>
+                <td><span className={`badge badge-${r.status==='PENDING'?'warn':'ok'}`}>{r.status}</span></td>
+                <td>
+                  {r.status === 'PENDING' && (
+                    <div style={{display:'flex', gap:5}}>
+                       <button className="btn btn-ok btn-xs" onClick={()=>updateStatus(r.id, 'RESOLVED')}>Resolve</button>
+                       <button className="btn btn-danger btn-xs" onClick={()=>updateStatus(r.id, 'DISMISSED')}>Dismiss</button>
+                    </div>
+                  )}
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  );
+};
+/* ═══════════════════════════════════════════════════
+   INTELLIGENCE COMMAND CENTER (Global Dashboard)
+ ═══════════════════════════════════════════════════ */
+const IntelligenceCommandView = ({ employees, tasks }) => {
+  const [stats, setStats] = useState({ active: 0, idle: 0, efficiency: 0 });
+  const [alerts, setAlerts] = useState([]);
+  
+  useEffect(() => {
+    GAS.call('getAlerts').then(res => res.success && setAlerts(res.alerts || []));
+    // Calculate live aggregates
+    const active = employees.filter(e => e.status === 'ONLINE').length;
+    setStats({ active, idle: 0, efficiency: 82 });
+  }, [employees]);
+
+  return (
+    <div className="view-fade">
+      {/* Top Aggregates */}
+      <div className="grid grid-3" style={{gap:15, marginBottom:20}}>
+        <div className="glass" style={{padding:20, borderRadius:16, borderLeft: '4px solid var(--p)'}}>
+           <div style={{fontSize:11, fontWeight:900, opacity:0.6}}>NEURAL NODES ACTIVE</div>
+           <div style={{fontSize:32, fontWeight:900, marginTop:5}}>{stats.active} <span style={{fontSize:12, color:'var(--ok)'}}>🟢 ONLINE</span></div>
+        </div>
+        <div className="glass" style={{padding:20, borderRadius:16, borderLeft: '4px solid var(--warn)'}}>
+           <div style={{fontSize:11, fontWeight:900, opacity:0.6}}>AVG SYSTEM EFFICIENCY</div>
+           <div style={{fontSize:32, fontWeight:900, marginTop:5}}>{stats.efficiency}% <span style={{fontSize:12, color:'var(--p)'}}>🔥 ELITE</span></div>
+        </div>
+        <div className="glass" style={{padding:20, borderRadius:16, borderLeft: '4px solid var(--danger)'}}>
+           <div style={{fontSize:11, fontWeight:900, opacity:0.6}}>ANOMALIES DETECTED</div>
+           <div style={{fontSize:32, fontWeight:900, marginTop:5}}>{alerts.length} <span style={{fontSize:12, opacity:0.6}}>24H WINDOW</span></div>
+        </div>
+      </div>
+
+      <div style={{display:'grid', gridTemplateColumns:'2fr 1fr', gap:20}}>
+         {/* Main Chart Area */}
+         <div className="glass" style={{padding:22, borderRadius:20, position:'relative'}}>
+            <div style={{display:'flex', justifyContent:'space-between', alignItems:'center', marginBottom:20}}>
+               <h3 style={{fontSize:14, fontWeight:900}}>PRODUCTIVITY TELEMETRY</h3>
+               <div style={{fontSize:10, fontWeight:700, opacity:0.5}}>AUTO-REFRESHING: 30S</div>
+            </div>
+            <div style={{height:300, display:'flex', alignItems:'center', justifyContent:'center', border:'1px dashed rgba(255,255,255,0.1)', borderRadius:12}}>
+               <span style={{fontSize:12, opacity:0.4}}>CHART.JS ENGINE V3 INITIALIZING... [WAVEFORM DATA PENDING]</span>
+            </div>
+         </div>
+
+         {/* Right Rail: Insights */}
+         <div style={{display:'flex', flexDirection:'column', gap:20}}>
+            <div className="glass" style={{padding:20, borderRadius:20, background: 'linear-gradient(135deg, rgba(139, 92, 246, 0.1), rgba(0,0,0,0))'}}>
+               <h4 style={{fontSize:12, fontWeight:900, color:'var(--p)', marginBottom:10}}>🧠 NEURAL INSIGHTS</h4>
+               <p style={{fontSize:11, opacity:0.8, lineHeight:1.6}}>
+                 System suggests scheduling high-complexity tasks before <b style={{color:'var(--p)'}}>11:00 AM</b> to align with peak cognitive patterns observed in 80% of nodes.
+               </p>
+               <div style={{marginTop:15, padding:10, background:'rgba(0,0,0,0.2)', borderRadius:8, fontSize:10, fontWeight:700}}>
+                 🚀 TREND: Efficiency up +6.2% since last epoch.
+               </div>
+            </div>
+
+            <div className="glass" style={{padding:20, borderRadius:20}}>
+               <h4 style={{fontSize:12, fontWeight:900, marginBottom:12}}>🔴 LIVE ALERT STREAM</h4>
+               <div style={{maxHeight:150, overflowY:'auto', display:'flex', flexDirection:'column', gap:8}}>
+                  {alerts.slice(-5).reverse().map((a, i) => (
+                    <div key={i} style={{fontSize:10, padding:'8px 12px', background:'rgba(244,63,94,0.05)', border:'1px solid rgba(244,63,94,0.1)', borderRadius:8, display:'flex', justifyContent:'space-between'}}>
+                       <span>{a.message}</span>
+                       <span style={{opacity:0.5}}>{new Date(a.timestamp).toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'})}</span>
+                    </div>
+                  ))}
+               </div>
+            </div>
+         </div>
+      </div>
+    </div>
+  );
+};
+
+/* ═══════════════════════════════════════════════════
+   SMART ALERTS DASHBOARD
+ ═══════════════════════════════════════════════════ */
+const AlertsDashboardView = () => {
+  const [alerts, setAlerts] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    GAS.call('getAlerts').then(res => {
+      if (res.success) setAlerts(res.alerts || []);
+      setLoading(false);
+    });
+  }, []);
+
+  return (
+    <div className="view-fade">
+      <div className="view-header">
+        <h2 style={{fontSize:22,fontWeight:900}}><i className="fa-solid fa-triangle-exclamation mr-2" style={{color:'var(--warn)'}}/>Neural Intelligence Alerts</h2>
+        <p style={{fontSize:11,color:'var(--tx3)',marginTop:3,fontWeight:600}}>System detected behavioral anomalies and productivity flags.</p>
+      </div>
+
+      <div className="glass" style={{padding:0, borderRadius:16, marginTop:20}}>
+        <table className="gh-table">
+          <thead>
+            <tr><th>TIMESTAMP</th><th>NODE</th><th>TYPE</th><th>MESSAGE</th></tr>
+          </thead>
+          <tbody>
+            {loading ? (
+              <tr><td colSpan="4" style={{textAlign:'center', padding:40}}><span className="spinner"/> Accessing alert logs...</td></tr>
+            ) : alerts.length === 0 ? (
+              <tr><td colSpan="4" style={{textAlign:'center', padding:40, color:'var(--tx3)'}}>No anomalies detected in this quadrant.</td></tr>
+            ) : alerts.slice().reverse().map((a, i) => (
+              <tr key={i}>
+                <td style={{fontSize:10, color:'var(--tx3)'}}>{a.timestamp}</td>
+                <td style={{fontWeight:800}}>{a.empId}</td>
+                <td><span className={`badge badge-${a.type === 'LONG_IDLE' ? 'danger' : 'warn'}`}>{a.type}</span></td>
+                <td style={{fontSize:11}}>{a.message}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  );
+};
+
+/* ═══════════════════════════════════════════════════
+   ADMIN TASK ASSIGNMENT PORTAL
+ ═══════════════════════════════════════════════════ */
+const TaskAssignmentView = ({ employees, showToast }) => {
+  const [form, setForm] = useState({ assigneeId: '', taskName: '', priority: 'Medium', deadline: '' });
+  const [tasks, setTasks] = useState([]);
+  const [submitting, setSubmitting] = useState(false);
+
+  useEffect(() => {
+    GAS.call('getAssignedTasks', { isAdmin: true }).then(res => res.success && setTasks(res.tasks || []));
+  }, []);
+
+  const assignTask = async () => {
+    if(!form.assigneeId || !form.taskName) return showToast("Assignee and Task Name required", "warn");
+    setSubmitting(true);
+    const res = await GAS.call('assignTask', form);
+    if(res.success) {
+      setTasks([res.task, ...tasks]);
+      showToast("Task assigned successfully", "success");
+      setForm({ assigneeId: '', taskName: '', priority: 'Medium', deadline: '' });
+    }
+    setSubmitting(false);
+  };
+
+  return (
+    <div className="view-fade" style={{display:'grid', gridTemplateColumns:'1fr 1.5fr', gap:20}}>
+      <div className="glass" style={{padding:22, borderRadius:16}}>
+         <h3 style={{fontSize:14, fontWeight:900, marginBottom:16}}><i className="fa-solid fa-plus-circle mr-2" style={{color:'var(--p)'}}/>Assign New Directive</h3>
+         <div style={{display:'flex', flexDirection:'column', gap:12}}>
+            <div className="form-group">
+               <label className="input-label">Assignee Neural Node</label>
+               <select className="input" value={form.assigneeId} onChange={e=>setForm({...form, assigneeId:e.target.value})}>
+                  <option value="">Select Employee...</option>
+                  {employees.map(e => <option key={e.id} value={e.id}>{e.name} ({e.id})</option>)}
+               </select>
+            </div>
+            <div className="form-group">
+               <label className="input-label">Directive Description</label>
+               <input className="input" placeholder="Primary Task Objective" value={form.taskName} onChange={e=>setForm({...form, taskName:e.target.value})}/>
+            </div>
+            <div style={{display:'grid', gridTemplateColumns:'1fr 1fr', gap:10}}>
+               <div className="form-group">
+                  <label className="input-label">Priority</label>
+                  <select className="input" value={form.priority} onChange={e=>setForm({...form, priority:e.target.value})}>
+                     <option>Low</option><option>Medium</option><option>High</option><option>Urgent</option>
+                  </select>
+               </div>
+               <div className="form-group">
+                  <label className="input-label">Deadline</label>
+                  <input className="input" type="date" value={form.deadline} onChange={e=>setForm({...form, deadline:e.target.value})}/>
+               </div>
+            </div>
+            <button className="btn btn-primary" style={{marginTop:10}} onClick={assignTask} disabled={submitting}>
+               {submitting ? <span className="spinner"/> : "TRANSMIT DIRECTIVE"}
+            </button>
+         </div>
+      </div>
+
+      <div className="glass" style={{padding:0, borderRadius:16}}>
+         <div className="section-title-bar" style={{fontSize:11, fontWeight:900, padding:'10px 18px', background:'rgba(0,0,0,0.04)'}}>ACTIVE DIRECTIVES TRANSMITTED</div>
+         <div style={{maxHeight:550, overflowY:'auto'}}>
+            <table className="gh-table">
+               <thead><tr><th>NODE</th><th>TASK</th><th>PRIORITY</th><th>STATUS</th></tr></thead>
+               <tbody>
+                  {tasks.map(t => (
+                    <tr key={t.id}>
+                       <td style={{fontSize:10, fontWeight:700}}>{t.assigneeId}</td>
+                       <td style={{fontSize:11, fontWeight:800}}>{t.taskName}</td>
+                       <td><span className={`badge badge-${t.priority.toLowerCase()==='urgent'?'danger':'info'}`} style={{fontSize:9}}>{t.priority}</span></td>
+                       <td><span className="badge badge-warn">{t.status}</span></td>
+                    </tr>
+                  ))}
+               </tbody>
+            </table>
+         </div>
+      </div>
+    </div>
+  );
+};
+
+/* ═══════════════════════════════════════════════════
    SHIFT SUMMARY MODAL
 ═══════════════════════════════════════════════════ */
 const ShiftSummaryModal=({onConfirm,onCancel,tasks,user,sessionStart})=>{
@@ -4225,6 +4749,8 @@ const TimerEngine=({user,tasks,onSave,showToast})=>{
   const [emergency,setEmergency]=useState(false);
   const [pauseModal,setPauseModal]=useState(null);
   const [memNote,setMemNote]=useState('');
+  const [remarks, setRemarks] = useState('');
+  const [attachedFile, setAttachedFile] = useState(null);
   const [prevTask,setPrevTask]=useState(null);
   const [taskHistory,setTaskHistory]=useState([]);
   const [sessionStart,setSessionStart]=useState(new Date());
@@ -4317,6 +4843,42 @@ const TimerEngine=({user,tasks,onSave,showToast})=>{
     if(!active)return;
     const hrs=parseFloat((elRef.current/3600).toFixed(2));
     if(hrs<0.01){showToast('Task too short (< 1 min)','warn');return;}
+
+    let finalRemarks = remarks;
+    if(attachedFile) {
+       showToast('📤 Uploading file...', 'info');
+       try {
+         const b64 = await new Promise((res, rej) => {
+           const r = new FileReader();
+           r.onload = (e) => res(e.target.result);
+           r.onerror = (e) => rej(new Error('File read failed'));
+           r.readAsDataURL(attachedFile);
+         });
+
+         const uploadRes = await GAS.call('updatePhoto', {
+           empId: safe.empId || safe.id,
+           imageBase64: b64,
+           fileName: attachedFile.name,
+           taskDetails: {
+             taskName: active.taskName,
+             category: active.category,
+             duration: hrs
+           }
+         });
+
+         if(uploadRes.success) {
+           const fileUrl = uploadRes.url || '';
+           finalRemarks = `📎 ${attachedFile.name}${fileUrl ? ' ' + fileUrl : ''} ${remarks}`.trim();
+           showToast('📎 File attached!', 'success');
+         } else {
+           showToast('File upload failed: ' + uploadRes.error, 'error');
+         }
+       } catch (e) {
+         showToast('Error uploading: ' + e.message, 'error');
+       }
+       setAttachedFile(null);
+    }
+
     const fq=AI.focusQuality(elRef.current,idleRef.current,interactions);
     const d=new Date(active.startTime||Date.now());
     const now=new Date();
@@ -4325,10 +4887,11 @@ const TimerEngine=({user,tasks,onSave,showToast})=>{
     const totalTaskTime=allTasks.reduce((sum,t)=>sum+(t.elapsedBase||0),0);
     const sessionDuration=Math.floor((now-sessionStart)/1000);
     const productivity=sessionDuration>0?Math.round((totalTaskTime/sessionDuration)*100):0;
-    const t={id:Date.now(),empId:safe.id,empName:`${safe.firstName||''} ${safe.lastName||''}`.trim(),taskName:active.taskName,category:active.category,date:d.toISOString().split('T')[0],startTime:active.startDate||`${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}`,endTime:`${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}`,durationHours:hrs,tasksCompleted:taskHistory.length+1,productivity:Math.min(100,productivity),month:d.getMonth()+1,year:d.getFullYear(),source:'Timer',focusQuality:fq};
+    const t={id:Date.now(),empId:safe.id,empName:`${safe.firstName||''} ${safe.lastName||''}`.trim(),taskName:active.taskName,category:active.category,date:d.toISOString().split('T')[0],startTime:active.startDate||`${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}`,endTime:`${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}`,durationHours:hrs,remarks:finalRemarks,tasksCompleted:taskHistory.length+1,productivity:Math.min(100,productivity),month:d.getMonth()+1,year:d.getFullYear(),source:'Timer',focusQuality:fq};
     await GAS.call('logTask',t);
     onSave(t);showToast(`Saved ${hrs}h · Focus: ${fq}% · Productivity: ${Math.min(100,productivity)}% ✓`,'success');
     setActive(null);setElapsed(0);elRef.current=0;idleRef.current=0;setIdleTime(0);setInteractions(0);setTaskHistory([]);setSessionStart(new Date());
+    setRemarks(''); setAttachedFile(null);
     LS.rm(`timer_${safe.id}`);
     setEmergency(false);
   };
@@ -4426,6 +4989,48 @@ const TimerEngine=({user,tasks,onSave,showToast})=>{
             ))}
           </div>
         )}
+
+        {/* Remarks and File Upload */}
+        {active && (
+          <div style={{marginBottom: 12}}>
+            <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 6}}>
+              <label style={{fontSize: 10, fontWeight: 800, color: 'var(--tx3)', textTransform: 'uppercase', letterSpacing: '.05em'}}>📝 Remarks</label>
+              <div style={{position: 'relative'}}>
+                <button className="btn btn-ghost btn-xs" onClick={() => document.getElementById('timer-file-upload').click()}>
+                  <i className="fa-solid fa-paperclip" style={{marginRight: 4}}/> {attachedFile ? 'Change File' : 'Attach File'}
+                </button>
+                <input 
+                  type="file" 
+                  id="timer-file-upload" 
+                  style={{display: 'none'}} 
+                  onChange={e => {
+                    const f = e.target.files?.[0];
+                    if(f) {
+                      setAttachedFile(f);
+                      showToast(`✓ File selected: ${f.name.slice(0, 20)}`, 'success');
+                    }
+                    e.target.value = '';
+                  }}
+                />
+              </div>
+            </div>
+            <textarea 
+              className="input" 
+              rows={2} 
+              style={{fontSize: 11, resize: 'vertical', minHeight: 40}}
+              placeholder="Add task notes or progress details..."
+              value={remarks}
+              onChange={e => setRemarks(e.target.value)}
+            />
+            {attachedFile && (
+              <div style={{display: 'flex', alignItems: 'center', gap: 6, marginTop: 4}}>
+                <span style={{fontSize: 10, fontWeight: 700, color: 'var(--ok)'}}>✓ {attachedFile.name.slice(0, 30)}{attachedFile.name.length > 30 ? '...' : ''}</span>
+                <button className="btn btn-ghost btn-xs" style={{color: 'var(--danger)', padding: '2px 4px'}} onClick={() => setAttachedFile(null)}><i className="fa-solid fa-xmark"/></button>
+              </div>
+            )}
+          </div>
+        )}
+
         {/* Controls */}
         <div style={{display:'flex',gap:8,flexWrap:'wrap'}}>
           {active&&active.status==='running'&&<button className="btn btn-warn btn-sm" onClick={reqPause} style={{flex:1}}><i className="fa-solid fa-pause"/> Pause</button>}
@@ -4515,13 +5120,45 @@ const TimerEngine=({user,tasks,onSave,showToast})=>{
 const LogTaskModal=({user,onClose,onSave,showToast,initial=null})=>{
   const today=new Date().toISOString().split('T')[0];
   const [form,setForm]=useState(initial||{taskName:'',category:'Admin',date:today,startTime:'08:00',endTime:'17:00',remarks:''});
+  const [attachedFile, setAttachedFile] = useState(null);
   const [loading,setLoading]=useState(false);
   const dur=useMemo(()=>calcDur(form.startTime,form.endTime),[form.startTime,form.endTime]);
   const submit=async e=>{
     e.preventDefault();if(!form.taskName.trim()||dur<=0)return;
     setLoading(true);
+
+    let finalRemarks = form.remarks;
+    if(attachedFile) {
+      showToast('📤 Uploading file...', 'info');
+      try {
+        const b64 = await new Promise((res, rej) => {
+          const r = new FileReader();
+          r.onload = (e) => res(e.target.result);
+          r.onerror = (e) => rej(new Error('File read failed'));
+          r.readAsDataURL(attachedFile);
+        });
+        const res = await GAS.call('updatePhoto', {
+          empId: user.empId || user.id,
+          imageBase64: b64,
+          fileName: attachedFile.name,
+          taskDetails: {
+            taskName: form.taskName.trim(),
+            category: form.category,
+            duration: dur
+          }
+        });
+        if(res.success) {
+          const fileUrl = res.url || '';
+          finalRemarks = `📎 ${attachedFile.name}${fileUrl ? ' ' + fileUrl : ''} ${form.remarks}`.trim();
+          showToast('📎 File attached!', 'success');
+        }
+      } catch (err) {
+        showToast('Upload failed: ' + err.message, 'error');
+      }
+    }
+
     const d=new Date(form.date);
-    const t={id:initial?.id||Date.now(),empId:user.id,empName:`${user.firstName||''} ${user.lastName||''}`.trim(),taskName:form.taskName.trim(),category:form.category,date:form.date,startTime:form.startTime,endTime:form.endTime,durationHours:dur,remarks:form.remarks,month:d.getMonth()+1,year:d.getFullYear(),source:'Manual'};
+    const t={id:initial?.id||Date.now(),empId:user.id,empName:`${user.firstName||''} ${user.lastName||''}`.trim(),taskName:form.taskName.trim(),category:form.category,date:form.date,startTime:form.startTime,endTime:form.endTime,durationHours:dur,remarks:finalRemarks,month:d.getMonth()+1,year:d.getFullYear(),source:'Manual'};
     await GAS.call('logTask',t);
     onSave(t,!!initial?.id);
     showToast(initial?.id?'Task updated!':'Task logged ✓','success');
@@ -4550,7 +5187,22 @@ const LogTaskModal=({user,onClose,onSave,showToast,initial=null})=>{
           <span style={{fontSize:12,fontWeight:700}}>Duration</span>
           <span style={{fontSize:20,fontWeight:900,color:dur>0?'var(--p)':'var(--danger)'}}>{dur>0?`${dur}h`:'—'}</span>
         </div>
-        <div><label className="input-label">Remarks</label><textarea className="input" rows={2} value={form.remarks} onChange={e=>setForm(p=>({...p,remarks:e.target.value}))} placeholder="Optional..."/></div>
+        <div>
+          <div style={{display:'flex', justifyContent:'space-between', alignItems:'center', marginBottom: 4}}>
+            <label className="input-label" style={{margin: 0}}>Remarks</label>
+            <div style={{position: 'relative'}}>
+              <button type="button" className="btn btn-ghost btn-xs" onClick={() => document.getElementById('log-file-upload-modal').click()}>
+                <i className="fa-solid fa-paperclip" style={{marginRight: 4}}/> {attachedFile ? 'Attached' : 'Attach File'}
+              </button>
+              <input type="file" id="log-file-upload-modal" style={{display:'none'}} onChange={e=>{const f=e.target.files?.[0]; if(f) { setAttachedFile(f); showToast(`✓ ${f.name.slice(0,12)}...`, 'success'); } e.target.value='';}}/>
+            </div>
+          </div>
+          <textarea className="input" rows={2} value={form.remarks} onChange={e=>setForm(p=>({...p,remarks:e.target.value}))} placeholder="Optional..."/>
+          {attachedFile && <div style={{fontSize:10, color:'var(--ok)', fontWeight: 700, marginTop: 4, display: 'flex', alignItems: 'center', gap: 6}}>
+             <i className="fa-solid fa-check-circle"/> {attachedFile.name}
+             <button type="button" onClick={() => setAttachedFile(null)} style={{background:'none', border:'none', color:'var(--danger)', cursor:'pointer'}}><i className="fa-solid fa-xmark"/></button>
+          </div>}
+        </div>
         <button type="submit" className="btn btn-primary" disabled={loading||dur<=0} style={{padding:'12px',justifyContent:'center'}}>
           {loading?<><span className="spinner"/> Saving...</>:<><i className="fa-solid fa-floppy-disk"/> Confirm Log</>}
         </button>
@@ -4562,30 +5214,33 @@ const LogTaskModal=({user,onClose,onSave,showToast,initial=null})=>{
 /* ═══════════════════════════════════════════════════
    ADMIN REGISTRATION MODAL
 ═══════════════════════════════════════════════════ */
-const RegisterEmployeeModal = ({ onClose, onSuccess, showToast }) => {
-  const [form, setForm] = useState({ empId:'', firstName:'', lastName:'', deptId:1, password:'', role:'EMPLOYEE' });
+const RegisterEmployeeModal = ({ onClose, onSuccess, showToast, editUser }) => {
+  const [form, setForm] = useState(editUser ? { ...editUser, empId: editUser.employeeId || editUser.empId } : { empId:'', firstName:'', lastName:'', deptId:1, password:'', role:'EMPLOYEE' });
   const [loading, setLoading] = useState(false);
   const [showPw, setShowPw] = useState(false);
 
   const submit = async (e) => {
     e.preventDefault();
-    if(!form.empId || !form.firstName || !form.lastName || !form.password) return;
+    if(!form.empId || !form.firstName || !form.lastName || (!form.id && !form.password)) return;
     setLoading(true);
-    const res = await GAS.call('adminRegisterUser', {
+    const res = await GAS.call(form.id ? 'adminUpdateUser' : 'adminRegisterUser', {
       ...form,
       dept: DEPTS.find(d=>d.id===parseInt(form.deptId))?.name || 'Unknown'
     });
     setLoading(false);
     if(res.success) {
-      showToast('Employee registered successfully!', 'success');
-      onSuccess(res.user);
+      showToast(form.id ? 'Employee updated successfully!' : 'Employee registered successfully!', 'success');
+      onSuccess(res.user || { ...form, id: form.id || Date.now() });
     } else {
-      showToast(res.error || 'Registration failed', 'danger');
+      showToast(res.error || (form.id ? 'Update failed' : 'Registration failed'), 'danger');
     }
   };
 
+  const title = form.id ? "Edit Personnel Details" : "Register New Personnel";
+  const icon = form.id ? "fa-user-pen" : "fa-user-plus";
+
   return (
-    <ModalLayout title="Register New Personnel" icon="fa-user-plus" onClose={onClose}>
+    <ModalLayout title={title} icon={icon} onClose={onClose}>
       <form onSubmit={submit} style={{display:'flex', flexDirection:'column', gap:12}}>
         <div style={{display:'grid', gridTemplateColumns:'1fr 1fr', gap:10}}>
           <div><label className="input-label">First Name</label><input className="input" value={form.firstName} onChange={e=>setForm(p=>({...p,firstName:e.target.value}))} required/></div>
@@ -4593,7 +5248,7 @@ const RegisterEmployeeModal = ({ onClose, onSuccess, showToast }) => {
         </div>
         <div>
           <label className="input-label">Employee ID</label>
-          <input className="input" value={form.empId} onChange={e=>setForm(p=>({...p,empId:e.target.value.toUpperCase()}))} placeholder="GHZXXXX" required/>
+          <input className="input" value={form.empId} onChange={e=>setForm(p=>({...p,empId:e.target.value.toUpperCase()}))} placeholder="GHZXXXX" required disabled={!!form.id}/>
         </div>
         <div>
           <label className="input-label">Department</label>
@@ -4602,9 +5257,9 @@ const RegisterEmployeeModal = ({ onClose, onSuccess, showToast }) => {
           </select>
         </div>
         <div>
-          <label className="input-label">Initial Password</label>
+          <label className="input-label">{form.id ? 'New Password (leave blank to keep current)' : 'Initial Password'}</label>
           <div style={{position:'relative'}}>
-            <input className="input" type={showPw?'text':'password'} value={form.password} onChange={e=>setForm(p=>({...p,password:e.target.value}))} required style={{paddingRight:42}}/>
+            <input className="input" type={showPw?'text':'password'} value={form.password} onChange={e=>setForm(p=>({...p,password:e.target.value}))} required={!form.id} style={{paddingRight:42}}/>
             <button type="button" onClick={()=>setShowPw(!showPw)} style={{position:'absolute',right:10,top:'50%',transform:'translateY(-50%)',background:'none',border:'none',cursor:'pointer',color:'var(--tx3)'}}>
               <i className={`fa-solid ${showPw?'fa-eye-slash':'fa-eye'}`}/>
             </button>
@@ -4618,7 +5273,7 @@ const RegisterEmployeeModal = ({ onClose, onSuccess, showToast }) => {
           </select>
         </div>
         <button type="submit" className="btn btn-primary" disabled={loading} style={{marginTop:10, padding:12, justifyContent:'center'}}>
-          {loading ? <span className="spinner"/> : 'Create Account'}
+          {loading ? <span className="spinner"/> : (form.id ? 'Save Changes' : 'Create Account')}
         </button>
       </form>
     </ModalLayout>
@@ -5173,6 +5828,8 @@ const TrackerView=({employees,tasks})=>{
 ═══════════════════════════════════════════════════ */
 const DirectoryView=({employees,setEmployees,tasks,showToast})=>{
   const [search,setSearch]=useState('');const [deptF,setDeptF]=useState('ALL');const [statusF,setStatusF]=useState('ALL');
+  const [editingEmp, setEditingEmp] = useState(null);
+  const [showAdd, setShowAdd] = useState(false);
   const safeE=employees||[];const safeT=tasks||[];
   const filtered=useMemo(()=>{
     let list=safeE;
@@ -5183,11 +5840,38 @@ const DirectoryView=({employees,setEmployees,tasks,showToast})=>{
   },[safeE,deptF,statusF,search]);
   const updateStatus=(id,s)=>{setEmployees(p=>p.map(e=>e.id===id?{...e,status:s}:e));showToast(`Status → ${s}`,'success');};
   const updateRole=(id,r)=>{setEmployees(p=>p.map(e=>e.id===id?{...e,role:r}:e));showToast(`Role → ${r}`,'success');};
+  
+  const deleteEmp = async (id) => {
+    if(!confirm('Are you sure you want to delete this personnel record?')) return;
+    const targetEmpId = filtered.find(e=>e.id===id)?.employeeId;
+    const res = await GAS.call('deleteUser', { empId: targetEmpId || id });
+    if(res.success) {
+      setEmployees(p=>p.filter(e=>e.id!==id));
+      showToast('Personnel record deleted', 'success');
+    } else {
+      showToast(res.error || 'Delete failed', 'danger');
+    }
+  };
+
   return(
     <div className="anim-fade" style={{display:'flex',flexDirection:'column',gap:13}}>
       <div style={{display:'flex',justifyContent:'space-between',alignItems:'flex-end',flexWrap:'wrap',gap:9}}>
         <div><h2 style={{fontSize:22,fontWeight:900}}>Directory</h2><p style={{fontSize:11,color:'var(--tx3)',marginTop:3,fontWeight:600}}>{safeE.length} personnel</p></div>
+        <button className="btn btn-primary btn-sm" onClick={() => setShowAdd(true)}><i className="fa-solid fa-user-plus"/> Add Personnel</button>
       </div>
+
+      {(showAdd || editingEmp) && (
+        <RegisterEmployeeModal 
+          editUser={editingEmp}
+          onClose={() => { setEditingEmp(null); setShowAdd(false); }}
+          onSuccess={(u) => {
+            if(editingEmp) setEmployees(p=>p.map(e=>e.id===u.id?u:e));
+            else setEmployees(p=>[u, ...p]);
+            setEditingEmp(null); setShowAdd(false);
+          }}
+          showToast={showToast}
+        />
+      )}
       <div style={{display:'flex',gap:7,flexWrap:'wrap'}}>
         <div style={{position:'relative',flex:1,minWidth:200}}>
           <i className="fa-solid fa-magnifying-glass" style={{position:'absolute',left:11,top:'50%',transform:'translateY(-50%)',color:'var(--tx3)',fontSize:11}}/>
@@ -5203,9 +5887,9 @@ const DirectoryView=({employees,setEmployees,tasks,showToast})=>{
       <div className="glass" style={{borderRadius:16,overflow:'hidden'}}>
         <div className="table-wrap">
           <table className="nx-table" style={{minWidth:680}}>
-            <thead><tr><th>Employee</th><th>ID</th><th>Department</th><th>Hours</th><th>Role / Status</th></tr></thead>
+            <thead><tr><th>Employee</th><th>ID</th><th>Department</th><th>Hours</th><th>Role / Status</th><th>Actions</th></tr></thead>
             <tbody>
-              {filtered.length===0?<tr><td colSpan="5" style={{textAlign:'center',padding:'36px',opacity:.4,fontWeight:700}}>No results.</td></tr>
+              {filtered.length===0?<tr><td colSpan="6" style={{textAlign:'center',padding:'36px',opacity:.4,fontWeight:700}}>No results.</td></tr>
               :filtered.map(emp=>{
                 const dept=DEPTS.find(d=>d.id===emp.deptId)||{};
                 const hrs=safeT.filter(t=>t.empId===emp.id).reduce((s,t)=>s+(t.durationHours||0),0);
@@ -5227,6 +5911,12 @@ const DirectoryView=({employees,setEmployees,tasks,showToast})=>{
                       <div style={{display:'flex',flexDirection:'column',gap:4}}>
                         <select value={emp.role||'Staff'} onChange={e=>updateRole(emp.id,e.target.value)} style={{background:'var(--ibg)',border:'1px solid var(--bd)',borderRadius:7,padding:'3px 7px',fontSize:10,fontWeight:700,color:'var(--tx)',cursor:'pointer',maxWidth:95}}><option>Staff</option><option>ADMIN</option></select>
                         <select value={emp.status||'Active'} onChange={e=>updateStatus(emp.id,e.target.value)} style={{background:'var(--ibg)',border:'1px solid var(--bd)',borderRadius:7,padding:'3px 7px',fontSize:10,fontWeight:700,color:'var(--tx)',cursor:'pointer',maxWidth:95}}><option>Active</option><option>Idle</option><option>Absent</option><option>Leave</option></select>
+                      </div>
+                    </td>
+                    <td>
+                      <div style={{display:'flex', gap:6}}>
+                        <button className="btn btn-ghost btn-xs" onClick={()=>setEditingEmp(emp)} title="Edit"><i className="fa-solid fa-user-pen" style={{color:'var(--p)'}}/></button>
+                        <button className="btn btn-ghost btn-xs" onClick={()=>deleteEmp(emp.id)} title="Delete"><i className="fa-solid fa-user-xmark" style={{color:'var(--danger)'}}/></button>
                       </div>
                     </td>
                   </tr>
@@ -5529,7 +6219,7 @@ const ProjectModal=({onClose,onSave,showToast})=>{
 /* ═══════════════════════════════════════════════════
    SETTINGS VIEW
 ═══════════════════════════════════════════════════ */
-const SettingsView=({theme,setTheme,animations,setAnimations,showToast,gasQueue})=>{
+const SettingsView=({theme,setTheme,animations,setAnimations,showToast,gasQueue,wallpaper,setWallpaper,user,isAdmin})=>{
   const [testing,setTesting]=useState(false);const [syncing,setSyncing]=useState(false);const [connStatus,setConnStatus]=useState(null);
   const [soundEnabled,setSoundEnabled]=useState(()=>LS.load('ghz_sound',true));
   const [fluidAnimations,setFluidAnimations]=useState(()=>LS.load('ghz_fluid',true));
@@ -5538,7 +6228,11 @@ const SettingsView=({theme,setTheme,animations,setAnimations,showToast,gasQueue}
   const [autoLock,setAutoLock]=useState(()=>LS.load('ghz_autoLock',true));
   const [dataRetention,setDataRetention]=useState(()=>LS.load('ghz_dataRetention','90'));
 
-  const test=async()=>{setTesting(true);setConnStatus(null);showToast('Testing GAS connection...','info');const ok=await GAS.ping();setTesting(false);setConnStatus(ok);showToast(ok?'✅ Connected to Google Sheets!':'⚠️ GAS offline — running local mode.',ok?'success':'warn');};
+  const [uploading, setUploading] = useState(false);
+  const [globalWall, setGlobalWall] = useState(wallpaper.url || '');
+  const [isLocked, setIsLocked] = useState(wallpaper.isLocked || false);
+
+  const test=async()=>{setTesting(true);setConnStatus(null);showToast('Testing GAS connection...','info');const ok=await GAS.call('ping');setTesting(false);setConnStatus(ok);showToast(ok?'✅ Connected to Google Sheets!':'⚠️ GAS offline — running local mode.',ok?'success':'warn');};
   const sync=async()=>{setSyncing(true);showToast('Syncing offline queue...','info');await GAS.syncQueue(showToast);setSyncing(false);showToast('Sync complete!','success');};
 
   const toggleSound=()=>{setSoundEnabled(p=>{LS.save('ghz_sound',!p);return!p;});showToast(soundEnabled?'Sound OFF':'Sound ON','info');};
@@ -5548,16 +6242,105 @@ const SettingsView=({theme,setTheme,animations,setAnimations,showToast,gasQueue}
   const toggleAutoLock=()=>{setAutoLock(p=>{LS.save('ghz_autoLock',!p);return!p;});showToast(autoLock?'Auto-lock OFF':'Auto-lock ON','info');};
   const updateRetention=v=>{setDataRetention(v);LS.save('ghz_dataRetention',v);showToast(`Data retention: ${v} days`,'info');};
 
+  const handleUpload = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    setUploading(true);
+    const reader = new FileReader();
+    reader.onload = async (ev) => {
+      const b64 = ev.target.result;
+      const res = await GAS.call('uploadWallpaper', { empId: user.employeeId, imageBase64: b64, fileName: file.name, mimeType: file.type });
+      if (res.success) {
+        setWallpaper(prev => ({ ...prev, url: res.url }));
+        showToast("Wallpaper uploaded successfully!", "success");
+      } else {
+        showToast(res.error || "Upload failed", "danger");
+      }
+      setUploading(false);
+    };
+    reader.readAsDataURL(file);
+  };
+
+  const handleSaveWallpaperSettings = async (updates) => {
+    const next = { ...wallpaper, ...updates };
+    setWallpaper(next);
+    await GAS.call('saveWallpaperSettings', { empId: user.employeeId, blur: next.blur, darkness: next.darkness });
+  };
+
+  const handleUpdateGlobalWallpaper = async (lockedStatus = null) => {
+    const l = lockedStatus !== null ? lockedStatus : isLocked;
+    const res = await GAS.call('adminConfigWallpaper', { globalWallpaper: globalWall, locked: l });
+    if (res.success) {
+      setIsLocked(l);
+      setWallpaper(prev => ({ ...prev, isLocked: l }));
+      showToast("Global Wallpaper Updated", "success");
+    }
+  };
+
   return(
-    <div className="anim-fade" style={{display:'flex',flexDirection:'column',gap:14,maxWidth:850}}>
-      <div><h2 style={{fontSize:22,fontWeight:900}}>Settings</h2><p style={{fontSize:11,color:'var(--tx3)',marginTop:3,fontWeight:600}}>System preferences, themes, backend config, and productivity settings.</p></div>
-      {gasQueue>0&&(
-        <div className="sync-banner">
-          <i className="fa-solid fa-cloud-arrow-up" style={{fontSize:16,flexShrink:0}}/>
-          <span>{gasQueue} offline record(s) pending sync. Click "Sync Now" when connected.</span>
-          <button className="btn btn-warn btn-sm" style={{marginLeft:'auto',flexShrink:0}} onClick={sync}>{syncing?<><span className="spinner"/> ...</>:'Sync Now'}</button>
+    <div className="anim-fade" style={{display:'flex',flexDirection:'column',gap:14,maxWidth:850, paddingBottom: 40}}>
+      <div><h2 style={{fontSize:22,fontWeight:900}}>Settings</h2><p style={{fontSize:11,color:'var(--tx3)',marginTop:3,fontWeight:600}}>System preferences, themes, background customization, and backend config.</p></div>
+      
+      {/* 🖼️ Wallpaper Customization Section */}
+      <div className="glass" style={{padding:'20px 22px',borderRadius:16, borderLeft: '4px solid var(--p)'}}>
+        <h3 style={{fontSize:14,fontWeight:900,marginBottom:14, display:'flex', alignItems:'center', gap:8}}>
+          <i className="fa-solid fa-image" style={{color:'var(--p)'}}/>
+          Background Environment
+          {wallpaper.isLocked && <span style={{fontSize:9, background:'var(--p)', color:'#fff', padding:'2px 6px', borderRadius:5}}>SYSTEM LOCKED</span>}
+        </h3>
+        
+        <div style={{display:'flex', flexDirection:'column', gap:15}}>
+          {!wallpaper.isLocked ? (
+             <div style={{display:'flex', gap:10, flexWrap:'wrap'}}>
+                <label className="btn btn-primary btn-sm" style={{flex:1, position:'relative', cursor:'pointer'}}>
+                  {uploading ? <><span className="spinner"/> Syncing...</> : <><i className="fa-solid fa-upload mr-2"/> Upload Wallpaper</>}
+                  <input type="file" hidden accept="image/*" onChange={handleUpload} disabled={uploading}/>
+                </label>
+                <button className="btn btn-ghost btn-sm" style={{border:'1px solid var(--bd)'}} onClick={() => { setWallpaper(p=>({...p, url:''})); GAS.call('uploadWallpaper', { empId: user.employeeId, imageBase64: '', fileName: '' }); }}>
+                   <i className="fa-solid fa-trash mr-2"/> Remove
+                </button>
+             </div>
+          ) : (
+            <div className="glass" style={{padding:'10px 14px', background:'rgba(255,255,255,0.03)', borderRadius:12, fontSize:11, fontWeight:700, color:'var(--tx3)'}}>
+               <i className="fa-solid fa-lock mr-2" style={{color:'var(--p)'}}/> Global background protocol active. Personal customization is restricted by terminal admin.
+            </div>
+          )}
+
+          <div style={{display:'grid', gridTemplateColumns:'1fr 1fr', gap:20}}>
+             <div>
+                <label className="input-label" style={{fontSize:10}}>Blur Intensity ({wallpaper.blur}px)</label>
+                <input type="range" min="0" max="40" value={wallpaper.blur} onChange={e => handleSaveWallpaperSettings({ blur: parseInt(e.target.value) })} style={{width:'100%', height:6, borderRadius:5, accentColor:'var(--p)'}} />
+             </div>
+             <div>
+                <label className="input-label" style={{fontSize:10}}>Overlay darkness ({Math.round(wallpaper.darkness * 100)}%)</label>
+                <input type="range" min="0" max="0.9" step="0.05" value={wallpaper.darkness} onChange={e => handleSaveWallpaperSettings({ darkness: parseFloat(e.target.value) })} style={{width:'100%', height:6, borderRadius:5, accentColor:'var(--p)'}} />
+             </div>
+          </div>
         </div>
-      )}
+
+        {isAdmin && (
+           <div style={{marginTop:25, paddingTop:20, borderTop:'1px dashed var(--bd)'}}>
+              <h4 style={{fontSize:12, fontWeight:900, marginBottom:12, color:'var(--p)'}}><i className="fa-solid fa-shield-halved mr-2"/> Admin Override Panel</h4>
+              <div style={{display:'flex', flexDirection:'column', gap:10}}>
+                 <div style={{display:'flex', gap:8}}>
+                    <input className="input" placeholder="Global Wallpaper URL (https://...)" style={{flex:1, fontSize:11}} value={globalWall} onChange={e=>setGlobalWall(e.target.value)} />
+                    <button className="btn btn-primary btn-sm" onClick={()=>handleUpdateGlobalWallpaper()}>Apply Global</button>
+                 </div>
+                 <div style={{display:'flex', justifyContent:'space-between', alignItems:'center', background:'rgba(0,0,0,0.05)', padding:'8px 12px', borderRadius:10}}>
+                    <div>
+                       <p style={{fontSize:11, fontWeight:800}}>Lock Personal Wallpapers</p>
+                       <p style={{fontSize:9, color:'var(--tx3)'}}>Force global background for all personnel</p>
+                    </div>
+                    <label className="toggle-wrap"><input type="checkbox" checked={isLocked} onChange={e => handleUpdateGlobalWallpaper(e.target.checked)} /><span className="toggle-sl"/></label>
+                 </div>
+                 <button className="btn btn-warn btn-xs" style={{fontSize:9, fontWeight:900}} onClick={async () => { if(confirm("Format ALL personnel wallpaper configurations?")) { await GAS.call('adminConfigWallpaper', { resetAll: true }); showToast("All wallpapers formatted.", "success"); } }}>
+                    <i className="fa-solid fa-broom mr-1"/> Format All Personnel Backgrounds
+                 </button>
+              </div>
+           </div>
+        )}
+      </div>
+
       <div className="glass" style={{padding:'20px 22px',borderRadius:16}}>
         <h3 style={{fontSize:14,fontWeight:900,marginBottom:14}}><i className="fa-solid fa-sliders" style={{color:'var(--p)',marginRight:6}}/>Display Settings</h3>
         <div style={{display:'flex',flexDirection:'column',gap:12}}>
@@ -5900,6 +6683,18 @@ const PersonnelAnalyticsView = ({ employees, tasks }) => {
                                     </div>
                                 </div>
                             </div>
+                            
+                            <div style={{ marginTop: 25 }}>
+                                <h4 style={{ fontSize: 11, fontWeight: 900, marginBottom: 15, textTransform: 'uppercase', color: 'var(--tx3)', letterSpacing: '.05em' }}>Top 3 Longest Missions</h4>
+                                <div style={{ display: 'grid', gridTemplateColumns: window.innerWidth > 600 ? 'repeat(3, 1fr)' : '1fr', gap: 12 }}>
+                                    {stats.top3.length === 0 ? <p style={{ fontSize: 11, color: 'var(--tx3)' }}>No tasks recorded.</p> : stats.top3.map((t, i) => (
+                                        <div key={i} className="glass p-3" style={{ borderLeft: '3px solid var(--p)' }}>
+                                            <div style={{ fontSize: 11, fontWeight: 900, marginBottom: 2, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{t.taskName}</div>
+                                            <div style={{ fontSize: 10, color: 'var(--tx3)', fontWeight: 700 }}>{t.date} · {t.durationMinutes}m</div>
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
                         </div>
                     )}
                 </div>
@@ -5910,12 +6705,43 @@ const PersonnelAnalyticsView = ({ employees, tasks }) => {
 
 const HRDTRView = ({ employees, tasks }) => {
     const [fDept, setFDept] = React.useState('ALL');
+    const [search, setSearch] = React.useState('');
     const allDepts = [...new Set(employees.map(e => e.dept))].filter(Boolean);
     const today = new Date().toISOString().split('T')[0];
+    
+    const filteredEmployees = React.useMemo(() => {
+        return employees.filter(e => {
+            const matchesDept = fDept === 'ALL' || e.dept === fDept;
+            const matchesSearch = (e.firstName + ' ' + e.lastName + ' ' + e.employeeId).toLowerCase().includes(search.toLowerCase());
+            return matchesDept && matchesSearch;
+        });
+    }, [employees, fDept, search]);
+
     return (
         <div className="view-fade">
-            <h2 style={{ fontSize: 22, fontWeight: 900, color: 'var(--p)', marginBottom: 4 }}><i className="fa-solid fa-business-time mr-2" />HR DTR Portal</h2>
-            <p style={{ fontSize: 11, color: 'var(--tx3)', fontWeight: 600, marginBottom: 20 }}>Official clock telemetry and shift verification.</p>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: 15, marginBottom: 20 }}>
+                <div>
+                    <h2 style={{ fontSize: 22, fontWeight: 900, color: 'var(--p)', marginBottom: 4 }}><i className="fa-solid fa-business-time mr-2" />HR DTR Portal</h2>
+                    <p style={{ fontSize: 11, color: 'var(--tx3)', fontWeight: 600 }}>Official clock telemetry and shift verification.</p>
+                </div>
+                <div style={{ display: 'flex', gap: 10 }}>
+                    <div className="glass p-2 px-4 text-center">
+                        <div style={{ fontSize: 9, fontWeight: 800, color: 'var(--tx3)', textTransform: 'uppercase' }}>Filtered Staff</div>
+                        <div style={{ fontSize: 18, fontWeight: 900, color: 'var(--p)' }}>{filteredEmployees.length}</div>
+                    </div>
+                    <div className="glass p-2 px-4 text-center">
+                        <div style={{ fontSize: 9, fontWeight: 800, color: 'var(--tx3)', textTransform: 'uppercase' }}>Total Hours</div>
+                        <div style={{ fontSize: 18, fontWeight: 900, color: 'var(--ok)' }}>{filteredEmployees.reduce((s, e) => {
+                            const eTasks = (tasks || []).filter(t => t.empId === e.employeeId && t.date === today);
+                            return s + (eTasks.reduce((s2, t2) => s2 + (t2.durationMinutes || 0), 0) / 60);
+                        }, 0).toFixed(1)}h</div>
+                    </div>
+                    <div style={{ position: 'relative', width: 240 }}>
+                        <i className="fa-solid fa-search" style={{ position: 'absolute', left: 12, top: '50%', transform: 'translateY(-50%)', color: 'var(--tx3)', fontSize: 12 }} />
+                        <input className="input" placeholder="Search staff..." value={search} onChange={e => setSearch(e.target.value)} style={{ paddingLeft: 34, fontSize: 12, height: 38, borderRadius: 10 }} />
+                    </div>
+                </div>
+            </div>
             <div className="glass p-3 mb-5 flex gap-2 overflow-x-auto no-scrollbar">
                 <button className={`btn btn-xs ${fDept === 'ALL' ? 'btn-primary' : 'btn-ghost'}`} onClick={() => setFDept('ALL')}>All</button>
                 {allDepts.map(d => (
@@ -5935,7 +6761,7 @@ const HRDTRView = ({ employees, tasks }) => {
                         </tr>
                     </thead>
                     <tbody>
-                        {employees.filter(e => fDept === 'ALL' || e.dept === fDept).map(e => {
+                        {filteredEmployees.map(e => {
                             const eTasks = (tasks || []).filter(t => t.empId === e.employeeId && t.date === today);
                             const tHrs = (eTasks.reduce((s, t) => s + (t.durationMinutes || 0), 0) / 60).toFixed(1);
                             return (
@@ -6002,6 +6828,7 @@ const ManagerTaskQueueView = ({ employees, tasks }) => {
     );
 };
 
+const LocationView = ({ user, isAdmin }) => {
   const safe = user || {};
   const [logs, setLogs] = React.useState([]);
   const [loading, setLoading] = React.useState(false);
@@ -6078,6 +6905,27 @@ const ManagerTaskQueueView = ({ employees, tasks }) => {
       </div>
 
       {isAdmin && (
+        <div style={{ display: 'grid', gridTemplateColumns: window.innerWidth > 768 ? 'repeat(4, 1fr)' : 'repeat(2, 1fr)', gap: 12, marginBottom: 10 }}>
+           <div className="glass p-3 text-center">
+             <div style={{ fontSize: 9, fontWeight: 800, color: 'var(--tx3)', textTransform: 'uppercase' }}>Active Telemetry</div>
+             <div style={{ fontSize: 18, fontWeight: 900, color: 'var(--p)' }}>{logs.length}</div>
+           </div>
+           <div className="glass p-3 text-center">
+             <div style={{ fontSize: 9, fontWeight: 800, color: 'var(--tx3)', textTransform: 'uppercase' }}>In Office</div>
+             <div style={{ fontSize: 18, fontWeight: 900, color: 'var(--ok)' }}>{logs.filter(l => l.workLocation === 'In Office' || l.status === 'IN_OFFICE').length}</div>
+           </div>
+           <div className="glass p-3 text-center">
+             <div style={{ fontSize: 9, fontWeight: 800, color: 'var(--tx3)', textTransform: 'uppercase' }}>Remote</div>
+             <div style={{ fontSize: 18, fontWeight: 900, color: 'var(--warn)' }}>{logs.filter(l => l.workLocation !== 'In Office' && l.status !== 'IN_OFFICE').length}</div>
+           </div>
+           <div className="glass p-3 text-center">
+             <div style={{ fontSize: 9, fontWeight: 800, color: 'var(--tx3)', textTransform: 'uppercase' }}>Last Pulse</div>
+             <div style={{ fontSize: 18, fontWeight: 900, color: 'var(--tx)' }}>{logs.length > 0 ? new Date(logs[0].timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : '--:--'}</div>
+           </div>
+        </div>
+      )}
+
+      {isAdmin && (
         <div className="glass" style={{padding:'10px 14px', borderRadius:12, border:'1px solid var(--bd)', display:'flex', alignItems:'center', gap:10, marginBottom:10}}>
            <i className="fa-solid fa-users text-[var(--p)]"/>
            <select className="input" style={{flex:1, border:'none', background:'transparent', fontWeight:800, fontSize:12, cursor:'pointer'}} value={filterEmp} onChange={e=>setFilterEmp(e.target.value)}>
@@ -6148,7 +6996,113 @@ const ManagerTaskQueueView = ({ employees, tasks }) => {
   );
 };
 
-const MainApp=({user:initUser,onLogoutReq,theme,setTheme})=>{
+
+const ActivityLogView = ({ isAdmin }) => {
+  const [logs, setLogs] = React.useState([]);
+  const [loading, setLoading] = React.useState(false);
+  const [search, setSearch] = React.useState('');
+  const [filterAction, setFilterAction] = React.useState('ALL');
+
+  const fetchLogs = React.useCallback(async () => {
+    setLoading(true);
+    try {
+      const res = await GAS.call('getActivityLogs', {}); // We'll assume this GAS endpoint exists or we'll add logic to getRecentActivity
+      if (res.success) {
+        setLogs(res.logs || res.data || []);
+      } else {
+        // Fallback to a mock for now if endpoint not ready, or use the activity tracking sheet
+        const fallback = await GAS.call('getRecentActivity', { limit: 100 });
+        if (fallback.success) setLogs(fallback.logs || fallback.data || []);
+      }
+    } catch (e) {
+      console.error('[ACTIVITY] Fetch failed:', e);
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  React.useEffect(() => {
+    fetchLogs();
+  }, [fetchLogs]);
+
+  const filtered = logs.filter(l => {
+    const matchesSearch = (l.name || l.empId || l.details || '').toLowerCase().includes(search.toLowerCase());
+    const matchesAction = filterAction === 'ALL' || l.action === filterAction;
+    return matchesSearch && matchesAction;
+  });
+
+  const uniqueActions = ['ALL', ...new Set(logs.map(l => l.action))];
+
+  return (
+    <div className="anim-fade" style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 10 }}>
+        <div>
+          <h2 style={{ fontSize: 22, fontWeight: 900, color: 'var(--p)' }}><i className="fa-solid fa-tower-observation mr-2" />Activity Audits</h2>
+          <p style={{ fontSize: 11, color: 'var(--tx3)', marginTop: 3, fontWeight: 600 }}>Real-time telemetry and user interaction logs.</p>
+        </div>
+        <div style={{display:'flex', gap:8}}>
+           <button className="btn btn-ghost btn-sm" onClick={fetchLogs} disabled={loading}>
+             {loading ? <i className="fa-solid fa-circle-notch fa-spin" /> : <i className="fa-solid fa-rotate" />}
+           </button>
+        </div>
+      </div>
+
+      <div className="glass p-3" style={{ display: 'flex', gap: 10, flexWrap: 'wrap' }}>
+        <input 
+          className="input" 
+          placeholder="🔍 Search personnel or details..." 
+          style={{ flex: 2, minWidth: 200 }} 
+          value={search} 
+          onChange={e => setSearch(e.target.value)} 
+        />
+        <select className="input" style={{ flex: 1, minWidth: 150 }} value={filterAction} onChange={e => setFilterAction(e.target.value)}>
+          {uniqueActions.map(a => <option key={a} value={a}>{a}</option>)}
+        </select>
+      </div>
+
+      <div className="glass" style={{ borderRadius: 16, border: '1px solid var(--bd)', overflow: 'hidden' }}>
+        <div style={{ maxHeight: '600px', overflowY: 'auto' }}>
+          <table className="nx-table">
+            <thead>
+              <tr style={{ background: 'var(--pl)', color: 'var(--p)', fontSize: 10, textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+                <th style={{ padding: '12px 15px' }}>Timestamp</th>
+                <th>Employee</th>
+                <th>Action</th>
+                <th>Trace Details</th>
+                <th>Session</th>
+              </tr>
+            </thead>
+            <tbody>
+              {filtered.map((l, i) => (
+                <tr key={i} style={{ borderBottom: '1px solid var(--bd)' }} className="hover:bg-[rgba(128,128,128,.03)]">
+                  <td style={{ fontSize: 10, fontWeight: 700, padding: '12px 15px', whiteSpace: 'nowrap' }}>{new Date(l.timestamp).toLocaleString()}</td>
+                  <td>
+                    <div style={{ fontSize: 11, fontWeight: 800 }}>{l.name || l.empId}</div>
+                    <div style={{ fontSize: 9, color: 'var(--tx3)' }}>{l.dept}</div>
+                  </td>
+                  <td>
+                    <span style={{ fontSize: 10, fontWeight: 900, color: 'var(--p)', background: 'var(--pl)', padding: '2px 6px', borderRadius: 4 }}>{l.action}</span>
+                  </td>
+                  <td style={{ fontSize: 10, color: 'var(--tx2)', maxWidth: 300, wordBreak: 'break-all' }}>{l.details}</td>
+                  <td style={{ fontSize: 9, color: 'var(--tx3)', fontStyle: 'italic' }}>{l.sessionId?.slice(-6) || 'N/A'}</td>
+                </tr>
+              ))}
+              {filtered.length === 0 && (
+                <tr>
+                  <td colSpan={5} style={{ textAlign: 'center', padding: '60px 20px' }}>
+                    <i className="fa-solid fa-list-ul" style={{ fontSize: 32, color: 'var(--p)', opacity: 0.3, marginBottom: 10, display: 'block' }} />
+                    <p style={{ fontSize: 12, fontWeight: 800, color: 'var(--tx3)' }}>No matching audit logs found.</p>
+                  </td>
+                </tr>
+              )}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  );
+};
+const MainApp = ({ user: initUser, onLogoutReq, theme, setTheme, wallpaper, setWallpaper }) => {
   const [user,setUser]=useState(initUser);
   const [view,setView]=useState('dashboard');
   const [tasks,setTasks]=useState(SEED_TASKS);
@@ -6243,13 +7197,19 @@ const MainApp=({user:initUser,onLogoutReq,theme,setTheme})=>{
   const adminNav=[
     {id:'dashboard',icon:'fa-chart-pie',label:'Dashboard'},
     {id:'tracker',icon:'fa-satellite-dish',label:'Tracker'},
+    {id:'activity_audits',icon:'fa-tower-observation',label:'Activity Audits'},
     {id:'enrollment',icon:'fa-user-plus',label:'Enrollment Requests'},
     {id:'location',icon:'fa-location-dot',label:'Location Tracking'},
+    {id:'tracker_admin',icon:'fa-list-check',label:'Tracker Requests'},
     {id:'directory',icon:'fa-address-book',label:'Directory'},
     {id:'leaves',icon:'fa-umbrella-beach',label:'Leaves',badge:pendingLeaves>0?pendingLeaves:null},
     {id:'announcements',icon:'fa-bullhorn',label:'Bulletin'},
     {id:'leaderboard',icon:'fa-trophy',label:'Rankings'},
     {id:'projects',icon:'fa-folder-open',label:'Projects'},
+    {id:'directives',icon:'fa-paper-plane',label:'Task Directives'},
+    {id:'support_tickets',icon:'fa-headset',label:'Support Tickets'},
+    {id:'intelligence',icon:'fa-brain',label:'Intelligence Command'},
+    {id:'system_alerts',icon:'fa-triangle-exclamation',label:'Smart Alerts'},
     {id:'analytics',label:'Trends & History',icon:'fa-chart-column'},
     {id:'dtr',label:'HR DTR Portal',icon:'fa-calendar-check'},
     {id:'queue',label:'Operations Queue',icon:'fa-list-check'},
@@ -6267,21 +7227,35 @@ const MainApp=({user:initUser,onLogoutReq,theme,setTheme})=>{
   ];
   const navItems=isAdmin?adminNav:staffNav;
 
-  const isDark=['dark','midnight','forest','ocean','matrix','retro', 'aurora','neon','red','cyberpunk','coffee','rosegold','sunset','egypt','ddlc','synthwave','christmas','dididi', 'vaporwave', 'steampunk', 'dracula', 'nordtheme', 'gruvbox', 'onedark', 'industrial', 'blueprint', 'plumber-dudes', 'lua'].includes(theme);
+  const isDark=['void','dark','midnight','forest','ocean','matrix','retro', 'aurora','neon','red','coffee','rosegold','sunset','egypt','synthwave','christmas','dididi', 'vaporwave', 'steampunk', 'dracula', 'nordtheme', 'gruvbox', 'onedark', 'industrial', 'blueprint', 'plumber-dudes', 'lua', 'spurs'].includes(theme);
 
   const SidebarInner=()=>(
     <>
       <div className="sidebar-logo">
-        <div className="logo-wrap" style={{border:'1px solid var(--bd)'}}>
-          <img src={LOGO} alt="Gigahertz" style={{filter:isDark?'brightness(0) invert(1)':''}}/>
+        <div className="logo-wrap" style={{border:'1px solid var(--bd)', borderRadius: 10, overflow: 'hidden', background: isDark ? 'white' : 'transparent'}}>
+          <img src={LOGO} alt="Gigahertz" style={{mixBlendMode: isDark ? 'screen' : 'multiply'}}/>
         </div>
         <div>
           <p style={{fontSize:13,fontWeight:900,lineHeight:1.2}}>Gigahertz Nexus</p>
-          <p style={{fontSize:9,fontWeight:900,textTransform:'uppercase',letterSpacing:'.12em',color:'var(--p)',marginTop:2}}>v6.1 PROD</p>
+          <div style={{display:'flex', alignItems:'center', gap:6}}>
+            <p style={{fontSize:9,fontWeight:900,textTransform:'uppercase',letterSpacing:'.12em',color:'var(--p)'}}>v9.07 PROD</p>
+            <div className="tracker-dot syncing" title="Live Sync Active"></div>
+          </div>
         </div>
         <div style={{marginLeft:'auto',flexShrink:0}}>
           <GASStatusPill status={gasStatus}/>
         </div>
+      </div>
+      <div style={{padding:'0 10px 5px'}}>
+        <button className="nav-item" style={{background:'linear-gradient(135deg, var(--p), var(--pd))', color:'#fff', border:'none', width:'100%', justifyContent:'center', fontSize:11, padding:'12px', boxShadow:'0 4px 12px var(--glow)'}} onClick={()=>{
+           if (typeof google !== 'undefined' && google.script && google.script.run) {
+             google.script.run.withSuccessHandler(url => window.open(url, '_top')).getScriptUrl();
+           } else {
+             window.location.href = '/index.html';
+           }
+        }}>
+          <i className="fa-solid fa-house" style={{marginRight:8}}/> USER DASHBOARD
+        </button>
       </div>
       <div style={{padding:'10px 10px 0',flex:1,overflowY:'auto',display:'flex',flexDirection:'column',gap:1}}>
         <span className="nav-section">Menu</span>
@@ -6312,6 +7286,11 @@ const MainApp=({user:initUser,onLogoutReq,theme,setTheme})=>{
             <p style={{fontSize:9,color:'var(--tx3)',fontWeight:600}}>{dept?.name||''} · LVL {lvl.level}</p>
           </div>
         </button>
+        {!isAdmin && (
+           <button className="btn btn-ghost btn-xs" onClick={()=>window.showStaffTrackerRequests(safe.id, safe.firstName + ' ' + safe.lastName)} style={{padding:'7px', border:'1px solid var(--bd)', borderRadius:'8px', fontSize:'10px', fontWeight:800, width:'100%', marginBottom:'5px', color:'var(--tx2)'}}>
+             <i className="fa-solid fa-file-signature"/> My Tracker Requests
+           </button>
+        )}
         <button className="nav-item" onClick={()=>onLogoutReq(tasks,safe,prodPct,sessionStart)} style={{color:'var(--danger)',background:'rgba(239,68,68,.07)',border:'1px solid rgba(239,68,68,.18)'}}>
           <span className="nav-icon" style={{background:'transparent'}}><i className="fa-solid fa-power-off" style={{color:'var(--danger)'}}/></span>Sign Out
         </button>
@@ -6323,7 +7302,48 @@ const MainApp=({user:initUser,onLogoutReq,theme,setTheme})=>{
   const footerLines=['Innovative Tech, Exceptional Service 🖥️','To provide affordable, reliable, and quality technology to everyone.'];
   useEffect(()=>{const i=setInterval(()=>setFooterIdx(p=>(p+1)%footerLines.length),5000);return()=>clearInterval(i);},[]);
 
-  return(
+  const [completedBreaks, setCompletedBreaks] = useState(() => {
+    const storageKey = `gh_breaks_${safe.id}_${new Date().toISOString().split('T')[0]}`;
+    return LS.load(storageKey) || {};
+  });
+  const [activeBreak, setActiveBreak] = useState(null);
+  const [breakStarted, setBreakStarted] = useState(null);
+  const [breakElapsed, setBreakElapsed] = useState(0);
+
+  useEffect(() => {
+    if (!activeBreak || !breakStarted) return;
+    const t = setInterval(() => setBreakElapsed(Math.floor((Date.now() - breakStarted.getTime()) / 1000)), 1000);
+    return () => clearInterval(t);
+  }, [activeBreak, breakStarted]);
+
+  const startBreak = (breakId) => {
+    if (activeBreak) return showToast('Finish your current break first.', 'err');
+    if (completedBreaks[breakId]) return showToast('Break already taken today.', 'warn');
+    const now = new Date();
+    setActiveBreak(breakId); setBreakStarted(now); setBreakElapsed(0);
+    showToast(`▶ Break started`, 'success');
+  };
+
+  const endBreak = () => {
+    if (!activeBreak || !breakStarted) return;
+    const now = new Date();
+    const durationMs = now.getTime() - breakStarted.getTime();
+    const durationMins = Math.max(1, Math.round(durationMs / 60000));
+    const storageKey = `gh_breaks_${safe.id}_${new Date().toISOString().split('T')[0]}`;
+    const updated = { ...completedBreaks, [activeBreak]: { durationMins, time: new Date().toISOString() } };
+    setCompletedBreaks(updated);
+    LS.save(storageKey, updated);
+    setActiveBreak(null); setBreakStarted(null); setBreakElapsed(0);
+    showToast('Break ended.', 'success');
+  };
+
+  const BREAK_TYPES = [
+    { id: '15m_1', label: '15 MIN BREAK', mins: 15 },
+    { id: '1h', label: '1 HOUR BREAK', mins: 60 },
+    { id: '15m_2', label: '15 MIN BREAK', mins: 15 }
+  ];
+
+  return (
     <>
       <ToastSystem toasts={toasts} remove={removeToast}/>
       {afkVisible&&<AFKOverlay countdown={afkCountdown} onResume={()=>{setAfkVisible(false);resetAFK();showToast('Welcome back! ⚡','success');}}/>}
@@ -6369,6 +7389,7 @@ const MainApp=({user:initUser,onLogoutReq,theme,setTheme})=>{
             <span className="session-pill desktop-only"><i className="fa-solid fa-circle" style={{fontSize:6,animation:'pulse 2s infinite'}}/>{fmtSec(Math.floor((Date.now()-new Date(sessionStart).getTime())/1000))}</span>
             <GASStatusPill status={gasStatus}/>
             <LiveClock/>
+        <div className="tracker-dot syncing" title="Live Sync Active"></div>
             <button className="btn btn-ghost" style={{padding:'7px 11px',borderRadius:10,position:'relative'}} onClick={()=>showModal('notifications')}>
               <i className="fa-solid fa-bell" style={{fontSize:16}}/>
               {(notifCount > 0) && <span style={{position:'absolute',top:8,right:8,width:7,height:7,background:'var(--danger)',borderRadius:'50%',border:'1px solid var(--header)'}}/>}
@@ -6390,6 +7411,7 @@ const MainApp=({user:initUser,onLogoutReq,theme,setTheme})=>{
           {view==='dashboard'&&isAdmin&&<AdminDashView employees={employees} tasks={tasks} leaveRequests={leaveRequests} announcements={announcements} showToast={showToast}/>}
           {view==='dashboard'&&!isAdmin&&<DashboardView user={safe} tasks={tasks} onSaveTask={t=>handleSaveTask(t,false)} showToast={showToast} announcements={announcements} kudos={kudos} setKudos={setKudos} showModal={showModal} isAdmin={isAdmin}/>}
           {view==='tracker'&&isAdmin&&<TrackerView employees={employees} tasks={tasks}/>}
+          {view==='activity_audits'&&isAdmin&&<ActivityLogView isAdmin={isAdmin}/>}
           {view==='enrollment'&&isAdmin&&<EnrollmentRequestsView showToast={showToast}/>}
           {view==='location'&&<LocationView user={safe} isAdmin={isAdmin}/>}
           {view==='directory'&&isAdmin&&<DirectoryView employees={employees} setEmployees={setEmployees} tasks={tasks} showToast={showToast}/>}
@@ -6398,11 +7420,16 @@ const MainApp=({user:initUser,onLogoutReq,theme,setTheme})=>{
           {view==='announcements'&&<AnnView announcements={announcements} setAnnouncements={setAnnouncements} isAdmin={isAdmin} user={safe} showModal={showModal} showToast={showToast}/>}
           {view==='leaderboard'&&<LeaderboardView employees={employees} tasks={tasks}/>}
           {view==='projects'&&<ProjectsView projects={projects} setProjects={setProjects} showModal={showModal} showToast={showToast} isAdmin={isAdmin}/>}
+          {view==='directives'&&isAdmin&&<TaskAssignmentView employees={employees} showToast={showToast}/>}
+          {view==='support_tickets'&&isAdmin&&<SupportDashboardView showToast={showToast}/>}
+          {view==='intelligence'&&isAdmin&&<IntelligenceCommandView employees={employees} tasks={tasks}/>}
+          {view==='system_alerts'&&isAdmin&&<AlertsDashboardView/>}
           {view==='analytics'&&isAdmin&&<PersonnelAnalyticsView employees={employees} tasks={tasks}/>}
           {view==='dtr'&&isAdmin&&<HRDTRView employees={employees} tasks={tasks}/>}
           {view==='queue'&&isAdmin&&<ManagerTaskQueueView employees={employees} tasks={tasks}/>}
           {view==='tools'&&isAdmin&&<div className="view-fade"><AdminScientificCalculator/></div>}
-          {view==='settings'&&<SettingsView theme={theme} setTheme={setTheme} animations={animations} setAnimations={setAnimations} showToast={showToast} gasQueue={gasQueueLen}/>}
+          {view==='settings'&&<SettingsView theme={theme} setTheme={setTheme} animations={animations} setAnimations={setAnimations} showToast={showToast} gasQueue={gasQueueLen} wallpaper={wallpaper} setWallpaper={setWallpaper} user={safe} isAdmin={isAdmin}/>}
+          {view==='tracker_admin'&&isAdmin&&<div className="view-fade"><div className="glass" style={{padding:'20px',borderRadius:16,textAlign:'center'}}><h2 style={{fontSize:20,fontWeight:900,marginBottom:15}}>Tracker Management</h2><p style={{marginBottom:20,color:'var(--tx3)'}}>Review and approve activity tracker access requests.</p><button className="btn btn-primary" onClick={()=>window.showAdminTrackerDashboard(user.id)}><i className="fa-solid fa-list-check"/> Open Request Dashboard</button></div></div>}
         </div>
 
         <div className="app-footer desktop-only" style={{animation:'none'}}>{footerLines[footerIdx]}</div>
@@ -6461,12 +7488,24 @@ const MainApp=({user:initUser,onLogoutReq,theme,setTheme})=>{
               ))}
             </div>
             <div className="glass" style={{padding:'12px 16px'}}>
-              <div style={{fontSize:11,fontWeight:900,color:'var(--p)',textTransform:'uppercase',letterSpacing:'.1em',marginBottom:8}}>Time & Attendance Today</div>
-              <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:8}}>
-                <div style={{fontSize:10,color:'var(--tx2)',fontWeight:700}}>1h Break: <span style={{color:'var(--p)'}}>01:00</span></div>
-                <div style={{fontSize:10,color:'var(--tx2)',fontWeight:700}}>Coffee: <span style={{color:'var(--p)'}}>00:15</span></div>
-                <div style={{fontSize:10,color:'var(--tx2)',fontWeight:700}}>Yosi: <span style={{color:'var(--p)'}}>00:15</span></div>
-                <div style={{fontSize:10,color:'var(--tx2)',fontWeight:700}}>Efficiency: <span style={{color:'var(--p)'}}>0%</span></div>
+              <div style={{fontSize:11,fontWeight:900,color:'var(--p)',textTransform:'uppercase',letterSpacing:'0.1em',marginBottom:8}}>Break Allowances</div>
+              <div style={{display:'flex',flexDirection:'column',gap:8}}>
+                {BREAK_TYPES.map(bt => {
+                  const done = completedBreaks[bt.id];
+                  const isActive = activeBreak === bt.id;
+                  return (
+                    <div key={bt.id} style={{display:'flex',alignItems:'center',justifyContent:'space-between',gap:8,padding:'6px 10px',background:'var(--pl)',borderRadius:8}}>
+                      <div style={{fontSize:10,fontWeight:700,color:'var(--tx2)'}}>{bt.label}</div>
+                      {done ? (
+                        <span style={{fontSize:9,fontWeight:900,color:'var(--ok)'}}>✓ COMPLETED</span>
+                      ) : isActive ? (
+                        <button className="btn btn-danger btn-xs" onClick={endBreak} style={{fontSize:9,padding:'3px 8px'}}>⏹ END ({fmtSec(breakElapsed)})</button>
+                      ) : (
+                        <button className="btn btn-primary btn-xs" onClick={() => startBreak(bt.id)} style={{fontSize:9,padding:'3px 8px'}} disabled={activeBreak}>▶ START</button>
+                      )}
+                    </div>
+                  );
+                })}
               </div>
             </div>
             <p style={{fontSize:11,color:'var(--tx3)',textAlign:'center',fontWeight:600}}>{safe.email}</p>
@@ -6480,21 +7519,125 @@ const MainApp=({user:initUser,onLogoutReq,theme,setTheme})=>{
 /* ═══════════════════════════════════════════════════
    ROOT
 ═══════════════════════════════════════════════════ */
-const Root=()=>{
-  const [user,setUser]=useState(()=>LS.load('ghz_user_v9'));
-  const [theme,setTheme]=useState(()=>LS.load('ghz_theme','classic'));
+const AdminLoadingScreen = ({ user, theme }) => {
+  const isDark = ['void', 'midnight', 'forest', 'ocean', 'matrix', 'retro', 'aurora', 'neon', 'red', 'void', 'coffee', 'rosegold', 'sunset', 'egypt', 'synthwave', 'christmas', 'dididi', 'vaporwave', 'steampunk', 'dracula', 'nordtheme', 'gruvbox', 'onedark', 'industrial', 'blueprint', 'plumber-dudes', 'lua', 'spurs'].includes(theme);
+  
+  const [status, setStatus] = React.useState('Initializing Nexus protocols...');
+  const [progress, setProgress] = React.useState(0);
+
+  React.useEffect(() => {
+    const steps = [
+      { p: 20, s: 'Authenticating telemetry...' },
+      { p: 45, s: 'Syncing Activity logs...' },
+      { p: 70, s: 'Loading department metrics...' },
+      { p: 90, s: 'Finalizing environment...' },
+      { p: 100, s: 'Bootstrap complete.' }
+    ];
+    
+    let currentStep = 0;
+    const interval = setInterval(() => {
+      if (currentStep < steps.length) {
+        setProgress(steps[currentStep].p);
+        setStatus(steps[currentStep].s);
+        currentStep++;
+      } else {
+        clearInterval(interval);
+      }
+    }, 350);
+    
+    return () => clearInterval(interval);
+  }, []);
+
+  return (
+    <div className="auth-bg" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', flexDirection: 'column' }}>
+       <div className="glass anim-bounce" style={{ padding: '40px', borderRadius: '24px', textAlign: 'center', maxWidth: '400px', width: '90%', border: '1px solid var(--bd)', position: 'relative', overflow: 'hidden' }}>
+          <div style={{ position: 'absolute', top: 0, left: 0, height: '4px', background: 'var(--p)', width: `${progress}%`, transition: 'width 0.3s ease' }} />
+          
+          <div style={{ position: 'relative', marginBottom: 20 }}>
+            {user?.facePhoto ? (
+              <img src={user.facePhoto} style={{ width: 80, height: 80, borderRadius: '50%', objectFit: 'cover', border: '3px solid var(--p)', margin: '0 auto' }} />
+            ) : (
+              <div style={{ width: 80, height: 80, borderRadius: '50%', background: 'var(--pl)', color: 'var(--p)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 32, fontWeight: 900, margin: '0 auto', border: '3px solid var(--p)' }}>
+                {user?.firstName?.[0] || '?'}
+              </div>
+            )}
+            <div style={{ position: 'absolute', bottom: -5, right: 'calc(50% - 40px)', background: 'var(--ok)', color: '#fff', width: 24, height: 24, borderRadius: '50%', display: 'flex', alignItems: 'center', justifyItems: 'center', fontSize: 12, border: '2px solid var(--wh)' }}>
+              <i className="fa-solid fa-check" style={{ margin: 'auto' }} />
+            </div>
+          </div>
+
+          <h2 style={{ fontSize: 20, fontWeight: 900, color: isDark ? '#fff' : 'var(--p)', marginBottom: 5 }}>Welcome, {user?.firstName || 'Admin'}</h2>
+          <p style={{ fontSize: 13, color: 'var(--tx3)', fontWeight: 600, marginBottom: 25 }}>Nexus session authorized.</p>
+          
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 10, alignItems: 'center' }}>
+            <div className="spinner" style={{ width: 24, height: 24, borderTopColor: 'var(--p)' }} />
+            <div style={{ fontSize: 11, fontWeight: 800, color: 'var(--tx2)', textTransform: 'uppercase', letterSpacing: '.1em' }}>{status}</div>
+          </div>
+
+          <div style={{ marginTop: 30, display: 'flex', gap: 4, justifyContent: 'center' }}>
+             {[0,1,2,3].map(i => (
+               <div key={i} style={{ width: 6, height: 6, borderRadius: '50%', background: progress >= (i+1)*25 ? 'var(--p)' : 'var(--bd)', transition: 'background 0.3s' }} />
+             ))}
+          </div>
+       </div>
+       
+       <p style={{ marginTop: 24, fontSize: 10, color: 'var(--tx3)', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '.2em' }}>Gigahertz Operational Intelligence</p>
+    </div>
+  );
+};
+
+const Root = () => {
+  const [user, setUser] = useState(() => LS.load('ghz_user_v9'));
+  const [isBooting, setIsBooting] = useState(false);
+  const [theme, setTheme] = useState(() => LS.load('ghz_theme', 'classic'));
   const [showThemePanel, setShowThemePanel] = useState(false);
   const [gasStatus,setGasStatus]=useState(GAS.status);
+
+  // 🖼️ Wallpaper State
+  const [wallpaper, setWallpaper] = useState({
+    url: '',
+    blur: 10,
+    darkness: 0.4,
+    isLocked: false
+  });
+
+  // 🖼️ Apply Wallpaper Styles
+  useEffect(() => {
+    const root = document.documentElement;
+    if (wallpaper.url && wallpaper.url !== 'none') {
+      root.style.setProperty('--wp-url', `url("${wallpaper.url}")`);
+      document.body.style.background = 'transparent';
+    } else {
+      root.style.setProperty('--wp-url', 'none');
+      document.body.style.background = 'var(--bg)';
+    }
+    root.style.setProperty('--wp-blur', `${wallpaper.blur}px`);
+    root.style.setProperty('--wp-dark', wallpaper.darkness);
+  }, [wallpaper]);
 
   useEffect(()=>{
     GAS.onStatus(s=>setGasStatus(s));
   },[]);
 
-  const handleLogin=u=>{
+  const handleLogin= (u, sysValues) => {
     setUser(u);
     LS.save('ghz_user_v9',u);
-    // Make user available to navigation system
     window.currentLoggedInUser = u;
+    
+    // 🖼️ Initialize Wallpaper
+    const isLockedStatus = sysValues?.wallpaper_locked === true || sysValues?.wallpaper_locked === 'true';
+    const globalUrl = sysValues?.global_wallpaper || '';
+    setWallpaper({
+      url: isLockedStatus ? globalUrl : (u.wallpaper || globalUrl),
+      blur: u.blur_intensity ?? 10,
+      darkness: u.darkness_level ?? 0.4,
+      isLocked: isLockedStatus
+    });
+
+    setIsBooting(true);
+    setTimeout(() => {
+      setIsBooting(false);
+    }, 2000);
   };
   const handleLogout=(tasks,user,prodPct,sessionStart)=>{
     const endTime=new Date().toISOString();
@@ -6506,17 +7649,32 @@ const Root=()=>{
   };
   useEffect(()=>{
     LS.save('ghz_theme',theme);
-    if(user) window.currentLoggedInUser = user;
+    if(user) {
+      window.currentLoggedInUser = user;
+      window.ActivityTracker.setUser(user);
+    }
     // Set theme on root element
     document.documentElement.setAttribute('data-theme', theme);
   },[theme, user]);
 
-  const isDark=['dark','midnight','forest','ocean','matrix','retro', 'aurora','neon','red','cyberpunk','coffee','rosegold','sunset','egypt','ddlc','synthwave','christmas','dididi', 'vaporwave', 'steampunk', 'dracula', 'nordtheme', 'gruvbox', 'onedark', 'industrial', 'blueprint', 'plumber-dudes', 'lua'].includes(theme);
+  useEffect(() => {
+    // Initialize Activity Tracker
+    window.ActivityTracker.init(user);
+  }, []);
+
+  const isDark=['void','dark','midnight','forest','ocean','matrix','retro', 'aurora','neon','red','coffee','rosegold','sunset','egypt','synthwave','christmas','dididi', 'vaporwave', 'steampunk', 'dracula', 'nordtheme', 'gruvbox', 'onedark', 'industrial', 'blueprint', 'plumber-dudes', 'lua', 'spurs'].includes(theme);
+
+  const gearColor = theme === 'ddlc' ? '#fb7185' : (isDark ? 'white' : 'var(--p)');
+  const gearGloss = theme === 'ddlc' ? 'linear-gradient(135deg, rgba(255,255,255,0.7) 0%, transparent 50%, rgba(0,0,0,0.1) 100%)' : 'none';
 
   return (
     <>
-      {user ? (
-        <MainApp user={user} onLogoutReq={handleLogout} theme={theme} setTheme={setTheme} />
+      <div className="wp-background"></div>
+      <div className="wp-glass-overlay"></div>
+      {isBooting ? (
+         <AdminLoadingScreen user={user} theme={theme} />
+      ) : user ? (
+        <MainApp user={user} onLogoutReq={handleLogout} theme={theme} setTheme={setTheme} wallpaper={wallpaper} setWallpaper={setWallpaper} />
       ) : (
         <AuthPortal onLogin={handleLogin} theme={theme} setTheme={setTheme} />
       )}
@@ -6548,7 +7706,11 @@ const Root=()=>{
       >
         <i className="fa-solid fa-gear" style={{
           fontSize: 22,
-          color: isDark ? 'white' : 'var(--p)', 
+          color: gearColor,
+          background: gearGloss,
+          borderRadius: '50%',
+          padding: 2,
+          textShadow: theme === 'ddlc' ? '0 0 8px rgba(251,113,133,0.5)' : 'none'
         }}/>
       </button>
 
@@ -7152,13 +8314,13 @@ const DataSync={
         <div class="modal-body" id="tracker-requests-list">
           ${result.requests.length === 0 ? '<p style="text-align: center; color: var(--tx3);">No pending requests</p>' : ''}
           ${result.requests.map((req, idx) => `
-            <div class="tracker-req-item" data-id="${req.requestId}" data-idx="${idx}" style="padding: 12px; background: var(--ibg); border: 1px solid var(--bd); border-radius: 8px; margin-bottom: 8px;">
+            <div class="tracker-req-item" data-id="${req.id}" data-idx="${idx}" style="padding: 12px; background: var(--ibg); border: 1px solid var(--bd); border-radius: 8px; margin-bottom: 8px;">
               <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 8px;">
                 <div style="flex: 1;">
                   <p style="margin: 0; font-weight: 600; font-size: 13px;">${req.employeeName}</p>
                   <p style="margin: 4px 0 0 0; font-size: 11px; color: var(--tx3);">${req.employeeId} • ${req.department}</p>
                 </div>
-                <button class="approve-tracker-btn btn btn-primary btn-sm" data-id="${req.requestId}" data-session="${sessionId}" style="white-space: nowrap;">Approve</button>
+                <button class="approve-tracker-btn btn btn-primary btn-sm" data-id="${req.id}" data-session="${sessionId}" style="white-space: nowrap;">Approve</button>
               </div>
               <p style="margin: 0; font-size: 12px; color: var(--tx3); padding: 8px; background: rgba(0,0,0,0.1); border-radius: 4px; white-space: pre-wrap; word-break: break-word;">${req.tasks}</p>
             </div>
