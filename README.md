@@ -12,7 +12,7 @@ Wag ka masyadong umasa sa code, baka ma-ghost ka bigla!
 Keep it real!! 💖
 
 ---
-
+HAHAHAHAHAH
 ## 🎀 About the Project
 This project is a high-performance **Gigahertz Activity Tracker**  system. It helps you time your productivity with a sleek, aesthetic interface.
 
